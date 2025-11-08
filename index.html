@@ -416,8 +416,10 @@ if(!list || index >= list.length){
     // Automatically start night after 1.5 seconds
     setTimeout(() => startSession('night'), 1500);
   } else {
-    // Night finished
-    showOverview(currentDate);
+// Night finished → show day overview
+session = null;
+showOverview(currentDate);
+
   }
 
   return;
@@ -504,11 +506,16 @@ function saveSession(){
 }
 
 function showOverview(date){
-  session=null;
+session = null;
 const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
 contentArea.innerHTML = `<div class="done-note">${dayName} complete!</div>`;
-  progressBar.style.width='100%';
-  progText.textContent=list ? list.length+'/'+list.length : '';
+
+// Hide progress bar and text
+progressBar.style.width = '0';
+progText.textContent = '';
+
+// Hide back/next buttons
+document.getElementById('controls').style.display = 'none';
 }
 
 function showEntriesView(){
