@@ -99,8 +99,12 @@ body.morning .opt-btn.selected{ background:rgba(255,255,255,0.32); color:#ffffff
     <h1>Daily Tracker</h1>
     <div class="top-actions">
       <div class="top-switch" id="switchWrap">
-        <button class="switch-btn morning" id="morningBtn">☀</button>
-        <button class="switch-btn night" id="nightBtn">☾</button>
+<button class="switch-btn morning" id="morningBtn" style="opacity: 0.8;" title="Morning">
+  <img src="icons/sun.svg" alt="Morning" width="24" height="24">
+</button>
+<button class="switch-btn night" id="nightBtn" style="opacity: 1;" title="Night">
+  <img src="icons/moon.svg" alt="Night" width="24" height="24">
+</button>
       </div>
       <button id="btnSettings" class="btn ghost" title="Menu">⋮</button>
       <div id="settingsMenu" class="settings-menu">
