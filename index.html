@@ -1,16 +1,97 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Daily Tracker</title>
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#317EFB">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daily Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
-
 <style>
-/* ... [Keep all your existing CSS as-is] ... */
+:root{
+  --morning-text:#3b1b10;
+  --night-text:#f0f4ff;
+  --card-radius:14px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;padding:18px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+.wrap{width:100%;max-width:740px;position:relative}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;position:relative}
+h1{margin:0;font-size:20px}
+.top-actions{display:flex;gap:8px}
+.btn{padding:8px 12px;border-radius:10px;border:0;font-weight:600;cursor:pointer;transition:background .2s}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.08)}
+#btnSettings{font-size:22px;padding:6px 10px;line-height:1;background:transparent;border-radius:10px}
+main.card{
+  padding:18px;
+  border-radius:0;
+  min-height:520px;
+  background:none;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+.top-switch{display:flex;gap:8px;margin-bottom:12px}
+.switch-btn{flex:1;padding:10px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+.progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.progress{flex:1;height:10px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06)}
+.bar{height:100%;width:0%;transition:width .25s}
+.prog-text{min-width:84px;text-align:right;font-size:13px}
+.question{font-size:18px;margin-bottom:12px;font-weight:600}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt-btn{width:100%;text-align:left;padding:14px 16px;border-radius:12px;border:1px solid transparent;font-size:18px;cursor:pointer;transition:background .2s,color .2s,border .2s;backdrop-filter: blur(6px);-webkit-backdrop-filter: blur(6px)}
+.opt-btn.selected{background:rgba(255,255,255,0.6); color:#000; font-weight:700; border-color:rgba(255,255,255,0.6)}
+input[type=time],input[type=number]{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);font-size:18px;background:transparent}
+.controls{display:flex;gap:10px;justify-content:space-between;margin-top:16px}
+.next-btn{padding:12px 16px;border-radius:12px;border:0;font-weight:700;cursor:pointer;transition:opacity .2s}
+.next-btn[disabled]{opacity:.5;cursor:not-allowed}
+.small-muted{font-size:13px;text-align:center;margin-top:12px}
+.done-note{font-size:20px;text-align:center;font-weight:700;margin-top:18px}
+.meta{font-size:13px;margin-top:10px;text-align:center}
+.center{display:flex;justify-content:center}
+.entries-list{margin-top:8px}
+.entry-row{padding:12px;border-radius:10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.entry-row .small{font-size:13px}
+.settings-menu {
+  position:absolute;
+  top:42px;
+  right:0;
+  background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(16px);
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  flex-direction:column;
+  padding:6px;
+  z-index:20;
+  display:none;
+}
+.settings-menu.show { display:flex; }
+body.night{color:#ffffff;}
+body.night::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat;
+}
+body.night .opt-btn{ background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.06); color:var(--night-text);}
+body.night .opt-btn.selected{ background:rgba(255,255,255,0.28); color:#12002e; font-weight:700; }
+body.morning{color:#ffffff;}
+body.morning::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:url("https://i.pinimg.com/736x/5e/11/10/5e11109da8e63735804114e28a8ff70e.jpg") center center / cover no-repeat;
+}
+body.morning .opt-btn{ background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.25); color:#ffffff;}
+body.morning .opt-btn.selected{ background:rgba(255,255,255,0.32); color:#ffffff; font-weight:700;}
+@media (max-width:480px){body{padding:12px}.opt-btn{font-size:16px;padding:12px}input[type=time],input[type=number]{font-size:16px;padding:12px}}
 </style>
 </head>
 <body class="night">
@@ -23,70 +104,34 @@
         <button class="switch-btn night" id="nightBtn">☾</button>
       </div>
       <button id="btnSettings" class="btn ghost" title="Menu">⋮</button>
-      <div id="settingsMenu" class="hidden settings-menu">
-        <button id="btnEntries" class="menu-item">Past days</button>
-        <button id="btnExport" class="menu-item">Export data</button>
-        <button id="btnImport" class="menu-item">Import data</button>
-        <button id="btnRestart" class="menu-item">Restart for tomorrow</button>
+      <div id="settingsMenu" class="settings-menu">
+        <button id="btnEntries">Past days</button>
+        <button id="btnExport">Export data</button>
+        <button id="btnImport">Import data</button>
+        <button id="btnRestart">Restart for tomorrow</button>
       </div>
     </div>
   </header>
 
   <main class="card" id="appCard">
     <div class="progress-wrap">
-      <div class="progress"><div class="bar" id="progressBar" style="width:0%;"></div></div>
-      <div class="prog-text" id="progText">0 of 0</div>
+      <div class="progress"><div class="bar" id="progressBar"></div></div>
+      <div class="prog-text" id="progText"></div>
     </div>
     <div id="contentArea"></div>
-
     <div class="controls" id="controls">
       <div class="center"><button class="btn ghost" id="backBtn">Back</button></div>
       <div class="center"><button class="next-btn" id="nextBtn">Next</button></div>
     </div>
-
     <div class="meta" id="meta">Local only — no data leaves your device.</div>
   </main>
-
   <input id="fileInput" type="file" accept="application/json" class="hidden">
 </div>
 
 <script>
-/* ---------- FULL JS LOGIC ---------- */
-const STORAGE_KEY = 'dailyTracker_v5';
-const todayKey = ()=>new Date().toISOString().slice(0,10);
-const loadAll = ()=>{ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e){ return {}; } };
-const saveAll = (obj)=>localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+// ===== JS: Full fixed code =====
 
-/* ---------- UI refs ---------- */
-const contentArea = document.getElementById('contentArea');
-const progressBar = document.getElementById('progressBar');
-const progText = document.getElementById('progText');
-const controls = document.getElementById('controls');
-const backBtn = document.getElementById('backBtn');
-const nextBtn = document.getElementById('nextBtn');
-const morningBtn = document.getElementById('morningBtn');
-const nightBtn = document.getElementById('nightBtn');
-const meta = document.getElementById('meta');
-const btnEntries = document.getElementById('btnEntries');
-const btnExport = document.getElementById('btnExport');
-const btnImport = document.getElementById('btnImport');
-const btnRestart = document.getElementById('btnRestart');
-const fileInput = document.getElementById('fileInput');
-const btnSettingsEl = document.getElementById('btnSettings');
-const settingsMenu = document.getElementById('settingsMenu');
-
-let session=null, list=null, index=0, answers={}, currentDate=todayKey();
-
-/* ---------- SETTINGS MENU ---------- */
-btnSettingsEl.addEventListener('click', e=>{
-  e.stopPropagation();
-  settingsMenu.classList.toggle('show');
-});
-document.addEventListener('click', e=>{
-  if(!settingsMenu.contains(e.target) && !btnSettingsEl.contains(e.target)) settingsMenu.classList.remove('show');
-});
-
-/* ---------- QUESTIONS ---------- */
+// QUESTIONS
 const MORNING = [
   {key:'wake_time', type:'time', label:'What time did you wake up? (24h)'},
   {key:'how_slept', type:'single', label:'How do you think you slept?', options:['Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine']},
@@ -134,12 +179,51 @@ const NIGHT = [
   {key:'avg_climate', type:'auto', label:'Average daytime climate'}
 ];
 
-/* ---------- INIT ---------- */
+// ===== STORAGE =====
+const STORAGE_KEY = 'dailyTracker_v5';
+function todayKey(){ return new Date().toISOString().slice(0,10); }
+function loadAll(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e){ return {}; } }
+function saveAll(obj){ localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
+
+// ===== UI REFS =====
+const contentArea = document.getElementById('contentArea');
+const progressBar = document.getElementById('progressBar');
+const progText = document.getElementById('progText');
+const controls = document.getElementById('controls');
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const morningBtn = document.getElementById('morningBtn');
+const nightBtn = document.getElementById('nightBtn');
+const meta = document.getElementById('meta');
+const btnEntries = document.getElementById('btnEntries');
+const btnExport = document.getElementById('btnExport');
+const btnImport = document.getElementById('btnImport');
+const btnRestart = document.getElementById('btnRestart');
+const fileInput = document.getElementById('fileInput');
+const btnSettingsEl = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
+
+let session = null;
+let list = null;
+let index = 0;
+let answers = {};
+let currentDate = todayKey();
+
+// ===== SETTINGS MENU =====
+btnSettingsEl.addEventListener('click', e => {
+  e.stopPropagation();
+  settingsMenu.classList.toggle('show');
+});
+document.addEventListener('click', e => {
+  if (!settingsMenu.contains(e.target) && !btnSettingsEl.contains(e.target)) settingsMenu.classList.remove('show');
+});
+
+// ===== INIT =====
 function init(){
-  morningBtn.addEventListener('click', ()=>startSession('morning'));
-  nightBtn.addEventListener('click', ()=>startSession('night'));
+  morningBtn.addEventListener('click', ()=> startManual('morning'));
+  nightBtn.addEventListener('click', ()=> startManual('night'));
   backBtn.addEventListener('click', ()=>{ if(index>0){ index--; loadUI(); } });
-  nextBtn.addEventListener('click', ()=>handleNext());
+  nextBtn.addEventListener('click', ()=> handleNext());
   btnEntries.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); showEntriesView(); });
   btnExport.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); exportAll(); });
   btnImport.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); fileInput.click(); });
@@ -150,18 +234,115 @@ function init(){
   const today = all[currentDate] || {};
   if(!today.morning){ startSession('morning'); }
   else if(!today.night){ startSession('night'); }
-  else { session=null; showOverview(currentDate); }
+  else { session = null; showOverview(currentDate); }
 
   tryFetchSunAndClimate();
 }
 
-/* ---------- Add service worker ---------- */
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('service-worker.js')
-  .then(()=>console.log('Service Worker registered.'));
+// ===== SESSION CONTROL =====
+function startManual(which){ startSession(which); }
+function startSession(which){
+  session = which;
+  list = (session === 'morning') ? MORNING : NIGHT;
+  const all = loadAll();
+  const today = all[currentDate] || {};
+  answers = today[session] ? JSON.parse(JSON.stringify(today[session])) : {};
+  index = 0;
+  for(let i=0;i<list.length;i++){ if(!(list[i].key in answers)){ index=i; break; } }
+  loadUI();
 }
 
-/* ---------- Initialize app ---------- */
+// ===== UI RENDER =====
+function loadUI(){
+  const q = list[index];
+  contentArea.innerHTML = '';
+  progText.innerText = `${index+1}/${list.length}`;
+  progressBar.style.width = `${((index+1)/list.length)*100}%`;
+  if(!q) { contentArea.innerHTML=`<div class="done-note">Done for ${session}!</div>`; nextBtn.disabled=true; return; }
+  if(q.type==='time'){
+    const inp = document.createElement('input'); inp.type='time'; inp.value=answers[q.key]||''; inp.onchange=e=>{ answers[q.key]=e.target.value; nextBtn.disabled=!e.target.value; }; contentArea.appendChild(inp); nextBtn.disabled=!answers[q.key];
+  } else if(q.type==='single'){
+    contentArea.innerHTML=`<div class="question">${q.label}</div>`;
+    const optsDiv = document.createElement('div'); optsDiv.className='options';
+    q.options.forEach(opt=>{
+      const btn = document.createElement('button'); btn.className='opt-btn'; btn.innerText=opt;
+      if(answers[q.key]===opt) btn.classList.add('selected');
+      btn.addEventListener('click', ()=>{ answers[q.key]=opt; Array.from(optsDiv.children).forEach(c=>c.classList.remove('selected')); btn.classList.add('selected'); nextBtn.disabled=false; });
+      optsDiv.appendChild(btn);
+    });
+    contentArea.appendChild(optsDiv);
+    nextBtn.disabled = !answers[q.key];
+  } else if(q.type==='multi'){
+    contentArea.innerHTML=`<div class="question">${q.label}</div>`;
+    const optsDiv = document.createElement('div'); optsDiv.className='options';
+    q.options.forEach(opt=>{
+      const btn = document.createElement('button'); btn.className='opt-btn'; btn.innerText=opt;
+      if(answers[q.key]?.includes(opt)) btn.classList.add('selected');
+      btn.addEventListener('click', ()=>{
+        answers[q.key] = answers[q.key]||[];
+        if(btn.classList.contains('selected')){ btn.classList.remove('selected'); answers[q.key]=answers[q.key].filter(x=>x!==opt); }
+        else { btn.classList.add('selected'); answers[q.key].push(opt); }
+        nextBtn.disabled = !answers[q.key]?.length;
+      });
+      optsDiv.appendChild(btn);
+    });
+    contentArea.appendChild(optsDiv);
+    nextBtn.disabled = !answers[q.key]?.length;
+  } else if(q.type==='auto'){
+    contentArea.innerHTML=`<div class="question">${q.label}</div><div>${answers[q.key]||'Fetching...'}</div>`; nextBtn.disabled=false;
+  }
+}
+
+// ===== NEXT =====
+function handleNext(){
+  const q = list[index];
+  if(q){ answers[q.key]=answers[q.key]||''; }
+  const all = loadAll(); all[currentDate] = all[currentDate]||{}; all[currentDate][session]=answers; saveAll(all);
+  index++;
+  if(index>=list.length){ session=null; showOverview(currentDate); }
+  else loadUI();
+}
+
+// ===== OVERVIEW =====
+function showOverview(date){
+  const all = loadAll(); const day = all[date];
+  contentArea.innerHTML=`<div class="done-note">Completed today!</div>`;
+  progressBar.style.width='100%'; progText.innerText='Done';
+  nextBtn.disabled=true; backBtn.disabled=true;
+}
+
+// ===== ENTRIES VIEW =====
+function showEntriesView(){
+  const all = loadAll(); contentArea.innerHTML='<div class="entries-list"></div>';
+  const listDiv = contentArea.querySelector('.entries-list');
+  Object.keys(all).sort().reverse().forEach(d=>{
+    const row = document.createElement('div'); row.className='entry-row';
+    row.innerHTML=`<span>${d}</span><span class="small">${all[d].morning?'M':'-'} ${all[d].night?'N':'-'}</span>`;
+    row.addEventListener('click', ()=>{ currentDate=d; startSession('morning'); });
+    listDiv.appendChild(row);
+  });
+  nextBtn.disabled=true; backBtn.disabled=true;
+}
+
+// ===== EXPORT / IMPORT =====
+function exportAll(){ const all = loadAll(); const blob = new Blob([JSON.stringify(all)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='dailyTracker.json'; a.click(); URL.revokeObjectURL(url); }
+function handleImport(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader(); reader.onload = ev=>{ try{ const data=JSON.parse(ev.target.result); saveAll(data); alert('Import success'); } catch(err){ alert('Import failed'); } }; reader.readAsText(file);
+}
+
+// ===== NEXT DAY =====
+function startNextDay(){ currentDate=todayKey(); session=null; init(); }
+
+// ===== AUTO FIELDS (mock) =====
+function tryFetchSunAndClimate(){
+  const all = loadAll(); all[currentDate]=all[currentDate]||{}; all[currentDate].night = all[currentDate].night||{};
+  if(!all[currentDate].night.sunset_time) all[currentDate].night.sunset_time='18:12';
+  if(!all[currentDate].night.avg_climate) all[currentDate].night.avg_climate='22°C, Sunny';
+  saveAll(all);
+}
+
+// ===== INIT =====
 init();
 </script>
 </body>
