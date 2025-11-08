@@ -42,6 +42,16 @@ h1 { margin:0; font-size:20px; }
   justify-content:space-between;
   width:100%;
 }
+  .options {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 equal columns */
+  gap: 10px; /* spacing between buttons */
+}
+
+.options button {
+  width: 100%; /* fill the grid cell */
+}
+
 /* MODE SWITCH ICONS — translucent inactive, bright active, scale effect */
 .top-switch {
   display: flex;
