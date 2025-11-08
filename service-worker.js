@@ -1,6 +1,13 @@
-self.addEventListener('install', e => {
+// tracker/service-worker.js
+self.addEventListener('install', event => {
   console.log('Service worker installed');
+  self.skipWaiting(); // optional: activate immediately
 });
-self.addEventListener('fetch', e => {
-  e.respondWith(fetch(e.request));
+
+self.addEventListener('activate', event => {
+  console.log('Service worker activated');
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(fetch(event.request));
 });
