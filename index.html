@@ -44,7 +44,7 @@ h1{margin:0; font-size:20px}
   align-items: center;
   justify-content: center;
   transition: opacity 0.2s ease;
-  margin-top: -6px; /* 👈 raise the icon slightly */
+  margin-top: -10px; /* 👈 raise the icon slightly */
 }
 
 #btnSettings:hover {
@@ -409,7 +409,8 @@ function saveSession(){
 
 function showOverview(date){
   session=null;
-  contentArea.innerHTML=`<div class="done-note">All done for ${date}</div>`;
+const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+contentArea.innerHTML = `<div class="done-note">${dayName} complete!</div>`;
   progressBar.style.width='100%';
   progText.textContent=list ? list.length+'/'+list.length : '';
 }
