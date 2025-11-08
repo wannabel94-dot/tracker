@@ -205,7 +205,8 @@ body.morning .opt-btn.selected {
       <div id="settingsMenu" class="settings-menu">
         <button id="btnEntries">Past days</button>
         <button id="btnExport">Export data</button>
-        <button id="btnRestart">Restart for tomorrow</button>
+        <button id="btnRestart">Restart for tomorrow</button> 
+        <button id="btnClearToday">Clear Today's Data</button> 
       </div>
     </div>
   </header>
@@ -325,6 +326,23 @@ function init(){
 
   tryFetchSunAndClimate();
 }
+  const btnClearToday = document.getElementById('btnClearToday');
+
+btnClearToday.addEventListener('click', () => {
+  if(confirm("Are you sure you want to clear all answers for today?")) {
+    const all = loadAll();
+    delete all[currentDate];   // remove today's entry completely
+    saveAll(all);
+
+    // Reset the session so you can start fresh
+    session = null;
+    index = 0;
+    answers = {};
+    contentArea.innerHTML = `<div class="done-note">Today's data cleared. You can start again.</div>`;
+    progressBar.style.width = '0%';
+    progText.textContent = '0/0';
+  }
+});
 
 function startManual(which){ startSession(which); }
 
