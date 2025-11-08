@@ -93,6 +93,26 @@ body.morning .opt-btn.selected{ background:rgba(255,255,255,0.32); color:#ffffff
 @media (max-width:480px){body{padding:12px}.opt-btn{font-size:16px;padding:12px}input[type=time],input[type=number]{font-size:16px;padding:12px}}
 </style>
 </head>
+  /* Morning/Night button icons */
+.switch-btn img {
+  display: block;
+  width: 28px;       /* adjust size */
+  height: 28px;
+  filter: brightness(0) invert(1); /* makes SVG white */
+  background: transparent;        /* directly on background */
+  border: none;
+}
+
+.switch-btn.night img {
+  transform: scale(0.9); /* slightly smaller */
+}
+
+/* Optional: hover/focus effect */
+.switch-btn:hover img,
+.switch-btn:focus img {
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
 <body class="night">
 <div class="wrap">
   <header>
@@ -105,26 +125,6 @@ body.morning .opt-btn.selected{ background:rgba(255,255,255,0.32); color:#ffffff
 <button class="switch-btn night" id="nightBtn" title="Night">
   <img src="icons/night.svg" class="icon-night" alt="Night">
 </button>
-.switch-btn {
-  padding: 0;        /* remove default padding */
-  background: none;  /* directly on background */
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.switch-btn img {
-  filter: brightness(0) invert(1); /* makes the icon white */
-  width: 32px;
-  height: 32px;
-}
-
-.icon-night {
-  width: 28px;  /* slightly smaller for night */
-  height: 28px;
-}
       </div>
       <button id="btnSettings" class="btn ghost" title="Menu">⋮</button>
       <div id="settingsMenu" class="settings-menu">
