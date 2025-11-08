@@ -352,22 +352,15 @@ function startSession(which){
 
 // ===== UI FUNCTIONS =====
 function loadUI(){
-if (!list || index >= list.length) {
+if(!list || index >= list.length){
   saveSession();
-  if (session === 'morning') {
+
+  if(session === 'morning') {
     // Morning completed
     contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
     progressBar.style.width = '100%';
     progText.textContent = `${list.length}/${list.length}`;
 
-    // Automatically start night after 1.5 seconds
-    setTimeout(() => startSession('night'), 1500);
-  } else {
-    // Night finished
-    showOverview(currentDate);
-  }
-  return;
-}
     // Automatically start night after 1.5 seconds
     setTimeout(() => startSession('night'), 1500);
   } else {
