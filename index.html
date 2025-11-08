@@ -474,6 +474,10 @@ const btnEntries = document.getElementById('btnEntries');
 const btnExport = document.getElementById('btnExport');
 const btnSettingsEl = document.getElementById('btnSettings');
 const settingsMenu = document.getElementById('settingsMenu');
+const btnRestart = document.getElementById('btnRestart');
+if (btnRestart) {
+  btnRestart.addEventListener('click', startNextDay);
+}
 
 let session = null;
 let list = null;
