@@ -280,10 +280,14 @@ function init(){
   tryFetchSunAndClimate();
 }
 
-function startManual(which){ startSession(which); }
 function startSession(which){
   session = which;
   list = (session === 'morning') ? MORNING : NIGHT;
+
+  // Update background class
+  document.body.classList.remove('morning','night');
+  document.body.classList.add(session);
+
   const all = loadAll();
   const today = all[currentDate] || {};
   answers = today[session] ? JSON.parse(JSON.stringify(today[session])) : {};
