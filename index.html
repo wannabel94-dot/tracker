@@ -60,7 +60,10 @@ h1{margin:0; font-size:20px}
   min-width: 150px;
   z-index: 20;
 }
-
+.done-note.fade-out {
+  opacity: 1;
+  transition: opacity 1.5s ease;
+}
 .settings-menu.show { display: flex; }
 
 .settings-menu button {
@@ -353,23 +356,42 @@ function init(){
   else { session = null; showOverview(currentDate); }
 
 }
-  const btnClearToday = document.getElementById('btnClearToday');
+const btnClearToday = document.getElementById('btnClearToday');
 
 btnClearToday.addEventListener('click', () => {
   if(confirm("Are you sure you want to clear all answers for today?")) {
+    // Remove today's entry completely
     const all = loadAll();
-    delete all[currentDate];   // remove today's entry completely
+    delete all[currentDate];
     saveAll(all);
 
-    // Reset the session so you can start fresh
+    // Reset session variables
     session = null;
     index = 0;
     answers = {};
-    contentArea.innerHTML = `<div class="done-note">Today cleared.</div>`;
+
+    // Hide progress bar and controls
     progressBar.style.width = '0%';
-    progText.textContent = '0/0';
-     // Close settings menu
+    progText.textContent = '';
+    document.getElementById('controls').style.display = 'none';
+
+    // Close settings menu
     settingsMenu.classList.remove('show');
+
+    // Show temporary cleared message with fade-out
+    contentArea.innerHTML = `<div class="done-note fade-out">Today's data cleared.</div>`;
+
+    // Trigger fade-out effect
+    const msg = contentArea.querySelector('.done-note');
+    setTimeout(() => {
+      msg.style.opacity = '0';
+    }, 50); // small delay to allow CSS transition
+
+    // After 2 seconds, start first morning question
+    setTimeout(() => {
+      startSession('morning');
+      document.getElementById('controls').style.display = 'flex'; // show buttons again
+    }, 2000);
   }
 });
 
