@@ -408,337 +408,291 @@ body.morning .opt-btn.selected {
     </div>
   </main>
 </div>
-
 <script>
-// ===== QUESTIONS =====
-const MORNING = [
-  {key:'wake_time', type:'time', label:'What time did you wake up?'},
-  {key:'how_slept', type:'single', label:'How do you think you slept?', options:['Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine'], autoNext:true},
-  {key:'made_bed', type:'single', label:'Make bed?', options:['Yes','No'], autoNext:true},
-  {key:'took_meds_morn', type:'single', label:'Take meds?', options:['Yes','No'], autoNext:true},
-  {key:'tidy_up', type:'single', label:'Tidy up?', options:['Yes','No'], autoNext:true},
-  {key:'tea_meditate', type:'single', label:'Have tea in bed + meditate 5 mins?', options:['Yes','No'], autoNext:true},
-  {key:'shower_morn', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
-  {key:'led_mask_morn', type:'single', label:'LED mask?', options:['Yes','No'], autoNext:true},
-  {key:'skincare_morn', type:'single', label:'Skincare?', options:['Yes','No'], autoNext:true},
-  {key:'eat_breakfast', type:'single', label:'Eat breakfast?', options:['Yes','No'], autoNext:true},
-  {key:'supplements_morn', type:'single', label:'Supplements?', options:['Yes','No'], autoNext:true},
-  {key:'get_dressed', type:'single', label:'Get dressed?', options:['Yes','No'], autoNext:true},
-  {key:'brush_teeth_morn', type:'single', label:'Brush teeth?', options:['Yes','No'], autoNext:true}
-];
+document.addEventListener('DOMContentLoaded', () => {
 
-const NIGHT = [
-  {key:'psyillium', type:'single', label:'Did you take psyllium?', options:['Yes','No'], autoNext:true},
-  {key:'magnesium', type:'single', label:'Magnesium?', options:['Yes','No'], autoNext:true},
-  {key:'pillowcase', type:'single', label:'Did you change the pillowcase?', options:['Yes','No'], autoNext:true},
-  {key:'shower_night', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
-  {key:'skincare_night', type:'single', label:'Skincare?', options:['None','Bare minimum','Once', 'Twice'], autoNext:true},
-  {key:'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true},
-  {key:'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None'], autoNext:true},
-  {key:'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true},
-  {key:'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true},
-  {key:'saw_dogs', type:'single', label:'Did you see the dogs today?', options:['Sometimes','Yes','No'], autoNext:true},
-  {key:'feel_with_L', type:'single', label:'How do you feel with L today?', options:['Elated','Sensitive','Pretty good','Fine','Irritated','Somewhat insecure','Anxiously insecure','Anguish'], autoNext:true},
-  {key:'house_state', type:'single', label:'What is the state of the house?', options:['Disaster','Very messy','A bit messy','Fine - a few dishes','Pretty tidy','Spotless'], autoNext:true},
-  {key:'drove', type:'single', label:'Did you drive today?', options:['No','<30 mins','30 mins+','1h+'], autoNext:true},
-  {key:'body_feelings', type:'single', label:'How do you feel about your body today?', options:["Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"], autoNext:true},
-  {key:'food_desc', type:'single', label:'How would you describe your food?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions'], autoNext:true},
-  {key:'most_prominent', type:'multi', label:'What do you think is most prominent?', options:['none','Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD'], autoNext:true},
-  {key:'meds', type:'multi', label:'Any extra meds?', options:['1mg lorazepam','2mg lorazepam','3mg lorazepam','painkillers','anti/sickness','anti/histamine','none']},
-  {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['1 coffee','1 tea','2 teas','3 teas','2 coffees','mate','1-2 drinks','2+ drinks','none']},
-  {key:'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting', 'none']},
-  {key:'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none']},
-  {key:'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy (in-person)','Doctor','Blood tests','none']},
-  {key:'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none']},
-  {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none']},
-  {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none']},
-  {key:'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading', 'none']},
-  {key:'closed_eyes_time', type:'time', label:'What time did you close your eyes?', autoNext:true},
-];
+  // ===== QUESTIONS =====
+  const MORNING = [
+    {key:'wake_time', type:'time', label:'What time did you wake up?'},
+    {key:'how_slept', type:'single', label:'How do you think you slept?', options:['Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine'], autoNext:true},
+    {key:'made_bed', type:'single', label:'Make bed?', options:['Yes','No'], autoNext:true},
+    {key:'took_meds_morn', type:'single', label:'Take meds?', options:['Yes','No'], autoNext:true},
+    {key:'tidy_up', type:'single', label:'Tidy up?', options:['Yes','No'], autoNext:true},
+    {key:'tea_meditate', type:'single', label:'Have tea in bed + meditate 5 mins?', options:['Yes','No'], autoNext:true},
+    {key:'shower_morn', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
+    {key:'led_mask_morn', type:'single', label:'LED mask?', options:['Yes','No'], autoNext:true},
+    {key:'skincare_morn', type:'single', label:'Skincare?', options:['Yes','No'], autoNext:true},
+    {key:'eat_breakfast', type:'single', label:'Eat breakfast?', options:['Yes','No'], autoNext:true},
+    {key:'supplements_morn', type:'single', label:'Supplements?', options:['Yes','No'], autoNext:true},
+    {key:'get_dressed', type:'single', label:'Get dressed?', options:['Yes','No'], autoNext:true},
+    {key:'brush_teeth_morn', type:'single', label:'Brush teeth?', options:['Yes','No'], autoNext:true}
+  ];
 
-// ===== STORAGE =====
-const STORAGE_KEY = 'dailyTracker_v5';
-function todayKey(){ return new Date().toISOString().slice(0,10); }
-function loadAll(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e){ return {}; } }
-function saveAll(obj){ localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
+  const NIGHT = [
+    {key:'psyillium', type:'single', label:'Did you take psyllium?', options:['Yes','No'], autoNext:true},
+    {key:'magnesium', type:'single', label:'Magnesium?', options:['Yes','No'], autoNext:true},
+    {key:'pillowcase', type:'single', label:'Did you change the pillowcase?', options:['Yes','No'], autoNext:true},
+    {key:'shower_night', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
+    {key:'skincare_night', type:'single', label:'Skincare?', options:['None','Bare minimum','Once', 'Twice'], autoNext:true},
+    {key:'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true},
+    {key:'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None'], autoNext:true},
+    {key:'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true},
+    {key:'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true},
+    {key:'saw_dogs', type:'single', label:'Did you see the dogs today?', options:['Sometimes','Yes','No'], autoNext:true},
+    {key:'feel_with_L', type:'single', label:'How do you feel with L today?', options:['Elated','Sensitive','Pretty good','Fine','Irritated','Somewhat insecure','Anxiously insecure','Anguish'], autoNext:true},
+    {key:'house_state', type:'single', label:'What is the state of the house?', options:['Disaster','Very messy','A bit messy','Fine - a few dishes','Pretty tidy','Spotless'], autoNext:true},
+    {key:'drove', type:'single', label:'Did you drive today?', options:['No','<30 mins','30 mins+','1h+'], autoNext:true},
+    {key:'body_feelings', type:'single', label:'How do you feel about your body today?', options:["Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"], autoNext:true},
+    {key:'food_desc', type:'single', label:'How would you describe your food?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions'], autoNext:true},
+    {key:'most_prominent', type:'multi', label:'What do you think is most prominent?', options:['none','Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD'], autoNext:true},
+    {key:'meds', type:'multi', label:'Any extra meds?', options:['1mg lorazepam','2mg lorazepam','3mg lorazepam','painkillers','anti/sickness','anti/histamine','none']},
+    {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['1 coffee','1 tea','2 teas','3 teas','2 coffees','mate','1-2 drinks','2+ drinks','none']},
+    {key:'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','none']},
+    {key:'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none']},
+    {key:'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy (in-person)','Doctor','Blood tests','none']},
+    {key:'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none']},
+    {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none']},
+    {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none']},
+    {key:'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading', 'none']},
+    {key:'closed_eyes_time', type:'time', label:'What time did you close your eyes?', autoNext:true},
+  ];
 
-// ===== UI REFS =====
-const contentArea = document.getElementById('contentArea');
-const progressBar = document.getElementById('progressBar');
-const progText = document.getElementById('progText');
-const backBtn = document.getElementById('backBtn');
-const nextBtn = document.getElementById('nextBtn');
-const morningBtn = document.getElementById('morningBtn');
-const nightBtn = document.getElementById('nightBtn');
-const btnEntries = document.getElementById('btnEntries');
-const btnExport = document.getElementById('btnExport');
-const btnSettingsEl = document.getElementById('btnSettings');
-const settingsMenu = document.getElementById('settingsMenu');
-const btnRestart = document.getElementById('btnRestart');
-if (btnRestart) {
-  btnRestart.addEventListener('click', startNextDay);
-}
+  // ===== STORAGE =====
+  const STORAGE_KEY = 'dailyTracker_v5';
+  function todayKey(){ return new Date().toISOString().slice(0,10); }
+  function loadAll(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e){ return {}; } }
+  function saveAll(obj){ localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
 
-let session = null;
-let list = null;
-let index = 0;
-let answers = {};
-let currentDate = todayKey();
+  // ===== UI REFS =====
+  const contentArea = document.getElementById('contentArea');
+  const progressBar = document.getElementById('progressBar');
+  const progText = document.getElementById('progText');
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const morningBtn = document.getElementById('morningBtn');
+  const nightBtn = document.getElementById('nightBtn');
+  const btnEntries = document.getElementById('btnEntries');
+  const btnExport = document.getElementById('btnExport');
+  const btnSettingsEl = document.getElementById('btnSettings');
+  const settingsMenu = document.getElementById('settingsMenu');
+  const btnClearToday = document.getElementById('btnClearToday');
+  const btnRestart = document.getElementById('btnRestart'); // optional
 
-// ===== SETTINGS MENU =====
-btnSettingsEl.addEventListener('click', e => {
-  e.stopPropagation();
-  settingsMenu.classList.toggle('show');
-});
-document.addEventListener('click', e => {
-  if (!settingsMenu.contains(e.target) && !btnSettingsEl.contains(e.target)) settingsMenu.classList.remove('show');
-});
+  let session = null;
+  let list = null;
+  let index = 0;
+  let answers = {};
+  let currentDate = todayKey();
 
-// ===== INIT =====
-function init(){
-  morningBtn.addEventListener('click', ()=> startManual('morning'));
-  nightBtn.addEventListener('click', ()=> startManual('night'));
-  backBtn.addEventListener('click', ()=>{ if(index>0){ index--; loadUI(); } });
-  nextBtn.addEventListener('click', ()=> handleNext());
-  btnEntries.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); showEntriesView(); });
-  btnExport.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); exportAll(); });
+  // ===== SETTINGS MENU =====
+  if (btnSettingsEl) btnSettingsEl.addEventListener('click', e => {
+    e.stopPropagation();
+    settingsMenu.classList.toggle('show');
+  });
+  document.addEventListener('click', e => {
+    if (!settingsMenu.contains(e.target) && !btnSettingsEl.contains(e.target)) settingsMenu.classList.remove('show');
+  });
 
-  const all = loadAll();
-  const today = all[currentDate] || {};
-  if(!today.morning){ startSession('morning'); }
-  else if(!today.night){ startSession('night'); }
-  else { session = null; showOverview(currentDate); }
+  // ===== BUTTONS =====
+  if (morningBtn) morningBtn.addEventListener('click', ()=> startManual('morning'));
+  if (nightBtn) nightBtn.addEventListener('click', ()=> startManual('night'));
+  if (backBtn) backBtn.addEventListener('click', ()=>{ if(index>0){ index--; loadUI(); } });
+  if (nextBtn) nextBtn.addEventListener('click', handleNext);
+  if (btnEntries) btnEntries.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); showEntriesView(); });
+  if (btnExport) btnExport.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); exportAll(); });
+  if (btnClearToday) btnClearToday.addEventListener('click', clearToday);
+  if (btnRestart) btnRestart.addEventListener('click', startNextDay);
 
-}
-const btnClearToday = document.getElementById('btnClearToday');
-
-btnClearToday.addEventListener('click', () => {
-  if(confirm("Are you sure you want to clear all answers for today?")) {
-    // Remove today's entry completely
+  // ===== INIT =====
+  function init(){
     const all = loadAll();
-    delete all[currentDate];
-    saveAll(all);
+    const today = all[currentDate] || {};
+    if(!today.morning){ startSession('morning'); }
+    else if(!today.night){ startSession('night'); }
+    else { session = null; showOverview(currentDate); }
+  }
 
-    // Reset session variables
-    session = null;
+  function startManual(which){ startSession(which); }
+
+  function startSession(which){
+    session = which;
+    list = (session === 'morning') ? MORNING : NIGHT;
+    document.body.classList.remove('morning','night');
+    document.body.classList.add(session);
+
+    const all = loadAll();
+    const today = all[currentDate] || {};
+    answers = today[session] ? JSON.parse(JSON.stringify(today[session])) : {};
     index = 0;
-    answers = {};
+    for(let i=0;i<list.length;i++){
+      if(!(list[i].key in answers)){
+        index=i;
+        break;
+      }
+    }
+    loadUI();
+  }
 
-    // Hide progress bar and controls
-    progressBar.style.width = '0%';
+  // ===== UI FUNCTIONS =====
+  function loadUI() {
+    if (!list || index >= list.length) {
+      saveSession();
+      if (session === 'morning') {
+        contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
+        progressBar.style.width = '0';
+        progText.textContent = '';
+        document.getElementById('controls').style.display = 'none';
+        setTimeout(() => startSession('night'), 1500);
+      } else {
+        session = null;
+        showOverview(currentDate);
+      }
+      return;
+    }
+
+    const q = list[index];
+    contentArea.innerHTML = '';
+    const qEl = document.createElement('div');
+    qEl.className = 'question';
+    qEl.textContent = q.label;
+    contentArea.appendChild(qEl);
+
+    const optionsWrap = document.createElement('div');
+    optionsWrap.className = 'options';
+
+    if (q.type === 'single' || q.type === 'multi') {
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.textContent = opt;
+        if (q.type === 'multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
+        if (q.type === 'single' && answers[q.key] === opt) btn.classList.add('selected');
+
+        btn.addEventListener('click', () => {
+          if (q.type === 'single') {
+            answers[q.key] = opt;
+            nextBtn.disabled = false;
+            if (q.autoNext) handleNext();
+            else loadUI();
+          } else {
+            if (!answers[q.key]) answers[q.key] = [];
+            if (answers[q.key].includes(opt)) answers[q.key] = answers[q.key].filter(x => x !== opt);
+            else answers[q.key].push(opt);
+            btn.classList.toggle('selected');
+            nextBtn.disabled = answers[q.key].length === 0;
+          }
+        });
+
+        optionsWrap.appendChild(btn);
+      });
+    } else if (q.type === 'time' || q.type === 'number') {
+      const inp = document.createElement('input');
+      inp.type = q.type;
+      inp.value = answers[q.key] || '';
+      inp.addEventListener('input', () => { answers[q.key] = inp.value; nextBtn.disabled = !inp.value; });
+      optionsWrap.appendChild(inp);
+    } else if (q.type === 'auto') {
+      const span = document.createElement('span');
+      span.textContent = answers[q.key] || 'Auto-filled';
+      optionsWrap.appendChild(span);
+      nextBtn.disabled = false;
+    }
+
+    contentArea.appendChild(optionsWrap);
+
+    const progress = ((index + 1) / list.length) * 100;
+    progressBar.style.width = progress + '%';
+    progText.textContent = '';
+
+    backBtn.style.display = (index === 0) ? 'none' : 'inline-flex';
+    nextBtn.disabled = !(answers[q.key] && ((q.type === 'single')||(q.type==='time')||(q.type==='number')||(q.type==='auto')||(q.type==='multi')));
+    document.getElementById('controls').style.display = 'flex';
+  }
+
+  function handleNext() {
+    const q = list[index];
+    if (!answers[q.key]) return;
+    index++;
+    loadUI();
+  }
+
+  function saveSession() {
+    const all = loadAll();
+    if (!all[currentDate]) all[currentDate] = {};
+    all[currentDate][session] = answers;
+    saveAll(all);
+  }
+
+  function showOverview(date) {
+    session = null;
+    const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+    contentArea.innerHTML = `<div class="done-note">${dayName} complete.</div>`;
+    progressBar.style.width = '0';
     progText.textContent = '';
     document.getElementById('controls').style.display = 'none';
-
-    // Close settings menu
-    settingsMenu.classList.remove('show');
-
-    // Show temporary cleared message with fade-out
-    contentArea.innerHTML = `<div class="done-note fade-out">Today's data cleared.</div>`;
-
-    // Trigger fade-out effect
-    const msg = contentArea.querySelector('.done-note');
-    setTimeout(() => {
-      msg.style.opacity = '0';
-    }, 50); // small delay to allow CSS transition
-
-    // After 2 seconds, start first morning question
-    setTimeout(() => {
-      startSession('morning');
-      document.getElementById('controls').style.display = 'flex'; // show buttons again
-    }, 2000);
-  }
-});
-
-function startManual(which){ startSession(which); }
-
-function startSession(which){
-  session = which;
-  list = (session === 'morning') ? MORNING : NIGHT;
-
-  // Update background class
-  document.body.classList.remove('morning','night');
-  document.body.classList.add(session);
-
-  const all = loadAll();
-  const today = all[currentDate] || {};
-  answers = today[session] ? JSON.parse(JSON.stringify(today[session])) : {};
-  index = 0;
-  for(let i=0;i<list.length;i++){
-    if(!(list[i].key in answers)){
-      index=i;
-      break;
-    }
-  }
-  loadUI();
-}
-// ===== UI FUNCTIONS =====
-function loadUI() {
-  if (!list || index >= list.length) {
-    saveSession();
-
-    if (session === 'morning') {
-      // Morning completed
-      contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
-
-      // Hide progress bar and text
-      progressBar.style.width = '0';
-      progText.textContent = '';
-
-      // Hide back/next buttons
-      document.getElementById('controls').style.display = 'none';
-
-      // Automatically start night after 1.5 seconds
-      setTimeout(() => startSession('night'), 1500);
-    } else {
-      // Night finished → show day overview
-      session = null;
-      showOverview(currentDate);
-    }
-    return;
   }
 
-  const q = list[index];
-  contentArea.innerHTML = '';
-  const qEl = document.createElement('div');
-  qEl.className = 'question';
-  qEl.textContent = q.label;
-  contentArea.appendChild(qEl);
-
-  const optionsWrap = document.createElement('div');
-  optionsWrap.className = 'options';
-
-  if (q.type === 'single' || q.type === 'multi') {
-    q.options.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'opt-btn';
-      btn.textContent = opt;
-      if (q.type === 'multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
-      if (q.type === 'single' && answers[q.key] === opt) btn.classList.add('selected');
-
-      btn.addEventListener('click', () => {
-        if (q.type === 'single') {
-          answers[q.key] = opt;
-          nextBtn.disabled = false;
-          if (q.autoNext) {
-            handleNext();  // move to next question automatically
-          } else {
-            loadUI();      // refresh selection visuals only
-          }
-        } else {
-          if (!answers[q.key]) answers[q.key] = [];
-          if (answers[q.key].includes(opt)) {
-            answers[q.key] = answers[q.key].filter(x => x !== opt);
-          } else {
-            answers[q.key].push(opt);
-          }
-          btn.classList.toggle('selected');
-          nextBtn.disabled = answers[q.key].length === 0;
-        }
-      });
-
-      optionsWrap.appendChild(btn);
+  function showEntriesView() {
+    const all = loadAll();
+    contentArea.innerHTML = '<div class="entries-list"></div>';
+    const listWrap = contentArea.querySelector('.entries-list');
+    Object.keys(all).sort().reverse().forEach(day => {
+      const row = document.createElement('div');
+      row.className = 'entry-row';
+      row.innerHTML = `<div>${day}</div><div class="small">morning:${all[day].morning ? Object.keys(all[day].morning).length : 0} | night:${all[day].night ? Object.keys(all[day].night).length : 0}</div>`;
+      listWrap.appendChild(row);
     });
-  } else if (q.type === 'time') {
-    const inp = document.createElement('input');
-    inp.type = 'time';
-    inp.value = answers[q.key] || '';
-    inp.addEventListener('input', () => { answers[q.key] = inp.value; nextBtn.disabled = !inp.value; });
-    optionsWrap.appendChild(inp);
-  } else if (q.type === 'number') {
-    const inp = document.createElement('input');
-    inp.type = 'number';
-    inp.value = answers[q.key] || '';
-    inp.addEventListener('input', () => { answers[q.key] = inp.value; nextBtn.disabled = !inp.value; });
-    optionsWrap.appendChild(inp);
-  } else if (q.type === 'auto') {
-    const span = document.createElement('span');
-    span.textContent = answers[q.key] || 'Auto-filled';
-    optionsWrap.appendChild(span);
-    nextBtn.disabled = false;
   }
 
-  contentArea.appendChild(optionsWrap);
-
-  // ===== Progress bar =====
-  const progress = ((index + 1) / list.length) * 100;
-  progressBar.style.width = progress + '%';
-  progText.textContent = ''; // no text
-
-  // ===== Back button visibility =====
-  if (index === 0) {
-    backBtn.style.display = 'none'; // hide back button on first question of session
-  } else {
-    backBtn.style.display = 'inline-flex'; // show back button otherwise
+  function exportAll() {
+    const all = loadAll();
+    const blob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'daily-tracker-data.json';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
-  // ===== Next button enable/disable =====
-  nextBtn.disabled = !(answers[q.key] && ((q.type === 'single') || (q.type === 'time') || (q.type === 'number') || (q.type === 'auto') || (q.type === 'multi')));
+  function startNextDay() {
+    currentDate = todayKey();
+    session = null;
+    startSession('morning');
+  }
 
-  // Ensure controls are visible
-  document.getElementById('controls').style.display = 'flex';
-}
+  function clearToday() {
+    if(confirm("Are you sure you want to clear all answers for today?")) {
+      const all = loadAll();
+      delete all[currentDate];
+      saveAll(all);
+      session = null;
+      index = 0;
+      answers = {};
+      progressBar.style.width = '0%';
+      progText.textContent = '';
+      document.getElementById('controls').style.display = 'none';
+      settingsMenu.classList.remove('show');
+      contentArea.innerHTML = `<div class="done-note fade-out">Today's data cleared.</div>`;
+      setTimeout(() => { 
+        const msg = contentArea.querySelector('.done-note'); 
+        if(msg) msg.style.opacity = '0'; 
+      }, 50);
+      setTimeout(() => { startSession('morning'); document.getElementById('controls').style.display = 'flex'; }, 2000);
+    }
+  }
 
-function handleNext() {
-  const q = list[index];
-  if (!answers[q.key]) return;
-  index++;
-  loadUI();
-}
+  // ===== INITIALIZE APP =====
+  init();
 
-function saveSession() {
-  const all = loadAll();
-  if (!all[currentDate]) all[currentDate] = {};
-  all[currentDate][session] = answers;
-  saveAll(all);
-}
+  // Optional: service worker
+  // if ('serviceWorker' in navigator) {
+  //   navigator.serviceWorker.register('service-worker.js')
+  //     .then(() => console.log('Service Worker registered.'))
+  //     .catch(err => console.error('Service Worker registration failed:', err));
+  // }
 
-function showOverview(date) {
-  session = null;
-  const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
-  contentArea.innerHTML = `<div class="done-note">${dayName} complete.</div>`;
-
-  // Hide progress bar and text
-  progressBar.style.width = '0';
-  progText.textContent = '';
-
-  // Hide back/next buttons
-  document.getElementById('controls').style.display = 'none';
-}
-
-function showEntriesView() {
-  const all = loadAll();
-  contentArea.innerHTML = '<div class="entries-list"></div>';
-  const listWrap = contentArea.querySelector('.entries-list');
-  Object.keys(all).sort().reverse().forEach(day => {
-    const row = document.createElement('div');
-    row.className = 'entry-row';
-    row.innerHTML = `<div>${day}</div><div class="small">morning:${all[day].morning ? Object.keys(all[day].morning).length : 0} | night:${all[day].night ? Object.keys(all[day].night).length : 0}</div>`;
-    listWrap.appendChild(row);
-  });
-}
-
-function exportAll() {
-  const all = loadAll();
-  const blob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'daily-tracker-data.json';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function startNextDay() {
-  currentDate = todayKey();
-  session = null;
-  startSession('morning');
-}
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js') // relative to index.html
-    .then(() => console.log('Service Worker registered.'))
-    .catch(err => console.error('Service Worker registration failed:', err));
-}
+});
 </script>
 </body>
 </html>
