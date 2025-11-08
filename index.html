@@ -46,6 +46,37 @@ h1{margin:0; font-size:20px}
   transition: opacity 0.2s ease;
   margin-top: -10px; /* 👈 raise the icon slightly */
 }
+.settings-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  color: #000;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  flex-direction: column;
+  padding: 4px 0;
+  display: none;
+  min-width: 150px;
+  z-index: 20;
+}
+
+.settings-menu.show { display: flex; }
+
+.settings-menu button {
+  background: transparent;
+  border: none;
+  padding: 10px 16px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.settings-menu button:hover {
+  background: rgba(0,0,0,0.05);
+}
 
 #btnSettings:hover {
   opacity: 0.8;
@@ -203,9 +234,8 @@ body.morning .opt-btn.selected {
       </div>
       <button id="btnSettings" class="btn ghost" title="Menu">⋮</button>
       <div id="settingsMenu" class="settings-menu">
-        <button id="btnEntries">Past days</button>
+        <button id="btnEntries">History</button>
         <button id="btnExport">Export data</button>
-        <button id="btnRestart">Restart for tomorrow</button> 
         <button id="btnClearToday">Clear Today's Data</button> 
       </div>
     </div>
@@ -341,6 +371,8 @@ btnClearToday.addEventListener('click', () => {
     contentArea.innerHTML = `<div class="done-note">Today's data cleared. You can start again.</div>`;
     progressBar.style.width = '0%';
     progText.textContent = '0/0';
+     // Close settings menu
+    settingsMenu.classList.remove('show');
   }
 });
 
