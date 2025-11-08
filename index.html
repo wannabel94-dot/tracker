@@ -499,7 +499,6 @@ function init(){
   nextBtn.addEventListener('click', ()=> handleNext());
   btnEntries.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); showEntriesView(); });
   btnExport.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); exportAll(); });
-  btnRestart.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); startNextDay(); });
 
   const all = loadAll();
   const today = all[currentDate] || {};
