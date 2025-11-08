@@ -693,9 +693,11 @@ function showOverview(date){
   controls.style.display = 'none';
 }
 
-/* ---------- next day ---------- */
+<!-- ---------- next day ---------- -->
+<script>
 function startNextDay(){
-  const d = new Date(currentDate + 'T00:00:00'); d.setDate(d.getDate() + 1);
+  const d = new Date(currentDate + 'T00:00:00'); 
+  d.setDate(d.getDate() + 1);
   const next = d.toISOString().slice(0,10);
   currentDate = next;
   const all = loadAll();
@@ -704,18 +706,16 @@ function startNextDay(){
   }
   startSession('morning');
 }
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(() => console.log('Service Worker registered.'));
-  }
-</script>
 
-<script>
+/* ---------- REGISTER SERVICE WORKER ---------- */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('Service Worker registered.'));
+}
 /* ---------- init ---------- */
 init();
-
 </script>
-
-
+</body>
+</html>
+</script>
 </body></html>
