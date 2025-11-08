@@ -693,7 +693,7 @@ function showOverview(date){
   controls.style.display = 'none';
 }
 
-<!-- ---------- next day ---------- -->
+<!-- ---------- next day + service worker + init ---------- -->
 <script>
 function startNextDay(){
   const d = new Date(currentDate + 'T00:00:00'); 
@@ -707,15 +707,13 @@ function startNextDay(){
   startSession('morning');
 }
 
-/* ---------- REGISTER SERVICE WORKER ---------- */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
     .then(() => console.log('Service Worker registered.'));
 }
+
 /* ---------- init ---------- */
 init();
 </script>
 </body>
 </html>
-</script>
-</body></html>
