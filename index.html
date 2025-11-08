@@ -91,40 +91,43 @@ body.morning::before{
 body.morning .opt-btn{ background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.25); color:#ffffff;}
 body.morning .opt-btn.selected{ background:rgba(255,255,255,0.32); color:#ffffff; font-weight:700;}
 @media (max-width:480px){body{padding:12px}.opt-btn{font-size:16px;padding:12px}input[type=time],input[type=number]{font-size:16px;padding:12px}}
+<style>
+  /* existing styles ... */
+
+  /* Morning/Night button icons */
+  .switch-btn img {
+    display: block;
+    width: 28px;       /* adjust size */
+    height: 28px;
+    filter: brightness(0) invert(1); /* makes SVG white */
+    background: transparent;        /* directly on background */
+    border: none;
+  }
+
+  .switch-btn.night img {
+    transform: scale(0.9); /* slightly smaller */
+  }
+
+  /* Optional: hover/focus effect */
+  .switch-btn:hover img,
+  .switch-btn:focus img {
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
 </style>
 </head>
-  /* Morning/Night button icons */
-.switch-btn img {
-  display: block;
-  width: 28px;       /* adjust size */
-  height: 28px;
-  filter: brightness(0) invert(1); /* makes SVG white */
-  background: transparent;        /* directly on background */
-  border: none;
-}
-
-.switch-btn.night img {
-  transform: scale(0.9); /* slightly smaller */
-}
-
-/* Optional: hover/focus effect */
-.switch-btn:hover img,
-.switch-btn:focus img {
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
-}
 <body class="night">
 <div class="wrap">
   <header>
     <h1>Daily Tracker</h1>
     <div class="top-actions">
       <div class="top-switch" id="switchWrap">
-<button class="switch-btn morning" id="morningBtn" title="Morning">
-  <img src="icons/day.svg" class="icon-morning" alt="Morning">
-</button>
-<button class="switch-btn night" id="nightBtn" title="Night">
-  <img src="icons/night.svg" class="icon-night" alt="Night">
-</button>
+        <button class="switch-btn morning" id="morningBtn" title="Morning">
+          <img src="icons/day.svg" class="icon-morning" alt="Morning">
+        </button>
+        <button class="switch-btn night" id="nightBtn" title="Night">
+          <img src="icons/night.svg" class="icon-night" alt="Night">
+        </button>
       </div>
       <button id="btnSettings" class="btn ghost" title="Menu">⋮</button>
       <div id="settingsMenu" class="settings-menu">
