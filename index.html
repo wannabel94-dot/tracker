@@ -33,21 +33,36 @@ body {
 header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:8px; position:relative; }
 h1 { margin:0; font-size:20px; }
 
-/* MODE SWITCH ICONS — translucent inactive, bright active, scale + glow effect */
-.top-switch { display:flex; gap:8px; margin-bottom:12px; }
+.top-actions {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+}
+/* MODE SWITCH ICONS — translucent inactive, bright active, scale effect */
+.top-switch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
 
 .switch-btn {
-  flex:1;
-  padding:10px;
-  border-radius:10px;
-  border:0;
-  font-weight:700;
-  cursor:pointer;
-  background: rgba(255,255,255,0.08);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  transition: background 0.2s;
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent; /* 🔹 ensures no square background */
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.25s ease;
+}
+
+/* Optional: subtle hover glow around the icon (not a box) */
+.switch-btn:hover {
+  background: rgba(255, 255, 255, 0.08); /* 🔹 small circular glow */
+  border-radius: 50%;
 }
 
 .switch-btn img {
@@ -57,46 +72,288 @@ h1 { margin:0; font-size:20px; }
   filter: brightness(0) invert(1);
   opacity: 0.5;
   transform: scale(1);
-  transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 /* Night icon slightly smaller base size */
-.switch-btn.night img { width: 25px; height: 25px; }
-
-/* Active button — both morning and night */
-.switch-btn.active img {
-  opacity: 1;
-  transform: scale(1.15);
-  filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
+.switch-btn.night img {
+  width: 25px;
+  height: 25px;
 }
 
-/* Night active slightly smaller scale */
-.switch-btn.night.active img { transform: scale(1.12); }
+/* Active mode: full opacity + gentle enlargement */
+body.morning .switch-btn.morning img {
+  opacity: 1;
+  transform: scale(1.15);
+}
 
-/* Hover effects */
-.switch-btn.morning img:hover { opacity: 0.8; transform: scale(1.1); }
-.switch-btn.night img:hover { opacity: 0.8; transform: scale(1.07); }
+body.night .switch-btn.night img {
+  opacity: 1;
+  transform: scale(1.12);
+}
 
-/* Back & Next buttons — white text, semi-transparent background */
-.back-btn, .next-btn {
-  padding:12px 16px;
-  border-radius:12px;
-  border:0;
-  font-weight:700;
+/* Hover effects (balanced for size difference) */
+.switch-btn.morning img:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
+}
+
+.switch-btn.night img:hover {
+  opacity: 0.8;
+  transform: scale(1.07);
+}
+
+/* Settings button */
+#btnSettings {
+  font-size:22px;
+  padding:6px 10px;
+  line-height:1;
+  background:transparent;
+  border:none;
+  color:#fff;
   cursor:pointer;
-  transition:opacity .2s;
-  background: rgba(255,255,255,0.15);
-  color: #fff;
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:opacity 0.2s ease;
+  margin-top:-10px;
+}
+
+#btnSettings:hover { opacity:0.8; }
+
+/* Settings dropdown */
+.settings-menu {
+  position:absolute;
+  top:42px;
+  right:0;
+  background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(16px);
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  flex-direction:column;
+  padding:6px;
+  z-index:20;
+  display:none;
+  min-width:150px;
+}
+
+.settings-menu.show { display:flex; }
+
+.settings-menu button {
+  background:transparent;
+  border:none;
+  padding:10px 16px;
+  width:100%;
+  text-align:left;
+  cursor:pointer;
+  font-weight:600;
+  transition:background 0.2s;
+}
+
+.settings-menu button:hover {
+  background:rgba(0,0,0,0.05);
+}
+
+/* Main card + questions */
+main.card {
+  padding:18px;
+  border-radius:0;
+  min-height:520px;
+  background:none;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+
+.progress-wrap {
+  display:flex;
+  align-items:center;
+  gap:0;
+  margin-bottom:12px;
+}
+
+.progress {
+  flex:1.2;
+  height:10px;
+  border-radius:8px;
+  overflow:hidden;
+  background:rgba(255,255,255,0.06);
+}
+
+.bar {
+  height:100%;
+  width:0%;
+  background:rgba(255,255,255,0.06);
+  border-radius:8px;
+  transition:width 0.25s;
+}
+
+.prog-text { display:none; }
+
+.question {
+  font-size:18px;
+  margin-bottom:12px;
+  font-weight:600;
+}
+
+.options {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.opt-btn {
+  width:100%;
+  text-align:left;
+  padding:14px 16px;
+  border-radius:12px;
+  border:1px solid transparent;
+  font-size:18px;
+  cursor:pointer;
+  transition:background .2s,color .2s,border .2s;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+
+.opt-btn.selected {
+  background:rgba(255,255,255,0.6);
+  color:#000;
+  font-weight:700;
+}
+
+input[type=time],
+input[type=number] {
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.12);
+  font-size:18px;
+  background:transparent;
+}
+
+/* Controls */
+.controls {
+  display:flex;
+  gap:10px;
+  justify-content:space-between;
+  margin-top:16px;
+}
+
+  /*next and back format*/
+.back-btn,
+.next-btn {
+  background: rgba(255, 255, 255, 0.15); /* slightly translucent background */
+  color: #fff;  /* white text */
+  font-weight: 700;
+  border: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s;
   backdrop-filter: blur(6px);
 }
 
-.back-btn:hover, .next-btn:hover { opacity:0.85; }
-.back-btn[disabled], .next-btn[disabled] { opacity:0.5; cursor:not-allowed; }
+.back-btn:hover,
+.next-btn:hover {
+  opacity: 0.85;
+}
 
-/* Small muted text */
-.small-muted { font-size:13px; text-align:center; margin-top:12px; }
+.back-btn[disabled],
+.next-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.small-muted {
+  font-size: 13px;
+  text-align: center;
+  margin-top: 12px;
+}
+
+
+.done-note {
+  font-size:20px;
+  text-align:center;
+  font-weight:700;
+  margin-top:18px;
+}
+
+/* Fade effect */
+.fade-out { opacity:0; transition:opacity 0.8s ease; }
+
+/* Entries list */
+.meta { font-size:13px; margin-top:10px; text-align:center; }
+.center { display:flex; justify-content:center; }
+.entries-list { margin-top:8px; }
+.entry-row {
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.entry-row .small { font-size:13px; }
+
+/* Night mode styling */
+body.night {
+  color:#fff;
+}
+
+body.night::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat;
+}
+
+body.night .opt-btn {
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--night-text);
+}
+
+body.night .opt-btn.selected {
+  background:rgba(255,255,255,0.28);
+  color:#12002e;
+  font-weight:700;
+}
+
+/* Morning mode styling */
+body.morning {
+  color:#fff;
+}
+
+body.morning::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:url("images/morning.jpg") center center / cover no-repeat;
+}
+
+body.morning .opt-btn {
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.25);
+  color:#fff;
+}
+
+body.morning .opt-btn.selected {
+  background:rgba(255,255,255,0.32);
+  color:#fff;
+  font-weight:700;
+}
+
+/* Responsive */
+@media (max-width:480px) {
+  body { padding:12px; }
+  .opt-btn { font-size:16px; padding:12px; }
+  input[type=time],
+  input[type=number] { font-size:16px; padding:12px; }
+}
 </style>
-
 
 </head>
 <body class="night">
@@ -281,10 +538,6 @@ function startSession(which){
   document.body.classList.remove('morning','night');
   document.body.classList.add(session);
 
-  // Set button active states — this keeps glow visible
-  morningBtn.classList.toggle('active', session === 'morning');
-  nightBtn.classList.toggle('active', session === 'night');
-  
   const all = loadAll();
   const today = all[currentDate] || {};
   answers = today[session] ? JSON.parse(JSON.stringify(today[session])) : {};
