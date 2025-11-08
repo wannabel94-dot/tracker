@@ -352,50 +352,24 @@ function startSession(which){
 
 // ===== UI FUNCTIONS =====
 function loadUI(){
-  // If session finished
-  if(!list || index >= list.length){
-    saveSession();
+if(!list || index >= list.length){
+  saveSession();
 
-    if(session === 'morning') {
-      contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
-      progressBar.style.width = '100%';
-      progText.textContent = `${list.length}/${list.length}`;
+  if(session === 'morning') {
+    // Morning completed
+    contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
+    progressBar.style.width = '100%';
+    progText.textContent = `${list.length}/${list.length}`;
+    
+ // Hide back/next buttons
+    document.getElementById('controls').style.display = 'none';
 
-      // hide buttons temporarily
-      document.getElementById('controls').style.display = 'none';
-
-      setTimeout(() => startSession('night'), 1500);
-    } else {
-      showOverview(currentDate);
-    }
-    return;
+    // Automatically start night after 1.5 seconds
+    setTimeout(() => startSession('night'), 1500);
+  } else {
+    // Night finished
+    showOverview(currentDate);
   }
-
-  // --- Normal question rendering ---
-  const q = list[index];
-  contentArea.innerHTML = '';
-  const qEl = document.createElement('div');
-  qEl.className = 'question';
-  qEl.textContent = q.label;
-  contentArea.appendChild(qEl);
-
-  const optionsWrap = document.createElement('div');
-  optionsWrap.className = 'options';
-  // render options here ... (unchanged)
-
-  contentArea.appendChild(optionsWrap);
-
-  // Update progress
-  const progress = ((index)/list.length)*100;
-  progressBar.style.width = progress+'%';
-  progText.textContent = `${index}/${list.length}`;
-
-  // --- BUTTON LOGIC ---
-  const controls = document.getElementById('controls');
-  controls.style.display = 'flex';   // always show buttons on normal questions
-  backBtn.disabled = index === 0;
-  nextBtn.disabled = !(answers[q.key] && ((q.type==='single') || (q.type==='time') || (q.type==='number') || (q.type==='auto') || (q.type==='multi')));
-}
 
   return;
 }
