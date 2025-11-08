@@ -1,0 +1,711 @@
+<html lang="en" class="ai-style-change-1"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daily Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --morning-text:#3b1b10;
+    --night-text:#f0f4ff;
+    --card-radius:14px;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;padding:18px;display:flex;justify-content:center;align-items:flex-start;min-height:100vh;
+    transition: background 0.5s ease, color 0.5s ease;
+  }
+  .wrap{width:100%;max-width:740px;position:relative}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;position:relative}
+  h1{margin:0;font-size:20px}
+  .top-actions{display:flex;gap:8px}
+  .btn{padding:8px 12px;border-radius:10px;border:0;font-weight:600;cursor:pointer;transition:background .2s}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.08)}
+  #btnSettings{font-size:22px;padding:6px 10px;line-height:1;background:transparent;border-radius:10px}
+main.card{
+  padding:18px;
+  border-radius:0;
+  min-height:520px;
+  background:none;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+  .top-switch{display:flex;gap:8px;margin-bottom:12px}
+  .switch-btn{flex:1;padding:10px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+  .progress-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .progress{flex:1;height:10px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.06)}
+  .bar{height:100%;width:0%;transition:width .25s}
+  .prog-text{min-width:84px;text-align:right;font-size:13px}
+  .question{font-size:18px;margin-bottom:12px;font-weight:600}
+  .options{display:flex;flex-direction:column;gap:10px}
+  .opt-btn{width:100%;text-align:left;padding:14px 16px;border-radius:12px;border:1px solid transparent;font-size:18px;cursor:pointer;transition:background .2s,color .2s,border .2s;backdrop-filter: blur(6px);-webkit-backdrop-filter: blur(6px)}
+  .opt-btn.selected{background:rgba(255,255,255,0.6); color:#000; font-weight:700; border-color:rgba(255,255,255,0.6)}
+  input[type=time],input[type=number]{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);font-size:18px;background:transparent}
+  .controls{display:flex;gap:10px;justify-content:space-between;margin-top:16px}
+  .next-btn{padding:12px 16px;border-radius:12px;border:0;font-weight:700;cursor:pointer;transition:opacity .2s}
+  .next-btn[disabled]{opacity:.5;cursor:not-allowed}
+  .small-muted{font-size:13px;text-align:center;margin-top:12px}
+  .done-note{font-size:20px;text-align:center;font-weight:700;margin-top:18px}
+  .meta{font-size:13px;margin-top:10px;text-align:center}
+  .center{display:flex;justify-content:center}
+  .entries-list{margin-top:8px}
+  .entry-row{padding:12px;border-radius:10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+  .entry-row .small{font-size:13px}
+  .hidden{display:none}
+  .overview{padding:8px 12px;border-radius:12px;background:rgba(255,255,255,0.08);margin-top:10px;backdrop-filter: blur(8px)}
+  @media (max-width:480px){body{padding:12px}.opt-btn{font-size:16px;padding:12px}input[type=time],input[type=number]{font-size:16px;padding:12px}}
+
+  /* settings menu (positioned relative to header area) */
+.settings-menu {
+  position:absolute;
+  top:42px;
+  right:0;
+  background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(16px);
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  flex-direction:column;
+  padding:6px;
+  z-index:20;
+  display:none; /* ✅ hidden by default */
+}
+.settings-menu.show {
+  display:flex; /* ✅ visible only when toggled */
+}
+/* NIGHT — fixed fullscreen */
+body.night{
+  color:#ffffff;
+}
+body.night::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat;
+}
+
+body.night .opt-btn{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--night-text);
+}
+body.night .opt-btn.selected{
+  background:rgba(255,255,255,0.28);
+  color:#12002e;
+  font-weight:700;
+}
+
+
+/* MORNING — fixed fullscreen + white text */
+body.morning{
+  color:#ffffff;
+}
+body.morning::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:url("https://i.pinimg.com/736x/5e/11/10/5e11109da8e63735804114e28a8ff70e.jpg") center center / cover no-repeat;
+}
+
+/* morning option buttons tuned for white text */
+body.morning .opt-btn{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.25);
+  color:#ffffff;
+}
+body.morning .opt-btn.selected{
+  background:rgba(255,255,255,0.32);
+  color:#ffffff;
+  font-weight:700;
+}
+
+</style>
+</head>
+<body class="night">
+  <div class="wrap">
+    <header class="ai-style-change-11">
+      <h1>Daily Tracker</h1>
+      <div class="top-actions ai-style-change-14"><div class="top-switch ai-style-change-7" id="switchWrap">
+        <button class="switch-btn morning ai-style-change-1" id="morningBtn" style="opacity: 0.8;">☀</button>
+        <button class="switch-btn night ai-style-change-4" id="nightBtn" style="opacity: 1;">☾</button>
+      </div>
+        <button id="btnSettings" class="btn ghost ai-style-change-22 ai-style-change-3" title="Menu">⋮</button>
+        <div id="settingsMenu" class="hidden settings-menu" aria-hidden="true">
+          <button id="btnEntries" class="menu-item">Past days</button>
+          <button id="btnExport" class="menu-item">Export data</button>
+          <button id="btnImport" class="menu-item">Import data</button>
+          <button id="btnRestart" class="menu-item">Restart for tomorrow</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="card" id="appCard">
+      
+
+      <div class="progress-wrap">
+        <div class="progress"><div class="bar" id="progressBar" style="background: linear-gradient(90deg, rgb(125, 211, 252), rgb(96, 165, 250)); width: 12%;"></div></div>
+        <div class="prog-text" id="progText">4 of 26</div>
+      </div>
+
+      <div id="contentArea"><div class="question">What meds did you take today?</div><div class="options"><button class="opt-btn">10mg escitalopram</button><button class="opt-btn selected">15mg escitalopram</button><button class="opt-btn">18mg concerta</button><button class="opt-btn">36mg concerta</button><button class="opt-btn">1mg lorazepam</button><button class="opt-btn">2mg lorazepam</button><button class="opt-btn selected">3mg lorazepam</button><button class="opt-btn">painkillers</button><button class="opt-btn">anti/sickness</button><button class="opt-btn">anti/histamine</button></div></div>
+
+      <div class="controls" id="controls" style="display: flex;">
+        <div class="center"><button class="btn ghost" id="backBtn" style="display: inline-block;">Back</button></div>
+        <div class="center"><button class="next-btn" id="nextBtn" style="display: inline-block;">Next</button></div>
+      </div>
+
+      <div class="meta" id="meta">Local only — no data leaves your device.</div>
+    </main>
+
+    <input id="fileInput" type="file" accept="application/json" class="hidden">
+  </div>
+
+<script>
+/* ---------- QUESTIONS ---------- */
+/* Morning questions */
+const MORNING = [
+  {key:'wake_time', type:'time', label:'What time did you wake up? (24h)'},
+  {key:'how_slept', type:'single', label:'How do you think you slept?', options:[
+    'Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine'
+  ]},
+  {key:'made_bed', type:'single', label:'Make bed?', options:['Yes','No']},
+  {key:'took_meds_morn', type:'single', label:'Take meds?', options:['Yes','No']},
+  {key:'tidy_up', type:'single', label:'Tidy up?', options:['Yes','No']},
+  {key:'tea_meditate', type:'single', label:'Have tea in bed + meditate 5 mins?', options:['Yes','No']},
+  {key:'shower_morn', type:'single', label:'Shower?', options:['Yes','No']},
+  {key:'led_mask_morn', type:'single', label:'LED mask?', options:['Yes','No']},
+  {key:'skincare_morn', type:'single', label:'Skincare?', options:['Yes','No']},
+  {key:'eat_breakfast', type:'single', label:'Eat breakfast?', options:['Yes','No']},
+  {key:'supplements_morn', type:'single', label:'Supplements?', options:['Yes','No']},
+  {key:'get_dressed', type:'single', label:'Get dressed?', options:['Yes','No']},
+  {key:'brush_teeth_morn', type:'single', label:'Brush teeth?', options:['Yes','No']}
+];
+
+/* Night questions */
+const NIGHT = [
+  {key:'psyillium', type:'single', label:'Did you take psyllium?', options:['Yes','No']},
+  {key:'magnesium', type:'single', label:'Magnesium?', options:['Yes','No']},
+  {key:'pillowcase', type:'single', label:'Did you change the pillowcase?', options:['Yes','No']},
+  {key:'meds', type:'multi', label:'What meds did you take today?', options:[
+    '10mg escitalopram','15mg escitalopram','18mg concerta','36mg concerta',
+    '1mg lorazepam','2mg lorazepam','3mg lorazepam','painkillers','anti/sickness','anti/histamine'
+  ]},
+  {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:[
+    'none','1 coffee','2 coffees','1 tea','2 teas','3 teas','mate','1-2 drinks','2+ drinks'
+  ]},
+  {key:'sickness', type:'multi', label:'Sickness / symptoms', options:[
+    'none','UTI feeling','UTI :(','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting'
+  ]},
+  {key:'shower_night', type:'single', label:'Shower?', options:['AM','PM','Nope']},
+  {key:'skincare_night', type:'single', label:'Skincare?', options:['None','Bare minimum','AM routine','PM routine','Full routine']},
+  {key:'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None']},
+  {key:'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None']},
+  {key:'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day']},
+  {key:'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good']},
+  {key:'saw_dogs', type:'single', label:'Did you see the dogs today?', options:['Sometimes','Yes','No']},
+  {key:'feel_with_L', type:'single', label:'How do you feel with L today?', options:[
+    'Elated','Sensitive','Pretty good','Fine','Irritated','Somewhat insecure','Anxiously insecure','Anguish'
+  ]},
+  {key:'house_state', type:'single', label:'What is the state of the house?', options:['Disaster','Very messy','A bit messy','Fine - a few dishes','Pretty tidy','Spotless']},
+  {key:'drove', type:'single', label:'Did you drive today?', options:['No','<30 mins','30 mins+','1h+']},
+  {key:'food_desc', type:'single', label:'How would you describe your food?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions']},
+  {key:'body_feelings', type:'single', label:'How do you feel about your body today?', options:[
+    "Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"
+  ]},
+  {key:'sensory_triggers', type:'multi', label:'Sensory triggers', options:['none','Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment']},
+  {key:'appointments', type:'multi', label:'Appointments', options:['none','Psych','Therapy (online)','Therapy (in-person)','Doctor','Blood tests']},
+  {key:'movement', type:'multi', label:'Did you move today?', options:['none','Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog']},
+  {key:'most_prominent', type:'multi', label:'What do you think is most prominent?', options:['none','Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD']},
+  {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family']},
+  {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['none','Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing']},
+  {key:'creative', type:'multi', label:'Did you do anything creative?', options:['none','Painting','DIY','Guitar','Sewing','Van stuff','Reading']},
+  {key:'closed_eyes_time', type:'time', label:'What time did you close your eyes? (24h)'},
+  {key:'sunset_time', type:'auto', label:'Sun went down at'},
+  {key:'avg_climate', type:'auto', label:'Average daytime climate'}
+];
+
+/* ---------- STORAGE ---------- */
+const STORAGE_KEY = 'dailyTracker_v5';
+function todayKey(){ return new Date().toISOString().slice(0,10); }
+function loadAll(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e){ return {}; } }
+function saveAll(obj){ localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
+
+/* ---------- UI refs ---------- */
+const contentArea = document.getElementById('contentArea');
+const progressBar = document.getElementById('progressBar');
+const progText = document.getElementById('progText');
+const controls = document.getElementById('controls');
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const morningBtn = document.getElementById('morningBtn');
+const nightBtn = document.getElementById('nightBtn');
+const meta = document.getElementById('meta');
+const btnEntries = document.getElementById('btnEntries');
+const btnExport = document.getElementById('btnExport');
+const btnImport = document.getElementById('btnImport');
+const btnRestart = document.getElementById('btnRestart');
+const fileInput = document.getElementById('fileInput');
+const btnSettingsEl = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
+
+let session = null; // 'morning' or 'night' or null
+let list = null;
+let index = 0;
+let answers = {};
+let currentDate = todayKey();
+
+/* ---------- SETTINGS MENU logic (fixed toggle) ---------- */
+btnSettingsEl.addEventListener('click', e => {
+  e.stopPropagation();
+  settingsMenu.classList.toggle('show'); // toggle visible state
+});
+
+document.addEventListener('click', e => {
+  if (!settingsMenu.contains(e.target) && !btnSettingsEl.contains(e.target)) {
+    settingsMenu.classList.remove('show'); // close when clicking outside
+  }
+});
+
+/* ---------- INITIALIZE ---------- */
+function init(){
+  morningBtn.addEventListener('click', ()=> startManual('morning'));
+  nightBtn.addEventListener('click', ()=> startManual('night'));
+  backBtn.addEventListener('click', ()=>{ if(index>0){ index--; loadUI(); } });
+  nextBtn.addEventListener('click', ()=> handleNext());
+  btnEntries.addEventListener('click', ()=>{ settingsMenu.classList.add('hidden'); showEntriesView(); });
+  btnExport.addEventListener('click', ()=>{ settingsMenu.classList.add('hidden'); exportAll(); });
+  btnImport.addEventListener('click', ()=>{ settingsMenu.classList.add('hidden'); fileInput.click(); });
+  btnRestart.addEventListener('click', ()=>{ settingsMenu.classList.add('hidden'); startNextDay(); });
+  fileInput.addEventListener('change', handleImport);
+
+  const all = loadAll();
+  const today = all[currentDate] || {};
+  if(!today.morning){
+    startSession('morning');
+  } else if(!today.night){
+    startSession('night');
+  } else {
+    session = null; showOverview(currentDate);
+  }
+
+  tryFetchSunAndClimate();
+}
+
+/* ---------- session control ---------- */
+function startManual(which){ startSession(which); }
+
+function startSession(which){
+  session = which;
+  list = (session === 'morning') ? MORNING : NIGHT;
+  const all = loadAll();
+  const today = all[currentDate] || {};
+  answers = today[session] ? JSON.parse(JSON.stringify(today[session])) : {};
+  // find first unanswered index (non-auto)
+  index = 0;
+  for(let i=0;i<list.length;i++){
+    if(list[i].type === 'auto') continue;
+    if(answers[list[i].key] === undefined){ index = i; break; }
+    if(i === list.length - 1) index = list.length;
+  }
+  renderTheme();
+  loadUI();
+}
+
+function setTheme(which){
+  document.body.classList.remove('morning','night');
+  document.body.classList.add(which);
+  // visual state for buttons (simple)
+  morningBtn.style.opacity = which === 'morning' ? '1' : '0.8';
+  nightBtn.style.opacity = which === 'night' ? '1' : '0.8';
+}
+function renderTheme(){
+  if(session === 'morning'){ setTheme('morning'); progressBar.style.background = 'linear-gradient(90deg,#ffb56b,#ff5e62)'; }
+  else { setTheme('night'); progressBar.style.background = 'linear-gradient(90deg,#7dd3fc,#60a5fa)'; }
+}
+
+/* ---------- RENDER UI ---------- */
+function loadUI(){
+  if(index >= list.length){ finalizeSession(); return; }
+  renderTheme();
+
+  const total = list.filter(q=>q.type!=='auto').length;
+  let position = 0;
+  for(let i=0;i<index;i++) if(list[i].type!=='auto') position++;
+  progressBar.style.width = (total === 0 ? 0 : Math.round((position / total) * 100)) + '%';
+  progText.textContent = `${Math.min(position+1,total)} of ${total}`;
+
+  const q = list[index];
+  contentArea.innerHTML = '';
+
+  if(q.type === 'auto'){
+    const label = document.createElement('div'); label.className='question'; label.textContent = q.label;
+    const valDiv = document.createElement('div'); valDiv.className='small-muted'; valDiv.style.color = getComputedStyle(document.body).color;
+    const all = loadAll(); const today = all[currentDate] || {};
+    const savedVal = today[session] && today[session][q.key] ? today[session][q.key] : '';
+    valDiv.textContent = savedVal || 'Fetching...';
+    contentArea.appendChild(label); contentArea.appendChild(valDiv);
+    setTimeout(()=>{ if(!savedVal) persistAutoField(q.key); index++; loadUI(); }, savedVal?500:900);
+    backBtn.style.display = (index>0) ? 'inline-block' : 'none';
+    controls.style.display = 'flex';
+    nextBtn.style.display = 'none';
+    return;
+  }
+
+  const label = document.createElement('div'); label.className='question'; label.textContent = q.label; contentArea.appendChild(label);
+  backBtn.style.display = (index>0) ? 'inline-block' : 'none';
+
+  if(q.type === 'single'){
+    const opts = document.createElement('div'); opts.className='options';
+    q.options.forEach(opt=>{
+      const b = document.createElement('button'); b.className='opt-btn'; b.textContent = opt;
+      if(answers[q.key] === opt) b.classList.add('selected');
+      b.addEventListener('click', ()=>{
+        answers[q.key] = opt;
+        persistPartial();
+        index++; loadUI();
+      });
+      opts.appendChild(b);
+    });
+    contentArea.appendChild(opts);
+    controls.style.display = 'flex';
+    nextBtn.style.display = 'none';
+  }
+  else if(q.type === 'multi'){
+    const opts = document.createElement('div'); opts.className='options';
+    const selected = new Set(Array.isArray(answers[q.key]) ? answers[q.key] : []);
+    q.options.forEach(opt=>{
+      const b = document.createElement('button'); b.className='opt-btn'; b.textContent = opt;
+      if(selected.has(opt)) b.classList.add('selected');
+      b.addEventListener('click', ()=>{
+        if(opt.toLowerCase() === 'none'){
+          if(selected.has('none')){ selected.delete('none'); b.classList.remove('selected'); }
+          else { selected.clear(); selected.add('none'); Array.from(opts.children).forEach(btn=>{ if(btn.textContent!=='none') btn.classList.remove('selected'); }); b.classList.add('selected'); }
+        } else {
+          if(selected.has(opt)){ selected.delete(opt); b.classList.remove('selected'); }
+          else { selected.add(opt); b.classList.add('selected'); }
+          if(selected.has('none')){ selected.delete('none'); Array.from(opts.children).forEach(btn=>{ if(btn.textContent==='none') btn.classList.remove('selected'); }); }
+        }
+        nextBtn.disabled = (selected.size === 0);
+      });
+      opts.appendChild(b);
+    });
+    contentArea.appendChild(opts);
+    controls.style.display = 'flex';
+    nextBtn.style.display = 'inline-block';
+    nextBtn.disabled = (selected.size === 0);
+    nextBtn.onclick = ()=>{
+      answers[q.key] = Array.from(selected);
+      persistPartial();
+      index++; loadUI();
+    };
+  }
+  else if(q.type === 'time' || q.type === 'number'){
+    const inp = document.createElement('input');
+    inp.type = (q.type === 'time') ? 'time' : 'number';
+    if(answers[q.key] !== undefined) inp.value = answers[q.key];
+    contentArea.appendChild(inp);
+    controls.style.display = 'flex';
+    nextBtn.style.display = 'inline-block';
+    const check = ()=>{ nextBtn.disabled = !inp.value; };
+    inp.addEventListener('input', check);
+    check();
+    nextBtn.onclick = ()=>{ if(!inp.value){ alert('Please enter a value'); return; } answers[q.key] = inp.value; persistPartial(); index++; loadUI(); };
+  }
+}
+
+function handleNext(){ /* kept for completeness if needed */ }
+
+/* ---------- Persistence ---------- */
+function persistPartial(){
+  const all = loadAll();
+  if(!all[currentDate]) all[currentDate] = {date: currentDate, morning: null, night: null};
+  all[currentDate][session] = Object.assign({}, all[currentDate][session] || {}, answers);
+  all[currentDate][session + '_partialSavedAt'] = new Date().toISOString();
+  saveAll(all);
+}
+
+function persistAutoField(key){
+  const all = loadAll();
+  if(!all[currentDate]) all[currentDate] = {date: currentDate, morning:null, night:null};
+  if(all[currentDate][session] && all[currentDate][session][key]) return;
+  const meta = loadAll()['__meta__'];
+  if(meta && meta.sunData && meta.sunData[currentDate]){
+    const sd = meta.sunData[currentDate];
+    if(!all[currentDate][session]) all[currentDate][session] = {};
+    if(key === 'sunset_time') all[currentDate][session][key] = sd.sunset_local || sd.sunset || '';
+    if(key === 'avg_climate') all[currentDate][session][key] = sd.avg_text || sd.avg_temp ? `${sd.avg_text || ''}${sd.avg_temp?` • ${sd.avg_temp}°C`:""}`.trim() : '';
+    saveAll(all);
+  }
+}
+
+/* ---------- FINALIZE ---------- */
+function finalizeSession(){
+  const all = loadAll();
+  if(!all[currentDate]) all[currentDate] = {date: currentDate, morning:null, night:null};
+  all[currentDate][session] = Object.assign({}, all[currentDate][session] || {}, answers);
+  all[currentDate][session + '_savedAt'] = new Date().toISOString();
+  saveAll(all);
+
+  const todays = all[currentDate] || {};
+  const morningDone = !!todays.morning;
+  const nightDone = !!todays.night;
+  session = null;
+  controls.style.display = 'none';
+
+  if(morningDone && nightDone){
+    showOverview(currentDate);
+  } else {
+    let msg = morningDone && !nightDone ? 'Morning done! You can do Night now.' : (nightDone && !morningDone ? 'Night done!' : 'Done!');
+    contentArea.innerHTML = `<div class="done-note">${msg}</div>
+      <div class="center" style="margin-top:12px"><button class="btn ghost" id="viewTodayBtn">View Today</button></div>`;
+    document.getElementById('viewTodayBtn').onclick = ()=> showOverview(currentDate);
+    if(morningDone && !nightDone){
+      setTimeout(()=> startSession('night'), 900);
+    }
+  }
+}
+
+/* ---------- Entries view ---------- */
+function showEntriesView(){
+  const all = loadAll();
+  const keys = Object.keys(all).filter(k=>k!=='__meta__').sort((a,b)=>b.localeCompare(a));
+  contentArea.innerHTML = `<div class="question">Past days</div>`;
+  const wrap = document.createElement('div'); wrap.className = 'entries-list';
+  if(keys.length === 0){
+    wrap.innerHTML = `<div class="small-muted">No entries yet</div>`;
+  } else {
+    keys.forEach(d=>{
+      const e = all[d];
+      const row = document.createElement('div'); row.className = 'entry-row';
+      const left = document.createElement('div'); left.innerHTML = `<div><strong>${d}</strong></div><div class="small">${e.morning ? 'Morning ✓' : 'Morning •'} • ${e.night ? 'Night ✓' : 'Night •'}</div>`;
+      const right = document.createElement('div');
+      const view = document.createElement('button'); view.className='btn'; view.textContent='Open'; view.addEventListener('click', ()=> openDay(d));
+      const del = document.createElement('button'); del.className='btn ghost'; del.textContent='Delete';
+      del.addEventListener('click', ()=>{ if(!confirm('Delete '+d+'?')) return; const all2 = loadAll(); delete all2[d]; saveAll(all2); showEntriesView(); });
+      right.appendChild(view); right.appendChild(del);
+      row.appendChild(left); row.appendChild(right); wrap.appendChild(row);
+    });
+  }
+  contentArea.appendChild(wrap);
+  controls.style.display = 'none';
+}
+
+/* open a single day */
+function openDay(date){
+  const all = loadAll();
+  const entry = all[date] || {};
+  contentArea.innerHTML = `<div class="question">${date}</div>`;
+  const summ = document.createElement('div'); summ.className = 'summary';
+  if(entry.morning){
+    let p = `<div class="overview"><strong>Morning</strong>`;
+    const m = entry.morning;
+    p += `<p>Wake: ${m.wake_time || '-'}</p>`;
+    p += `<p>Sleep: ${m.how_slept || '-'}</p>`;
+    p += `<p>Made bed: ${m.made_bed || '-'}</p>`;
+    p += `</div>`;
+    summ.innerHTML += p;
+  }
+  if(entry.night){
+    let p = `<div class="overview"><strong>Night</strong>`;
+    const n = entry.night;
+    Object.keys(n).forEach(k=>{
+      const val = Array.isArray(n[k]) ? n[k].join(', ') : n[k];
+      p += `<p>${labelForKey(k)}: ${val}</p>`;
+    });
+    p += `</div>`;
+    summ.innerHTML += p;
+  }
+  const metaBlock = document.createElement('div'); metaBlock.className='overview';
+  const sd = entry.morning && entry.morning.avg_climate ? entry.morning.avg_climate : (entry.night && entry.night.avg_climate ? entry.night.avg_climate : '');
+  const sun = entry.morning && entry.morning.sunset_time ? entry.morning.sunset_time : (entry.night && entry.night.sunset_time ? entry.night.sunset_time : '');
+  metaBlock.innerHTML = `<strong>Climate / Sun</strong><p>Avg: ${sd || '-'}</p><p>Sunset: ${sun || '-'}</p>`;
+  contentArea.appendChild(summ); contentArea.appendChild(metaBlock);
+
+  controls.style.display = 'flex';
+  backBtn.style.display = 'none';
+  nextBtn.style.display = 'none';
+  const editBtn = document.createElement('button'); editBtn.className='next-btn'; editBtn.textContent='Edit';
+  editBtn.addEventListener('click', ()=> startEditingDay(date));
+  controls.children[1].innerHTML = ''; controls.children[1].appendChild(editBtn);
+}
+
+/* ---------- start editing a past day (fixed logic) ---------- */
+function startEditingDay(date){
+  const all = loadAll(); const entry = all[date] || {};
+  // Correct selection logic:
+  let which;
+  if(entry.morning && !entry.night) which = 'morning';
+  else if(!entry.morning && entry.night) which = 'night';
+  else which = confirm('Edit morning? (OK = Morning, Cancel = Night)') ? 'morning' : 'night';
+
+  session = which;
+  list = (session === 'morning') ? MORNING : NIGHT;
+  answers = entry[which] ? JSON.parse(JSON.stringify(entry[which])) : {};
+  // ALWAYS start at the first question when editing a completed session
+  index = 0;
+  currentDate = date;
+  renderTheme();
+  loadUI();
+}
+
+/* ---------- Export / Import ---------- */
+function exportAll(){
+  const all = loadAll();
+  const blob = new Blob([JSON.stringify(all,null,2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'daily-tracker-backup.json'; document.body.appendChild(a); a.click(); a.remove();
+}
+function handleImport(e){
+  const f = e.target.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{ try {
+    const imported = JSON.parse(reader.result);
+    if(typeof imported !== 'object') throw new Error('Invalid file');
+    const all = loadAll();
+    Object.keys(imported).forEach(k => all[k] = imported[k]); saveAll(all); alert('Import complete'); } catch(err){ alert('Import failed: '+err.message); } };
+  reader.readAsText(f); e.target.value = '';
+}
+
+/* ---------- Helpers ---------- */
+function labelForKey(k){
+  const map = {
+    meds:'Medications', caffeine_alcohol:'Caffeine/Alcohol', sickness:'Sickness', shower_night:'Shower', skincare_night:'Skincare',
+    teeth_night:'Teeth', flossed:'Flossed', left_house:'Left house', day_description:'Day', saw_dogs:'Saw dogs', house_state:'House state',
+    drove:'Drove', food_desc:'Food', body_feelings:'Body feelings', sensory_triggers:'Sensory triggers', appointments:'Appointments',
+    movement:'Movement', most_prominent:'Most prominent', talked_to_anyone:'Talked to', wellness:'Wellness', creative:'Creative', closed_eyes_time:'Closed eyes at',
+    sunset_time:'Sun went down at', avg_climate:'Avg climate'
+  };
+  return map[k] || k;
+}
+
+/* ---------- WEATHER & SUNSET FETCH ---------- */
+async function tryFetchSunAndClimate(){
+  if(!('geolocation' in navigator)) return;
+  try {
+    navigator.geolocation.getCurrentPosition(async pos => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      const date = todayKey();
+      const meta = loadAll()['__meta__'] || { sunData: {} };
+      if(meta.sunData && meta.sunData[date]) { injectSunData(date, meta.sunData[date]); return; }
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,sunset&timezone=auto`;
+      try {
+        const r = await fetch(url);
+        const j = await r.json();
+        const daily = j.daily || {};
+        const dates = daily.time || [];
+        const idx = dates.indexOf(date);
+        let sunset_iso = '', avg_temp = '', avg_text = '';
+        if(idx >= 0){
+          sunset_iso = daily.sunset[idx];
+          const tmax = daily.temperature_2m_max ? daily.temperature_2m_max[idx] : null;
+          const tmin = daily.temperature_2m_min ? daily.temperature_2m_min[idx] : null;
+          if(tmax !== null && tmin !== null) {
+            const avg = Math.round(((tmax + tmin)/2) * 10)/10;
+            avg_temp = avg;
+            avg_text = `${avg} °C`;
+          }
+        }
+        meta.sunData = meta.sunData || {};
+        meta.sunData[date] = { sunset: sunset_iso, avg_temp: avg_temp, avg_text: avg_text };
+        const all = loadAll(); all['__meta__'] = meta; saveAll(all);
+        injectSunData(date, meta.sunData[date]);
+      } catch(err){ console.warn('Weather fetch failed', err); }
+    }, err => { console.warn('Geolocation failed', err); }, {timeout:10000});
+  } catch(e){ console.warn('geo err', e); }
+}
+
+function injectSunData(date, sd){
+  if(!sd) return;
+  const all = loadAll();
+  if(!all[date]) all[date] = { date: date, morning: null, night: null };
+  ['morning','night'].forEach(sess=>{
+    if(!all[date][sess]) all[date][sess] = {};
+    if(!all[date][sess]['sunset_time'] && sd.sunset){
+      try {
+        const t = new Date(sd.sunset);
+        const hh = String(t.getHours()).padStart(2,'0');
+        const mm = String(t.getMinutes()).padStart(2,'0');
+        all[date][sess]['sunset_time'] = `${hh}:${mm}`;
+      } catch(e){}
+    }
+    if(!all[date][sess]['avg_climate'] && sd.avg_text){
+      all[date][sess]['avg_climate'] = sd.avg_text;
+    }
+  });
+  saveAll(all);
+}
+
+/* ---------- Overview ---------- */
+function showOverview(date){
+  const all = loadAll();
+  const entry = all[date] || {};
+  contentArea.innerHTML = `<div class="question">Daily Overview — ${date}</div>`;
+  const wrap = document.createElement('div');
+
+  const mBlock = document.createElement('div'); mBlock.className = 'overview'; mBlock.innerHTML = `<strong>Morning</strong>`;
+  if(entry.morning){
+    const m = entry.morning;
+    mBlock.innerHTML += `<p>Wake: ${m.wake_time || '-'}</p><p>Sleep: ${m.how_slept || '-'}</p>`;
+    const skip = new Set(['wake_time','how_slept']);
+    Object.keys(m).forEach(k=>{
+      if(skip.has(k) || k.endsWith('_savedAt') || k.endsWith('_partialSavedAt')) return;
+      const val = Array.isArray(m[k]) ? m[k].join(', ') : m[k];
+      mBlock.innerHTML += `<p>${labelForKey(k)}: ${val || '-'}</p>`;
+    });
+  } else { mBlock.innerHTML += `<p class="small-muted">No morning data</p>`; }
+  wrap.appendChild(mBlock);
+
+  const nBlock = document.createElement('div'); nBlock.className = 'overview'; nBlock.innerHTML = `<strong>Night</strong>`;
+  if(entry.night){
+    const n = entry.night;
+    Object.keys(n).forEach(k=>{
+      if(k.endsWith('_savedAt') || k.endsWith('_partialSavedAt')) return;
+      const val = Array.isArray(n[k]) ? n[k].join(', ') : n[k];
+      nBlock.innerHTML += `<p>${labelForKey(k)}: ${val || '-'}</p>`;
+    });
+  } else { nBlock.innerHTML += `<p class="small-muted">No night data</p>`; }
+  wrap.appendChild(nBlock);
+
+  const climate = entry.morning && entry.morning.avg_climate ? entry.morning.avg_climate : (entry.night && entry.night.avg_climate ? entry.night.avg_climate : '');
+  const sunset = entry.morning && entry.morning.sunset_time ? entry.morning.sunset_time : (entry.night && entry.night.sunset_time ? entry.night.sunset_time : '');
+  const metaBlock = document.createElement('div'); metaBlock.className='overview';
+  metaBlock.innerHTML = `<strong>Climate & Sunset</strong><p>Average climate: ${climate || '-'}</p><p>Sunset time: ${sunset || '-'}</p>`;
+  wrap.appendChild(metaBlock);
+
+  const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.marginTop='12px';
+  const restartBtn = document.createElement('button'); restartBtn.className='btn'; restartBtn.textContent='Restart for Tomorrow'; restartBtn.addEventListener('click', ()=> startNextDay());
+  const editBtn = document.createElement('button'); editBtn.className='btn ghost'; editBtn.textContent='Edit Today'; editBtn.addEventListener('click', ()=> startEditingDay(date));
+  const exportDayBtn = document.createElement('button'); exportDayBtn.className='btn ghost'; exportDayBtn.textContent='Export Day';
+  exportDayBtn.addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify({[date]: entry},null,2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `daily-${date}.json`; document.body.appendChild(a); a.click(); a.remove();
+  });
+  actions.appendChild(restartBtn); actions.appendChild(editBtn); actions.appendChild(exportDayBtn);
+  wrap.appendChild(actions);
+
+  contentArea.appendChild(wrap);
+  controls.style.display = 'none';
+}
+
+/* ---------- next day ---------- */
+function startNextDay(){
+  const d = new Date(currentDate + 'T00:00:00'); d.setDate(d.getDate() + 1);
+  const next = d.toISOString().slice(0,10);
+  currentDate = next;
+  const all = loadAll();
+  if(all[currentDate] && (all[currentDate].morning || all[currentDate].night)){
+    if(!confirm('There are already entries for ' + currentDate + '. Overwrite?')) { return; }
+  }
+  startSession('morning');
+}
+
+/* ---------- init ---------- */
+init();
+
+</script>
+
+
+</body></html>
