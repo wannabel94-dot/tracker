@@ -27,11 +27,17 @@ h1{margin:0; font-size:20px}
 .btn{padding:8px 12px; border-radius:10px; border:0; font-weight:600; cursor:pointer; transition:background .2s}
 .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,0.08)}
 #btnSettings {
-  font-size:22px;
-  padding:6px 10px;
-  line-height:1;
-  background:transparent;
-  border-radius:10px;
+  font-size: 22px;
+  padding: 6px 10px;
+  line-height: 1;
+  background: transparent;    /* removes any background */
+  border: none;               /* removes visible border */
+  color: white;               /* makes the ⋮ icon white */
+  margin-left: auto;           /* pushes it to the far right */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 main.card{
   padding:18px;
