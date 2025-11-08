@@ -29,6 +29,18 @@ h1{margin:0; font-size:20px}
   justify-content: space-between;
   width: 100%;
 }
+  /* Default: both icons slightly translucent */
+.switch-btn img {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+/* Active mode: fully opaque */
+body.morning .switch-btn.morning img,
+body.night .switch-btn.night img {
+  opacity: 1;
+}
+
 .btn{padding:8px 12px; border-radius:10px; border:0; font-weight:600; cursor:pointer; transition:background .2s}
 .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,0.08)}
 #btnSettings {
