@@ -8,110 +8,42 @@
 <title>Daily Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
+:root {
   --morning-text:#3b1b10;
   --night-text:#f0f4ff;
   --card-radius:14px;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
-*{box-sizing:border-box}
-html, body{height:100%}
-body{
-  margin:0; padding:18px; display:flex; justify-content:center; align-items:flex-start; min-height:100vh;
+
+* { box-sizing:border-box; }
+html, body { height:100%; }
+
+body {
+  margin:0;
+  padding:18px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:100vh;
   transition: background 0.5s ease, color 0.5s ease;
 }
-.wrap{width:100%; max-width:740px; position:relative}
-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:8px; position:relative}
-h1{margin:0; font-size:20px}
+
+/* Layout + header */
+.wrap { width:100%; max-width:740px; position:relative; }
+header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:8px; position:relative; }
+h1 { margin:0; font-size:20px; }
+
 .top-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-  /* Default: both icons slightly translucent */
-.switch-btn img {
-  opacity: 0.5;
-  transition: opacity 0.2s ease;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
 }
 
-/* Active mode: fully opaque */
-body.morning .switch-btn.morning img,
-body.night .switch-btn.night img {
-  opacity: 1;
-}
-  /* Hover effect for inactive icon */
-.switch-btn img:hover {
-  opacity: 0.8;       /* brightens on hover */
-  transform: scale(1.1); /* slightly enlarge for feedback */
-}
+/* MODE SWITCH ICONS — translucent inactive, bright active, scale effect */
+.top-switch { display:flex; gap:8px; margin-bottom:12px; }
 
-.btn{padding:8px 12px; border-radius:10px; border:0; font-weight:600; cursor:pointer; transition:background .2s}
-.btn.ghost{background:transparent; border:1px solid rgba(255,255,255,0.08)}
-#btnSettings {
-  font-size: 22px;
-  padding: 6px 10px;
-  line-height: 1;
-  background: transparent;
-  border: none;
-  color: #fff; /* make the dots white */
-  cursor: pointer;
-  margin-left: auto; /* push it to the far right */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.2s ease;
-  margin-top: -10px; /* 👈 raise the icon slightly */
-}
-.settings-menu {
-  position: absolute;
-  top: 40px;
-  right: 0;
-  background: rgba(255, 255, 255, 0.95);
-  color: #000;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  flex-direction: column;
-  padding: 4px 0;
-  display: none;
-  min-width: 150px;
-  z-index: 20;
-}
-.done-note.fade-out {
-  opacity: 1;
-  transition: opacity 1s ease;
-}
-.settings-menu.show { display: flex; }
-
-.settings-menu button {
-  background: transparent;
-  border: none;
-  padding: 10px 16px;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s;
-}
-
-.settings-menu button:hover {
-  background: rgba(0,0,0,0.05);
-}
-
-#btnSettings:hover {
-  opacity: 0.8;
-}
-main.card{
-  padding:18px;
-  border-radius:0;
-  min-height:520px;
-  background:none;
-  box-shadow:none;
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-}
-.top-switch{display:flex; gap:8px; margin-bottom:12px}
-.switch-btn{
+.switch-btn {
   flex:1;
   padding:10px;
   border-radius:10px;
@@ -123,55 +55,51 @@ main.card{
   justify-content:center;
   align-items:center;
 }
+
 .switch-btn img {
-  display: block;
+  display:block;
   width:28px;
   height:28px;
-  filter: brightness(0) invert(1); /* makes SVG white */
-  background: transparent;
-  border: none;
+  filter:brightness(0) invert(1);
+  opacity:0.5;
+  transform:scale(1);
+  transition:opacity 0.25s ease, transform 0.25s ease;
 }
-.switch-btn.night img {
-  transform: scale(0.9); /* slightly smaller */
+
+/* Active mode stays bright and larger */
+body.morning .switch-btn.morning img,
+body.night .switch-btn.night img {
+  opacity:1;
+  transform:scale(1.15);
 }
-.switch-btn:hover img,
-.switch-btn:focus img {
-  opacity:0.85;
-  transition: opacity 0.2s ease;
+
+/* Hover effect for inactive icon */
+.switch-btn img:hover {
+  opacity:0.8;
+  transform:scale(1.1);
 }
-.progress-wrap{display:flex; align-items:center; gap:0; margin-bottom:12px}
-.progress{flex:1.1; height:10px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.06)}
-.bar {
-  height: 100%;
-  width: 0%;
-  background: rgba(255,255,255,0.06); /* same as container background */
-  border-radius: 8px;
-  transition: width 0.25s;
+
+/* Settings button */
+#btnSettings {
+  font-size:22px;
+  padding:6px 10px;
+  line-height:1;
+  background:transparent;
+  border:none;
+  color:#fff;
+  cursor:pointer;
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:opacity 0.2s ease;
+  margin-top:-10px;
 }
-.prog-text {
-  display: none;
-}
-.question{font-size:18px; margin-bottom:12px; font-weight:600}
-.options{display:flex; flex-direction:column; gap:10px}
-.opt-btn{width:100%; text-align:left; padding:14px 16px; border-radius:12px; border:1px solid transparent; font-size:18px; cursor:pointer; transition:background .2s,color .2s,border .2s; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);}
-.opt-btn.selected{background:rgba(255,255,255,0.6); color:#000; font-weight:700;}
-input[type=time],input[type=number]{width:100%; padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,0.12); font-size:18px; background:transparent;}
-.controls{display:flex; gap:10px; justify-content:space-between; margin-top:16px}
-.next-btn{padding:12px 16px; border-radius:12px; border:0; font-weight:700; cursor:pointer; transition:opacity .2s}
-.next-btn[disabled]{opacity:.5; cursor:not-allowed}
-.small-muted{font-size:13px; text-align:center; margin-top:12px}
-.done-note{font-size:20px; text-align:center; font-weight:700; margin-top:18px}
-  /* Fade-out effect for completion messages */
-.fade-out {
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-.meta{font-size:13px; margin-top:10px; text-align:center}
-.center{display:flex; justify-content:center}
-.entries-list{margin-top:8px}
-.entry-row{padding:12px; border-radius:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center}
-.entry-row .small{font-size:13px}
-.settings-menu{
+
+#btnSettings:hover { opacity:0.8; }
+
+/* Settings dropdown */
+.settings-menu {
   position:absolute;
   top:42px;
   right:0;
@@ -183,70 +111,230 @@ input[type=time],input[type=number]{width:100%; padding:14px; border-radius:12px
   padding:6px;
   z-index:20;
   display:none;
+  min-width:150px;
 }
-.settings-menu.show{display:flex;}
+
+.settings-menu.show { display:flex; }
+
+.settings-menu button {
+  background:transparent;
+  border:none;
+  padding:10px 16px;
+  width:100%;
+  text-align:left;
+  cursor:pointer;
+  font-weight:600;
+  transition:background 0.2s;
+}
+
+.settings-menu button:hover {
+  background:rgba(0,0,0,0.05);
+}
+
+/* Main card + questions */
+main.card {
+  padding:18px;
+  border-radius:0;
+  min-height:520px;
+  background:none;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+
+.progress-wrap {
+  display:flex;
+  align-items:center;
+  gap:0;
+  margin-bottom:12px;
+}
+
+.progress {
+  flex:1.2;
+  height:10px;
+  border-radius:8px;
+  overflow:hidden;
+  background:rgba(255,255,255,0.06);
+}
+
+.bar {
+  height:100%;
+  width:0%;
+  background:rgba(255,255,255,0.06);
+  border-radius:8px;
+  transition:width 0.25s;
+}
+
+.prog-text { display:none; }
+
+.question {
+  font-size:18px;
+  margin-bottom:12px;
+  font-weight:600;
+}
+
+.options {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.opt-btn {
+  width:100%;
+  text-align:left;
+  padding:14px 16px;
+  border-radius:12px;
+  border:1px solid transparent;
+  font-size:18px;
+  cursor:pointer;
+  transition:background .2s,color .2s,border .2s;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+
+.opt-btn.selected {
+  background:rgba(255,255,255,0.6);
+  color:#000;
+  font-weight:700;
+}
+
+input[type=time],
+input[type=number] {
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.12);
+  font-size:18px;
+  background:transparent;
+}
+
+/* Controls */
+.controls {
+  display:flex;
+  gap:10px;
+  justify-content:space-between;
+  margin-top:16px;
+}
+
+.next-btn {
+  padding:12px 16px;
+  border-radius:12px;
+  border:0;
+  font-weight:700;
+  cursor:pointer;
+  transition:opacity .2s;
+  background:rgba(255,255,255,0.15);
+  color:#000;
+  backdrop-filter:blur(6px);
+}
+
+.next-btn:hover { opacity:0.85; }
+.next-btn[disabled] { opacity:.5; cursor:not-allowed; }
+
+.back-btn {
+  background:rgba(255,255,255,0.15);
+  color:#000;
+  font-weight:700;
+  border:0;
+  padding:12px 16px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:opacity .2s;
+  backdrop-filter:blur(6px);
+}
+
+.back-btn:hover { opacity:0.85; }
+.back-btn[disabled] { opacity:0.5; cursor:not-allowed; }
+
+.small-muted {
+  font-size:13px;
+  text-align:center;
+  margin-top:12px;
+}
+
+.done-note {
+  font-size:20px;
+  text-align:center;
+  font-weight:700;
+  margin-top:18px;
+}
+
+/* Fade effect */
+.fade-out { opacity:0; transition:opacity 0.8s ease; }
+
+/* Entries list */
+.meta { font-size:13px; margin-top:10px; text-align:center; }
+.center { display:flex; justify-content:center; }
+.entries-list { margin-top:8px; }
+.entry-row {
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.entry-row .small { font-size:13px; }
+
+/* Night mode styling */
 body.night {
-  color: #ffffff;
+  color:#fff;
 }
+
 body.night::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat;
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat;
 }
+
 body.night .opt-btn {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.06);
-  color: var(--night-text);
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--night-text);
 }
+
 body.night .opt-btn.selected {
-  background: rgba(255,255,255,0.28);
-  color: #12002e;
-  font-weight: 700;
+  background:rgba(255,255,255,0.28);
+  color:#12002e;
+  font-weight:700;
 }
 
+/* Morning mode styling */
 body.morning {
-  color: #ffffff;
+  color:#fff;
 }
+
 body.morning::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: url("images/morning.jpg") center center / cover no-repeat;
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:url("images/morning.jpg") center center / cover no-repeat;
 }
+
 body.morning .opt-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.25);
-  color: #ffffff;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.25);
+  color:#fff;
 }
+
 body.morning .opt-btn.selected {
-  background: rgba(255,255,255,0.32);
-  color: #ffffff;
-  font-weight: 700;
-}
-  .back-btn {
-  background: #ffffff;
-  color: #000000;
-  font-weight: 700;
-  border: 0;
-  padding: 12px 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: opacity .2s;
+  background:rgba(255,255,255,0.32);
+  color:#fff;
+  font-weight:700;
 }
 
-.back-btn:hover {
-  opacity: 0.85;
+/* Responsive */
+@media (max-width:480px) {
+  body { padding:12px; }
+  .opt-btn { font-size:16px; padding:12px; }
+  input[type=time],
+  input[type=number] { font-size:16px; padding:12px; }
 }
-
-.back-btn[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-@media (max-width:480px){body{padding:12px}.opt-btn{font-size:16px;padding:12px}input[type=time],input[type=number]{font-size:16px;padding:12px}}
 </style>
+
 </head>
 <body class="night">
 <div class="wrap">
