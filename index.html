@@ -303,7 +303,6 @@ function showOverview(date){
   const all = loadAll(); const day = all[date];
   contentArea.innerHTML=`<div class="done-note">Completed today!</div>`;
   progressBar.style.width='100%'; progText.innerText='Done';
-  nextBtn.disabled=true; backBtn.disabled=true;
 }
 
 // ===== ENTRIES VIEW =====
@@ -316,7 +315,6 @@ function showEntriesView(){
     row.addEventListener('click', ()=>{ currentDate=d; startSession('morning'); });
     listDiv.appendChild(row);
   });
-  nextBtn.disabled=true; backBtn.disabled=true;
 }
 
 // ===== EXPORT / IMPORT =====
