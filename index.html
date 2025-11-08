@@ -299,8 +299,6 @@ const NIGHT = [
   {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none']},
   {key:'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading', 'none']},
   {key:'closed_eyes_time', type:'time', label:'What time did you close your eyes?', autoNext:true},
-  {key:'sunset_time', type:'auto', label:'Sun went down at'},
-  {key:'avg_climate', type:'auto', label:'Average daytime climate'}
 ];
 
 // ===== STORAGE =====
@@ -354,7 +352,6 @@ function init(){
   else if(!today.night){ startSession('night'); }
   else { session = null; showOverview(currentDate); }
 
-  tryFetchSunAndClimate();
 }
   const btnClearToday = document.getElementById('btnClearToday');
 
