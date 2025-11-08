@@ -26,19 +26,7 @@ h1{margin:0; font-size:20px}
 .top-actions{display:flex; gap:8px}
 .btn{padding:8px 12px; border-radius:10px; border:0; font-weight:600; cursor:pointer; transition:background .2s}
 .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,0.08)}
-#btnSettings {
-  font-size: 22px;
-  padding: 6px 10px;
-  line-height: 1;
-  background: transparent;    
-  border: none;               
-  color: white;               
-  margin-left: auto;         
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+#btnSettings{font-size:22px; padding:6px 10px; line-height:1; background:transparent; border-radius:10px}
 main.card{
   padding:18px;
   border-radius:0;
@@ -191,8 +179,8 @@ body.morning .opt-btn.selected {
 <script>
 // ===== QUESTIONS =====
 const MORNING = [
-  {key:'wake_time', type:'time', label:'What time did you wake up?'},
-  {key:'how_slept', type:'single', label:'How do you think you slept?', options:['Went to bed late but slept in','Went to bed late','Went to bed early but woke really early','Couldn't fall asleep','Lightly disrupted','Frequently disrupted','Fine']},
+  {key:'wake_time', type:'time', label:'What time did you wake up? (24h)'},
+  {key:'how_slept', type:'single', label:'How do you think you slept?', options:['Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine']},
   {key:'made_bed', type:'single', label:'Make bed?', options:['Yes','No']},
   {key:'took_meds_morn', type:'single', label:'Take meds?', options:['Yes','No']},
   {key:'tidy_up', type:'single', label:'Tidy up?', options:['Yes','No']},
