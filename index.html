@@ -351,19 +351,26 @@ function loadUI(){
       btn.textContent = opt;
       if(q.type==='multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
       if(q.type==='single' && answers[q.key]===opt) btn.classList.add('selected');
-      btn.addEventListener('click', ()=>{
-        if(q.type==='single'){
-          answers[q.key]=opt;
-          nextBtn.disabled=false;
-          loadUI();
-        } else {
-          if(!answers[q.key]) answers[q.key]=[];
-          if(answers[q.key].includes(opt)){
-            answers[q.key]=answers[q.key].filter(x=>x!==opt);
-          } else { answers[q.key].push(opt); }
-          btn.classList.toggle('selected');
-        }
-      });
+btn.addEventListener('click', ()=>{
+  if(q.type === 'single'){
+    answers[q.key] = opt;
+    nextBtn.disabled = false;
+    if(q.autoNext){ 
+      handleNext();  // move to next question automatically
+    } else {
+      loadUI();      // refresh selection visuals only
+    }
+  } else {
+    if(!answers[q.key]) answers[q.key] = [];
+    if(answers[q.key].includes(opt)){
+      answers[q.key] = answers[q.key].filter(x => x !== opt);
+    } else {
+      answers[q.key].push(opt);
+    }
+    btn.classList.toggle('selected');
+    nextBtn.disabled = answers[q.key].length === 0; // only enable Next if at least one choice selected
+  }
+});
       optionsWrap.appendChild(btn);
     });
   } else if(q.type==='time'){
