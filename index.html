@@ -224,9 +224,7 @@ function init(){
   nextBtn.addEventListener('click', ()=> handleNext());
   btnEntries.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); showEntriesView(); });
   btnExport.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); exportAll(); });
-  btnImport.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); fileInput.click(); });
   btnRestart.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); startNextDay(); });
-  fileInput.addEventListener('change', handleImport);
 
   const all = loadAll();
   const today = all[currentDate] || {};
