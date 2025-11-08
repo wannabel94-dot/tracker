@@ -281,6 +281,10 @@ function startSession(which){
   document.body.classList.remove('morning','night');
   document.body.classList.add(session);
 
+  // Set button active states — this keeps glow visible
+  morningBtn.classList.toggle('active', session === 'morning');
+  nightBtn.classList.toggle('active', session === 'night');
+  
   const all = loadAll();
   const today = all[currentDate] || {};
   answers = today[session] ? JSON.parse(JSON.stringify(today[session])) : {};
