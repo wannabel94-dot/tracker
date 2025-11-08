@@ -405,8 +405,10 @@ if(!list || index >= list.length){
   if(session === 'morning') {
     // Morning completed
     contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
-    progressBar.style.width = '100%';
-    progText.textContent = `${list.length}/${list.length}`;
+  
+// Hide progress bar and text
+  progressBar.style.width = '0';
+  progText.textContent = '';
     
  // Hide back/next buttons
     document.getElementById('controls').style.display = 'none';
