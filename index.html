@@ -156,24 +156,28 @@ body.morning .opt-btn.selected {
 </head>
 <body class="night">
 <div class="wrap">
-  <header>
-    <div class="top-actions">
-      <div class="top-switch" id="switchWrap">
-        <button class="switch-btn morning" id="morningBtn" title="Morning">
-          <img src="icons/day.svg" class="icon-morning" alt="Morning">
-        </button>
-        <button class="switch-btn night" id="nightBtn" title="Night">
-          <img src="icons/night.svg" class="icon-night" alt="Night">
-        </button>
-      </div>
-      <button id="btnSettings" class="btn ghost" title="Menu">⋮</button>
-      <div id="settingsMenu" class="settings-menu">
-        <button id="btnEntries">Past days</button>
-        <button id="btnExport">Export data</button>
-        <button id="btnRestart">Restart for tomorrow</button>
-      </div>
+<header>
+  <div class="top-actions" style="flex:1; display:flex; align-items:center; gap:8px;">
+    <div class="top-switch" id="switchWrap" style="display:flex; gap:8px;">
+      <button class="switch-btn morning" id="morningBtn" title="Morning">
+        <img src="icons/day.svg" class="icon-morning" alt="Morning">
+      </button>
+      <button class="switch-btn night" id="nightBtn" title="Night">
+        <img src="icons/night.svg" class="icon-night" alt="Night">
+      </button>
     </div>
-  </header>
+
+    <!-- Settings button -->
+    <button id="btnSettings" title="Menu">⋮</button>
+
+    <!-- Settings menu -->
+    <div id="settingsMenu" class="settings-menu">
+      <button id="btnEntries">Past days</button>
+      <button id="btnExport">Export data</button>
+      <button id="btnRestart">Restart for tomorrow</button>
+    </div>
+  </div>
+</header>
 
   <main class="card" id="appCard">
     <div class="progress-wrap">
