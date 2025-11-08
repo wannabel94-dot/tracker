@@ -280,6 +280,8 @@ function init(){
   tryFetchSunAndClimate();
 }
 
+function startManual(which){ startSession(which); }
+
 function startSession(which){
   session = which;
   list = (session === 'morning') ? MORNING : NIGHT;
@@ -292,9 +294,15 @@ function startSession(which){
   const today = all[currentDate] || {};
   answers = today[session] ? JSON.parse(JSON.stringify(today[session])) : {};
   index = 0;
-  for(let i=0;i<list.length;i++){ if(!(list[i].key in answers)){ index=i; break; } }
+  for(let i=0;i<list.length;i++){
+    if(!(list[i].key in answers)){
+      index=i;
+      break;
+    }
+  }
   loadUI();
 }
+
 
 // ===== UI FUNCTIONS =====
 function loadUI(){
