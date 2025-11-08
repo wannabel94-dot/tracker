@@ -360,6 +360,9 @@ if(!list || index >= list.length){
     contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
     progressBar.style.width = '100%';
     progText.textContent = `${list.length}/${list.length}`;
+    
+ // Hide back/next buttons
+    document.getElementById('controls').style.display = 'none';
 
     // Automatically start night after 1.5 seconds
     setTimeout(() => startSession('night'), 1500);
