@@ -40,6 +40,11 @@ body.morning .switch-btn.morning img,
 body.night .switch-btn.night img {
   opacity: 1;
 }
+  /* Hover effect for inactive icon */
+.switch-btn img:hover {
+  opacity: 0.8;       /* brightens on hover */
+  transform: scale(1.1); /* slightly enlarge for feedback */
+}
 
 .btn{padding:8px 12px; border-radius:10px; border:0; font-weight:600; cursor:pointer; transition:background .2s}
 .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,0.08)}
