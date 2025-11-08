@@ -276,9 +276,6 @@ const NIGHT = [
   {key:'psyillium', type:'single', label:'Did you take psyllium?', options:['Yes','No'], autoNext:true},
   {key:'magnesium', type:'single', label:'Magnesium?', options:['Yes','No'], autoNext:true},
   {key:'pillowcase', type:'single', label:'Did you change the pillowcase?', options:['Yes','No'], autoNext:true},
-  {key:'meds', type:'multi', label:'Any extra meds?', options:['1mg lorazepam','2mg lorazepam','3mg lorazepam','painkillers','anti/sickness','anti/histamine','none']},
-  {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['1 coffee','1 tea','2 teas','3 teas','2 coffees','mate','1-2 drinks','2+ drinks','none']},
-  {key:'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting', 'none']},
   {key:'shower_night', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
   {key:'skincare_night', type:'single', label:'Skincare?', options:['None','Bare minimum','Once', 'Twice'], autoNext:true},
   {key:'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true},
@@ -289,12 +286,15 @@ const NIGHT = [
   {key:'feel_with_L', type:'single', label:'How do you feel with L today?', options:['Elated','Sensitive','Pretty good','Fine','Irritated','Somewhat insecure','Anxiously insecure','Anguish'], autoNext:true},
   {key:'house_state', type:'single', label:'What is the state of the house?', options:['Disaster','Very messy','A bit messy','Fine - a few dishes','Pretty tidy','Spotless'], autoNext:true},
   {key:'drove', type:'single', label:'Did you drive today?', options:['No','<30 mins','30 mins+','1h+'], autoNext:true},
-  {key:'food_desc', type:'single', label:'How would you describe your food?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions'], autoNext:true},
   {key:'body_feelings', type:'single', label:'How do you feel about your body today?', options:["Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"], autoNext:true},
+  {key:'food_desc', type:'single', label:'How would you describe your food?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions'], autoNext:true},
+  {key:'most_prominent', type:'multi', label:'What do you think is most prominent?', options:['none','Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD'], autoNext:true},
+  {key:'meds', type:'multi', label:'Any extra meds?', options:['1mg lorazepam','2mg lorazepam','3mg lorazepam','painkillers','anti/sickness','anti/histamine','none']},
+  {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['1 coffee','1 tea','2 teas','3 teas','2 coffees','mate','1-2 drinks','2+ drinks','none']},
+  {key:'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting', 'none']},
   {key:'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none']},
   {key:'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy (in-person)','Doctor','Blood tests','none']},
   {key:'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none']},
-  {key:'most_prominent', type:'multi', label:'What do you think is most prominent?', options:['none','Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD'], autoNext:true},
   {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none']},
   {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none']},
   {key:'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading', 'none']},
@@ -365,7 +365,7 @@ btnClearToday.addEventListener('click', () => {
     session = null;
     index = 0;
     answers = {};
-    contentArea.innerHTML = `<div class="done-note">Today's data cleared. You can start again.</div>`;
+    contentArea.innerHTML = `<div class="done-note">Today cleared.</div>`;
     progressBar.style.width = '0%';
     progText.textContent = '0/0';
      // Close settings menu
