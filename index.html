@@ -1,5 +1,8 @@
 <html lang="en" class="ai-style-change-1"><head>
 <meta charset="utf-8">
+      <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#317EFB">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Daily Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
@@ -701,7 +704,14 @@ function startNextDay(){
   }
   startSession('morning');
 }
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('Service Worker registered.'));
+  }
+</script>
 
+<script>
 /* ---------- init ---------- */
 init();
 
