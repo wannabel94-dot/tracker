@@ -62,7 +62,7 @@ h1{margin:0; font-size:20px}
 }
 .done-note.fade-out {
   opacity: 1;
-  transition: opacity 1.5s ease;
+  transition: opacity 1s ease;
 }
 .settings-menu.show { display: flex; }
 
@@ -530,7 +530,7 @@ function saveSession(){
 function showOverview(date){
 session = null;
 const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
-contentArea.innerHTML = `<div class="done-note">${dayName} complete!</div>`;
+contentArea.innerHTML = `<div class="done-note">${dayName} complete.</div>`;
 
 // Hide progress bar and text
 progressBar.style.width = '0';
@@ -569,10 +569,6 @@ function startNextDay(){
   startSession('morning');
 }
 
-// ===== FETCH SUN AND CLIMATE (dummy for now) =====
-function tryFetchSunAndClimate(){
-  // can implement API fetch here
-}
 
 // ===== START =====
 init();
@@ -581,31 +577,6 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/service-worker.js')
     .then(() => console.log('Service Worker registered.'))
     .catch(err => console.error('Service Worker registration failed:', err));
-}
-  // ===== SWIPE GESTURE SUPPORT =====
-let touchStartX = 0;
-let touchEndX = 0;
-const SWIPE_THRESHOLD = 60; // pixels to count as a swipe
-
-document.addEventListener('touchstart', e => {
-  touchStartX = e.changedTouches[0].screenX;
-});
-
-document.addEventListener('touchend', e => {
-  touchEndX = e.changedTouches[0].screenX;
-  handleSwipeGesture();
-});
-
-function handleSwipeGesture() {
-  // Swipe right → go back
-  if (touchEndX - touchStartX > SWIPE_THRESHOLD && index > 0) {
-    index--;
-    loadUI();
-  }
-  // Optional: swipe left → go forward (if you want)
-  // else if (touchStartX - touchEndX > SWIPE_THRESHOLD && !nextBtn.disabled) {
-  //   handleNext();
-  // }
 }
 </script>
 </body>
