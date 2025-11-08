@@ -37,7 +37,18 @@ main.card{
   -webkit-backdrop-filter:none;
 }
 .top-switch{display:flex; gap:8px; margin-bottom:12px}
-.switch-btn{flex:1; padding:10px; border-radius:10px; border:0; font-weight:700; cursor:pointer; background:transparent; display:flex; justify-content:center; align-items:center;}
+.switch-btn{
+  flex:1;
+  padding:10px;
+  border-radius:10px;
+  border:0;
+  font-weight:700;
+  cursor:pointer;
+  background:transparent;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
 .switch-btn img {
   display: block;
   width:28px;
@@ -47,7 +58,7 @@ main.card{
   border: none;
 }
 .switch-btn.night img {
-  transform: scale(0.9);
+  transform: scale(0.9); /* slightly smaller */
 }
 .switch-btn:hover img,
 .switch-btn:focus img {
@@ -146,16 +157,61 @@ body.morning .opt-btn.selected{ background:rgba(255,255,255,0.32); color:#ffffff
 </div>
 
 <script>
-// ===== JS =====
-// Keep your existing MORNING/NIGHT questions arrays
-const MORNING = [...];
-const NIGHT = [...];
+// ===== QUESTIONS =====
+const MORNING = [
+  {key:'wake_time', type:'time', label:'What time did you wake up? (24h)'},
+  {key:'how_slept', type:'single', label:'How do you think you slept?', options:['Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine']},
+  {key:'made_bed', type:'single', label:'Make bed?', options:['Yes','No']},
+  {key:'took_meds_morn', type:'single', label:'Take meds?', options:['Yes','No']},
+  {key:'tidy_up', type:'single', label:'Tidy up?', options:['Yes','No']},
+  {key:'tea_meditate', type:'single', label:'Have tea in bed + meditate 5 mins?', options:['Yes','No']},
+  {key:'shower_morn', type:'single', label:'Shower?', options:['Yes','No']},
+  {key:'led_mask_morn', type:'single', label:'LED mask?', options:['Yes','No']},
+  {key:'skincare_morn', type:'single', label:'Skincare?', options:['Yes','No']},
+  {key:'eat_breakfast', type:'single', label:'Eat breakfast?', options:['Yes','No']},
+  {key:'supplements_morn', type:'single', label:'Supplements?', options:['Yes','No']},
+  {key:'get_dressed', type:'single', label:'Get dressed?', options:['Yes','No']},
+  {key:'brush_teeth_morn', type:'single', label:'Brush teeth?', options:['Yes','No']}
+];
 
+const NIGHT = [
+  {key:'psyillium', type:'single', label:'Did you take psyllium?', options:['Yes','No']},
+  {key:'magnesium', type:'single', label:'Magnesium?', options:['Yes','No']},
+  {key:'pillowcase', type:'single', label:'Did you change the pillowcase?', options:['Yes','No']},
+  {key:'meds', type:'multi', label:'What meds did you take today?', options:['10mg escitalopram','15mg escitalopram','18mg concerta','36mg concerta','1mg lorazepam','2mg lorazepam','3mg lorazepam','painkillers','anti/sickness','anti/histamine']},
+  {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['none','1 coffee','2 coffees','1 tea','2 teas','3 teas','mate','1-2 drinks','2+ drinks']},
+  {key:'sickness', type:'multi', label:'Sickness / symptoms', options:['none','UTI feeling','UTI :(','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting']},
+  {key:'shower_night', type:'single', label:'Shower?', options:['AM','PM','Nope']},
+  {key:'skincare_night', type:'single', label:'Skincare?', options:['None','Bare minimum','AM routine','PM routine','Full routine']},
+  {key:'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None']},
+  {key:'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None']},
+  {key:'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day']},
+  {key:'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good']},
+  {key:'saw_dogs', type:'single', label:'Did you see the dogs today?', options:['Sometimes','Yes','No']},
+  {key:'feel_with_L', type:'single', label:'How do you feel with L today?', options:['Elated','Sensitive','Pretty good','Fine','Irritated','Somewhat insecure','Anxiously insecure','Anguish']},
+  {key:'house_state', type:'single', label:'What is the state of the house?', options:['Disaster','Very messy','A bit messy','Fine - a few dishes','Pretty tidy','Spotless']},
+  {key:'drove', type:'single', label:'Did you drive today?', options:['No','<30 mins','30 mins+','1h+']},
+  {key:'food_desc', type:'single', label:'How would you describe your food?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions']},
+  {key:'body_feelings', type:'single', label:'How do you feel about your body today?', options:["Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"]},
+  {key:'sensory_triggers', type:'multi', label:'Sensory triggers', options:['none','Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment']},
+  {key:'appointments', type:'multi', label:'Appointments', options:['none','Psych','Therapy (online)','Therapy (in-person)','Doctor','Blood tests']},
+  {key:'movement', type:'multi', label:'Did you move today?', options:['none','Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog']},
+  {key:'most_prominent', type:'multi', label:'What do you think is most prominent?', options:['none','Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD']},
+  {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family']},
+  {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['none','Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing']},
+  {key:'creative', type:'multi', label:'Did you do anything creative?', options:['none','Painting','DIY','Guitar','Sewing','Van stuff','Reading']},
+  {key:'closed_eyes_time', type:'time', label:'What time did you close your eyes? (24h)'},
+  {key:'sunset_time', type:'auto', label:'Sun went down at'},
+  {key:'avg_climate', type:'auto', label:'Average daytime climate'}
+];
+
+// ===== STORAGE =====
 const STORAGE_KEY = 'dailyTracker_v5';
 function todayKey(){ return new Date().toISOString().slice(0,10); }
 function loadAll(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e){ return {}; } }
 function saveAll(obj){ localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
 
+// ===== UI REFS =====
 const contentArea = document.getElementById('contentArea');
 const progressBar = document.getElementById('progressBar');
 const progText = document.getElementById('progText');
@@ -175,6 +231,7 @@ let index = 0;
 let answers = {};
 let currentDate = todayKey();
 
+// ===== SETTINGS MENU =====
 btnSettingsEl.addEventListener('click', e => {
   e.stopPropagation();
   settingsMenu.classList.toggle('show');
@@ -183,6 +240,7 @@ document.addEventListener('click', e => {
   if (!settingsMenu.contains(e.target) && !btnSettingsEl.contains(e.target)) settingsMenu.classList.remove('show');
 });
 
+// ===== INIT =====
 function init(){
   morningBtn.addEventListener('click', ()=> startManual('morning'));
   nightBtn.addEventListener('click', ()=> startManual('night'));
@@ -213,8 +271,129 @@ function startSession(which){
   loadUI();
 }
 
-// Keep your existing loadUI(), handleNext(), showOverview(), showEntriesView(), exportAll(), startNextDay(), tryFetchSunAndClimate() functions
+// ===== UI FUNCTIONS =====
+function loadUI(){
+  if(!list || index>=list.length){
+    saveSession();
+    showOverview(currentDate);
+    return;
+  }
 
+  const q = list[index];
+  contentArea.innerHTML = '';
+  const qEl = document.createElement('div');
+  qEl.className = 'question';
+  qEl.textContent = q.label;
+  contentArea.appendChild(qEl);
+
+  const optionsWrap = document.createElement('div');
+  optionsWrap.className = 'options';
+
+  if(q.type === 'single' || q.type === 'multi'){
+    q.options.forEach(opt=>{
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = opt;
+      if(q.type==='multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
+      if(q.type==='single' && answers[q.key]===opt) btn.classList.add('selected');
+      btn.addEventListener('click', ()=>{
+        if(q.type==='single'){
+          answers[q.key]=opt;
+          nextBtn.disabled=false;
+          loadUI();
+        } else {
+          if(!answers[q.key]) answers[q.key]=[];
+          if(answers[q.key].includes(opt)){
+            answers[q.key]=answers[q.key].filter(x=>x!==opt);
+          } else { answers[q.key].push(opt); }
+          btn.classList.toggle('selected');
+        }
+      });
+      optionsWrap.appendChild(btn);
+    });
+  } else if(q.type==='time'){
+    const inp = document.createElement('input');
+    inp.type='time';
+    inp.value=answers[q.key]||'';
+    inp.addEventListener('input', ()=>{ answers[q.key]=inp.value; nextBtn.disabled=!inp.value; });
+    optionsWrap.appendChild(inp);
+  } else if(q.type==='number'){
+    const inp = document.createElement('input');
+    inp.type='number';
+    inp.value=answers[q.key]||'';
+    inp.addEventListener('input', ()=>{ answers[q.key]=inp.value; nextBtn.disabled=!inp.value; });
+    optionsWrap.appendChild(inp);
+  } else if(q.type==='auto'){
+    const span = document.createElement('span');
+    span.textContent = answers[q.key]||'Auto-filled';
+    optionsWrap.appendChild(span);
+    nextBtn.disabled=false;
+  }
+
+  contentArea.appendChild(optionsWrap);
+
+  const progress = ((index)/list.length)*100;
+  progressBar.style.width=progress+'%';
+  progText.textContent=`${index}/${list.length}`;
+  nextBtn.disabled = !(answers[q.key] && ((q.type==='single') || (q.type==='time') || (q.type==='number') || (q.type==='auto') || (q.type==='multi')));
+}
+
+function handleNext(){
+  const q = list[index];
+  if(!answers[q.key]) return;
+  index++;
+  loadUI();
+}
+
+function saveSession(){
+  const all = loadAll();
+  if(!all[currentDate]) all[currentDate]={};
+  all[currentDate][session] = answers;
+  saveAll(all);
+}
+
+function showOverview(date){
+  session=null;
+  contentArea.innerHTML=`<div class="done-note">All done for ${date}</div>`;
+  progressBar.style.width='100%';
+  progText.textContent=list ? list.length+'/'+list.length : '';
+}
+
+function showEntriesView(){
+  const all = loadAll();
+  contentArea.innerHTML='<div class="entries-list"></div>';
+  const listWrap = contentArea.querySelector('.entries-list');
+  Object.keys(all).sort().reverse().forEach(day=>{
+    const row = document.createElement('div');
+    row.className='entry-row';
+    row.innerHTML=`<div>${day}</div><div class="small">morning:${all[day].morning?Object.keys(all[day].morning).length:0} | night:${all[day].night?Object.keys(all[day].night).length:0}</div>`;
+    listWrap.appendChild(row);
+  });
+}
+
+function exportAll(){
+  const all = loadAll();
+  const blob = new Blob([JSON.stringify(all,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url;
+  a.download='daily-tracker-data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function startNextDay(){
+  currentDate=todayKey();
+  session=null;
+  startSession('morning');
+}
+
+// ===== FETCH SUN AND CLIMATE (dummy for now) =====
+function tryFetchSunAndClimate(){
+  // can implement API fetch here
+}
+
+// ===== START =====
 init();
 
 if ('serviceWorker' in navigator) {
