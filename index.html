@@ -1,8 +1,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="data:application/manifest+json,{"name":"Daily Tracker","short_name":"Tracker","start_url":".","display":"standalone","background_color":"#317EFB","theme_color":"#317EFB"}">
 <meta name="theme-color" content="#317EFB">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Daily Tracker</title>
@@ -344,6 +343,13 @@ function tryFetchSunAndClimate(){
 
 // ===== INIT =====
 init();
+
+// ===== SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+    .then(() => console.log('Service Worker registered.'))
+    .catch(err => console.error('Service Worker registration failed:', err));
+}
 </script>
 </body>
 </html>
