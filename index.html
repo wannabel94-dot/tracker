@@ -59,48 +59,53 @@ h1 { margin:0; font-size:20px; }
   transition: background 0.25s ease;
 }
 
-/* Optional: subtle hover glow around the icon (not a box) */
-.switch-btn:hover {
-  background: rgba(255, 255, 255, 0.08); /* 🔹 small circular glow */
-  border-radius: 50%;
-}
-
-.switch-btn img {
-  display: block;
-  width: 28px;
-  height: 28px;
-  filter: brightness(0) invert(1);
-  opacity: 0.5;
-  transform: scale(1);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
 /* Night icon slightly smaller base size */
 .switch-btn.night img {
   width: 25px;
   height: 25px;
 }
 
-/* Active mode: full opacity + gentle enlargement */
+/* Base hover glow (optional, still works on hover) */
+.switch-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+}
+
+/* Persistent glow + soft halo for morning mode */
+body.morning .switch-btn.morning {
+  background: rgba(255, 255, 255, 0.12); /* circular glow behind icon */
+  border-radius: 50%;
+}
+
 body.morning .switch-btn.morning img {
   opacity: 1;
   transform: scale(1.15);
+  filter: brightness(1) drop-shadow(0 0 6px rgba(255,255,255,0.7));
+  transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease;
+}
+
+/* Persistent glow + soft halo for night mode */
+body.night .switch-btn.night {
+  background: rgba(255, 255, 255, 0.12); /* circular glow behind icon */
+  border-radius: 50%;
 }
 
 body.night .switch-btn.night img {
   opacity: 1;
   transform: scale(1.12);
+  filter: brightness(1) drop-shadow(0 0 6px rgba(255,255,255,0.7));
+  transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease;
 }
 
-/* Hover effects (balanced for size difference) */
+/* Hover effects — still works on top of persistent glow */
 .switch-btn.morning img:hover {
-  opacity: 0.8;
-  transform: scale(1.1);
+  opacity: 0.85;
+  transform: scale(1.18);
 }
 
 .switch-btn.night img:hover {
-  opacity: 0.8;
-  transform: scale(1.07);
+  opacity: 0.85;
+  transform: scale(1.15);
 }
 
 /* Settings button */
