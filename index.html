@@ -43,40 +43,42 @@ h1 { margin:0; font-size:20px; }
 /* MODE SWITCH ICONS — translucent inactive, bright active, scale effect */
 .top-switch { display:flex; gap:8px; margin-bottom:12px; }
 
-.switch-btn {
-  flex:1;
-  padding:10px;
-  border-radius:10px;
-  border:0;
-  font-weight:700;
-  cursor:pointer;
-  background:transparent;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
 .switch-btn img {
-  display:block;
-  width:28px;
-  height:28px;
-  filter:brightness(0) invert(1);
-  opacity:0.5;
-  transform:scale(1);
-  transition:opacity 0.25s ease, transform 0.25s ease;
+  display: block;
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) invert(1);
+  opacity: 0.5;
+  transform: scale(1);
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-/* Active mode stays bright and larger */
-body.morning .switch-btn.morning img,
+/* Night icon slightly smaller base size */
+.switch-btn.night img {
+  width: 25px;
+  height: 25px;
+}
+
+/* Active mode: full opacity + gentle enlargement */
+body.morning .switch-btn.morning img {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
 body.night .switch-btn.night img {
-  opacity:1;
-  transform:scale(1.15);
+  opacity: 1;
+  transform: scale(1.12);
 }
 
-/* Hover effect for inactive icon */
-.switch-btn img:hover {
-  opacity:0.8;
-  transform:scale(1.1);
+/* Hover effects (balanced for size difference) */
+.switch-btn.morning img:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
+}
+
+.switch-btn.night img:hover {
+  opacity: 0.8;
+  transform: scale(1.07);
 }
 
 /* Settings button */
