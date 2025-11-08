@@ -124,7 +124,13 @@ main.card{
 }
 .progress-wrap{display:flex; align-items:center; gap:10px; margin-bottom:12px}
 .progress{flex:1; height:10px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.06)}
-.bar{height:100%; width:0%; transition:width .25s}
+.bar {
+  height: 100%;
+  width: 0%;
+  background: rgba(255,255,255,0.06); /* same as container background */
+  border-radius: 8px;
+  transition: width 0.25s;
+}
 .prog-text{min-width:84px; text-align:right; font-size:13px}
 .question{font-size:18px; margin-bottom:12px; font-weight:600}
 .options{display:flex; flex-direction:column; gap:10px}
