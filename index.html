@@ -98,26 +98,47 @@ input[type=time],input[type=number]{width:100%; padding:14px; border-radius:12px
   display:none;
 }
 .settings-menu.show{display:flex;}
-body.night{color:#ffffff;}
-body.night::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  background:url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat;
+body.night {
+  color: #ffffff;
 }
-body.night .opt-btn{ background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.06); color:var(--night-text);}
-body.night .opt-btn.selected{ background:rgba(255,255,255,0.28); color:#12002e; font-weight:700; }
-body.morning{color:#ffffff;}
-body.morning::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-1;
-background: url("images/morning.jpg") center center / cover no-repeat;
+body.night::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat;
 }
-body.morning .opt-btn{ background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.25); color:#ffffff;}
-body.morning .opt-btn.selected{ background:rgba(255,255,255,0.32); color:#ffffff; font-weight:700;}
+body.night .opt-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--night-text);
+}
+body.night .opt-btn.selected {
+  background: rgba(255,255,255,0.28);
+  color: #12002e;
+  font-weight: 700;
+}
+
+body.morning {
+  color: #ffffff;
+}
+body.morning::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url("images/morning.jpg") center center / cover no-repeat;
+}
+body.morning .opt-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #ffffff;
+}
+body.morning .opt-btn.selected {
+  background: rgba(255,255,255,0.32);
+  color: #ffffff;
+  font-weight: 700;
+}
 @media (max-width:480px){body{padding:12px}.opt-btn{font-size:16px;padding:12px}input[type=time],input[type=number]{font-size:16px;padding:12px}}
 </style>
 </head>
