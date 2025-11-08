@@ -39,9 +39,31 @@ h1 { margin:0; font-size:20px; }
   justify-content:space-between;
   width:100%;
 }
-
 /* MODE SWITCH ICONS — translucent inactive, bright active, scale effect */
-.top-switch { display:flex; gap:8px; margin-bottom:12px; }
+.top-switch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.switch-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent; /* 🔹 ensures no square background */
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.25s ease;
+}
+
+/* Optional: subtle hover glow around the icon (not a box) */
+.switch-btn:hover {
+  background: rgba(255, 255, 255, 0.08); /* 🔹 small circular glow */
+  border-radius: 50%;
+}
 
 .switch-btn img {
   display: block;
