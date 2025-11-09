@@ -595,37 +595,6 @@ document.addEventListener('DOMContentLoaded', () => {
       optionsWrap.appendChild(span);
       nextBtn.disabled = false;
     }
-
-    if (q.type === 'single') {
-  btn.addEventListener('click', () => {
-    answers[q.key] = opt;
-    nextBtn.disabled = false;
-
-    // Autonext if question has autoNext OR option is "none"
-    if (q.autoNext || opt.toLowerCase() === 'none') {
-      handleNext();  // move to next question automatically
-    } else {
-      loadUI();      // refresh selection visuals only
-    }
-  });
-} else if (q.type === 'multi') {
-  btn.addEventListener('click', () => {
-    if (!answers[q.key]) answers[q.key] = [];
-    if (answers[q.key].includes(opt)) {
-      answers[q.key] = answers[q.key].filter(x => x !== opt);
-    } else {
-      answers[q.key].push(opt);
-    }
-    btn.classList.toggle('selected');
-    nextBtn.disabled = answers[q.key].length === 0;
-
-    // Autonext if "none" is selected (for multi, treat selecting "none" as immediate next)
-    if (opt.toLowerCase() === 'none') {
-      handleNext();
-    }
-  });
-}
-
     contentArea.appendChild(optionsWrap);
 
     const progress = ((index + 1) / list.length) * 100;
