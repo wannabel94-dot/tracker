@@ -547,6 +547,43 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       return;
     }
+q.options.forEach(opt => {
+  const btn = document.createElement('button');
+  btn.className = 'opt-btn';
+  btn.textContent = opt;
+  if (q.type === 'multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
+  if (q.type === 'single' && answers[q.key] === opt) btn.classList.add('selected');
+
+  btn.addEventListener('click', () => {
+    if (opt.toLowerCase() === 'none') {
+      // Immediately select "none" and move to next question
+      answers[q.key] = (q.type === 'multi') ? ['none'] : 'none';
+      handleNext();
+      return;
+    }
+
+    if (q.type === 'single') {
+      answers[q.key] = opt;
+      nextBtn.disabled = false;
+      if (q.autoNext) {
+        handleNext();
+      } else {
+        loadUI();
+      }
+    } else if (q.type === 'multi') {
+      if (!answers[q.key]) answers[q.key] = [];
+      if (answers[q.key].includes(opt)) {
+        answers[q.key] = answers[q.key].filter(x => x !== opt);
+      } else {
+        answers[q.key].push(opt);
+      }
+      btn.classList.toggle('selected');
+      nextBtn.disabled = answers[q.key].length === 0;
+    }
+  });
+
+  optionsWrap.appendChild(btn);
+});
 
     const q = list[index];
     contentArea.innerHTML = '';
