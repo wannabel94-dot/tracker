@@ -584,17 +584,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = document.createElement('button');
         btn.className = 'opt-btn';
 btn.innerHTML = `
-  <span class="opt-icon">${getIconForOption(opt)}</span>
+  <img src="${getIconForOption(opt)}" alt="${opt}" class="opt-icon">
   <span class="opt-text">${opt}</span>
 `;
-        function getIconForOption(opt) {
+
+function getIconForOption(opt) {
+  // Map known options to specific files, or auto-generate filenames
   const icons = {
-    'Yes': '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M20.285 6.709l-11.285 11.291-5.285-5.291 1.415-1.416 3.87 3.875 9.87-9.875z"/></svg>',
-    'No': '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18.364 5.636l-12.728 12.728-1.414-1.414 12.728-12.728z"/><path d="M5.636 5.636l12.728 12.728-1.414 1.414-12.728-12.728z"/></svg>',
-    'None': '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/><line x1="8" y1="8" x2="16" y2="16" stroke="currentColor" stroke-width="2"/></svg>'
+    'Headache': 'icons/head.svg',
+    'No': 'icons/no.svg',
+    'None': 'icons/none.svg'
   };
-  return icons[opt] || ''; // fallback = no icon
+
+  // If no match found, try a filename based on the option text
+  if (!icons[opt]) {
+    const fileName = opt
+      .toLowerCase()
+      .replace(/\s+/g, '_')
+      .replace(/[^\w-]/g, '');
+    icons[opt] = `icons/${fileName}.svg`;
+  }
+
+  return icons[opt];
 }
+
         if (q.type === 'multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
         if (q.type === 'single' && answers[q.key] === opt) btn.classList.add('selected');
 
