@@ -17,13 +17,10 @@
   --card-radius:14px;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
-
 * { box-sizing:border-box; }
 html, body { height:100%; }
-
 body {
-  margin:0;
-  padding:18px;
+  margin:0; padding:18px;
   display:flex;
   justify-content:center;
   align-items:flex-start;
@@ -36,294 +33,56 @@ body {
 header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:8px; position:relative; }
 h1 { margin:0; font-size:20px; }
 
-.top-actions {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  width:100%;
-}
+.top-actions { display:flex; align-items:center; justify-content:space-between; width:100%; }
 
-/* MODE SWITCH ICONS — translucent inactive, bright active, scale effect */
-.top-switch {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.switch-btn {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: transparent; /* 🔹 ensures no square background */
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background 0.25s ease;
-}
-
-/* Night icon slightly smaller base size */
-.switch-btn.night img {
-  width: 25px;
-  height: 25px;
-}
-
-/* Morning base size */
-.switch-btn.morning img {
-  width: 24px;
-  height: 24px;
-}
-
-/* Make SVG icons white */
-.switch-btn img {
-  filter: invert(1); /* 🔹 turns black SVG white */
-  opacity: 0.5;
-  transform: scale(1);
-  transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease;
-}
-
-/* Base hover glow (optional, still works on hover) */
-.switch-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 50%;
-}
-
-/* Persistent glow + soft halo for morning mode */
-body.morning .switch-btn.morning {
-  background: rgba(255, 255, 255, 0.12); /* circular glow behind icon */
-  border-radius: 50%;
-}
-
-body.morning .switch-btn.morning img {
-  opacity: 1;
-  transform: scale(1.15);
-}
-
-/* Persistent glow + soft halo for night mode */
-body.night .switch-btn.night {
-  background: rgba(255, 255, 255, 0.12); /* circular glow behind icon */
-  border-radius: 50%;
-}
-
-body.night .switch-btn.night img {
-  opacity: 1;
-  transform: scale(1.12);
-}
-
-/* Hover effects — still works on top of persistent glow */
-.switch-btn.morning img:hover {
-  opacity: 0.85;
-  transform: scale(1.18);
-}
-
-.switch-btn.night img:hover {
-  opacity: 0.85;
-  transform: scale(1.15);
-}
-
+/* MODE SWITCH ICONS */
+.top-switch { display:flex; gap:8px; margin-bottom:12px; }
+.switch-btn { flex:1; padding:10px; border:none; border-radius:10px; background:transparent; cursor:pointer; display:flex; justify-content:center; align-items:center; transition: background 0.25s ease; }
+.switch-btn.night img { width:25px; height:25px; }
+.switch-btn.morning img { width:24px; height:24px; }
+.switch-btn img { filter: invert(1); opacity:0.5; transform:scale(1); transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease; }
+.switch-btn:hover { background: rgba(255,255,255,0.08); border-radius:50%; }
+body.morning .switch-btn.morning { background: rgba(255,255,255,0.12); border-radius:50%; }
+body.morning .switch-btn.morning img { opacity:1; transform:scale(1.15); }
+body.night .switch-btn.night { background: rgba(255,255,255,0.12); border-radius:50%; }
+body.night .switch-btn.night img { opacity:1; transform:scale(1.12); }
+.switch-btn.morning img:hover { opacity:0.85; transform:scale(1.18); }
+.switch-btn.night img:hover { opacity:0.85; transform:scale(1.15); }
 
 /* Settings button */
-#btnSettings {
-  font-size:22px;
-  padding:6px 10px;
-  line-height:1;
-  background:transparent;
-  border:none;
-  color:#fff;
-  cursor:pointer;
-  margin-left:auto;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:opacity 0.2s ease;
-  margin-top:-10px;
-}
-
+#btnSettings { font-size:22px; padding:6px 10px; line-height:1; background:transparent; border:none; color:#fff; cursor:pointer; margin-left:auto; display:flex; align-items:center; justify-content:center; transition:opacity 0.2s ease; margin-top:-10px; }
 #btnSettings:hover { opacity:0.8; }
 
 /* Settings dropdown */
 .settings-menu {
-  position:absolute;
-  top:42px;
-  right:0;
-  background:rgba(255,255,255,0.25);
-  backdrop-filter:blur(16px);
-  border-radius:12px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.3);
-  flex-direction:column;
-  padding:6px;
-  z-index:20;
-  display:none;
-  min-width:150px;
+  position:absolute; top:42px; right:0; background:rgba(255,255,255,0.25); backdrop-filter:blur(16px); border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.3); flex-direction:column; padding:6px; z-index:20; display:none; min-width:150px;
 }
-
 .settings-menu.show { display:flex; }
-
-.settings-menu button {
-  background:transparent;
-  border:none;
-  padding:10px 16px;
-  width:100%;
-  text-align:left;
-  cursor:pointer;
-  font-weight:600;
-  transition:background 0.2s;
-}
-
-.settings-menu button:hover {
-  background:rgba(0,0,0,0.05);
-}
+.settings-menu button { background:transparent; border:none; padding:10px 16px; width:100%; text-align:left; cursor:pointer; font-weight:600; transition:background 0.2s; }
+.settings-menu button:hover { background:rgba(0,0,0,0.05); }
 
 /* Main card + questions */
-main.card {
-  padding:18px;
-  border-radius:0;
-  min-height:520px;
-  background:none;
-  box-shadow:none;
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-}
-
-.progress-wrap {
-  display:flex;
-  align-items:center;
-  gap:0;
-  margin-bottom:12px;
-}
-
-.progress {
-  flex:1.2;
-  height:10px;
-  border-radius:8px;
-  overflow:hidden;
-  background:rgba(255,255,255,0.06);
-}
-
-.bar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.3));
-  box-shadow: 0 0 4px rgba(255,255,255,0.2);
-  border-radius: 8px;
-  transition: width 0.25s;
-}
-
-
+main.card { padding:18px; border-radius:0; min-height:520px; background:none; box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none; }
+.progress-wrap { display:flex; align-items:center; gap:0; margin-bottom:12px; }
+.progress { flex:1.2; height:10px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.06); }
+.bar { height:100%; width:0%; background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.3)); box-shadow:0 0 4px rgba(255,255,255,0.2); border-radius:8px; transition: width 0.25s; }
 .prog-text { display:none; }
 
-.question {
-  font-size:18px;
-  margin-bottom:12px;
-  font-weight:600;
-}
-
-.options {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.opt-btn {
-  width: 100%;
-  text-align: center;
-  display: flex;           /* use flex to center content vertically */
-  align-items: center;     /* vertical centering */
-  justify-content: center; 
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: 1px solid transparent;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background .2s, color .2s, border .2s;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-
-.opt-btn.selected {
-  background: rgba(255,255,255,0.6);
-  color: #000;
-  font-weight: 700;
-}
-
-.options button {
-  width: 100%;
-}
-  .opt-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  text-align: center;
-}
-
-.opt-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-  
-.opt-icon {
-  width: 20px;       /* smaller, subtle size */
-  height: 20px;
-  filter: invert(1); /* keep white for dark backgrounds */
-  opacity: 0.9;
-  flex-shrink: 0;    /* keeps icon from squishing with long text */
-}
-
-.opt-btn svg {
-  width: 18px;
-  height: 18px;
-  opacity: 0.85;
-}
+.question { font-size:18px; margin-bottom:12px; font-weight:600; }
+.options { display:grid !important; grid-template-columns: 1fr 1fr; gap:10px; }
+.opt-btn { width:100%; text-align:center; display:flex; align-items:center; justify-content:center; padding:14px 16px; border-radius:12px; border:1px solid transparent; font-size:18px; cursor:pointer; transition: background .2s, color .2s, border .2s; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); gap:8px; }
+.opt-btn.selected { background: rgba(255,255,255,0.6); color:#000; font-weight:700; }
+.opt-icon { width:20px; height:20px; filter: invert(1); opacity:0.9; flex-shrink:0; }
+.opt-btn svg { width:18px; height:18px; opacity:0.85; }
 
 /* Controls */
-.controls {
-  display:flex;
-  gap:10px;
-  justify-content:space-between;
-  margin-top:16px;
-}
+.controls { display:flex; gap:10px; justify-content:space-between; margin-top:16px; }
+.back-btn, .next-btn { background: rgba(255,255,255,0.15); color:#fff; font-weight:700; border:0; padding:12px 16px; border-radius:12px; cursor:pointer; transition:opacity 0.2s; backdrop-filter: blur(6px); }
+.back-btn:hover, .next-btn:hover { opacity:0.85; }
+.back-btn[disabled], .next-btn[disabled] { opacity:0.5; cursor:not-allowed; }
 
-  /*next and back format*/
-.back-btn,
-.next-btn {
-  background: rgba(255, 255, 255, 0.15); /* slightly translucent background */
-  color: #fff;  /* white text */
-  font-weight: 700;
-  border: 0;
-  padding: 12px 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  backdrop-filter: blur(6px);
-}
-
-.back-btn:hover,
-.next-btn:hover {
-  opacity: 0.85;
-}
-
-.back-btn[disabled],
-.next-btn[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.small-muted {
-  font-size: 13px;
-  text-align: center;
-  margin-top: 12px;
-}
-
-
-.done-note {
-  font-size:20px;
-  text-align:center;
-  font-weight:700;
-  margin-top:18px;
-}
+.small-muted { font-size:13px; text-align:center; margin-top:12px; }
+.done-note { font-size:20px; text-align:center; font-weight:700; margin-top:18px; }
 
 /* Fade effect */
 .fade-out { opacity:0; transition:opacity 0.8s ease; }
@@ -332,87 +91,32 @@ main.card {
 .meta { font-size:13px; margin-top:10px; text-align:center; }
 .center { display:flex; justify-content:center; }
 .entries-list { margin-top:8px; }
-.entry-row {
-  padding:12px;
-  border-radius:10px;
-  margin-bottom:8px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+.entry-row { padding:12px; border-radius:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
 .entry-row .small { font-size:13px; }
 
 /* Night mode styling */
-body.night {
-  color:#fff;
-}
-
-body.night::before {
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  background:url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat;
-}
-
-body.night .opt-btn {
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.06);
-  color:var(--night-text);
-}
-
-body.night .opt-btn.selected {
-  background:rgba(255,255,255,0.28);
-  color:#12002e;
-  font-weight:700;
-}
+body.night { color:#fff; }
+body.night::before { content:""; position:fixed; inset:0; z-index:-1; background:url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat; }
+body.night .opt-btn { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.06); color:var(--night-text); }
+body.night .opt-btn.selected { background:rgba(255,255,255,0.28); color:#12002e; font-weight:700; }
 
 /* Morning mode styling */
-body.morning {
-  color:#fff;
-}
-
-body.morning::before {
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  background:url("images/morning.jpg") center center / cover no-repeat;
-}
-
-body.morning .opt-btn {
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.25);
-  color:#fff;
-}
-
-body.morning .opt-btn.selected {
-  background:rgba(255,255,255,0.32);
-  color:#fff;
-  font-weight:700;
-}
+body.morning { color:#fff; }
+body.morning::before { content:""; position:fixed; inset:0; z-index:-1; background:url("images/morning.jpg") center center / cover no-repeat; }
+body.morning .opt-btn { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.25); color:#fff; }
+body.morning .opt-btn.selected { background:rgba(255,255,255,0.32); color:#fff; font-weight:700; }
 
 /* Responsive */
-@media (max-width:480px) {
-  body { padding:12px; }
-  .opt-btn { font-size:16px; padding:12px; }
-  input[type=time],
-  input[type=number] { font-size:16px; padding:12px; }
-}
+@media (max-width:480px) { body { padding:12px; } .opt-btn { font-size:16px; padding:12px; } input[type=time], input[type=number] { font-size:16px; padding:12px; } }
 </style>
-
 </head>
 <body class="night">
 <div class="wrap">
   <header>
     <div class="top-actions">
       <div class="top-switch" id="switchWrap">
-        <button class="switch-btn morning" id="morningBtn" title="Morning">
-          <img src="icons/day.svg" class="icon-morning" alt="Morning">
-        </button>
-        <button class="switch-btn night" id="nightBtn" title="Night">
-          <img src="icons/night.svg" class="icon-night" alt="Night">
-        </button>
+        <button class="switch-btn morning" id="morningBtn" title="Morning"><img src="icons/day.svg" class="icon-morning" alt="Morning"></button>
+        <button class="switch-btn night" id="nightBtn" title="Night"><img src="icons/night.svg" class="icon-night" alt="Night"></button>
       </div>
       <button id="btnSettings" class="btn ghost" title="Menu">⋮</button>
       <div id="settingsMenu" class="settings-menu">
@@ -435,6 +139,7 @@ body.morning .opt-btn.selected {
     </div>
   </main>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -494,428 +199,156 @@ document.addEventListener('DOMContentLoaded', () => {
   const contentArea = document.getElementById('contentArea');
   const progressBar = document.getElementById('progressBar');
   const progText = document.getElementById('progText');
-  const backBtn = document.getElementById('backBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const morningBtn = document.getElementById('morningBtn');
-  const nightBtn = document.getElementById('nightBtn');
-  const btnEntries = document.getElementById('btnEntries');
-  const btnExport = document.getElementById('btnExport');
-  const btnSettingsEl = document.getElementById('btnSettings');
-  const settingsMenu = document.getElementById('settingsMenu');
-  const btnClearToday = document.getElementById('btnClearToday');
-  const btnRestart = document.getElementById('btnRestart'); // optional
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const btnSettings = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
+const btnEntries = document.getElementById('btnEntries');
+const btnExport = document.getElementById('btnExport');
+const btnClearToday = document.getElementById('btnClearToday');
+const morningBtn = document.getElementById('morningBtn');
+const nightBtn = document.getElementById('nightBtn');
 
-  let session = null;
-  let list = null;
-  let index = 0;
-  let answers = {};
-  let currentDate = todayKey();
+let currentMode = 'night'; // default mode
+let currentIndex = 0;
+let questions = NIGHT;
+let answers = {};
 
-  // ===== SETTINGS MENU =====
-  if (btnSettingsEl) btnSettingsEl.addEventListener('click', e => {
-    e.stopPropagation();
-    settingsMenu.classList.toggle('show');
-  });
-  document.addEventListener('click', e => {
-    if (!settingsMenu.contains(e.target) && !btnSettingsEl.contains(e.target)) settingsMenu.classList.remove('show');
-  });
+// ===== MODE SWITCH =====
+function setMode(mode){
+    currentMode = mode;
+    document.body.className = mode;
+    questions = mode === 'morning' ? MORNING : NIGHT;
+    currentIndex = 0;
+    answers = loadAll()[todayKey()]?.[mode] || {};
+    renderQuestion();
+}
 
-  // ===== BUTTONS =====
-  if (morningBtn) morningBtn.addEventListener('click', ()=> startManual('morning'));
-  if (nightBtn) nightBtn.addEventListener('click', ()=> startManual('night'));
-  if (backBtn) backBtn.addEventListener('click', ()=>{ if(index>0){ index--; loadUI(); } });
-  if (nextBtn) nextBtn.addEventListener('click', handleNext);
-  if (btnEntries) btnEntries.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); showEntriesView(); });
-  if (btnExport) btnExport.addEventListener('click', ()=>{ settingsMenu.classList.remove('show'); exportAll(); });
-  if (btnClearToday) btnClearToday.addEventListener('click', clearToday);
-  if (btnRestart) btnRestart.addEventListener('click', startNextDay);
+morningBtn.addEventListener('click', ()=>setMode('morning'));
+nightBtn.addEventListener('click', ()=>setMode('night'));
 
-  // ===== INIT =====
-  function init(){
-    const all = loadAll();
-    const today = all[currentDate] || {};
-    if(!today.morning){ startSession('morning'); }
-    else if(!today.night){ startSession('night'); }
-    else { session = null; showOverview(currentDate); }
-  }
+// ===== SETTINGS MENU =====
+btnSettings.addEventListener('click', ()=>settingsMenu.classList.toggle('show'));
+document.addEventListener('click', e=>{
+    if(!btnSettings.contains(e.target) && !settingsMenu.contains(e.target)) settingsMenu.classList.remove('show');
+});
+btnEntries.addEventListener('click', ()=>showEntries());
+btnExport.addEventListener('click', ()=>exportData());
+btnClearToday.addEventListener('click', ()=>clearToday());
 
-  function startManual(which){ startSession(which); }
-
-  function startSession(which){
-    session = which;
-    list = (session === 'morning') ? MORNING : NIGHT;
-    document.body.classList.remove('morning','night');
-    document.body.classList.add(session);
-
-    const all = loadAll();
-    const today = all[currentDate] || {};
-    answers = today[session] ? JSON.parse(JSON.stringify(today[session])) : {};
-    index = 0;
-    for(let i=0;i<list.length;i++){
-      if(!(list[i].key in answers)){
-        index=i;
-        break;
-      }
-    }
-    loadUI();
-  }
-
-  // ===== UI FUNCTIONS =====
-  function loadUI() {
-    if (!list || index >= list.length) {
-      saveSession();
-      if (session === 'morning') {
-        contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
-        progressBar.style.width = '0';
+// ===== RENDER QUESTION =====
+function renderQuestion(){
+    if(currentIndex >= questions.length){
+        contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
+        progressBar.style.width = '100%';
         progText.textContent = '';
-        document.getElementById('controls').style.display = 'none';
-        setTimeout(() => startSession('night'), 1500);
-      } else {
-        session = null;
-        showOverview(currentDate);
-      }
-      return;
+        saveAnswer();
+        return;
     }
-    
-    const q = list[index];
-    contentArea.innerHTML = '';
-    const qEl = document.createElement('div');
-    qEl.className = 'question';
-    qEl.textContent = q.label;
-    contentArea.appendChild(qEl);
+    const q = questions[currentIndex];
+    let html = `<div class="question">${q.label}</div>`;
+    if(q.type === 'time'){
+        html += `<input type="time" id="answerInput" value="${answers[q.key]||''}" />`;
+    } else if(q.type === 'single' || q.type==='multi'){
+        html += '<div class="options">';
+        q.options.forEach(opt=>{
+            const selected = (Array.isArray(answers[q.key]) ? answers[q.key] : [answers[q.key]]).includes(opt) ? 'selected':'';
+            html += `<button class="opt-btn ${selected}">${opt}</button>`;
+        });
+        html += '</div>';
+    }
+    contentArea.innerHTML = html;
+    updateProgress();
+    attachOptionHandlers(q);
+}
 
-    const optionsWrap = document.createElement('div');
-    optionsWrap.className = 'options';
-
-    if (q.type === 'single' || q.type === 'multi') {
-      if (q.key === 'caffeine_alcohol') {
-    // Create a number counter UI for each option
-    q.options.forEach(opt => {
-        const div = document.createElement('div');
-        div.style.display = 'flex';
-        div.style.alignItems = 'center';
-        div.style.justifyContent = 'space-between';
-        div.style.padding = '8px';
-        div.style.border = '1px solid rgba(255,255,255,0.2)';
-        div.style.borderRadius = '10px';
-        div.style.marginBottom = '6px';
-
-        const label = document.createElement('span');
-        label.textContent = opt;
-
-        const controls = document.createElement('div');
-        controls.style.display = 'flex';
-        controls.style.gap = '6px';
-        const minus = document.createElement('button');
-        minus.textContent = '−';
-        minus.style.padding = '2px 8px';
-        const count = document.createElement('span');
-        count.textContent = (answers[q.key] && answers[q.key][opt]) || 0;
-        const plus = document.createElement('button');
-        plus.textContent = '+';
-        plus.style.padding = '2px 8px';
-
-        minus.addEventListener('click', () => {
-            let val = answers[q.key]?.[opt] || 0;
-            if (val > 0) {
-                val--;
-                if (!answers[q.key]) answers[q.key] = {};
-                answers[q.key][opt] = val;
-                count.textContent = val;
+function attachOptionHandlers(q){
+    const opts = document.querySelectorAll('.opt-btn');
+    opts.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            if(q.type==='single'){
+                opts.forEach(b=>b.classList.remove('selected'));
+                btn.classList.add('selected');
+                answers[q.key] = btn.textContent;
+                if(q.autoNext) nextQuestion();
+            } else if(q.type==='multi'){
+                btn.classList.toggle('selected');
+                let arr = Array.from(document.querySelectorAll('.opt-btn.selected')).map(b=>b.textContent);
+                answers[q.key] = arr;
             }
+            saveAnswer();
         });
-
-        plus.addEventListener('click', () => {
-            let val = answers[q.key]?.[opt] || 0;
-            val++;
-            if (!answers[q.key]) answers[q.key] = {};
-            answers[q.key][opt] = val;
-            count.textContent = val;
-        });
-
-        controls.appendChild(minus);
-        controls.appendChild(count);
-        controls.appendChild(plus);
-
-        div.appendChild(label);
-        div.appendChild(controls);
-        optionsWrap.appendChild(div);
     });
-    nextBtn.disabled = false; // allow next even if counts are 0
-} else {
-    // Existing single/multi option logic
-    q.options.forEach(opt => {
-        ...
-    });
-}
-
-      q.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'opt-btn';
-btn.innerHTML = `
-  <img src="${getIconForOption(opt)}" alt="${opt}" class="opt-icon">
-  <span class="opt-text">${opt}</span>
-`;
-
-function getIconForOption(opt) {
-  // Map known options to specific files, or auto-generate filenames
-  const icons = {
-    'UTI feeling': 'icons/bladder1.svg',
-    'UTI': 'icons/bladder2.svg',
-    'Headache': 'icons/head (1).svg',
-    'Migraine': 'icons/headache.svg',
-    'Ulcer': 'icons/mouth.svg',    
-    'Nausea': 'icons/sick.svg',   
-    'Gassy': 'icons/FHIR-logo.svg',
-    'Trapped gas': 'icons/stomach.svg',
-    'Cold/flu': 'icons/cold-chain.svg',   
-    'Allergies': 'icons/flower.svg',
-    'Vomiting': 'icons/vomiting.svg',
-    '1mg benzo': 'icons/loraz1.svg',
-    '2mg benzo': 'icons/loraz2.svg',
-    '3mg benzo': 'icons/loraz3.svg',
-    'Painkillers': 'icons/ibu.svg',
-    'Antisickness': 'icons/stomach.svg',
-    'Antihistamine': 'icons/flower.svg',
-    'D-Mannose': 'icons/bladder2.svg',
-    'Antibiotic' : 'icons/bacteria.svg',
-  'Went to bed late but slept in': 'icons/placeholder.svg',
-  'Went to bed late but woke early': 'icons/placeholder.svg',
-  'Went to bed early but woke really early': 'icons/placeholder.svg',
-  "Couldn't fall asleep": 'icons/placeholder.svg',
-  'Lightly disrupted': 'icons/placeholder.svg',
-  'Frequently disrupted': 'icons/placeholder.svg',
-  'Fine': 'icons/placeholder.svg',
-  'Yes': 'icons/placeholder.svg',
-  'No': 'icons/placeholder.svg',
-  'None': 'icons/placeholder.svg',
-  'Bare minimum': 'icons/placeholder.svg',
-  'Once': 'icons/placeholder.svg',
-  'Twice': 'icons/placeholder.svg',
-  'Nope': 'icons/placeholder.svg',
-  'Seconds': 'icons/placeholder.svg',
-  'Briefly': 'icons/placeholder.svg',
-  '1h+': 'icons/placeholder.svg',
-  '2h+': 'icons/placeholder.svg',
-  'Fair amount': 'icons/placeholder.svg',
-  'All day': 'icons/placeholder.svg',
-  'Bedrot': 'icons/placeholder.svg',
-  'Mostly wasted': 'icons/placeholder.svg',
-  'Chilled': 'icons/placeholder.svg',
-  'Somewhat productive': 'icons/placeholder.svg',
-  'Hyperproductive': 'icons/placeholder.svg',
-  'Busy': 'icons/placeholder.svg',
-  'Good': 'icons/placeholder.svg',
-  'Sometimes': 'icons/placeholder.svg',
-  'Elated': 'icons/placeholder.svg',
-  'Sensitive': 'icons/placeholder.svg',
-  'Pretty good': 'icons/placeholder.svg',
-  'Irritated': 'icons/placeholder.svg',
-  'Somewhat insecure': 'icons/placeholder.svg',
-  'Anxiously insecure': 'icons/placeholder.svg',
-  'Anguish': 'icons/placeholder.svg',
-  'Disaster': 'icons/placeholder.svg',
-  'Very messy': 'icons/placeholder.svg',
-  'A bit messy': 'icons/placeholder.svg',
-  'Fine - a few dishes': 'icons/placeholder.svg',
-  'Pretty tidy': 'icons/placeholder.svg',
-  'Spotless': 'icons/placeholder.svg',
-  "Hadn't thought about it": 'icons/placeholder.svg',
-  'Passing thoughts': 'icons/placeholder.svg',
-  'Momentarily down': 'icons/placeholder.svg',
-  'Depressed or gross': 'icons/placeholder.svg',
-  'Fixated': 'icons/placeholder.svg',
-  'Disgusting / really preoccupied': 'icons/placeholder.svg',
-  'All-consuming': 'icons/placeholder.svg',
-  'Binged': 'icons/placeholder.svg',
-  'Grazed random crap': 'icons/placeholder.svg',
-  'Indulgent but satisfying': 'icons/placeholder.svg',
-  'Big portions of good food': 'icons/placeholder.svg',
-  'Balanced food + portions': 'icons/placeholder.svg',
-  'Restricted food + portions': 'icons/placeholder.svg',
-  'none': 'icons/placeholder.svg',
-  'Somatic anxiety': 'icons/placeholder.svg',
-  'Mental anxiety': 'icons/placeholder.svg',
-  'OCD': 'icons/placeholder.svg',
-  'Depression': 'icons/placeholder.svg',
-  'BPD': 'icons/placeholder.svg',
-  'ADHD': 'icons/placeholder.svg',
-  'BDD': 'icons/placeholder.svg',
-  '1 coffee': 'icons/placeholder.svg',
-  '1 tea': 'icons/placeholder.svg',
-  '2 teas': 'icons/placeholder.svg',
-  '3 teas': 'icons/placeholder.svg',
-  '2 coffees': 'icons/placeholder.svg',
-  'mate': 'icons/placeholder.svg',
-  '1-2 drinks': 'icons/placeholder.svg',
-  '2+ drinks': 'icons/placeholder.svg',
-  'Body fat': 'icons/placeholder.svg',
-  'Body size': 'icons/placeholder.svg',
-  'Dirty / messy flat': 'icons/placeholder.svg',
-  'Skin': 'icons/placeholder.svg',
-  'Hair': 'icons/placeholder.svg',
-  'Clothes': 'icons/placeholder.svg',
-  'Outside environment': 'icons/placeholder.svg',
-  'Psych': 'icons/placeholder.svg',
-  'Therapy (online)': 'icons/placeholder.svg',
-  'Therapy (in-person)': 'icons/placeholder.svg',
-  'Doctor': 'icons/placeholder.svg',
-  'Blood tests': 'icons/placeholder.svg',
-  'Tidying / cleaning': 'icons/placeholder.svg',
-  'City walking': 'icons/placeholder.svg',
-  'Stroll': 'icons/placeholder.svg',
-  'Quick dog walk': 'icons/placeholder.svg',
-  'Long dog walk': 'icons/placeholder.svg',
-  'Hike': 'icons/placeholder.svg',
-  'Jog': 'icons/placeholder.svg',
-  'General public': 'icons/placeholder.svg',
-  'Health professional': 'icons/placeholder.svg',
-  'Acquaintances': 'icons/placeholder.svg',
-  'Friends': 'icons/placeholder.svg',
-  'Friends of L': 'icons/placeholder.svg',
-  'Family': 'icons/placeholder.svg',
-  'Shakti mat': 'icons/placeholder.svg',
-  'Stretching': 'icons/placeholder.svg',
-  'Moments of mindfulness': 'icons/placeholder.svg',
-  'Meditation': 'icons/placeholder.svg',
-  'Therapy notes': 'icons/placeholder.svg',
-  'Deep breathing': 'icons/placeholder.svg',
-  'Painting': 'icons/placeholder.svg',
-  'DIY': 'icons/placeholder.svg',
-  'Guitar': 'icons/placeholder.svg',
-  'Sewing': 'icons/placeholder.svg',
-  'Van stuff': 'icons/placeholder.svg',
-  'Reading': 'icons/placeholder.svg'
-  };
-
-  return icons[opt];
-}
-
-        if (q.type === 'multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
-        if (q.type === 'single' && answers[q.key] === opt) btn.classList.add('selected');
-
-        btn.addEventListener('click', () => {
-          if (q.type === 'single') {
-            answers[q.key] = opt;
-            nextBtn.disabled = false;
-            if (q.autoNext) handleNext();
-            else loadUI();
-          } else {
-            if (!answers[q.key]) answers[q.key] = [];
-            if (answers[q.key].includes(opt)) answers[q.key] = answers[q.key].filter(x => x !== opt);
-            else answers[q.key].push(opt);
-            btn.classList.toggle('selected');
-            nextBtn.disabled = answers[q.key].length === 0;
-          }
+    const input = document.getElementById('answerInput');
+    if(input){
+        input.addEventListener('change', ()=>{
+            answers[q.key] = input.value;
+            saveAnswer();
+            if(q.autoNext) nextQuestion();
         });
-
-        optionsWrap.appendChild(btn);
-      });
-    } else if (q.type === 'time' || q.type === 'number') {
-      const inp = document.createElement('input');
-      inp.type = q.type;
-      inp.value = answers[q.key] || '';
-      inp.addEventListener('input', () => { answers[q.key] = inp.value; nextBtn.disabled = !inp.value; });
-      optionsWrap.appendChild(inp);
-    } else if (q.type === 'auto') {
-      const span = document.createElement('span');
-      span.textContent = answers[q.key] || 'Auto-filled';
-      optionsWrap.appendChild(span);
-      nextBtn.disabled = false;
     }
-    contentArea.appendChild(optionsWrap);
+}
 
-    const progress = ((index + 1) / list.length) * 100;
-    progressBar.style.width = progress + '%';
-    progText.textContent = '';
+// ===== NAVIGATION =====
+function nextQuestion(){
+    if(currentIndex < questions.length-1){ currentIndex++; renderQuestion(); }
+}
+function backQuestion(){
+    if(currentIndex>0){ currentIndex--; renderQuestion(); }
+}
+backBtn.addEventListener('click', backQuestion);
+nextBtn.addEventListener('click', nextQuestion);
 
-    backBtn.style.display = (index === 0) ? 'none' : 'inline-flex';
-    nextBtn.disabled = !(answers[q.key] && ((q.type === 'single')||(q.type==='time')||(q.type==='number')||(q.type==='auto')||(q.type==='multi')));
-    document.getElementById('controls').style.display = 'flex';
-  }
+// ===== PROGRESS BAR =====
+function updateProgress(){
+    const pct = Math.round((currentIndex / questions.length) * 100);
+    progressBar.style.width = pct+'%';
+    progText.textContent = `${pct}%`;
+}
 
-  function handleNext() {
-    const q = list[index];
-    if (!answers[q.key]) return;
-    index++;
-    loadUI();
-  }
-
-  function saveSession() {
+// ===== SAVE / LOAD =====
+function saveAnswer(){
     const all = loadAll();
-    if (!all[currentDate]) all[currentDate] = {};
-    all[currentDate][session] = answers;
+    if(!all[todayKey()]) all[todayKey()]={};
+    all[todayKey()][currentMode] = answers;
     saveAll(all);
-  }
+}
 
-  function showOverview(date) {
-    session = null;
-    const dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
-    contentArea.innerHTML = `<div class="done-note">${dayName} complete.</div>`;
-    progressBar.style.width = '0';
-    progText.textContent = '';
-    document.getElementById('controls').style.display = 'none';
-  }
-
-  function showEntriesView() {
+// ===== ENTRIES / EXPORT / CLEAR =====
+function showEntries(){
     const all = loadAll();
-    contentArea.innerHTML = '<div class="entries-list"></div>';
-    const listWrap = contentArea.querySelector('.entries-list');
-    Object.keys(all).sort().reverse().forEach(day => {
-      const row = document.createElement('div');
-      row.className = 'entry-row';
-      row.innerHTML = `<div>${day}</div><div class="small">morning:${all[day].morning ? Object.keys(all[day].morning).length : 0} | night:${all[day].night ? Object.keys(all[day].night).length : 0}</div>`;
-      listWrap.appendChild(row);
+    let html = '<div class="entries-list">';
+    Object.keys(all).forEach(date=>{
+        html += `<div class="entry-row"><div>${date}</div><div class="small">Mode: Morning/Night</div></div>`;
     });
-  }
+    html += '</div>';
+    contentArea.innerHTML = html;
+    progressBar.style.width = '0%';
+    progText.textContent = '';
+}
 
-  function exportAll() {
-    const all = loadAll();
-    const blob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
+function exportData(){
+    const data = JSON.stringify(loadAll(), null, 2);
+    const blob = new Blob([data], {type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'daily-tracker-data.json';
+    a.download = 'dailyTrackerData.json';
     a.click();
     URL.revokeObjectURL(url);
-  }
+}
 
-  function startNextDay() {
-    currentDate = todayKey();
-    session = null;
-    startSession('morning');
-  }
+function clearToday(){
+    const all = loadAll();
+    delete all[todayKey()];
+    saveAll(all);
+    currentIndex=0;
+    answers={};
+    renderQuestion();
+}
 
-  function clearToday() {
-    if(confirm("Are you sure you want to clear all answers for today?")) {
-      const all = loadAll();
-      delete all[currentDate];
-      saveAll(all);
-      session = null;
-      index = 0;
-      answers = {};
-      progressBar.style.width = '0%';
-      progText.textContent = '';
-      document.getElementById('controls').style.display = 'none';
-      settingsMenu.classList.remove('show');
-      contentArea.innerHTML = `<div class="done-note fade-out">Today's data cleared.</div>`;
-      setTimeout(() => { 
-        const msg = contentArea.querySelector('.done-note'); 
-        if(msg) msg.style.opacity = '0'; 
-      }, 50);
-      setTimeout(() => { startSession('morning'); document.getElementById('controls').style.display = 'flex'; }, 2000);
-    }
-  }
-
-  // ===== INITIALIZE APP =====
-  init();
-
-  // Optional: service worker
-  // if ('serviceWorker' in navigator) {
-  //   navigator.serviceWorker.register('service-worker.js')
-  //     .then(() => console.log('Service Worker registered.'))
-  //     .catch(err => console.error('Service Worker registration failed:', err));
-  // }
+// ===== INIT =====
+setMode('night');
 
 });
 </script>
