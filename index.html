@@ -17,10 +17,13 @@
   --card-radius:14px;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
+
 * { box-sizing:border-box; }
 html, body { height:100%; }
+
 body {
-  margin:0; padding:18px;
+  margin:0;
+  padding:18px;
   display:flex;
   justify-content:center;
   align-items:flex-start;
@@ -33,81 +36,267 @@ body {
 header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:8px; position:relative; }
 h1 { margin:0; font-size:20px; }
 
-.top-actions { display:flex; align-items:center; justify-content:space-between; width:100%; }
+.top-actions {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+}
 
-/* MODE SWITCH ICONS */
-.top-switch { display:flex; gap:8px; margin-bottom:12px; }
-.switch-btn { flex:1; padding:10px; border:none; border-radius:10px; background:transparent; cursor:pointer; display:flex; justify-content:center; align-items:center; transition: background 0.25s ease; }
-.switch-btn.night img { width:25px; height:25px; }
-.switch-btn.morning img { width:24px; height:24px; }
-.switch-btn img { filter: invert(1); opacity:0.5; transform:scale(1); transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease; }
-.switch-btn:hover { background: rgba(255,255,255,0.08); border-radius:50%; }
-body.morning .switch-btn.morning { background: rgba(255,255,255,0.12); border-radius:50%; }
-body.morning .switch-btn.morning img { opacity:1; transform:scale(1.15); }
-body.night .switch-btn.night { background: rgba(255,255,255,0.12); border-radius:50%; }
-body.night .switch-btn.night img { opacity:1; transform:scale(1.12); }
-.switch-btn.morning img:hover { opacity:0.85; transform:scale(1.18); }
-.switch-btn.night img:hover { opacity:0.85; transform:scale(1.15); }
+/* MODE SWITCH ICONS — translucent inactive, bright active, scale effect */
+.top-switch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.switch-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.25s ease;
+}
+
+.switch-btn.night img {
+  width: 25px;
+  height: 25px;
+}
+
+.switch-btn.morning img {
+  width: 24px;
+  height: 24px;
+}
+
+.switch-btn img {
+  filter: invert(1);
+  opacity: 0.5;
+  transform: scale(1);
+  transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease;
+}
+
+.switch-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+}
+
+body.morning .switch-btn.morning {
+  background: rgba(255,255,255,0.12);
+  border-radius: 50%;
+}
+body.morning .switch-btn.morning img { opacity: 1; transform: scale(1.15); }
+
+body.night .switch-btn.night {
+  background: rgba(255,255,255,0.12);
+  border-radius: 50%;
+}
+body.night .switch-btn.night img { opacity: 1; transform: scale(1.12); }
+
+.switch-btn.morning img:hover { opacity: 0.85; transform: scale(1.18); }
+.switch-btn.night img:hover { opacity: 0.85; transform: scale(1.15); }
 
 /* Settings button */
-#btnSettings { font-size:22px; padding:6px 10px; line-height:1; background:transparent; border:none; color:#fff; cursor:pointer; margin-left:auto; display:flex; align-items:center; justify-content:center; transition:opacity 0.2s ease; margin-top:-10px; }
+#btnSettings {
+  font-size:22px;
+  padding:6px 10px;
+  line-height:1;
+  background:transparent;
+  border:none;
+  color:#fff;
+  cursor:pointer;
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:opacity 0.2s ease;
+  margin-top:-10px;
+}
+
 #btnSettings:hover { opacity:0.8; }
 
 /* Settings dropdown */
 .settings-menu {
-  position:absolute; top:42px; right:0; background:rgba(255,255,255,0.25); backdrop-filter:blur(16px); border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.3); flex-direction:column; padding:6px; z-index:20; display:none; min-width:150px;
+  position:absolute;
+  top:42px;
+  right:0;
+  background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(16px);
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  flex-direction:column;
+  padding:6px;
+  z-index:20;
+  display:none;
+  min-width:150px;
 }
+
 .settings-menu.show { display:flex; }
-.settings-menu button { background:transparent; border:none; padding:10px 16px; width:100%; text-align:left; cursor:pointer; font-weight:600; transition:background 0.2s; }
+
+.settings-menu button {
+  background:transparent;
+  border:none;
+  padding:10px 16px;
+  width:100%;
+  text-align:left;
+  cursor:pointer;
+  font-weight:600;
+  transition:background 0.2s;
+}
+
 .settings-menu button:hover { background:rgba(0,0,0,0.05); }
 
 /* Main card + questions */
-main.card { padding:18px; border-radius:0; min-height:520px; background:none; box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none; }
-.progress-wrap { display:flex; align-items:center; gap:0; margin-bottom:12px; }
-.progress { flex:1.2; height:10px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.06); }
-.bar { height:100%; width:0%; background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.3)); box-shadow:0 0 4px rgba(255,255,255,0.2); border-radius:8px; transition: width 0.25s; }
+main.card {
+  padding:18px;
+  border-radius:0;
+  min-height:520px;
+  background:none;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+
+.progress-wrap {
+  display:flex;
+  align-items:center;
+  gap:0;
+  margin-bottom:12px;
+}
+
+.progress {
+  flex:1.2;
+  height:10px;
+  border-radius:8px;
+  overflow:hidden;
+  background:rgba(255,255,255,0.06);
+}
+
+.bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.3));
+  box-shadow: 0 0 4px rgba(255,255,255,0.2);
+  border-radius: 8px;
+  transition: width 0.25s;
+}
+
 .prog-text { display:none; }
 
-.question { font-size:18px; margin-bottom:12px; font-weight:600; }
-.options { display:grid !important; grid-template-columns: 1fr 1fr; gap:10px; }
-.opt-btn { width:100%; text-align:center; display:flex; align-items:center; justify-content:center; padding:14px 16px; border-radius:12px; border:1px solid transparent; font-size:18px; cursor:pointer; transition: background .2s, color .2s, border .2s; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); gap:8px; }
-.opt-btn.selected { background: rgba(255,255,255,0.6); color:#000; font-weight:700; }
-.opt-icon { width:20px; height:20px; filter: invert(1); opacity:0.9; flex-shrink:0; }
-.opt-btn svg { width:18px; height:18px; opacity:0.85; }
+.question {
+  font-size:18px;
+  margin-bottom:12px;
+  font-weight:600;
+}
 
-/* Controls */
-.controls { display:flex; gap:10px; justify-content:space-between; margin-top:16px; }
-.back-btn, .next-btn { background: rgba(255,255,255,0.15); color:#fff; font-weight:700; border:0; padding:12px 16px; border-radius:12px; cursor:pointer; transition:opacity 0.2s; backdrop-filter: blur(6px); }
-.back-btn:hover, .next-btn:hover { opacity:0.85; }
-.back-btn[disabled], .next-btn[disabled] { opacity:0.5; cursor:not-allowed; }
+.options {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
 
-.small-muted { font-size:13px; text-align:center; margin-top:12px; }
+.opt-btn {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background .2s, color .2s, border .2s;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.opt-btn.selected {
+  background: rgba(255,255,255,0.6);
+  color: #000;
+  font-weight: 700;
+}
+
+.options button { width: 100%; }
+
+.controls {
+  display:flex;
+  gap:10px;
+  justify-content:space-between;
+  margin-top:16px;
+}
+
+.back-btn,
+.next-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 700;
+  border: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  backdrop-filter: blur(6px);
+}
+
+.back-btn:hover,
+.next-btn:hover { opacity: 0.85; }
+.back-btn[disabled],
+.next-btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+.small-muted { font-size: 13px; text-align: center; margin-top: 12px; }
 .done-note { font-size:20px; text-align:center; font-weight:700; margin-top:18px; }
-
-/* Fade effect */
 .fade-out { opacity:0; transition:opacity 0.8s ease; }
 
 /* Entries list */
 .meta { font-size:13px; margin-top:10px; text-align:center; }
 .center { display:flex; justify-content:center; }
 .entries-list { margin-top:8px; }
-.entry-row { padding:12px; border-radius:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+.entry-row {
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 .entry-row .small { font-size:13px; }
 
 /* Night mode styling */
 body.night { color:#fff; }
-body.night::before { content:""; position:fixed; inset:0; z-index:-1; background:url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat; }
+body.night::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:url("https://i.pinimg.com/1200x/6c/d7/2d/6cd72d1678453c8f4d7c4afa59a617e3.jpg") center center / cover no-repeat;
+}
 body.night .opt-btn { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.06); color:var(--night-text); }
 body.night .opt-btn.selected { background:rgba(255,255,255,0.28); color:#12002e; font-weight:700; }
 
 /* Morning mode styling */
 body.morning { color:#fff; }
-body.morning::before { content:""; position:fixed; inset:0; z-index:-1; background:url("images/morning.jpg") center center / cover no-repeat; }
+body.morning::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:url("images/morning.jpg") center center / cover no-repeat;
+}
 body.morning .opt-btn { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.25); color:#fff; }
 body.morning .opt-btn.selected { background:rgba(255,255,255,0.32); color:#fff; font-weight:700; }
 
 /* Responsive */
-@media (max-width:480px) { body { padding:12px; } .opt-btn { font-size:16px; padding:12px; } input[type=time], input[type=number] { font-size:16px; padding:12px; } }
+@media (max-width:480px) {
+  body { padding:12px; }
+  .opt-btn { font-size:16px; padding:12px; }
+  input[type=time],
+  input[type=number] { font-size:16px; padding:12px; }
+}
 </style>
 </head>
 <body class="night">
@@ -115,8 +304,12 @@ body.morning .opt-btn.selected { background:rgba(255,255,255,0.32); color:#fff; 
   <header>
     <div class="top-actions">
       <div class="top-switch" id="switchWrap">
-        <button class="switch-btn morning" id="morningBtn" title="Morning"><img src="icons/day.svg" class="icon-morning" alt="Morning"></button>
-        <button class="switch-btn night" id="nightBtn" title="Night"><img src="icons/night.svg" class="icon-night" alt="Night"></button>
+        <button class="switch-btn morning" id="morningBtn" title="Morning">
+          <img src="icons/day.svg" class="icon-morning" alt="Morning">
+        </button>
+        <button class="switch-btn night" id="nightBtn" title="Night">
+          <img src="icons/night.svg" class="icon-night" alt="Night">
+        </button>
       </div>
       <button id="btnSettings" class="btn ghost" title="Menu">⋮</button>
       <div id="settingsMenu" class="settings-menu">
@@ -186,170 +379,131 @@ document.addEventListener('DOMContentLoaded', () => {
     {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none']},
     {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none']},
     {key:'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading', 'none']},
-    {key:'closed_eyes_time', type:'time', label:'What time did you close your eyes?', autoNext:true},
+    {key:'closed_eyes_time', type:'time', label:'When did you close your eyes?'}
   ];
 
-  // ===== STORAGE =====
-  const STORAGE_KEY = 'dailyTracker_v5';
-  function todayKey(){ return new Date().toISOString().slice(0,10); }
-  function loadAll(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e){ return {}; } }
-  function saveAll(obj){ localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); }
+  let currentIndex = 0;
+  let answers = {};
 
-  // ===== UI REFS =====
+  // ===== DISPLAY =====
   const contentArea = document.getElementById('contentArea');
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
   const progressBar = document.getElementById('progressBar');
-  const progText = document.getElementById('progText');
-const backBtn = document.getElementById('backBtn');
-const nextBtn = document.getElementById('nextBtn');
-const btnSettings = document.getElementById('btnSettings');
-const settingsMenu = document.getElementById('settingsMenu');
-const btnEntries = document.getElementById('btnEntries');
-const btnExport = document.getElementById('btnExport');
-const btnClearToday = document.getElementById('btnClearToday');
-const morningBtn = document.getElementById('morningBtn');
-const nightBtn = document.getElementById('nightBtn');
 
-let currentMode = 'night'; // default mode
-let currentIndex = 0;
-let questions = NIGHT;
-let answers = {};
+  const getQuestions = () => (document.body.classList.contains('morning') ? MORNING : NIGHT);
 
-// ===== MODE SWITCH =====
-function setMode(mode){
-    currentMode = mode;
-    document.body.className = mode;
-    questions = mode === 'morning' ? MORNING : NIGHT;
-    currentIndex = 0;
-    answers = loadAll()[todayKey()]?.[mode] || {};
-    renderQuestion();
-}
-
-morningBtn.addEventListener('click', ()=>setMode('morning'));
-nightBtn.addEventListener('click', ()=>setMode('night'));
-
-// ===== SETTINGS MENU =====
-btnSettings.addEventListener('click', ()=>settingsMenu.classList.toggle('show'));
-document.addEventListener('click', e=>{
-    if(!btnSettings.contains(e.target) && !settingsMenu.contains(e.target)) settingsMenu.classList.remove('show');
-});
-btnEntries.addEventListener('click', ()=>showEntries());
-btnExport.addEventListener('click', ()=>exportData());
-btnClearToday.addEventListener('click', ()=>clearToday());
-
-// ===== RENDER QUESTION =====
-function renderQuestion(){
-    if(currentIndex >= questions.length){
-        contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
-        progressBar.style.width = '100%';
-        progText.textContent = '';
-        saveAnswer();
-        return;
+  function loadUI() {
+    const questions = getQuestions();
+    if (currentIndex >= questions.length) {
+      contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
+      backBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+      progressBar.style.width = '100%';
+      return;
     }
+
     const q = questions[currentIndex];
-    let html = `<div class="question">${q.label}</div>`;
-    if(q.type === 'time'){
-        html += `<input type="time" id="answerInput" value="${answers[q.key]||''}" />`;
-    } else if(q.type === 'single' || q.type==='multi'){
-        html += '<div class="options">';
-        q.options.forEach(opt=>{
-            const selected = (Array.isArray(answers[q.key]) ? answers[q.key] : [answers[q.key]]).includes(opt) ? 'selected':'';
-            html += `<button class="opt-btn ${selected}">${opt}</button>`;
-        });
-        html += '</div>';
+    let html = `<div class="question">${q.label}</div><div class="options">`;
+
+    if (q.type === 'single') {
+      q.options.forEach(opt => {
+        html += `<button class="opt-btn" onclick="selectOption('${opt}')">${opt}</button>`;
+      });
+    } else if (q.type === 'multi') {
+      // Special case: caffeine/alcohol counter
+      if (q.key === 'caffeine_alcohol') {
+        html += `<div id="cafAlcCounter" style="margin-bottom:12px; font-weight:bold;">Selected: 0</div>`;
+      }
+      q.options.forEach(opt => {
+        html += `<button class="opt-btn" onclick="toggleOption('${opt}')">${opt}</button>`;
+      });
+    } else if (q.type === 'time') {
+      html += `<input type="time" id="timeInput" onchange="selectOption(this.value)"/>`;
     }
-    contentArea.innerHTML = html;
-    updateProgress();
-    attachOptionHandlers(q);
-}
-
-function attachOptionHandlers(q){
-    const opts = document.querySelectorAll('.opt-btn');
-    opts.forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-            if(q.type==='single'){
-                opts.forEach(b=>b.classList.remove('selected'));
-                btn.classList.add('selected');
-                answers[q.key] = btn.textContent;
-                if(q.autoNext) nextQuestion();
-            } else if(q.type==='multi'){
-                btn.classList.toggle('selected');
-                let arr = Array.from(document.querySelectorAll('.opt-btn.selected')).map(b=>b.textContent);
-                answers[q.key] = arr;
-            }
-            saveAnswer();
-        });
-    });
-    const input = document.getElementById('answerInput');
-    if(input){
-        input.addEventListener('change', ()=>{
-            answers[q.key] = input.value;
-            saveAnswer();
-            if(q.autoNext) nextQuestion();
-        });
-    }
-}
-
-// ===== NAVIGATION =====
-function nextQuestion(){
-    if(currentIndex < questions.length-1){ currentIndex++; renderQuestion(); }
-}
-function backQuestion(){
-    if(currentIndex>0){ currentIndex--; renderQuestion(); }
-}
-backBtn.addEventListener('click', backQuestion);
-nextBtn.addEventListener('click', nextQuestion);
-
-// ===== PROGRESS BAR =====
-function updateProgress(){
-    const pct = Math.round((currentIndex / questions.length) * 100);
-    progressBar.style.width = pct+'%';
-    progText.textContent = `${pct}%`;
-}
-
-// ===== SAVE / LOAD =====
-function saveAnswer(){
-    const all = loadAll();
-    if(!all[todayKey()]) all[todayKey()]={};
-    all[todayKey()][currentMode] = answers;
-    saveAll(all);
-}
-
-// ===== ENTRIES / EXPORT / CLEAR =====
-function showEntries(){
-    const all = loadAll();
-    let html = '<div class="entries-list">';
-    Object.keys(all).forEach(date=>{
-        html += `<div class="entry-row"><div>${date}</div><div class="small">Mode: Morning/Night</div></div>`;
-    });
     html += '</div>';
     contentArea.innerHTML = html;
-    progressBar.style.width = '0%';
-    progText.textContent = '';
-}
 
-function exportData(){
-    const data = JSON.stringify(loadAll(), null, 2);
-    const blob = new Blob([data], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'dailyTrackerData.json';
-    a.click();
-    URL.revokeObjectURL(url);
-}
+    updateProgress();
+  }
 
-function clearToday(){
-    const all = loadAll();
-    delete all[todayKey()];
-    saveAll(all);
-    currentIndex=0;
-    answers={};
-    renderQuestion();
-}
+  function updateProgress() {
+    const questions = getQuestions();
+    const pct = ((currentIndex)/questions.length)*100;
+    progressBar.style.width = pct + '%';
+  }
 
-// ===== INIT =====
-setMode('night');
+  window.selectOption = function(opt) {
+    const q = getQuestions()[currentIndex];
+    answers[q.key] = opt;
+    // Auto-next if needed
+    if (q.autoNext) {
+      currentIndex++;
+      loadUI();
+    }
+  }
 
+  window.toggleOption = function(opt) {
+    const q = getQuestions()[currentIndex];
+    if (!answers[q.key]) answers[q.key] = [];
+    const arr = answers[q.key];
+    const idx = arr.indexOf(opt);
+    if (idx > -1) arr.splice(idx,1);
+    else arr.push(opt);
+
+    // Update caffeine/alcohol counter if this is that question
+    if (q.key === 'caffeine_alcohol') {
+      const counter = document.getElementById('cafAlcCounter');
+      counter.textContent = 'Selected: ' + arr.length;
+    }
+
+    // Toggle button style
+    const buttons = document.querySelectorAll('.opt-btn');
+    buttons.forEach(btn => {
+      if (btn.textContent === opt) btn.classList.toggle('selected');
+    });
+  }
+
+  backBtn.onclick = function() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      loadUI();
+    }
+  }
+
+  nextBtn.onclick = function() {
+    const questions = getQuestions();
+    const q = questions[currentIndex];
+    if (q.type !== 'multi' && q.type !== 'time' && !answers[q.key]) {
+      alert('Please select an option.');
+      return;
+    }
+    currentIndex++;
+    loadUI();
+  }
+
+  // ===== MODE SWITCH =====
+  document.getElementById('morningBtn').onclick = () => {
+    document.body.classList.add('morning');
+    document.body.classList.remove('night');
+    currentIndex = 0;
+    answers = {};
+    loadUI();
+  }
+  document.getElementById('nightBtn').onclick = () => {
+    document.body.classList.add('night');
+    document.body.classList.remove('morning');
+    currentIndex = 0;
+    answers = {};
+    loadUI();
+  }
+
+  // ===== SETTINGS MENU =====
+  const btnSettings = document.getElementById('btnSettings');
+  const settingsMenu = document.getElementById('settingsMenu');
+  btnSettings.onclick = () => settingsMenu.classList.toggle('show');
+
+  loadUI();
 });
 </script>
 </body>
