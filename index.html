@@ -415,10 +415,11 @@ document.addEventListener('DOMContentLoaded', () => {
     {key:'closed_eyes_time', type:'time', label:'When did you close your eyes?'}
   ];
 
-  let currentIndex = 0;
-  let answers = {};
+let currentIndex = 0;
+let answers = {};
 
-  function updateCounter(opt, delta) {
+// ===== COUNTER FUNCTION =====
+function updateCounter(opt, delta) {
   if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
   let val = answers['caffeine_alcohol'][opt] || 0;
   val += delta;
@@ -428,78 +429,118 @@ document.addEventListener('DOMContentLoaded', () => {
   if (el) el.textContent = val;
 }
 
-  // ===== DISPLAY =====
-  const contentArea = document.getElementById('contentArea');
-  const backBtn = document.getElementById('backBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const progressBar = document.getElementById('progressBar');
+// ===== DISPLAY =====
+const contentArea = document.getElementById('contentArea');
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressBar = document.getElementById('progressBar');
 
-  const getQuestions = () => (document.body.classList.contains('morning') ? MORNING : NIGHT);
+const getQuestions = () => (document.body.classList.contains('morning') ? MORNING : NIGHT);
 
-  function loadUI() {
-    const questions = getQuestions();
-    if (currentIndex >= questions.length) {
-      contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
-      backBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-      progressBar.style.width = '100%';
-      return;
+function loadUI() {
+  const questions = getQuestions();
+  if (currentIndex >= questions.length) {
+    contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    progressBar.style.width = '100%';
+    return;
+  }
+
+  const q = questions[currentIndex];
+  let html = `<div class="question">${q.label}</div><div class="options">`;
+
+  if (q.type === 'single') {
+    q.options.forEach(opt => {
+      html += `<button class="opt-btn" onclick="selectOption('${opt}')">${opt}</button>`;
+    });
+
+  } else if (q.type === 'multi') {
+    if (q.key === 'caffeine_alcohol') {
+      // Clear html first for counter UI
+      html = '';
+      q.options.forEach(opt => {
+        html += `
+          <div class="counter-item" style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border:1px solid rgba(255,255,255,0.2);border-radius:10px;margin-bottom:6px;">
+            <span class="counter-label">${opt}</span>
+            <div class="counter-controls" style="display:flex;gap:6px;align-items:center;">
+              <button type="button" onclick="updateCounter('${opt}', -1)">−</button>
+              <span id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
+              <button type="button" onclick="updateCounter('${opt}', 1)">+</button>
+            </div>
+          </div>
+        `;
+      });
+      nextBtn.disabled = false; // allow next even if counts are 0
+    } else {
+      // Regular multi options
+      q.options.forEach(opt => {
+        html += `<button class="opt-btn" onclick="toggleOption('${opt}')">${opt}</button>`;
+      });
     }
 
-    const q = questions[currentIndex];
-    let html = `<div class="question">${q.label}</div><div class="options">`;
-
-    if (q.type === 'single') {
-      q.options.forEach(opt => {
-        html += `<button class="opt-btn" onclick="selectOption('${opt}')">${opt}</button>`;
-      });
- } else if (q.type === 'multi') {
-  if (q.key === 'caffeine_alcohol') {
-    // Clear html first
-    html = '';
-    q.options.forEach(opt => {
-      html += `
-        <div class="counter-item">
-          <span class="counter-label">${opt}</span>
-          <div class="counter-controls">
-            <button type="button" onclick="updateCounter('${opt}', -1)">−</button>
-            <span class="counter-count" id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
-            <button type="button" onclick="updateCounter('${opt}', 1)">+</button>
-          </div>
-        </div>
-      `;
-    });
-    nextBtn.disabled = false; // allow next even if counts are 0
-  } else {
-    // Regular multi options
-    q.options.forEach(opt => {
-      html += `<button class="opt-btn" onclick="toggleOption('${opt}')">${opt}</button>`;
-    });
+  } else if (q.type === 'time') {
+    html += `<input type="time" id="timeInput" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" style="padding:10px; font-size:16px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); margin-top:6px;"/>`;
   }
-} else if (q.type === 'time') {
-  html += `<input type="time" id="timeInput" onchange="selectOption(this.value)"/>`;
+
+  html += '</div>';
+  contentArea.innerHTML = html;
+
+  updateProgress();
 }
 
-    html += '</div>';
-    contentArea.innerHTML = html;
+function updateProgress() {
+  const questions = getQuestions();
+  const pct = ((currentIndex)/questions.length)*100;
+  progressBar.style.width = pct + '%';
+}
 
-    updateProgress();
+// ===== SELECT OPTIONS =====
+window.selectOption = function(opt) {
+  const q = getQuestions()[currentIndex];
+  answers[q.key] = opt;
+  if (q.autoNext) {
+    currentIndex++;
+    loadUI();
   }
+}
 
-  function updateProgress() {
-    const questions = getQuestions();
-    const pct = ((currentIndex)/questions.length)*100;
-    progressBar.style.width = pct + '%';
+window.toggleOption = function(opt) {
+  const q = getQuestions()[currentIndex];
+  if (!answers[q.key]) answers[q.key] = [];
+  const arr = answers[q.key];
+  const idx = arr.indexOf(opt);
+  if (idx > -1) arr.splice(idx,1);
+  else arr.push(opt);
+
+  // Toggle button style
+  const buttons = document.querySelectorAll('.opt-btn');
+  buttons.forEach(btn => {
+    if (btn.textContent === opt) btn.classList.toggle('selected');
+  });
+}
+
+// ===== NAVIGATION =====
+backBtn.onclick = function() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    loadUI();
   }
+}
 
-  window.selectOption = function(opt) {
-    const q = getQuestions()[currentIndex];
-    answers[q.key] = opt;
-    // Auto-next if needed
-    if (q.autoNext) {
-      currentIndex++;
-      loadUI();
-    }
+nextBtn.onclick = function() {
+  const questions = getQuestions();
+  const q = questions[currentIndex];
+  if (q.type !== 'multi' && q.type !== 'time' && !answers[q.key]) {
+    alert('Please select an option.');
+    return;
+  }
+  currentIndex++;
+  loadUI();
+}
+
+// ===== INITIAL LOAD =====
+loadUI();
   }
 
   window.toggleOption = function(opt) {
