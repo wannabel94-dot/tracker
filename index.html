@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {key:'food_desc', type:'single', label:'How would you describe your food?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions'], autoNext:true},
     {key:'most_prominent', type:'multi', label:'What do you think is most prominent?', options:['none','Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD'], autoNext:true},
     {key:'meds', type:'multi', label:'Any extra meds?', options:['1mg benzo','Painkillers','2mg benzo','Antisickness','3mg benzo','Antihistamine','D-Mannose','Antibiotic','None']},
-    {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['1 coffee','1 tea','2 teas','3 teas','2 coffees','mate','1-2 drinks','2+ drinks','none']},
+    {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['Coffee','Tea','Beer','Spirits','Wine']},
     {key:'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','none']},
     {key:'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none']},
     {key:'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy (in-person)','Doctor','Blood tests','none']},
@@ -417,6 +417,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentIndex = 0;
   let answers = {};
+
+  function updateCounter(opt, delta) {
+  if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
+  let val = answers['caffeine_alcohol'][opt] || 0;
+  val += delta;
+  if (val < 0) val = 0;
+  answers['caffeine_alcohol'][opt] = val;
+  const el = document.getElementById(`count-${opt}`);
+  if (el) el.textContent = val;
+}
 
   // ===== DISPLAY =====
   const contentArea = document.getElementById('contentArea');
@@ -443,17 +453,33 @@ document.addEventListener('DOMContentLoaded', () => {
       q.options.forEach(opt => {
         html += `<button class="opt-btn" onclick="selectOption('${opt}')">${opt}</button>`;
       });
-    } else if (q.type === 'multi') {
-      // Special case: caffeine/alcohol counter
-      if (q.key === 'caffeine_alcohol') {
-        html += `<div id="cafAlcCounter" style="margin-bottom:12px; font-weight:bold;">Selected: 0</div>`;
-      }
-      q.options.forEach(opt => {
-        html += `<button class="opt-btn" onclick="toggleOption('${opt}')">${opt}</button>`;
-      });
-    } else if (q.type === 'time') {
-      html += `<input type="time" id="timeInput" onchange="selectOption(this.value)"/>`;
-    }
+ } else if (q.type === 'multi') {
+  if (q.key === 'caffeine_alcohol') {
+    // Clear html first
+    html = '';
+    q.options.forEach(opt => {
+      html += `
+        <div class="counter-item">
+          <span class="counter-label">${opt}</span>
+          <div class="counter-controls">
+            <button type="button" onclick="updateCounter('${opt}', -1)">−</button>
+            <span class="counter-count" id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
+            <button type="button" onclick="updateCounter('${opt}', 1)">+</button>
+          </div>
+        </div>
+      `;
+    });
+    nextBtn.disabled = false; // allow next even if counts are 0
+  } else {
+    // Regular multi options
+    q.options.forEach(opt => {
+      html += `<button class="opt-btn" onclick="toggleOption('${opt}')">${opt}</button>`;
+    });
+  }
+} else if (q.type === 'time') {
+  html += `<input type="time" id="timeInput" onchange="selectOption(this.value)"/>`;
+}
+
     html += '</div>';
     contentArea.innerHTML = html;
 
