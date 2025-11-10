@@ -1,3 +1,41 @@
+Skip to content
+Navigation Menu
+wannabel94-dot
+tracker
+
+Type / to search
+Code
+Issues
+Pull requests
+Actions
+Projects
+Security
+Insights
+Settings
+Files
+Go to file
+t
+icons
+images
+icon-192.png
+index.html
+manifest.json
+service-worker.js
+style.css
+tracker
+/index.html
+wannabel94-dot
+wannabel94-dot
+Update index.html
+70206e1
+ · 
+19 minutes ago
+tracker
+/index.html
+
+Code
+
+Blame
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -560,147 +598,44 @@ document.addEventListener('DOMContentLoaded', () => {
     loadUI();
   }
 
-// ===== UI FUNCTIONS =====
-function loadUI() {
-  if (!list || index >= list.length) {
-    saveSession();
-    if (session === 'morning') {
-      contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
-      progressBar.style.width = '0';
-      progText.textContent = '';
-      document.getElementById('controls').style.display = 'none';
-      setTimeout(() => startSession('night'), 1500);
-    } else {
-      session = null;
-      showOverview(currentDate);
-    }
-    return;
-  }
-
-  const q = list[index];
-  contentArea.innerHTML = '';
-
-  const qEl = document.createElement('div');
-  qEl.className = 'question';
-  qEl.textContent = q.label;
-  contentArea.appendChild(qEl);
-
-  const optionsWrap = document.createElement('div');
-  optionsWrap.className = 'options';
-
-  if (q.type === 'single' || q.type === 'multi') {
-    q.options.forEach(opt => {
-      if (q.key === 'caffeine_alcohol') {
-        // Counter version
-        const container = document.createElement('div');
-        container.className = 'counter-wrap';
-        container.style.display = 'flex';
-        container.style.alignItems = 'center';
-        container.style.justifyContent = 'space-between';
-        container.style.marginBottom = '8px';
-
-        const label = document.createElement('span');
-        label.textContent = opt;
-        label.style.flex = '1';
-
-        const minusBtn = document.createElement('button');
-        minusBtn.textContent = '-';
-        minusBtn.style.width = '32px';
-
-        const countSpan = document.createElement('span');
-        countSpan.textContent = answers[q.key]?.[opt] || 0;
-        countSpan.style.margin = '0 8px';
-
-        const plusBtn = document.createElement('button');
-        plusBtn.textContent = '+';
-        plusBtn.style.width = '32px';
-
-        minusBtn.addEventListener('click', () => {
-          const val = Math.max(0, (answers[q.key]?.[opt] || 0) - 1);
-          countSpan.textContent = val;
-          if (!answers[q.key]) answers[q.key] = {};
-          answers[q.key][opt] = val;
-          nextBtn.disabled = false;
-        });
-
-        plusBtn.addEventListener('click', () => {
-          const val = (answers[q.key]?.[opt] || 0) + 1;
-          countSpan.textContent = val;
-          if (!answers[q.key]) answers[q.key] = {};
-          answers[q.key][opt] = val;
-          nextBtn.disabled = false;
-        });
-
-        container.appendChild(label);
-        container.appendChild(minusBtn);
-        container.appendChild(countSpan);
-        container.appendChild(plusBtn);
-        optionsWrap.appendChild(container);
-
+  // ===== UI FUNCTIONS =====
+  function loadUI() {
+    if (!list || index >= list.length) {
+      saveSession();
+      if (session === 'morning') {
+        contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
+        progressBar.style.width = '0';
+        progText.textContent = '';
+        document.getElementById('controls').style.display = 'none';
+        setTimeout(() => startSession('night'), 1500);
       } else {
-        // Button version
+        session = null;
+        showOverview(currentDate);
+      }
+      return;
+    }
+    
+    const q = list[index];
+    contentArea.innerHTML = '';
+    const qEl = document.createElement('div');
+    qEl.className = 'question';
+    qEl.textContent = q.label;
+    contentArea.appendChild(qEl);
+
+    const optionsWrap = document.createElement('div');
+    optionsWrap.className = 'options';
+
+    if (q.type === 'single' || q.type === 'multi') {
+      q.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'opt-btn';
-        btn.innerHTML = `
-          <img src="${getIconForOption(opt)}" alt="${opt}" class="opt-icon">
-          <span class="opt-text">${opt}</span>
-        `;
+btn.innerHTML = `
+  <img src="${getIconForOption(opt)}" alt="${opt}" class="opt-icon">
+  <span class="opt-text">${opt}</span>
+`;
 
-        if (q.type === 'multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
-        if (q.type === 'single' && answers[q.key] === opt) btn.classList.add('selected');
-
-        btn.addEventListener('click', () => {
-          if (q.type === 'single') {
-            answers[q.key] = opt;
-            nextBtn.disabled = false;
-            if (q.autoNext) handleNext();
-            else loadUI();
-          } else {
-            if (!answers[q.key]) answers[q.key] = [];
-            if (answers[q.key].includes(opt)) answers[q.key] = answers[q.key].filter(x => x !== opt);
-            else answers[q.key].push(opt);
-            btn.classList.toggle('selected');
-            nextBtn.disabled = answers[q.key].length === 0;
-          }
-        });
-
-        optionsWrap.appendChild(btn);
-      }
-    });
-  } else if (q.type === 'time' || q.type === 'number') {
-    const inp = document.createElement('input');
-    inp.type = q.type;
-    inp.value = answers[q.key] || '';
-    inp.addEventListener('input', () => {
-      answers[q.key] = inp.value;
-      nextBtn.disabled = !inp.value;
-    });
-    optionsWrap.appendChild(inp);
-  } else if (q.type === 'auto') {
-    const span = document.createElement('span');
-    span.textContent = answers[q.key] || 'Auto-filled';
-    optionsWrap.appendChild(span);
-    nextBtn.disabled = false;
-  }
-
-  contentArea.appendChild(optionsWrap);
-
-  // Progress bar
-  const progress = ((index + 1) / list.length) * 100;
-  progressBar.style.width = progress + '%';
-  progText.textContent = '';
-
-  backBtn.style.display = (index === 0) ? 'none' : 'inline-flex';
-
-  if (q.key !== 'caffeine_alcohol') {
-    nextBtn.disabled = !(answers[q.key] && ((q.type === 'single')||(q.type==='multi')||(q.type==='time')||(q.type==='number')||(q.type==='auto')));
-  }
-
-  document.getElementById('controls').style.display = 'flex';
-}
-
-// ===== Icon mapping (all placeholders included) =====
 function getIconForOption(opt) {
+  // Map known options to specific files, or auto-generate filenames
   const icons = {
     'UTI feeling': 'icons/bladder1.svg',
     'UTI': 'icons/bladder2.svg',
@@ -721,117 +656,116 @@ function getIconForOption(opt) {
     'Antihistamine': 'icons/flower.svg',
     'D-Mannose': 'icons/bladder2.svg',
     'Antibiotic' : 'icons/bacteria.svg',
-    // All placeholders below
-    'Went to bed late but slept in': 'icons/placeholder.svg',
-    'Went to bed late but woke early': 'icons/placeholder.svg',
-    'Went to bed early but woke really early': 'icons/placeholder.svg',
-    "Couldn't fall asleep": 'icons/placeholder.svg',
-    'Lightly disrupted': 'icons/placeholder.svg',
-    'Frequently disrupted': 'icons/placeholder.svg',
-    'Fine': 'icons/placeholder.svg',
-    'Yes': 'icons/placeholder.svg',
-    'No': 'icons/placeholder.svg',
-    'None': 'icons/placeholder.svg',
-    'Bare minimum': 'icons/placeholder.svg',
-    'Once': 'icons/placeholder.svg',
-    'Twice': 'icons/placeholder.svg',
-    'Nope': 'icons/placeholder.svg',
-    'Seconds': 'icons/placeholder.svg',
-    'Briefly': 'icons/placeholder.svg',
-    '1h+': 'icons/placeholder.svg',
-    '2h+': 'icons/placeholder.svg',
-    'Fair amount': 'icons/placeholder.svg',
-    'All day': 'icons/placeholder.svg',
-    'Bedrot': 'icons/placeholder.svg',
-    'Mostly wasted': 'icons/placeholder.svg',
-    'Chilled': 'icons/placeholder.svg',
-    'Somewhat productive': 'icons/placeholder.svg',
-    'Hyperproductive': 'icons/placeholder.svg',
-    'Busy': 'icons/placeholder.svg',
-    'Good': 'icons/placeholder.svg',
-    'Sometimes': 'icons/placeholder.svg',
-    'Elated': 'icons/placeholder.svg',
-    'Sensitive': 'icons/placeholder.svg',
-    'Pretty good': 'icons/placeholder.svg',
-    'Irritated': 'icons/placeholder.svg',
-    'Somewhat insecure': 'icons/placeholder.svg',
-    'Anxiously insecure': 'icons/placeholder.svg',
-    'Anguish': 'icons/placeholder.svg',
-    'Disaster': 'icons/placeholder.svg',
-    'Very messy': 'icons/placeholder.svg',
-    'A bit messy': 'icons/placeholder.svg',
-    'Fine - a few dishes': 'icons/placeholder.svg',
-    'Pretty tidy': 'icons/placeholder.svg',
-    'Spotless': 'icons/placeholder.svg',
-    "Hadn't thought about it": 'icons/placeholder.svg',
-    'Passing thoughts': 'icons/placeholder.svg',
-    'Momentarily down': 'icons/placeholder.svg',
-    'Depressed or gross': 'icons/placeholder.svg',
-    'Fixated': 'icons/placeholder.svg',
-    'Disgusting / really preoccupied': 'icons/placeholder.svg',
-    'All-consuming': 'icons/placeholder.svg',
-    'Binged': 'icons/placeholder.svg',
-    'Grazed random crap': 'icons/placeholder.svg',
-    'Indulgent but satisfying': 'icons/placeholder.svg',
-    'Big portions of good food': 'icons/placeholder.svg',
-    'Balanced food + portions': 'icons/placeholder.svg',
-    'Restricted food + portions': 'icons/placeholder.svg',
-    'none': 'icons/placeholder.svg',
-    'Somatic anxiety': 'icons/placeholder.svg',
-    'Mental anxiety': 'icons/placeholder.svg',
-    'OCD': 'icons/placeholder.svg',
-    'Depression': 'icons/placeholder.svg',
-    'BPD': 'icons/placeholder.svg',
-    'ADHD': 'icons/placeholder.svg',
-    'BDD': 'icons/placeholder.svg',
-    '1 coffee': 'icons/placeholder.svg',
-    '1 tea': 'icons/placeholder.svg',
-    '2 teas': 'icons/placeholder.svg',
-    '3 teas': 'icons/placeholder.svg',
-    '2 coffees': 'icons/placeholder.svg',
-    'mate': 'icons/placeholder.svg',
-    '1-2 drinks': 'icons/placeholder.svg',
-    '2+ drinks': 'icons/placeholder.svg',
-    'Body fat': 'icons/placeholder.svg',
-    'Body size': 'icons/placeholder.svg',
-    'Dirty / messy flat': 'icons/placeholder.svg',
-    'Skin': 'icons/placeholder.svg',
-    'Hair': 'icons/placeholder.svg',
-    'Clothes': 'icons/placeholder.svg',
-    'Outside environment': 'icons/placeholder.svg',
-    'Psych': 'icons/placeholder.svg',
-    'Therapy (online)': 'icons/placeholder.svg',
-    'Therapy (in-person)': 'icons/placeholder.svg',
-    'Doctor': 'icons/placeholder.svg',
-    'Blood tests': 'icons/placeholder.svg',
-    'Tidying / cleaning': 'icons/placeholder.svg',
-    'City walking': 'icons/placeholder.svg',
-    'Stroll': 'icons/placeholder.svg',
-    'Quick dog walk': 'icons/placeholder.svg',
-    'Long dog walk': 'icons/placeholder.svg',
-    'Hike': 'icons/placeholder.svg',
-    'Jog': 'icons/placeholder.svg',
-    'General public': 'icons/placeholder.svg',
-    'Health professional': 'icons/placeholder.svg',
-    'Acquaintances': 'icons/placeholder.svg',
-    'Friends': 'icons/placeholder.svg',
-    'Friends of L': 'icons/placeholder.svg',
-    'Family': 'icons/placeholder.svg',
-    'Shakti mat': 'icons/placeholder.svg',
-    'Stretching': 'icons/placeholder.svg',
-    'Moments of mindfulness': 'icons/placeholder.svg',
-    'Meditation': 'icons/placeholder.svg',
-    'Therapy notes': 'icons/placeholder.svg',
-    'Deep breathing': 'icons/placeholder.svg',
-    'Painting': 'icons/placeholder.svg',
-    'DIY': 'icons/placeholder.svg',
-    'Guitar': 'icons/placeholder.svg',
-    'Sewing': 'icons/placeholder.svg',
-    'Van stuff': 'icons/placeholder.svg',
-    'Reading': 'icons/placeholder.svg'
+  'Went to bed late but slept in': 'icons/placeholder.svg',
+  'Went to bed late but woke early': 'icons/placeholder.svg',
+  'Went to bed early but woke really early': 'icons/placeholder.svg',
+  "Couldn't fall asleep": 'icons/placeholder.svg',
+  'Lightly disrupted': 'icons/placeholder.svg',
+  'Frequently disrupted': 'icons/placeholder.svg',
+  'Fine': 'icons/placeholder.svg',
+  'Yes': 'icons/placeholder.svg',
+  'No': 'icons/placeholder.svg',
+  'None': 'icons/placeholder.svg',
+  'Bare minimum': 'icons/placeholder.svg',
+  'Once': 'icons/placeholder.svg',
+  'Twice': 'icons/placeholder.svg',
+  'Nope': 'icons/placeholder.svg',
+  'Seconds': 'icons/placeholder.svg',
+  'Briefly': 'icons/placeholder.svg',
+  '1h+': 'icons/placeholder.svg',
+  '2h+': 'icons/placeholder.svg',
+  'Fair amount': 'icons/placeholder.svg',
+  'All day': 'icons/placeholder.svg',
+  'Bedrot': 'icons/placeholder.svg',
+  'Mostly wasted': 'icons/placeholder.svg',
+  'Chilled': 'icons/placeholder.svg',
+  'Somewhat productive': 'icons/placeholder.svg',
+  'Hyperproductive': 'icons/placeholder.svg',
+  'Busy': 'icons/placeholder.svg',
+  'Good': 'icons/placeholder.svg',
+  'Sometimes': 'icons/placeholder.svg',
+  'Elated': 'icons/placeholder.svg',
+  'Sensitive': 'icons/placeholder.svg',
+  'Pretty good': 'icons/placeholder.svg',
+  'Irritated': 'icons/placeholder.svg',
+  'Somewhat insecure': 'icons/placeholder.svg',
+  'Anxiously insecure': 'icons/placeholder.svg',
+  'Anguish': 'icons/placeholder.svg',
+  'Disaster': 'icons/placeholder.svg',
+  'Very messy': 'icons/placeholder.svg',
+  'A bit messy': 'icons/placeholder.svg',
+  'Fine - a few dishes': 'icons/placeholder.svg',
+  'Pretty tidy': 'icons/placeholder.svg',
+  'Spotless': 'icons/placeholder.svg',
+  "Hadn't thought about it": 'icons/placeholder.svg',
+  'Passing thoughts': 'icons/placeholder.svg',
+  'Momentarily down': 'icons/placeholder.svg',
+  'Depressed or gross': 'icons/placeholder.svg',
+  'Fixated': 'icons/placeholder.svg',
+  'Disgusting / really preoccupied': 'icons/placeholder.svg',
+  'All-consuming': 'icons/placeholder.svg',
+  'Binged': 'icons/placeholder.svg',
+  'Grazed random crap': 'icons/placeholder.svg',
+  'Indulgent but satisfying': 'icons/placeholder.svg',
+  'Big portions of good food': 'icons/placeholder.svg',
+  'Balanced food + portions': 'icons/placeholder.svg',
+  'Restricted food + portions': 'icons/placeholder.svg',
+  'none': 'icons/placeholder.svg',
+  'Somatic anxiety': 'icons/placeholder.svg',
+  'Mental anxiety': 'icons/placeholder.svg',
+  'OCD': 'icons/placeholder.svg',
+  'Depression': 'icons/placeholder.svg',
+  'BPD': 'icons/placeholder.svg',
+  'ADHD': 'icons/placeholder.svg',
+  'BDD': 'icons/placeholder.svg',
+  '1 coffee': 'icons/placeholder.svg',
+  '1 tea': 'icons/placeholder.svg',
+  '2 teas': 'icons/placeholder.svg',
+  '3 teas': 'icons/placeholder.svg',
+  '2 coffees': 'icons/placeholder.svg',
+  'mate': 'icons/placeholder.svg',
+  '1-2 drinks': 'icons/placeholder.svg',
+  '2+ drinks': 'icons/placeholder.svg',
+  'Body fat': 'icons/placeholder.svg',
+  'Body size': 'icons/placeholder.svg',
+  'Dirty / messy flat': 'icons/placeholder.svg',
+  'Skin': 'icons/placeholder.svg',
+  'Hair': 'icons/placeholder.svg',
+  'Clothes': 'icons/placeholder.svg',
+  'Outside environment': 'icons/placeholder.svg',
+  'Psych': 'icons/placeholder.svg',
+  'Therapy (online)': 'icons/placeholder.svg',
+  'Therapy (in-person)': 'icons/placeholder.svg',
+  'Doctor': 'icons/placeholder.svg',
+  'Blood tests': 'icons/placeholder.svg',
+  'Tidying / cleaning': 'icons/placeholder.svg',
+  'City walking': 'icons/placeholder.svg',
+  'Stroll': 'icons/placeholder.svg',
+  'Quick dog walk': 'icons/placeholder.svg',
+  'Long dog walk': 'icons/placeholder.svg',
+  'Hike': 'icons/placeholder.svg',
+  'Jog': 'icons/placeholder.svg',
+  'General public': 'icons/placeholder.svg',
+  'Health professional': 'icons/placeholder.svg',
+  'Acquaintances': 'icons/placeholder.svg',
+  'Friends': 'icons/placeholder.svg',
+  'Friends of L': 'icons/placeholder.svg',
+  'Family': 'icons/placeholder.svg',
+  'Shakti mat': 'icons/placeholder.svg',
+  'Stretching': 'icons/placeholder.svg',
+  'Moments of mindfulness': 'icons/placeholder.svg',
+  'Meditation': 'icons/placeholder.svg',
+  'Therapy notes': 'icons/placeholder.svg',
+  'Deep breathing': 'icons/placeholder.svg',
+  'Painting': 'icons/placeholder.svg',
+  'DIY': 'icons/placeholder.svg',
+  'Guitar': 'icons/placeholder.svg',
+  'Sewing': 'icons/placeholder.svg',
+  'Van stuff': 'icons/placeholder.svg',
+  'Reading': 'icons/placeholder.svg'
   };
 
-  return icons[opt] || 'icons/placeholder.svg';
+  return icons[opt];
 }
 
         if (q.type === 'multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
@@ -964,3 +898,4 @@ function getIconForOption(opt) {
 </script>
 </body>
 </html>
+tracker/index.html at 70206e1d43ec0aadef7e198b047d35f0c2214166 · wannabel94-dot/tracker 
