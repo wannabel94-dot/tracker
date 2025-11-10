@@ -591,11 +591,10 @@ document.addEventListener('DOMContentLoaded', () => {
       q.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'opt-btn';
-const iconSrc = getIconForOption(opt);
-btn.innerHTML = iconSrc
-  ? `<img src="${iconSrc}" alt="${opt}" class="opt-icon"><span class="opt-text">${opt}</span>`
-  : `<span class="opt-text">${opt}</span>`;
-
+btn.innerHTML = `
+  <img src="${getIconForOption(opt)}" alt="${opt}" class="opt-icon">
+  <span class="opt-text">${opt}</span>
+`;
 
 function getIconForOption(opt) {
   // Map known options to specific files, or auto-generate filenames
