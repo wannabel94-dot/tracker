@@ -561,113 +561,142 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===== UI FUNCTIONS =====
-  function loadUI() {
-    if (!list || index >= list.length) {
-      saveSession();
-      if (session === 'morning') {
-        contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
-        progressBar.style.width = '0';
-        progText.textContent = '';
-        document.getElementById('controls').style.display = 'none';
-        setTimeout(() => startSession('night'), 1500);
-      } else {
-        session = null;
-        showOverview(currentDate);
-      }
-      return;
+function loadUI() {
+  if (!list || index >= list.length) {
+    saveSession();
+    if (session === 'morning') {
+      contentArea.innerHTML = `<div class="done-note">Morning complete!</div>`;
+      progressBar.style.width = '0';
+      progText.textContent = '';
+      document.getElementById('controls').style.display = 'none';
+      setTimeout(() => startSession('night'), 1500);
+    } else {
+      session = null;
+      showOverview(currentDate);
     }
-    
-    const q = list[index];
-    contentArea.innerHTML = '';
-    const qEl = document.createElement('div');
-    qEl.className = 'question';
-    qEl.textContent = q.label;
-    contentArea.appendChild(qEl);
+    return;
+  }
 
-    const optionsWrap = document.createElement('div');
-    optionsWrap.className = 'options';
+  const q = list[index];
+  contentArea.innerHTML = '';
+  const qEl = document.createElement('div');
+  qEl.className = 'question';
+  qEl.textContent = q.label;
+  contentArea.appendChild(qEl);
 
-    if (q.type === 'single' || q.type === 'multi') {
-      q.options.forEach(opt => {
+  const optionsWrap = document.createElement('div');
+  optionsWrap.className = 'options';
+
+  if (q.type === 'single' || q.type === 'multi') {
+    q.options.forEach(opt => {
+      if (q.key === 'caffeine_alcohol') {
+        // Numeric counter version
+        const container = document.createElement('div');
+        container.className = 'counter-wrap';
+        container.style.display = 'flex';
+        container.style.alignItems = 'center';
+        container.style.justifyContent = 'space-between';
+        container.style.marginBottom = '8px';
+
+        const label = document.createElement('span');
+        label.textContent = opt;
+        label.style.flex = '1';
+
+        const minusBtn = document.createElement('button');
+        minusBtn.textContent = '-';
+        minusBtn.style.width = '32px';
+
+        const countSpan = document.createElement('span');
+        countSpan.textContent = answers[q.key]?.[opt] || 0;
+        countSpan.style.margin = '0 8px';
+
+        const plusBtn = document.createElement('button');
+        plusBtn.textContent = '+';
+        plusBtn.style.width = '32px';
+
+        minusBtn.addEventListener('click', () => {
+          const val = Math.max(0, (answers[q.key]?.[opt] || 0) - 1);
+          countSpan.textContent = val;
+          if (!answers[q.key]) answers[q.key] = {};
+          answers[q.key][opt] = val;
+          nextBtn.disabled = false; // always allow next
+        });
+
+        plusBtn.addEventListener('click', () => {
+          const val = (answers[q.key]?.[opt] || 0) + 1;
+          countSpan.textContent = val;
+          if (!answers[q.key]) answers[q.key] = {};
+          answers[q.key][opt] = val;
+          nextBtn.disabled = false; // always allow next
+        });
+
+        container.appendChild(label);
+        container.appendChild(minusBtn);
+        container.appendChild(countSpan);
+        container.appendChild(plusBtn);
+        optionsWrap.appendChild(container);
+
+      } else {
+        // Default button behavior for all other questions
         const btn = document.createElement('button');
         btn.className = 'opt-btn';
-        q.options.forEach(opt => {
-  if (q.key === 'caffeine_alcohol') {
-    // Numeric counter version
-    const container = document.createElement('div');
-    container.className = 'counter-wrap';
-    container.style.display = 'flex';
-    container.style.alignItems = 'center';
-    container.style.justifyContent = 'space-between';
-    container.style.marginBottom = '8px';
+        btn.innerHTML = `
+          <img src="${getIconForOption(opt)}" alt="${opt}" class="opt-icon">
+          <span class="opt-text">${opt}</span>
+        `;
 
-    const label = document.createElement('span');
-    label.textContent = opt;
-    label.style.flex = '1';
+        if (q.type === 'multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
+        if (q.type === 'single' && answers[q.key] === opt) btn.classList.add('selected');
 
-    const minusBtn = document.createElement('button');
-    minusBtn.textContent = '-';
-    minusBtn.style.width = '32px';
+        btn.addEventListener('click', () => {
+          if (q.type === 'single') {
+            answers[q.key] = opt;
+            nextBtn.disabled = false;
+            if (q.autoNext) handleNext();
+            else loadUI();
+          } else {
+            if (!answers[q.key]) answers[q.key] = [];
+            if (answers[q.key].includes(opt)) answers[q.key] = answers[q.key].filter(x => x !== opt);
+            else answers[q.key].push(opt);
+            btn.classList.toggle('selected');
+            nextBtn.disabled = answers[q.key].length === 0;
+          }
+        });
 
-    const countSpan = document.createElement('span');
-    countSpan.textContent = answers[q.key]?.[opt] || 0;
-    countSpan.style.margin = '0 8px';
-
-    const plusBtn = document.createElement('button');
-    plusBtn.textContent = '+';
-    plusBtn.style.width = '32px';
-
-    minusBtn.addEventListener('click', () => {
-      const val = Math.max(0, (answers[q.key]?.[opt] || 0) - 1);
-      countSpan.textContent = val;
-      if (!answers[q.key]) answers[q.key] = {};
-      answers[q.key][opt] = val;
-      nextBtn.disabled = false; // always allow next
-    });
-
-    plusBtn.addEventListener('click', () => {
-      const val = (answers[q.key]?.[opt] || 0) + 1;
-      countSpan.textContent = val;
-      if (!answers[q.key]) answers[q.key] = {};
-      answers[q.key][opt] = val;
-      nextBtn.disabled = false; // always allow next
-    });
-
-    container.appendChild(label);
-    container.appendChild(minusBtn);
-    container.appendChild(countSpan);
-    container.appendChild(plusBtn);
-    optionsWrap.appendChild(container);
-
-  } else {
-    // Default behavior for all other questions
-    const btn = document.createElement('button');
-    btn.className = 'opt-btn';
-    btn.innerHTML = `
-      <img src="${getIconForOption(opt)}" alt="${opt}" class="opt-icon">
-      <span class="opt-text">${opt}</span>
-    `;
-    if (q.type === 'multi' && answers[q.key] && answers[q.key].includes(opt)) btn.classList.add('selected');
-    if (q.type === 'single' && answers[q.key] === opt) btn.classList.add('selected');
-
-    btn.addEventListener('click', () => {
-      if (q.type === 'single') {
-        answers[q.key] = opt;
-        nextBtn.disabled = false;
-        if (q.autoNext) handleNext();
-        else loadUI();
-      } else {
-        if (!answers[q.key]) answers[q.key] = [];
-        if (answers[q.key].includes(opt)) answers[q.key] = answers[q.key].filter(x => x !== opt);
-        else answers[q.key].push(opt);
-        btn.classList.toggle('selected');
-        nextBtn.disabled = answers[q.key].length === 0;
+        optionsWrap.appendChild(btn);
       }
     });
-
-    optionsWrap.appendChild(btn);
+  } else if (q.type === 'time' || q.type === 'number') {
+    const inp = document.createElement('input');
+    inp.type = q.type;
+    inp.value = answers[q.key] || '';
+    inp.addEventListener('input', () => {
+      answers[q.key] = inp.value;
+      nextBtn.disabled = !inp.value;
+    });
+    optionsWrap.appendChild(inp);
+  } else if (q.type === 'auto') {
+    const span = document.createElement('span');
+    span.textContent = answers[q.key] || 'Auto-filled';
+    optionsWrap.appendChild(span);
+    nextBtn.disabled = false;
   }
-});
+
+  contentArea.appendChild(optionsWrap);
+
+  // Progress bar
+  const progress = ((index + 1) / list.length) * 100;
+  progressBar.style.width = progress + '%';
+  progText.textContent = '';
+
+  backBtn.style.display = (index === 0) ? 'none' : 'inline-flex';
+  // Default next button behavior for non-counter questions
+  if (q.key !== 'caffeine_alcohol') {
+    nextBtn.disabled = !(answers[q.key] && ((q.type === 'single')||(q.type==='time')||(q.type==='number')||(q.type==='auto')||(q.type==='multi')));
+  }
+  document.getElementById('controls').style.display = 'flex';
+}
+
 
 btn.innerHTML = `
   <img src="${getIconForOption(opt)}" alt="${opt}" class="opt-icon">
