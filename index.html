@@ -65,13 +65,6 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   box-shadow: 0 6px 10px rgba(0,0,0,0.15);
 }
 
-/* Selected state */
-.opt-btn.selected {
-  background: linear-gradient(135deg, #ffdd59, #ffa502); /* warm highlight */
-  color: #1a1a1a;
-  border: 1px solid #ffb142;
-  font-weight: 700;
-}
 
 /* Morning / Night backgrounds */
 body.morning .opt-btn {
@@ -81,10 +74,6 @@ body.morning .opt-btn {
 body.morning .opt-btn:hover {
   background: rgba(255,255,255,0.25);
 }
-body.morning .opt-btn.selected {
-  background: linear-gradient(135deg, #ffd56b, #ffa82b);
-  color: #1a1a1a;
-}
 
 body.night .opt-btn {
   background: rgba(255,255,255,0.08);
@@ -92,10 +81,6 @@ body.night .opt-btn {
 }
 body.night .opt-btn:hover {
   background: rgba(255,255,255,0.18);
-}
-body.night .opt-btn.selected {
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: #fff;
 }
 
 /* Small screens */
@@ -243,9 +228,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     const q=getQuestions()[currentIndex];
     answers[q.key]=opt;
     if(q.autoNext){currentIndex++;loadUI();}
-    document.querySelectorAll('.opt-btn').forEach(btn=>{
-      btn.classList.toggle('selected',btn.textContent===opt);
-    });
   }
 
   backBtn.onclick=()=>{if(currentIndex>0){currentIndex--;loadUI();}}
