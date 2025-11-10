@@ -619,16 +619,6 @@ function getIconForOption(opt) {
     'D-Mannose': 'icons/bladder2.svg',
     'Antibiotic' : 'icons/bacteria.svg',
   };
- return icons[opt] || null; // ⬅️ no icon means null, not auto-generated filename
-}
-  // If no match found, try a filename based on the option text
-  if (!icons[opt]) {
-    const fileName = opt
-      .toLowerCase()
-      .replace(/\s+/g, '_')
-      .replace(/[^\w-]/g, '');
-    icons[opt] = `icons/${fileName}.svg`;
-  }
 
   return icons[opt];
 }
