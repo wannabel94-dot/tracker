@@ -262,9 +262,23 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   document.getElementById('morningBtn').onclick=()=>{document.body.classList.add('morning');document.body.classList.remove('night');currentIndex=0;answers={};loadUI();}
   document.getElementById('nightBtn').onclick=()=>{document.body.classList.add('night');document.body.classList.remove('morning');currentIndex=0;answers={};loadUI();}
-  document.getElementById('btnSettings').onclick=()=>{document.getElementById('settingsMenu').classList.toggle('show');}
+  document.getElementById('btnSettings').onclick = () => {
+  document.getElementById('settingsMenu').classList.toggle('show');
+};
 
-  loadUI();
+// 🧹 Clear today's data
+document.getElementById('btnClearToday').onclick = () => {
+  if (confirm("Clear all today's data?")) {
+    answers = {};
+    currentIndex = 0;
+    loadUI();
+    document.getElementById('settingsMenu').classList.remove('show');
+    alert("✅ Today's data has been cleared.");
+  }
+};
+
+loadUI();
+
 });
 </script>
 </body>
