@@ -344,10 +344,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
   nextBtn.addEventListener('click', saveData);
   backBtn.addEventListener('click', saveData);
 
+ /* ---------- LOAD UI & NAVIGATION ---------- */
 function loadUI() {
   const questionsAll = getQuestions(); // morning or night
   let questions = [...questionsAll];
 
+  // Remove morning checklist questions from main flow
   if (document.body.classList.contains('morning')) {
     questions = questions.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key));
   }
@@ -357,7 +359,7 @@ function loadUI() {
     contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
     backBtn.style.display = 'none';
     nextBtn.style.display = 'none';
-    updateChecklistProgress(); // final progress bar
+    updateChecklistProgress(); // update progress for checklist if morning
     return;
   }
 
@@ -371,13 +373,14 @@ function loadUI() {
     });
   } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
     q.options.forEach(opt => {
+      const count = (answers[q.key] && answers[q.key][opt]) || 0;
       html += `<div class="counter-item">
-                  <span>${opt}</span>
-                  <div class="counter-controls">
-                      <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
-                      <span id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
-                      <button type="button" onclick="updateCounter('${opt}',1)">+</button>
-                  </div>
+                 <span>${opt}</span>
+                 <div class="counter-controls">
+                   <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
+                   <span id="count-${opt}">${count}</span>
+                   <button type="button" onclick="updateCounter('${opt}',1)">+</button>
+                 </div>
                </div>`;
     });
     nextBtn.disabled = false;
@@ -388,14 +391,14 @@ function loadUI() {
   html += '</div>';
   contentArea.innerHTML = html;
 
-  // Show back/next buttons
+  // Show/hide buttons
   backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
   nextBtn.style.display = 'inline-block';
 
-  // Update progress bar
   updateProgressBar();
 }
 
+// Selecting an option
 window.selectOption = (opt, idx) => {
   const questionsAll = getQuestions();
   let questions = [...questionsAll];
@@ -405,20 +408,22 @@ window.selectOption = (opt, idx) => {
 
   const q = questions[idx];
   answers[q.key] = opt;
+
   if (q.autoNext) {
     currentIndex++;
     loadUI();
   }
 };
 
-// Unified Back/Next buttons
+// Unified Back button
 backBtn.onclick = () => { 
-  if (currentIndex > 0) { 
-    currentIndex--; 
-    loadUI(); 
+  if (currentIndex > 0) {
+    currentIndex--;
+    loadUI();
   }
 };
 
+// Unified Next button
 nextBtn.onclick = () => {
   const questionsAll = getQuestions();
   let questions = [...questionsAll];
@@ -427,6 +432,8 @@ nextBtn.onclick = () => {
   }
 
   const q = questions[currentIndex];
+
+  // Special handling for multi counter
   if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
     if (Object.values(answers[q.key] || {}).every(v => v === 0)) {
       if (!confirm('Save with no caffeine/alcohol?')) return;
