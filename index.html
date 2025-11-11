@@ -481,32 +481,36 @@ document.addEventListener('DOMContentLoaded', ()=>{
   };
 
   /* ---------- MORNING CHECKLIST ---------- */
-  function loadMorningChecklist() {
-    let html=`<div class="checklist">${MORNING_CHECKLIST_ITEMS.map(item=>{
-      const selected = answers[item.key]==='Yes'?'selected':'';
-      return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-        <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
-        <span class="check-text">${item.label}</span>
-      </div>`;
-    }).join('')}</div>
-    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>`;
-    contentArea.innerHTML=html;
-    backBtn.style.display='inline-block';
-    nextBtn.style.display='inline-block';
-  const clearBtn = document.getElementById('clearChecklistBtn');
- if (clearBtn) clearBtn.onclick = clearChecklist;
+function loadMorningChecklist() {
+  let html = `
+    <div class="checklist">
+      ${MORNING_CHECKLIST_ITEMS.map(item => {
+        const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+        return `
+          <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+            <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
+            <span class="check-text">${item.label}</span>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>
+  `;
+  contentArea.innerHTML = html;
 
- updateProgressBar();
+  backBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
+
   const clearBtn = document.getElementById('clearChecklistBtn');
   if (clearBtn) clearBtn.onclick = clearChecklist;
- // Ensure progress bar reflects completed checklist items
- updateProgressBar();
 
-  }
+  updateProgressBar(); // single call
+}
 
   window.toggleChecklist=key=>{
     answers[key] = answers[key]==='Yes'?'No':'Yes';
-    const el=document.querySelector(`.check-item[onclick="toggleChecklist('${key}')"]`);
+const els = document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`);
+els.forEach(el => el.classList.toggle('selected', answers[key] === 'Yes'));
     if(el) el.classList.toggle('selected',answers[key]==='Yes');
     updateProgressBar();
     saveData();
