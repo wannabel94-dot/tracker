@@ -180,7 +180,6 @@ body.morning::before { content:""; position:fixed; inset:0; z-index:-1; backgrou
     <div id="historyInner"></div>
   </div>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
 
@@ -231,7 +230,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   const getQuestions=()=>document.body.classList.contains('morning')?MORNING:NIGHT;
   const getMode=()=>document.body.classList.contains('morning')?'morning':'night';
-  
+
   /* ---------- COUNTER UPDATES ---------- */
   window.updateCounter=(opt,delta)=>{
     if(!answers['caffeine_alcohol']) answers['caffeine_alcohol']={};
@@ -280,8 +279,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
     const q=questions[currentIndex];
     let html=`<div class="question">${q.label}</div><div class="options">`;
+    
     if(q.type==='single'){
-      q.options.forEach(opt=>html+=`<button class="opt-btn" onclick="selectOption('${opt}')">${opt}</button>`);
+      q.options.forEach(opt=>{
+        const isSelected = answers[q.key]===opt ? 'selected' : '';
+        html+=`<button class="opt-btn ${isSelected}" onclick="selectOption('${opt}')">${opt}</button>`;
+      });
     } else if(q.type==='multi' && q.key==='caffeine_alcohol'){
       q.options.forEach(opt=>{
         html+=`<div class="counter-item"><span>${opt}</span>
@@ -295,6 +298,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     } else if(q.type==='time'){
       html+=`<input type="time" value="${answers[q.key]||''}" onchange="selectOption(this.value)"/>`;
     }
+
     html+='</div>';
     contentArea.innerHTML=html;
     progressBar.style.width=((currentIndex)/questions.length*100)+'%';
@@ -302,11 +306,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
     nextBtn.style.display='inline-block';
   }
 
-  window.selectOption=opt=>{
-    const q=getQuestions()[currentIndex];
-    answers[q.key]=opt;
-    if(q.autoNext){currentIndex++; loadUI();}
-  }
+  /* ---------- SELECT OPTION ---------- */
+  window.selectOption = opt => {
+    const q = getQuestions()[currentIndex];
+    answers[q.key] = opt;
+    loadUI(); // refresh to apply selected style
+    if(q.autoNext){ 
+      currentIndex++; 
+      loadUI(); 
+    }
+  };
 
   backBtn.onclick=()=>{if(currentIndex>0){currentIndex--; loadUI();}};
   nextBtn.onclick=()=>{
