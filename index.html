@@ -419,127 +419,24 @@ document.addEventListener('DOMContentLoaded', ()=>{
   nextBtn.addEventListener('click', saveData);
   backBtn.addEventListener('click', saveData);
 
-  /* ---------- UI ---------- */
-  function loadUI() {
-    const questions = getQuestions();
-
-    if(currentIndex >= questions.length){
-      if(document.body.classList.contains('morning')){
-        loadMorningChecklist();
-        backBtn.style.display = 'inline-block';
-        nextBtn.style.display = 'inline-block';
-      } else {
-        contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
-        backBtn.style.display = currentIndex>0?'inline-block':'none';
-        nextBtn.style.display = 'none';
-      }
-      progressBar.style.width = '100%';
-      return;
-    }
-
-    const q = questions[currentIndex];
-    let html = `<div class="question">${q.label}</div><div class="options">`;
-
-    if(q.type==='single'){
-      q.options.forEach(opt=>{
-        const selected = answers[q.key]===opt?'selected':'';
-        html+=`<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-      });
-    } else if(q.type==='multi' && q.key==='caffeine_alcohol'){
-      q.options.forEach(opt=>{
-        html+=`<div class="counter-item"><span>${opt}</span>
-          <div class="counter-controls">
-            <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
-            <span id="count-${opt}">${(answers[q.key]&&answers[q.key][opt])||0}</span>
-            <button type="button" onclick="updateCounter('${opt}',1)">+</button>
-          </div>
-        </div>`;
-      });
-      nextBtn.disabled=false;
-    } else if(q.type==='time'){
-      html+=`<input type="time" value="${answers[q.key]||''}" onchange="selectOption(this.value)"/>`;
-    }
-
-    html+='</div>';
-    contentArea.innerHTML=html;
-    backBtn.style.display=currentIndex>0?'inline-block':'none';
-    nextBtn.style.display='inline-block';
-  }
-
-  window.selectOption=opt=>{
-    const questions = getQuestions();
-    if(currentIndex<questions.length){
-      const q=questions[currentIndex];
-      answers[q.key]=opt;
-      updateProgressBar();
-      if(q.autoNext){currentIndex++; loadUI();}
-    }
-  }
-
-  backBtn.onclick=()=>{if(currentIndex>0){currentIndex--; loadUI();}};
-  nextBtn.onclick=()=>{
-    const q=getQuestions()[currentIndex];
-    if(q && q.type==='multi' && q.key==='caffeine_alcohol'){
-      if(Object.values(answers[q.key]||{}).every(v=>v===0)){
-        if(!confirm('Save with no caffeine/alcohol?')) return;
-      }
-    }
-    currentIndex++; loadUI();
-  };
-
-  /* ---------- MORNING PROGRESS KEYS ---------- */
-function getMorningProgressKeys(){
-  const morningQuestions = ['wake_time','how_slept'];
-  const checklistKeys = MORNING_CHECKLIST_ITEMS.map(i => i.key);
-  return [...morningQuestions, ...checklistKeys];
-}
-
-/* ---------- PROGRESS BAR (separate for morning & night) ---------- */
-function updateProgressBar() {
-  let total = 0;
-  let done = 0;
-
-  // --- Morning Mode ---
-  if (document.body.classList.contains('morning')) {
-    const morningQuestions = ['wake_time', 'how_slept'];
-    const morningChecklist = MORNING_CHECKLIST_ITEMS.map(i => i.key);
-    const allMorning = [...morningQuestions, ...morningChecklist];
-
-    total = allMorning.length;
-    done = allMorning.filter(key =>
-      morningChecklist.includes(key)
-        ? answers[key] === 'Yes'
-        : !!answers[key]
-    ).length;
-  }
-
-  // --- Night Mode ---
-  else if (document.body.classList.contains('night')) {
-    const nightQuestions = NIGHT.map(q => q.key);
-    total = nightQuestions.length;
-    done = nightQuestions.filter(key => !!answers[key]).length;
-  }
-
-  // --- Update visual progress bar ---
-  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-  progressBar.style.width = pct + '%';
-}
-
-/* ---------- LOAD UI ---------- */
+/* ---------- UI ---------- */
 function loadUI() {
   const mode = document.body.classList.contains('morning') ? 'morning' : 'night';
   const questions = mode === 'morning' ? MORNING : NIGHT;
 
-  // Night mode has no progress bar at the top
-progressBar.parentElement.style.display = 'block';
+  // Show progress bar for both modes
+  progressBar.parentElement.style.display = 'block';
 
   if(currentIndex >= questions.length){
     if(mode === 'morning'){
       loadMorningChecklist(); // show morning checklist after questions
+      backBtn.style.display = 'inline-block';
+      nextBtn.style.display = 'inline-block';
     } else {
       contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
-      backBtn.style.display = currentIndex>0?'inline-block':'none';
+      backBtn.style.display = currentIndex>0 ? 'inline-block':'none';
       nextBtn.style.display = 'none';
+      updateProgressBar(); // fill night progress bar completely
     }
     return;
   }
@@ -573,8 +470,8 @@ progressBar.parentElement.style.display = 'block';
   backBtn.style.display = currentIndex>0 ? 'inline-block':'none';
   nextBtn.style.display = 'inline-block';
 
-  // Update morning progress bar
-  if(mode === 'morning') updateProgressBar();
+  // Update progress bar
+  updateProgressBar();
 }
 
 /* ---------- SELECT OPTION ---------- */
@@ -586,8 +483,7 @@ window.selectOption = (opt) => {
     const q = questions[currentIndex];
     answers[q.key] = opt;
 
-    // Only show progress for morning
-    if(mode === 'morning') updateProgressBar();
+    updateProgressBar(); // update progress for both morning & night
 
     if(q.autoNext){ 
       currentIndex++; 
@@ -596,10 +492,45 @@ window.selectOption = (opt) => {
   }
 }
 
+/* ---------- BACK/NEXT BUTTONS ---------- */
+backBtn.onclick=()=>{if(currentIndex>0){currentIndex--; loadUI();}};
+nextBtn.onclick=()=>{
+  const q=getQuestions()[currentIndex];
+  if(q && q.type==='multi' && q.key==='caffeine_alcohol'){
+    if(Object.values(answers[q.key]||{}).every(v=>v===0)){
+      if(!confirm('Save with no caffeine/alcohol?')) return;
+    }
+  }
+  currentIndex++; loadUI();
+};
+
+/* ---------- PROGRESS BAR (separate for morning & night) ---------- */
+function updateProgressBar() {
+  const isMorning = document.body.classList.contains('morning');
+  let keys = [];
+
+  if(isMorning){
+    keys = ['wake_time','how_slept', ...MORNING_CHECKLIST_ITEMS.map(i=>i.key)];
+  } else {
+    keys = NIGHT.map(q => q.key);
+  }
+
+  const total = keys.length;
+  let done = 0;
+
+  keys.forEach(key=>{
+    if(MORNING_CHECKLIST_ITEMS.find(i=>i.key===key)){
+      if(answers[key]==='Yes') done++;
+    } else if(answers[key]) done++;
+  });
+
+  const pct = total > 0 ? Math.round((done/total)*100) : 0;
+  progressBar.style.width = pct + '%';
+}
+
 /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-let html = `<div class="question"></div>
-    <div class="checklist">
+  let html = `<div class="checklist">
       ${MORNING_CHECKLIST_ITEMS.map(item=>{
         const selected = answers[item.key]==='Yes'?'selected':'';
         return `
@@ -618,7 +549,6 @@ let html = `<div class="question"></div>
   const clearBtn = document.getElementById('clearChecklistBtn');
   if(clearBtn) clearBtn.onclick = clearChecklist;
 
-  // Show progress bar
   progressBar.parentElement.style.display = 'block';
   updateProgressBar();
 }
@@ -640,29 +570,23 @@ function clearChecklist(){
   saveData();
 }
 
-  /* ---------- SETTINGS ---------- */
-  btnSettings.onclick=e=>{
-    e.stopPropagation();
-    settingsMenu.classList.toggle('show');
-  };
-  document.addEventListener('click',e=>{
-    if(!settingsMenu.contains(e.target)&&e.target!==btnSettings) settingsMenu.classList.remove('show');
-  });
-
-  document.getElementById('morningBtn').onclick=()=>{
-    saveData();
-    document.body.classList.add('morning'); document.body.classList.remove('night');
-    currentIndex=0; answers={}; editingDate=null;
-    loadSavedData(); loadUI();
-  };
-  document.getElementById('nightBtn').onclick=()=>{
-    saveData();
-    document.body.classList.add('night'); document.body.classList.remove('morning');
-    currentIndex=0; answers={}; editingDate=null;
-    loadSavedData(); loadUI();
-    progressBar.style.width = '0%';
-
-  };
+/* ---------- SWITCH MODES ---------- */
+document.getElementById('morningBtn').onclick=()=>{
+  saveData();
+  document.body.classList.add('morning'); document.body.classList.remove('night');
+  currentIndex=0; answers={}; editingDate=null;
+  loadSavedData(); 
+  progressBar.style.width = '0%';
+  loadUI();
+};
+document.getElementById('nightBtn').onclick=()=>{
+  saveData();
+  document.body.classList.add('night'); document.body.classList.remove('morning');
+  currentIndex=0; answers={}; editingDate=null;
+  loadSavedData(); 
+  progressBar.style.width = '0%';
+  loadUI();
+};
 
   document.getElementById('btnClearToday').onclick=()=>{
     const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
