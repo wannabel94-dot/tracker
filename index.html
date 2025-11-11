@@ -97,43 +97,52 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   transform: scale(1.02);
 }
 
-/* ---------- CHECKBOX ---------- */
-.check-item input[type="checkbox"] {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 22px;
-  height: 22px;
-  border: 2px solid #fff;
-  border-radius: 50%; /* circle */
+/* ---------- CHECKLIST ---------- */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* spacing between items */
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* text left, checkbox right */
+  padding: 12px 18px;
+  border-radius: 24px; /* pill shape */
+  background: rgba(255, 255, 255, 0.12);
   cursor: pointer;
-  flex-shrink: 0;
-  position: relative;
-  transition: background 0.2s, border 0.2s, transform 0.2s;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.check-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
+}
+
+.check-item span {
+  font-weight: 600;
+  font-size: 16px;
+  user-select: none;
+}
+
+.check-item input[type="checkbox"] {
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  accent-color: #fff; /* theme color */
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .check-item input[type="checkbox"]:hover {
-  border-color: rgba(255, 255, 255, 0.8);
   transform: scale(1.1);
   box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
 }
 
 .check-item input[type="checkbox"]:checked {
-  background: #fff;
-  border-color: #fff;
   transform: scale(1.15);
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
-}
-
-.check-item input[type="checkbox"]:checked::after {
-  content: '✔';
-  color: #000;
-  font-size: 14px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
 }
 
 /* Morning / Night backgrounds */
