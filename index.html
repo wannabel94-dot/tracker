@@ -505,12 +505,22 @@ function updateProgressBar(){
   progressBar.style.width = pct + '%';
 }
 
-/* ---------- LOAD MORNING QUESTIONS ---------- */
+/* ---------- LOAD UI ---------- */
 function loadUI() {
-  const questions = MORNING;
+  const mode = document.body.classList.contains('morning') ? 'morning' : 'night';
+  const questions = mode === 'morning' ? MORNING : NIGHT;
+
+  // Night mode has no progress bar at the top
+  progressBar.parentElement.style.display = mode === 'morning' ? 'block' : 'none';
 
   if(currentIndex >= questions.length){
-    loadMorningChecklist(); // show checklist after questions
+    if(mode === 'morning'){
+      loadMorningChecklist(); // show morning checklist after questions
+    } else {
+      contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
+      backBtn.style.display = currentIndex>0?'inline-block':'none';
+      nextBtn.style.display = 'none';
+    }
     return;
   }
 
@@ -522,6 +532,17 @@ function loadUI() {
       const selected = answers[q.key]===opt?'selected':'';
       html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
     });
+  } else if(q.type==='multi' && q.key==='caffeine_alcohol'){
+    q.options.forEach(opt=>{
+      html+=`<div class="counter-item"><span>${opt}</span>
+        <div class="counter-controls">
+          <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
+          <span id="count-${opt}">${(answers[q.key]&&answers[q.key][opt])||0}</span>
+          <button type="button" onclick="updateCounter('${opt}',1)">+</button>
+        </div>
+      </div>`;
+    });
+    nextBtn.disabled=false;
   } else if(q.type==='time'){
     html += `<input type="time" value="${answers[q.key]||''}" onchange="selectOption(this.value)"/>`;
   }
@@ -532,20 +553,26 @@ function loadUI() {
   backBtn.style.display = currentIndex>0 ? 'inline-block':'none';
   nextBtn.style.display = 'inline-block';
 
-  // Ensure progress bar shows during morning
-  progressBar.parentElement.style.display = 'block';
-  updateProgressBar();
+  // Update morning progress bar
+  if(mode === 'morning') updateProgressBar();
 }
 
 /* ---------- SELECT OPTION ---------- */
 window.selectOption = (opt) => {
-  const q = MORNING[currentIndex];
-  answers[q.key] = opt;
-  updateProgressBar();
+  const mode = document.body.classList.contains('morning') ? 'morning' : 'night';
+  const questions = mode === 'morning' ? MORNING : NIGHT;
 
-  if(q.autoNext){ 
-    currentIndex++; 
-    loadUI(); 
+  if(currentIndex < questions.length){
+    const q = questions[currentIndex];
+    answers[q.key] = opt;
+
+    // Only show progress for morning
+    if(mode === 'morning') updateProgressBar();
+
+    if(q.autoNext){ 
+      currentIndex++; 
+      loadUI(); 
+    }
   }
 }
 
