@@ -82,6 +82,9 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 
 /* ---------- CHECKLIST ITEM (pill style) ---------- */
 .check-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 8px;
   padding: 10px 14px;
   border-radius: 16px;
@@ -89,13 +92,33 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   cursor: pointer;
   transition: background 0.2s ease;
 }
+
 .check-item:hover {
   background: rgba(255,255,255,0.1);
 }
+
+.check-text {
+  font-weight: 500;
+}
+
 .check-item.selected .check-text {
   text-decoration: line-through;
   opacity: 0.6;
 }
+
+.check-icon {
+  width: 22px;
+  height: 22px;
+  opacity: 0.9;
+  flex-shrink: 0;
+  margin-left: 10px;
+  transition: opacity 0.25s ease;
+}
+
+.check-item.selected .check-icon {
+  opacity: 0.4;
+}
+
 .clear-btn {
   display: block;
   margin: 14px auto 0;
@@ -107,10 +130,10 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   cursor: pointer;
   transition: background 0.25s ease;
 }
+
 .clear-btn:hover {
   background: rgba(255,255,255,0.18);
 }
-
 
 /* Morning / Night backgrounds */
 body.morning .opt-btn { background: rgba(255,255,255,0.12); color: #fff; }
@@ -250,17 +273,17 @@ const MORNING = [
 
 // Checklist items are now separate
 const MORNING_CHECKLIST_ITEMS = [
-  { key:'made_bed', label:'Make bed?' },
-  { key:'took_meds_morn', label:'Take meds?' },
-  { key:'tidy_up', label:'Tidy up?' },
-  { key:'tea_meditate', label:'Have tea in bed + meditate 5 mins?' },
-  { key:'shower_morn', label:'Shower?' },
-  { key:'led_mask_morn', label:'LED mask?' },
-  { key:'skincare_morn', label:'Skincare?' },
-  { key:'eat_breakfast', label:'Eat breakfast?' },
-  { key:'supplements_morn', label:'Supplements?' },
-  { key:'get_dressed', label:'Get dressed?' },
-  { key:'brush_teeth_morn', label:'Brush teeth?' }
+  { key: 'made_bed', label: 'Make bed?', icon: 'bed.svg' },
+  { key: 'took_meds_morn', label: 'Take meds?', icon: 'meds.svg' },
+  { key: 'tidy_up', label: 'Tidy up?', icon: 'tidy.svg' },
+  { key: 'tea_meditate', label: 'Have tea in bed + meditate 5 mins?', icon: 'tea.svg' },
+  { key: 'shower_morn', label: 'Shower?', icon: 'shower.svg' },
+  { key: 'led_mask_morn', label: 'LED mask?', icon: 'mask.svg' },
+  { key: 'skincare_morn', label: 'Skincare?', icon: 'skincare.svg' },
+  { key: 'eat_breakfast', label: 'Eat breakfast?', icon: 'breakfast.svg' },
+  { key: 'supplements_morn', label: 'Supplements?', icon: 'supplements.svg' },
+  { key: 'get_dressed', label: 'Get dressed?', icon: 'clothes.svg' },
+  { key: 'brush_teeth_morn', label: 'Brush teeth?', icon: 'toothbrush.svg' }
 ];
 
 const NIGHT = [
@@ -398,9 +421,11 @@ function loadMorningChecklist() {
     <div class="checklist">
       ${MORNING_CHECKLIST_ITEMS.map(item => {
         const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-        return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-                  <span class="check-text">${item.label}</span>
-                </div>`;
+        return `
+          <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+            <span class="check-text">${item.label}</span>
+            <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
+          </div>`;
       }).join('')}
     </div>
     <button id="clearChecklistBtn" class="clear-btn">Clear All</button>
@@ -411,7 +436,7 @@ function loadMorningChecklist() {
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
 
-  // Attach the Clear All button event
+  // Attach Clear All event
   const clearBtn = document.getElementById('clearChecklistBtn');
   if (clearBtn) clearBtn.onclick = clearChecklist;
 }
