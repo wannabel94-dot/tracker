@@ -418,7 +418,6 @@ const NIGHT = [
 
 /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  // Build checklist HTML
   let html = `
     <div class="checklist">
       ${MORNING_CHECKLIST_ITEMS.map(item => {
@@ -433,18 +432,14 @@ function loadMorningChecklist() {
     </div>
     <button id="clearChecklistBtn" class="clear-btn">Clear All</button>
   `;
-
   contentArea.innerHTML = html;
 
-  // Show navigation buttons
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
 
-  // Attach Clear All button event
   const clearBtn = document.getElementById('clearChecklistBtn');
   if (clearBtn) clearBtn.onclick = clearChecklist;
 
-  // Update the main progress bar
   updateProgressBar();
 }
 
@@ -452,69 +447,21 @@ window.toggleChecklist = (key) => {
   answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
   const el = document.querySelector(`.check-item[onclick="toggleChecklist('${key}')"]`);
   if (el) el.classList.toggle('selected', answers[key] === 'Yes');
-  updateProgressBar();
-  saveData();
-};
 
-/* ---------- MORNING CHECKLIST ---------- */
-function loadMorningChecklist() {
-  // Build checklist HTML
-  let html = `
-    <div class="checklist">
-      ${MORNING_CHECKLIST_ITEMS.map(item => {
-        const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-        return `
-          <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-            <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
-            <span class="check-text">${item.label}</span>
-          </div>
-        `;
-      }).join('')}
-    </div>
-    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>
-  `;
-
-  contentArea.innerHTML = html;
-
-  // Show navigation buttons
-  backBtn.style.display = 'inline-block';
-  nextBtn.style.display = 'inline-block';
-
-  // Attach Clear All button event
-  const clearBtn = document.getElementById('clearChecklistBtn');
-  if (clearBtn) clearBtn.onclick = clearChecklist;
-
-  // Update the main progress bar
-  updateProgressBar();
-}
-
-window.toggleChecklist = (key) => {
-  // Toggle the checklist item
-  answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
-  const el = document.querySelector(`.check-item[onclick="toggleChecklist('${key}')"]`);
-  if (el) el.classList.toggle('selected', answers[key] === 'Yes');
-
-  // Update progress bar
   updateProgressBar();
   saveData();
 
-  // Auto-next if all checklist items are completed
   const allDone = MORNING_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
-  if (allDone) {
-    showMorningCompleted();
-  }
+  if (allDone) showMorningCompleted();
 };
 
 function clearChecklist() {
-  MORNING_CHECKLIST_ITEMS.forEach(item => {
-    answers[item.key] = 'No';
-  });
+  MORNING_CHECKLIST_ITEMS.forEach(item => answers[item.key] = 'No');
   document.querySelectorAll('.check-item').forEach(el => el.classList.remove('selected'));
   updateProgressBar();
   saveData();
 }
 
-/* ---------- PROGRESS BAR (morning questions + checklist) ---------- */
 function updateProgressBar() {
   const baseQuestions = 2; // wake_time + how_slept
   const checklistTotal = MORNING_CHECKLIST_ITEMS.length;
@@ -529,19 +476,16 @@ function updateProgressBar() {
   progressBar.style.width = pct + '%';
 }
 
-/* ---------- MORNING COMPLETED MESSAGE ---------- */
 function showMorningCompleted() {
   contentArea.innerHTML = `<div class="done-note">Morning completed! ☀️</div>`;
   backBtn.style.display = 'none';
   nextBtn.style.display = 'none';
 
-  // Auto-advance to the next section after short delay
   setTimeout(() => {
-    currentIndex++; 
+    currentIndex++;
     loadUI();
   }, 800);
 }
-
 
   /* ---------- SETTINGS ---------- */
   btnSettings.onclick=e=>{
