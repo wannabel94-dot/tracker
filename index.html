@@ -255,39 +255,42 @@ body.morning::before { content:""; position:fixed; inset:0; z-index:-1; backgrou
 document.addEventListener('DOMContentLoaded', ()=>{
 
   /* ---------- QUESTIONS ---------- */
-  const MORNING = [
-    {key:'wake_time', type:'time', label:'What time did you wake up?'},
-    {key:'how_slept', type:'single', label:'How do you think you slept?', options:['Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine'], autoNext:true},
-    {key:'made_bed', type:'single', label:'Make bed?', options:['Yes','No'], autoNext:true},
-    {key:'took_meds_morn', type:'single', label:'Take meds?', options:['Yes','No'], autoNext:true},
-    {key:'tidy_up', type:'single', label:'Tidy up?', options:['Yes','No'], autoNext:true},
-    {key:'tea_meditate', type:'single', label:'Have tea in bed + meditate 5 mins?', options:['Yes','No'], autoNext:true},
-    {key:'shower_morn', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
-    {key:'led_mask_morn', type:'single', label:'LED mask?', options:['Yes','No'], autoNext:true},
-    {key:'skincare_morn', type:'single', label:'Skincare?', options:['Yes','No'], autoNext:true},
-    {key:'eat_breakfast', type:'single', label:'Eat breakfast?', options:['Yes','No'], autoNext:true},
-    {key:'supplements_morn', type:'single', label:'Supplements?', options:['Yes','No'], autoNext:true},
-    {key:'get_dressed', type:'single', label:'Get dressed?', options:['Yes','No'], autoNext:true},
-    {key:'brush_teeth_morn', type:'single', label:'Brush teeth?', options:['Yes','No'], autoNext:true}
-  ];
+const MORNING = [
+  {key:'wake_time', type:'time', label:'What time did you wake up?'},
+  {key:'how_slept', type:'single', label:'How do you think you slept?', options:[
+    'Went to bed late but slept in','Went to bed late but woke early',
+    'Went to bed early but woke really early',"Couldn't fall asleep",
+    'Lightly disrupted','Frequently disrupted','Fine'
+  ], autoNext:true}
+];
 
-  const NIGHT = [
-    {key:'psyillium', type:'single', label:'Did you take psyllium?', options:['Yes','No'], autoNext:true},
-    {key:'magnesium', type:'single', label:'Magnesium?', options:['Yes','No'], autoNext:true},
-    {key:'pillowcase', type:'single', label:'Did you change the pillowcase?', options:['Yes','No'], autoNext:true},
-    {key:'shower_night', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
-    {key:'skincare_night', type:'single', label:'Skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true},
-    {key:'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true},
-    {key:'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None'], autoNext:true},
-    {key:'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true},
-    {key:'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true},
-    {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['Coffee','Tea','Beer','Spirits','Wine']}
-  ];
+// Checklist items are now separate
+const MORNING_CHECKLIST_ITEMS = [
+  { key:'made_bed', label:'Make bed?' },
+  { key:'took_meds_morn', label:'Take meds?' },
+  { key:'tidy_up', label:'Tidy up?' },
+  { key:'tea_meditate', label:'Have tea in bed + meditate 5 mins?' },
+  { key:'shower_morn', label:'Shower?' },
+  { key:'led_mask_morn', label:'LED mask?' },
+  { key:'skincare_morn', label:'Skincare?' },
+  { key:'eat_breakfast', label:'Eat breakfast?' },
+  { key:'supplements_morn', label:'Supplements?' },
+  { key:'get_dressed', label:'Get dressed?' },
+  { key:'brush_teeth_morn', label:'Brush teeth?' }
+];
 
-  const MORNING_CHECKLIST_KEYS = [
-    'made_bed','took_meds_morn','tidy_up','tea_meditate','shower_morn',
-    'led_mask_morn','skincare_morn','eat_breakfast','supplements_morn','get_dressed','brush_teeth_morn'
-  ];
+const NIGHT = [
+  {key:'psyillium', type:'single', label:'Did you take psyllium?', options:['Yes','No'], autoNext:true},
+  {key:'magnesium', type:'single', label:'Magnesium?', options:['Yes','No'], autoNext:true},
+  {key:'pillowcase', type:'single', label:'Did you change the pillowcase?', options:['Yes','No'], autoNext:true},
+  {key:'shower_night', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
+  {key:'skincare_night', type:'single', label:'Skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true},
+  {key:'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true},
+  {key:'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None'], autoNext:true},
+  {key:'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true},
+  {key:'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true},
+  {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['Coffee','Tea','Beer','Spirits','Wine']}
+];
 
   /* ---------- STATE ---------- */
   let currentIndex=0;
