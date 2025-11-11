@@ -493,9 +493,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
     contentArea.innerHTML=html;
     backBtn.style.display='inline-block';
     nextBtn.style.display='inline-block';
-    const clearBtn=document.getElementById('clearChecklistBtn');
-    if(clearBtn) clearBtn.onclick=clearChecklist;
-    updateProgressBar();
+  const clearBtn = document.getElementById('clearChecklistBtn');
+ if (clearBtn) clearBtn.onclick = clearChecklist;
+
+ updateProgressBar();
+  const clearBtn = document.getElementById('clearChecklistBtn');
+  if (clearBtn) clearBtn.onclick = clearChecklist;
+ // Ensure progress bar reflects completed checklist items
+ updateProgressBar();
+
   }
 
   window.toggleChecklist=key=>{
