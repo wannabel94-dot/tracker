@@ -41,41 +41,31 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .question { font-size:18px; margin-bottom:12px; font-weight:600; }
 .options { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 
-/* Option buttons */
-.opt-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px 18px;
-  border-radius: 16px;
-  border: 1px solid transparent;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.3s, box-shadow 0.3s, border 0.3s, color 0.3s;
-  backdrop-filter: blur(6px);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  text-align: center;
-  user-select: none;
-}
-/* Subtle animated highlight for selected option buttons */
+/* Selected option button with subtle animated border and glow */
 .opt-btn.selected {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
-  transition: background 0.3s ease, transform 0.2s ease;
+  border: 2px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
   transform: scale(1.02);
+  transition: background 0.3s ease, transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  animation: glowPulse 1.5s infinite alternate;
 }
 
 body.morning .opt-btn.selected {
-  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.45);
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
 }
 
 body.night .opt-btn.selected {
-  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
+}
+
+/* Subtle pulsing animation */
+@keyframes glowPulse {
+  from { box-shadow: 0 0 6px rgba(255, 255, 255, 0.15); }
+  to   { box-shadow: 0 0 12px rgba(255, 255, 255, 0.25); }
 }
 
 /* Smooth hover effect for unselected buttons */
