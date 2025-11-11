@@ -490,14 +490,14 @@ function updateProgressBar() {
 }
 
 function showMorningCompleted() {
-  contentArea.innerHTML = `<div class="done-note">Morning completed!</div>`;
+  contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
   backBtn.style.display = 'none';
   nextBtn.style.display = 'none';
 
   setTimeout(() => {
     currentIndex++;
     loadUI();
-  }, 1000);
+  }, 3000);
 }
 
   /* ---------- SETTINGS ---------- */
