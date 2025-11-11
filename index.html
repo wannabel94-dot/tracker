@@ -297,6 +297,14 @@ const NIGHT = [
   {key:'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true},
   {key:'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true},
   {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['Coffee','Tea','Beer','Spirits','Wine']}
+  {key:'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting', 'none']},
+  {key:'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none']},
+  {key:'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy (in-person)','Doctor','Blood tests','none']},
+  {key:'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none']},
+  {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none']},
+  {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none']},
+  {key:'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading', 'none']},
+  {key:'closed_eyes_time', type:'time', label:'What time did you close your eyes?', autoNext:true},
 ];
 
   /* ---------- STATE ---------- */
@@ -367,9 +375,12 @@ const NIGHT = [
 
 if (currentIndex >= questions.length) {
   if (document.body.classList.contains('morning')) {
-    loadMorningChecklist(); // stay on morning checklist
+    // Morning section finished, show checklist
+    loadMorningChecklist();
+    backBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'inline-block';
   } else {
-    // Night section finished: final done
+    // Night section finished, all done
     contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
     backBtn.style.display = 'none';
     nextBtn.style.display = 'none';
@@ -377,7 +388,6 @@ if (currentIndex >= questions.length) {
   }
   return;
 }
-
     const q=questions[currentIndex];
     let html=`<div class="question">${q.label}</div><div class="options">`;
     if(q.type==='single'){
@@ -447,29 +457,37 @@ function loadMorningChecklist() {
 
   updateProgressBar();
 }
+
+// Selecting a normal question option
 window.selectOption = opt => {
   const q = getQuestions()[currentIndex];
   answers[q.key] = opt;
-  updateProgressBar(); // <-- add this
-  if(q.autoNext){ currentIndex++; loadUI(); }
+  updateProgressBar(); // live update
+  if (q.autoNext) {
+    currentIndex++;
+    loadUI();
+  }
 };
-window.toggleChecklist = (key) => {
+
+// Toggling checklist items
+window.toggleChecklist = key => {
   answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
   const el = document.querySelector(`.check-item[onclick="toggleChecklist('${key}')"]`);
   if (el) el.classList.toggle('selected', answers[key] === 'Yes');
 
-  updateProgressBar();
+  updateProgressBar(); // live progress update
   saveData();
+};
 
-updateProgressBar(); // progress updates without showing a popup
-
+// Clear all checklist items
 function clearChecklist() {
   MORNING_CHECKLIST_ITEMS.forEach(item => answers[item.key] = 'No');
   document.querySelectorAll('.check-item').forEach(el => el.classList.remove('selected'));
   updateProgressBar();
   saveData();
 }
-  
+
+// Returns all keys for the entire day
 function getAllDailyKeys() {
   const morningQuestions = ['wake_time', 'how_slept'];
   const morningChecklist = MORNING_CHECKLIST_ITEMS.map(i => i.key);
@@ -477,6 +495,7 @@ function getAllDailyKeys() {
   return [...morningQuestions, ...morningChecklist, ...nightQuestions];
 }
 
+// Update progress bar based on entire day's completion
 function updateProgressBar() {
   const allKeys = getAllDailyKeys();
   let done = 0;
@@ -486,7 +505,7 @@ function updateProgressBar() {
     if (MORNING_CHECKLIST_ITEMS.find(i => i.key === key)) {
       if (answers[key] === 'Yes') done++;
     }
-    // Any value counts for morning or night questions
+    // Morning and night questions: any value counts
     else if (answers[key]) done++;
   });
 
@@ -494,16 +513,6 @@ function updateProgressBar() {
   progressBar.style.width = pct + '%';
 }
 
-function showMorningCompleted() {
-  contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-  backBtn.style.display = 'none';
-  nextBtn.style.display = 'none';
-
-  setTimeout(() => {
-    currentIndex++;
-    loadUI();
-  }, 3000);
-}
 
   /* ---------- SETTINGS ---------- */
   btnSettings.onclick=e=>{
