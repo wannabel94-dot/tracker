@@ -348,11 +348,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
   function loadUI(){
     const questions=getQuestions();
 
-    if(document.body.classList.contains('morning') && currentIndex===1){ // after "how slept"
-      loadMorningChecklist();
-      backBtn.style.display='inline-block'; nextBtn.style.display='inline-block';
-      return;
-    }
+   if(document.body.classList.contains('morning') && currentIndex === 2){ // after "wake up" + "how slept"
+  loadMorningChecklist();
+  backBtn.style.display='inline-block'; nextBtn.style.display='inline-block';
+  return;
+}
 
     if(currentIndex>=questions.length){
       contentArea.innerHTML='<div class="done-note">All done for today!</div>';
