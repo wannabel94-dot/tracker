@@ -394,7 +394,6 @@ const NIGHT = [
     }
     html+='</div>';
     contentArea.innerHTML=html;
-    progressBar.style.width=((currentIndex)/questions.length*100)+'%';
     backBtn.style.display=(currentIndex>0)?'inline-block':'none';
     nextBtn.style.display='inline-block';
   }
@@ -442,7 +441,12 @@ function loadMorningChecklist() {
 
   updateProgressBar();
 }
-
+window.selectOption = opt => {
+  const q = getQuestions()[currentIndex];
+  answers[q.key] = opt;
+  updateProgressBar(); // <-- add this
+  if(q.autoNext){ currentIndex++; loadUI(); }
+};
 window.toggleChecklist = (key) => {
   answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
   const el = document.querySelector(`.check-item[onclick="toggleChecklist('${key}')"]`);
@@ -463,7 +467,6 @@ function clearChecklist() {
 }
   
 function updateProgressBar() {
-  // Combine the morning questions and checklist items into one array
   const morningQuestions = ['wake_time', 'how_slept'];
   const checklistItems = MORNING_CHECKLIST_ITEMS.map(i => i.key);
   const allItems = [...morningQuestions, ...checklistItems];
@@ -472,9 +475,10 @@ function updateProgressBar() {
   let done = 0;
 
   allItems.forEach(key => {
-    // Consider 'Yes' for checklist and any non-empty value for questions as done
-    if ((MORNING_CHECKLIST_ITEMS.find(i => i.key === key) && answers[key] === 'Yes') ||
-        (!MORNING_CHECKLIST_ITEMS.find(i => i.key === key) && answers[key])) {
+    if (
+      morningQuestions.includes(key) && answers[key] // any value counts
+      || checklistItems.includes(key) && answers[key] === 'Yes' // only Yes counts
+    ) {
       done++;
     }
   });
@@ -482,7 +486,6 @@ function updateProgressBar() {
   const pct = Math.round((done / total) * 100);
   progressBar.style.width = pct + '%';
 
-  // Auto-next to "Morning completed" if everything is done
   if (done === total) showMorningCompleted();
 }
 
