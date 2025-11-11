@@ -34,23 +34,30 @@ header { display:flex; align-items:center; justify-content:space-between; margin
 .switch-btn:hover { background: rgba(255,255,255,0.08); border-radius:50%; }
 body.morning .switch-btn.morning img { opacity:1; transform:scale(1.15); }
 body.night .switch-btn.night img { opacity:1; transform:scale(1.15); }
-
+  
 /* ---------- SETTINGS MENU ---------- */
 .settings-menu {
   position: absolute;
-  top: 50px;                 
-  right: 0;
-  background: rgba(255, 255, 255, 0.1);  
-  backdrop-filter: blur(12px);          
-  border-radius: 16px;
-  flex-direction: column;
+  top: 55px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 18px;
   padding: 10px 0;
-  z-index: 20;
   display: none;
-  min-width: 180px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 200px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 50;
+  transform-origin: top right;
+  transform: scale(0.95);
+  opacity: 0;
   transition: all 0.25s ease;
 }
+
 
 /* Show menu */
 .settings-menu.show {
@@ -284,7 +291,7 @@ body.morning::before { content:""; position:fixed; inset:0; z-index:-1; backgrou
       <button class="switch-btn morning" id="morningBtn"><img src="icons/day.svg" alt="Morning"></button>
       <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
     </div>
-    <button id="btnSettings">⋮</button>
+    <button id="btnSettings">☰</button>
     <div id="settingsMenu" class="settings-menu">
       <button id="btnEntries">History</button>
       <button id="btnExport">Export data</button>
