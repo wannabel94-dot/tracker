@@ -480,67 +480,118 @@ document.addEventListener('DOMContentLoaded', ()=>{
     currentIndex++; loadUI();
   };
 
-  /* ---------- MORNING CHECKLIST ---------- */
+  /* ---------- MORNING PROGRESS KEYS ---------- */
+function getMorningProgressKeys(){
+  const morningQuestions = ['wake_time','how_slept'];
+  const checklistKeys = MORNING_CHECKLIST_ITEMS.map(i => i.key);
+  return [...morningQuestions, ...checklistKeys];
+}
+
+/* ---------- UPDATE PROGRESS BAR ---------- */
+function updateProgressBar(){
+  const allKeys = getMorningProgressKeys();
+  let done = 0;
+
+  allKeys.forEach(key => {
+    const isChecklistItem = MORNING_CHECKLIST_ITEMS.find(i => i.key === key);
+    if(isChecklistItem){
+      if(answers[key]==='Yes') done++;
+    } else {
+      if(answers[key]) done++;
+    }
+  });
+
+  const pct = Math.round(done / allKeys.length * 100);
+  progressBar.style.width = pct + '%';
+}
+
+/* ---------- LOAD MORNING QUESTIONS ---------- */
+function loadUI() {
+  const questions = MORNING;
+
+  if(currentIndex >= questions.length){
+    loadMorningChecklist(); // show checklist after questions
+    return;
+  }
+
+  const q = questions[currentIndex];
+  let html = `<div class="question">${q.label}</div><div class="options">`;
+
+  if(q.type==='single'){
+    q.options.forEach(opt=>{
+      const selected = answers[q.key]===opt?'selected':'';
+      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+    });
+  } else if(q.type==='time'){
+    html += `<input type="time" value="${answers[q.key]||''}" onchange="selectOption(this.value)"/>`;
+  }
+
+  html += '</div>';
+  contentArea.innerHTML = html;
+
+  backBtn.style.display = currentIndex>0 ? 'inline-block':'none';
+  nextBtn.style.display = 'inline-block';
+
+  // Ensure progress bar shows during morning
+  progressBar.parentElement.style.display = 'block';
+  updateProgressBar();
+}
+
+/* ---------- SELECT OPTION ---------- */
+window.selectOption = (opt) => {
+  const q = MORNING[currentIndex];
+  answers[q.key] = opt;
+  updateProgressBar();
+
+  if(q.autoNext){ 
+    currentIndex++; 
+    loadUI(); 
+  }
+}
+
+/* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  let html = `
+  let html = `<div class="question">☀️ Morning Checklist</div>
     <div class="checklist">
-      ${MORNING_CHECKLIST_ITEMS.map(item => {
-        const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+      ${MORNING_CHECKLIST_ITEMS.map(item=>{
+        const selected = answers[item.key]==='Yes'?'selected':'';
         return `
           <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
             <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
             <span class="check-text">${item.label}</span>
-          </div>
-        `;
+          </div>`;
       }).join('')}
     </div>
-    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>
-  `;
-  contentArea.innerHTML = html;
+    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>`;
 
+  contentArea.innerHTML = html;
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
 
   const clearBtn = document.getElementById('clearChecklistBtn');
-  if (clearBtn) clearBtn.onclick = clearChecklist;
+  if(clearBtn) clearBtn.onclick = clearChecklist;
 
-  updateProgressBar(); // single call
+  // Show progress bar
+  progressBar.parentElement.style.display = 'block';
+  updateProgressBar();
 }
 
-  window.toggleChecklist=key=>{
-    answers[key] = answers[key]==='Yes'?'No':'Yes';
-const els = document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`);
-els.forEach(el => el.classList.toggle('selected', answers[key] === 'Yes'));
-    if(el) el.classList.toggle('selected',answers[key]==='Yes');
-    updateProgressBar();
-    saveData();
-  };
+/* ---------- TOGGLE CHECKLIST ITEM ---------- */
+window.toggleChecklist = key => {
+  answers[key] = answers[key]==='Yes'?'No':'Yes';
+  const els = document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`);
+  els.forEach(el => el.classList.toggle('selected', answers[key]==='Yes'));
+  updateProgressBar();
+  saveData();
+}
 
-  function clearChecklist(){
-    MORNING_CHECKLIST_ITEMS.forEach(i=>answers[i.key]='No');
-    document.querySelectorAll('.check-item').forEach(el=>el.classList.remove('selected'));
-    updateProgressBar();
-    saveData();
-  }
-
-  function getAllDailyKeys(){
-    const morningQuestions=['wake_time','how_slept'];
-    const morningChecklist=MORNING_CHECKLIST_ITEMS.map(i=>i.key);
-    const nightQuestions=NIGHT.map(q=>q.key);
-    return [...morningQuestions,...morningChecklist,...nightQuestions];
-  }
-
-  function updateProgressBar(){
-    const allKeys=getAllDailyKeys();
-    let done=0;
-    allKeys.forEach(key=>{
-      if(MORNING_CHECKLIST_ITEMS.find(i=>i.key===key)){
-        if(answers[key]==='Yes') done++;
-      } else if(answers[key]) done++;
-    });
-    const pct=Math.round(done/allKeys.length*100);
-    progressBar.style.width=pct+'%';
-  }
+/* ---------- CLEAR CHECKLIST ---------- */
+function clearChecklist(){
+  MORNING_CHECKLIST_ITEMS.forEach(i=>answers[i.key]='No');
+  document.querySelectorAll('.check-item').forEach(el=>el.classList.remove('selected'));
+  updateProgressBar();
+  saveData();
+}
 
   /* ---------- SETTINGS ---------- */
   btnSettings.onclick=e=>{
