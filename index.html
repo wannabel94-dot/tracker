@@ -344,10 +344,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
   nextBtn.addEventListener('click', saveData);
   backBtn.addEventListener('click', saveData);
 
+/* ---------- UI ---------- */
 function loadUI() {
   const questionsAll = getQuestions(); // morning or night
   let questions = [...questionsAll];
 
+  // For morning mode, remove checklist questions from the main flow
   if (document.body.classList.contains('morning')) {
     questions = questions.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key));
   }
@@ -367,7 +369,7 @@ function loadUI() {
   if (q.type === 'single') {
     q.options.forEach(opt => {
       const selected = answers[q.key] === opt ? 'selected' : '';
-      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}', ${currentIndex})">${opt}</button>`;
+      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
     });
   } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
     q.options.forEach(opt => {
@@ -382,7 +384,7 @@ function loadUI() {
     });
     nextBtn.disabled = false;
   } else if (q.type === 'time') {
-    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value, ${currentIndex})"/>`;
+    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
   }
 
   html += '</div>';
@@ -396,45 +398,51 @@ function loadUI() {
   updateProgressBar();
 }
 
-window.selectOption = (opt, idx) => {
+// Update progress bar including checklist
+function updateProgressBar() {
   const questionsAll = getQuestions();
-  let questions = [...questionsAll];
+  let total = questionsAll.length;
+  let done = 0;
+
+  // Count answered main questions
+  questionsAll.forEach(q => {
+    if (answers[q.key]) done++;
+  });
+
+  // For morning, count checklist items
   if (document.body.classList.contains('morning')) {
-    questions = questions.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key));
+    const checklistDone = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === 'Yes').length;
+    done = checklistDone + questionsAll.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key) && answers[q.key]).length;
+    total = MORNING_CHECKLIST_KEYS.length + questionsAll.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key)).length;
   }
 
-  const q = questions[idx];
-  answers[q.key] = opt;
-  if (q.autoNext) {
-    currentIndex++;
-    loadUI();
-  }
+  progressBar.style.width = ((done / total) * 100) + '%';
+}
+
+// Selecting an option
+window.selectOption = opt => {
+    const q = getQuestions()[currentIndex];
+    answers[q.key] = opt;
+    if (q.autoNext) { 
+        currentIndex++; 
+        loadUI(); 
+    }
 };
 
-// Unified Back/Next buttons
-backBtn.onclick = () => { 
-  if (currentIndex > 0) { 
-    currentIndex--; 
-    loadUI(); 
-  }
+// Back / Next buttons
+backBtn.onclick = () => {
+    if (currentIndex > 0) { currentIndex--; loadUI(); }
 };
 
 nextBtn.onclick = () => {
-  const questionsAll = getQuestions();
-  let questions = [...questionsAll];
-  if (document.body.classList.contains('morning')) {
-    questions = questions.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key));
-  }
-
-  const q = questions[currentIndex];
-  if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-    if (Object.values(answers[q.key] || {}).every(v => v === 0)) {
-      if (!confirm('Save with no caffeine/alcohol?')) return;
+    const q = getQuestions()[currentIndex];
+    if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+        if (Object.values(answers[q.key] || {}).every(v => v === 0)) {
+            if (!confirm('Save with no caffeine/alcohol?')) return;
+        }
     }
-  }
-
-  currentIndex++;
-  loadUI();
+    currentIndex++; 
+    loadUI();
 };
 
   /* ---------- MORNING CHECKLIST ---------- */
