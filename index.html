@@ -182,15 +182,16 @@ body.morning::before { content:""; position:fixed; inset:0; z-index:-1; backgrou
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded', ()=>{
 
+  /* ---------- QUESTIONS ---------- */
   const MORNING = [
     {key:'wake_time', type:'time', label:'What time did you wake up?'},
     {key:'how_slept', type:'single', label:'How do you think you slept?', options:['Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine'], autoNext:true},
     {key:'made_bed', type:'single', label:'Make bed?', options:['Yes','No'], autoNext:true},
     {key:'took_meds_morn', type:'single', label:'Take meds?', options:['Yes','No'], autoNext:true},
     {key:'tidy_up', type:'single', label:'Tidy up?', options:['Yes','No'], autoNext:true},
-    {key:'tea_meditate', type:'single', label:'Have tea in bed + meditate 5 mins?', options:['Yes','No'], autoNext:true},
+    {key:'tea_meditate', type:'single', in label:'Have tea in bed + meditate 5 mins?', options:['Yes','No'], autoNext:true},
     {key:'shower_morn', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
     {key:'led_mask_morn', type:'single', label:'LED mask?', options:['Yes','No'], autoNext:true},
     {key:'skincare_morn', type:'single', label:'Skincare?', options:['Yes','No'], autoNext:true},
@@ -213,63 +214,101 @@ document.addEventListener('DOMContentLoaded',()=>{
     {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['Coffee','Tea','Beer','Spirits','Wine']}
   ];
 
+  /* ---------- STATE ---------- */
   let currentIndex=0;
   let answers={};
+  let editingDate=null; // null = editing today
 
   const contentArea=document.getElementById('contentArea');
   const backBtn=document.getElementById('backBtn');
   const nextBtn=document.getElementById('nextBtn');
   const progressBar=document.getElementById('progressBar');
+  const btnSettings=document.getElementById('btnSettings');
+  const settingsMenu=document.getElementById('settingsMenu');
+  const historyModal=document.getElementById('historyModal');
+  const historyInner=document.getElementById('historyInner');
+  const closeHistory=document.getElementById('closeHistory');
 
   const getQuestions=()=>document.body.classList.contains('morning')?MORNING:NIGHT;
-
+  const getMode=()=>document.body.classList.contains('morning')?'morning':'night';
+  
+  /* ---------- COUNTER UPDATES ---------- */
   window.updateCounter=(opt,delta)=>{
     if(!answers['caffeine_alcohol']) answers['caffeine_alcohol']={};
     let val=answers['caffeine_alcohol'][opt]||0;
-    val+=delta;if(val<0)val=0;
+    val+=delta;if(val<0) val=0;
     answers['caffeine_alcohol'][opt]=val;
     const el=document.getElementById(`count-${opt}`);
     if(el) el.textContent=val;
   }
 
+  /* ---------- LOAD / SAVE ---------- */
+  function getTodayDate(){ 
+    if(editingDate) return editingDate;
+    const d=new Date(); 
+    return d.toLocaleDateString('en-GB'); 
+  }
+
+  function loadSavedData(){
+    const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
+    const day=getTodayDate();
+    const mode=getMode();
+    if(all[day] && all[day][mode]) answers=all[day][mode];
+  }
+
+  function saveData(){
+    const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
+    const day=getTodayDate();
+    const mode=getMode();
+    if(!all[day]) all[day]={};
+    all[day][mode]=answers;
+    localStorage.setItem('dailyTrackerData',JSON.stringify(all));
+  }
+
+  window.addEventListener('beforeunload', saveData);
+  nextBtn.addEventListener('click', saveData);
+  backBtn.addEventListener('click', saveData);
+
+  /* ---------- UI ---------- */
   function loadUI(){
     const questions=getQuestions();
     if(currentIndex>=questions.length){
       contentArea.innerHTML='<div class="done-note">All done for today!</div>';
-      backBtn.style.display='none'; nextBtn.style.display='none'; progressBar.style.width='100%';
+      backBtn.style.display='none'; nextBtn.style.display='none';
+      progressBar.style.width='100%';
       return;
     }
-
     const q=questions[currentIndex];
     let html=`<div class="question">${q.label}</div><div class="options">`;
-
     if(q.type==='single'){
       q.options.forEach(opt=>html+=`<button class="opt-btn" onclick="selectOption('${opt}')">${opt}</button>`);
-    }else if(q.type==='multi' && q.key==='caffeine_alcohol'){
+    } else if(q.type==='multi' && q.key==='caffeine_alcohol'){
       q.options.forEach(opt=>{
-        html+=`<div class="counter-item"><span>${opt}</span><div class="counter-controls">
+        html+=`<div class="counter-item"><span>${opt}</span>
+        <div class="counter-controls">
         <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
         <span id="count-${opt}">${(answers[q.key]&&answers[q.key][opt])||0}</span>
         <button type="button" onclick="updateCounter('${opt}',1)">+</button>
         </div></div>`;
       });
       nextBtn.disabled=false;
-    }else if(q.type==='time'){
+    } else if(q.type==='time'){
       html+=`<input type="time" value="${answers[q.key]||''}" onchange="selectOption(this.value)"/>`;
     }
-
     html+='</div>';
     contentArea.innerHTML=html;
     progressBar.style.width=((currentIndex)/questions.length*100)+'%';
+    backBtn.style.display=(currentIndex>0)?'inline-block':'none';
+    nextBtn.style.display='inline-block';
   }
 
   window.selectOption=opt=>{
     const q=getQuestions()[currentIndex];
     answers[q.key]=opt;
-    if(q.autoNext){currentIndex++;loadUI();}
+    if(q.autoNext){currentIndex++; loadUI();}
   }
 
-  backBtn.onclick=()=>{if(currentIndex>0){currentIndex--;loadUI();}}
+  backBtn.onclick=()=>{if(currentIndex>0){currentIndex--; loadUI();}};
   nextBtn.onclick=()=>{
     const q=getQuestions()[currentIndex];
     if(q.type==='multi' && q.key==='caffeine_alcohol'){
@@ -277,65 +316,49 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(!confirm('Save with no caffeine/alcohol?')) return;
       }
     }
-    currentIndex++;loadUI();
-  }
+    currentIndex++; loadUI();
+  };
 
-  /* Settings menu toggle */
-  const btnSettings=document.getElementById('btnSettings');
-  const settingsMenu=document.getElementById('settingsMenu');
+  /* ---------- SETTINGS ---------- */
   btnSettings.onclick=e=>{
     e.stopPropagation();
     settingsMenu.classList.toggle('show');
   };
   document.addEventListener('click',e=>{
-    if(!settingsMenu.contains(e.target)&&e.target!==btnSettings)settingsMenu.classList.remove('show');
+    if(!settingsMenu.contains(e.target)&&e.target!==btnSettings) settingsMenu.classList.remove('show');
   });
 
-  document.getElementById('morningBtn').onclick=()=>{saveData();document.body.classList.add('morning');document.body.classList.remove('night');currentIndex=0;answers={};loadSavedData();loadUI();}
-  document.getElementById('nightBtn').onclick=()=>{saveData();document.body.classList.add('night');document.body.classList.remove('morning');currentIndex=0;answers={};loadSavedData();loadUI();}
-
-  /* ---------- DAILY STORAGE + HISTORY ---------- */
-  function getTodayDate(){
-    const d=new Date();
-    return d.toLocaleDateString('en-GB'); // UK format
-  }
-  function getMode(){return document.body.classList.contains('morning')?'morning':'night';}
-
-  function loadSavedData(){
-    const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
-    const day=getTodayDate(); const mode=getMode();
-    if(all[day]&&all[day][mode]){answers=all[day][mode];}
-  }
-
-  function saveData(){
-    const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
-    const day=getTodayDate(); const mode=getMode();
-    if(!all[day]) all[day]={};
-    all[day][mode]=answers;
-    localStorage.setItem('dailyTrackerData',JSON.stringify(all));
-  }
-
-  window.addEventListener('beforeunload',saveData);
-  nextBtn.addEventListener('click',saveData);
-  backBtn.addEventListener('click',saveData);
+  document.getElementById('morningBtn').onclick=()=>{
+    saveData(); 
+    document.body.classList.add('morning'); 
+    document.body.classList.remove('night'); 
+    currentIndex=0; answers={}; editingDate=null; 
+    loadSavedData(); loadUI();
+  };
+  document.getElementById('nightBtn').onclick=()=>{
+    saveData(); 
+    document.body.classList.add('night'); 
+    document.body.classList.remove('morning'); 
+    currentIndex=0; answers={}; editingDate=null;
+    loadSavedData(); loadUI();
+  };
 
   document.getElementById('btnClearToday').onclick=()=>{
     const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
     const day=getTodayDate();
     delete all[day];
     localStorage.setItem('dailyTrackerData',JSON.stringify(all));
-    answers={};currentIndex=0;loadUI();
+    answers={}; currentIndex=0; loadUI();
+    editingDate=null;
     alert("Today's data cleared.");
   };
 
-  const historyModal=document.getElementById('historyModal');
-  const historyInner=document.getElementById('historyInner');
-  const closeHistory=document.getElementById('closeHistory');
+  /* ---------- HISTORY ---------- */
   closeHistory.onclick=()=>historyModal.classList.remove('show');
 
   document.getElementById('btnEntries').onclick=()=>{
     const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
-    if(Object.keys(all).length===0){alert("No history yet.");return;}
+    if(Object.keys(all).length===0){alert("No history yet."); return;}
     let html=`<div class="question">📅 Daily History</div>`;
     const dates=Object.keys(all).sort((a,b)=>{
       const [da,ma,ya]=a.split('/').map(Number);
@@ -350,111 +373,58 @@ document.addEventListener('DOMContentLoaded',()=>{
     settingsMenu.classList.remove('show');
   };
 
-// --- Track which date is being edited ---
-let editingDate = null; // null means editing today
-
-// --- Update getTodayDate() to respect editing mode ---
-function getTodayDate() {
-  if (editingDate) return editingDate; // editing a past day
-  const d = new Date();
-  return d.toLocaleDateString('en-GB'); // UK format
-}
-
-// --- Show details of a past day ---
-window.showHistoryEntry = (date) => {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const d = all[date];
-  if (!d) return;
-
-  let html = `<div class="question">🗓 ${date}</div>`;
-
-  const render = (title, data) => {
-    if (!data || Object.keys(data).length === 0) return '';
-    let s = `<h3>${title}</h3>`;
-    for (const [k, v] of Object.entries(data)) {
-      if (typeof v === 'object') {
-        s += `<div class="counter-item"><strong>${k}</strong>: ${Object.entries(v).map(([drink,c])=>`${drink} × ${c}`).join(', ')}</div>`;
-      } else {
-        s += `<div class="counter-item"><strong>${k}</strong>: ${v}</div>`;
-      }
-    }
-    return s;
-  };
-
-  html += render('☀️ Morning', d.morning);
-  html += render('🌙 Night', d.night);
-
-  // --- Controls: Back, Edit, Delete ---
-  html += `
-    <div class="controls" style="margin-top:18px; gap:8px;">
-      <button class="back-btn" onclick="document.getElementById('btnEntries').onclick()">Back</button>
-      <button class="next-btn" onclick="editPastDay('${date}')">Edit</button>
-      <button class="next-btn" style="background:rgba(255,0,0,0.25);" onclick="deletePastDay('${date}')">Delete</button>
-    </div>
-  `;
-
-  historyInner.innerHTML = html;
-  historyModal.classList.add('show');
-  settingsMenu.classList.remove('show');
-};
-
-// --- Edit a past day's entry ---
-window.editPastDay = (date) => {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const dayData = all[date];
-  if (!dayData) return alert("No data for that day.");
-
-  editingDate = date; // mark that we're editing this specific day
-
-  // Default to morning view when editing
-  document.body.classList.add('morning');
-  document.body.classList.remove('night');
-
-  // Load morning answers first
-  answers = dayData.morning || {};
-  currentIndex = 0;
-
-  // Hide modal and refresh UI
-  document.getElementById('historyModal').classList.remove('show');
-  loadUI();
-
-  alert(`Editing ${date}. Changes will overwrite that day's data.`);
-};
-
-// --- Delete a past day's entry ---
-window.deletePastDay = (date) => {
-  if (!confirm(`Delete entry for ${date}? This cannot be undone.`)) return;
-
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  delete all[date];
-  localStorage.setItem('dailyTrackerData', JSON.stringify(all));
-
-  // Return to updated history list
-  alert(`Deleted entry for ${date}.`);
-  document.getElementById('btnEntries').onclick(); // refresh history list
-};
-
-
-  window.showHistoryEntry=(date)=>{
+  /* ---------- EDIT & DELETE ---------- */
+  window.showHistoryEntry = (date)=>{
     const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
-    const d=all[date]; if(!d)return;
+    const d=all[date]; if(!d) return;
     let html=`<div class="question">🗓 ${date}</div>`;
     const render=(title,data)=>{
-      if(!data||Object.keys(data).length===0)return'';
+      if(!data||Object.keys(data).length===0) return '';
       let s=`<h3>${title}</h3>`;
       for(const [k,v] of Object.entries(data)){
-        if(typeof v==='object'){
-          s+=`<div class="counter-item"><strong>${k}</strong>: ${Object.entries(v).map(([drink,c])=>`${drink} × ${c}`).join(', ')}</div>`;
-        }else{s+=`<div class="counter-item"><strong>${k}</strong>: ${v}</div>`;}
+        if(typeof v==='object'){ s+=`<div class="counter-item"><strong>${k}</strong>: ${Object.entries(v).map(([drink,c])=>`${drink} × ${c}`).join(', ')}</div>`; }
+        else{ s+=`<div class="counter-item"><strong>${k}</strong>: ${v}</div>`; }
       }
       return s;
     };
-    html+=render('☀️ Morning',d.morning);
-    html+=render('🌙 Night',d.night);
-    html+=`<div class="controls" style="margin-top:18px;"><button class="back-btn" onclick="document.getElementById('btnEntries').onclick()">Back</button></div>`;
+    html+=render('☀️ Morning', d.morning);
+    html+=render('🌙 Night', d.night);
+    html+=`
+      <div class="controls" style="margin-top:18px; gap:8px;">
+        <button class="back-btn" onclick="document.getElementById('btnEntries').onclick()">Back</button>
+        <button class="next-btn" onclick="editPastDay('${date}')">Edit</button>
+        <button class="next-btn" style="background:rgba(255,0,0,0.25);" onclick="deletePastDay('${date}')">Delete</button>
+      </div>
+    `;
     historyInner.innerHTML=html;
+    historyModal.classList.add('show');
+    settingsMenu.classList.remove('show');
   };
 
+  window.editPastDay=(date)=>{
+    const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
+    const dayData=all[date];
+    if(!dayData) return alert("No data for that day.");
+    editingDate=date;
+    document.body.classList.add('morning'); 
+    document.body.classList.remove('night');
+    answers=dayData.morning||{};
+    currentIndex=0;
+    historyModal.classList.remove('show');
+    loadUI();
+    alert(`Editing ${date}. Changes will overwrite that day's data.`);
+  };
+
+  window.deletePastDay=(date)=>{
+    if(!confirm(`Delete entry for ${date}? This cannot be undone.`)) return;
+    const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
+    delete all[date];
+    localStorage.setItem('dailyTrackerData',JSON.stringify(all));
+    alert(`Deleted entry for ${date}.`);
+    document.getElementById('btnEntries').onclick();
+  };
+
+  /* ---------- INIT ---------- */
   loadSavedData();
   loadUI();
 
