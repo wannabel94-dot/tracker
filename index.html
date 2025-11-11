@@ -414,8 +414,7 @@ function loadMorningChecklist() {
   MORNING_CHECKLIST_ITEMS.forEach(item => {
     const selected = answers[item.key] === 'Yes' ? 'selected' : '';
     html += `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-               <span>${item.label}</span>
-               <span class="checkmark">✓</span>
+               <span class="check-text">${item.label}</span>
              </div>`;
   });
   html += '</div>';
