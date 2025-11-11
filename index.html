@@ -350,6 +350,91 @@ document.addEventListener('DOMContentLoaded',()=>{
     settingsMenu.classList.remove('show');
   };
 
+// --- Track which date is being edited ---
+let editingDate = null; // null means editing today
+
+// --- Update getTodayDate() to respect editing mode ---
+function getTodayDate() {
+  if (editingDate) return editingDate; // editing a past day
+  const d = new Date();
+  return d.toLocaleDateString('en-GB'); // UK format
+}
+
+// --- Show details of a past day ---
+window.showHistoryEntry = (date) => {
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  const d = all[date];
+  if (!d) return;
+
+  let html = `<div class="question">🗓 ${date}</div>`;
+
+  const render = (title, data) => {
+    if (!data || Object.keys(data).length === 0) return '';
+    let s = `<h3>${title}</h3>`;
+    for (const [k, v] of Object.entries(data)) {
+      if (typeof v === 'object') {
+        s += `<div class="counter-item"><strong>${k}</strong>: ${Object.entries(v).map(([drink,c])=>`${drink} × ${c}`).join(', ')}</div>`;
+      } else {
+        s += `<div class="counter-item"><strong>${k}</strong>: ${v}</div>`;
+      }
+    }
+    return s;
+  };
+
+  html += render('☀️ Morning', d.morning);
+  html += render('🌙 Night', d.night);
+
+  // --- Controls: Back, Edit, Delete ---
+  html += `
+    <div class="controls" style="margin-top:18px; gap:8px;">
+      <button class="back-btn" onclick="document.getElementById('btnEntries').onclick()">Back</button>
+      <button class="next-btn" onclick="editPastDay('${date}')">Edit</button>
+      <button class="next-btn" style="background:rgba(255,0,0,0.25);" onclick="deletePastDay('${date}')">Delete</button>
+    </div>
+  `;
+
+  historyInner.innerHTML = html;
+  historyModal.classList.add('show');
+  settingsMenu.classList.remove('show');
+};
+
+// --- Edit a past day's entry ---
+window.editPastDay = (date) => {
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  const dayData = all[date];
+  if (!dayData) return alert("No data for that day.");
+
+  editingDate = date; // mark that we're editing this specific day
+
+  // Default to morning view when editing
+  document.body.classList.add('morning');
+  document.body.classList.remove('night');
+
+  // Load morning answers first
+  answers = dayData.morning || {};
+  currentIndex = 0;
+
+  // Hide modal and refresh UI
+  document.getElementById('historyModal').classList.remove('show');
+  loadUI();
+
+  alert(`Editing ${date}. Changes will overwrite that day's data.`);
+};
+
+// --- Delete a past day's entry ---
+window.deletePastDay = (date) => {
+  if (!confirm(`Delete entry for ${date}? This cannot be undone.`)) return;
+
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  delete all[date];
+  localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+
+  // Return to updated history list
+  alert(`Deleted entry for ${date}.`);
+  document.getElementById('btnEntries').onclick(); // refresh history list
+};
+
+
   window.showHistoryEntry=(date)=>{
     const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
     const d=all[date]; if(!d)return;
