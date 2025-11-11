@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       loadMorningChecklist();
       return;
     } else if (mode === 'night' && currentIndex >= questions.length) {
-      contentArea.innerHTML = '<div class="done-note">All done for today! ✅</div>';
+      contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
       backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
       nextBtn.style.display = 'none';
       updateProgressBar();
@@ -584,7 +584,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   function checkMorningCompletion() {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
     if (allDone) {
-      contentArea.innerHTML = '<div class="done-note">Morning completed! ✅</div>';
+      contentArea.innerHTML = '<div class="done-note">Morning completed.</div>';
       backBtn.style.display = 'none';
       nextBtn.style.display = 'none';
     }
