@@ -346,73 +346,78 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 /* ---------- UI ---------- */
 function loadUI() {
-    let questions = getQuestions();
+  const questionsAll = getQuestions(); // morning or night
+  let questions = [...questionsAll];
 
-    // If morning, filter out checklist questions from the main flow
-    if (document.body.classList.contains('morning')) {
-        questions = questions.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key));
-    }
+  // For morning mode, remove checklist questions from the main flow
+  if (document.body.classList.contains('morning')) {
+    questions = questions.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key));
+  }
 
-    // If we've reached the end of questions
-    if (currentIndex >= questions.length) {
-        contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
-        backBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
-        progressBar.style.width = '100%';
-        return;
-    }
+  // End of questions
+  if (currentIndex >= questions.length) {
+    contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    updateChecklistProgress(); // final progress bar
+    return;
+  }
 
-    // If morning and we are at index 0 (wake-up time), or wherever you want checklist to appear
-    if (document.body.classList.contains('morning') && questions[currentIndex].key === 'made_bed') {
-        loadMorningChecklist(); // loads the checklist with checkable pills
-        backBtn.style.display = 'inline-block';
-        nextBtn.style.display = 'inline-block';
-        return;
-    }
+  const q = questions[currentIndex];
+  let html = `<div class="question">${q.label}</div><div class="options">`;
 
-    const q = questions[currentIndex];
-    let html = `<div class="question">${q.label}</div><div class="options">`;
-
-    if (q.type === 'single') {
-        q.options.forEach(opt => {
-            const selected = answers[q.key] === opt ? 'selected' : '';
-            html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-        });
-    } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-        q.options.forEach(opt => {
-            html += `<div class="counter-item">
-                        <span>${opt}</span>
-                        <div class="counter-controls">
-                            <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
-                            <span id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
-                            <button type="button" onclick="updateCounter('${opt}',1)">+</button>
-                        </div>
-                    </div>`;
-        });
-        nextBtn.disabled = false;
-    } else if (q.type === 'time') {
-        html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
-    }
-
-    html += '</div>';
-    contentArea.innerHTML = html;
-
-    // Update progress bar
-    const total = questions.length + (document.body.classList.contains('morning') ? MORNING_CHECKLIST_KEYS.length : 0);
-    let done = 0;
-
-    // Count answered questions
-    questions.forEach(question => {
-        if (answers[question.key]) done++;
+  if (q.type === 'single') {
+    q.options.forEach(opt => {
+      const selected = answers[q.key] === opt ? 'selected' : '';
+      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
     });
+  } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+    q.options.forEach(opt => {
+      html += `<div class="counter-item">
+                  <span>${opt}</span>
+                  <div class="counter-controls">
+                      <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
+                      <span id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
+                      <button type="button" onclick="updateCounter('${opt}',1)">+</button>
+                  </div>
+               </div>`;
+    });
+    nextBtn.disabled = false;
+  } else if (q.type === 'time') {
+    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
+  }
 
-    // Count checklist items
-    if (document.body.classList.contains('morning')) {
-        done += MORNING_CHECKLIST_KEYS.filter(k => answers[k] === 'Yes').length;
-    }
+  html += '</div>';
+  contentArea.innerHTML = html;
 
-    progressBar.style.width = ((done / total) * 100) + '%';
+  // Show back/next buttons
+  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+  nextBtn.style.display = 'inline-block';
 
+  // Update progress bar
+  updateProgressBar();
+}
+
+// Update progress bar including checklist
+function updateProgressBar() {
+  const questionsAll = getQuestions();
+  let total = questionsAll.length;
+  let done = 0;
+
+  // Count answered main questions
+  questionsAll.forEach(q => {
+    if (answers[q.key]) done++;
+  });
+
+  // For morning, count checklist items
+  if (document.body.classList.contains('morning')) {
+    const checklistDone = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === 'Yes').length;
+    done = checklistDone + questionsAll.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key) && answers[q.key]).length;
+    total = MORNING_CHECKLIST_KEYS.length + questionsAll.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key)).length;
+  }
+
+  progressBar.style.width = ((done / total) * 100) + '%';
+}
     backBtn.style.display = (currentIndex > 0) ? 'inline-block' : 'none';
     nextBtn.style.display = 'inline-block';
 }
