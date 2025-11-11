@@ -363,56 +363,57 @@ const NIGHT = [
   backBtn.addEventListener('click', saveData);
 
   /* ---------- UI ---------- */
-  function loadUI(){
-    const questions=getQuestions();
+function loadUI() {
+  const questions = getQuestions();
 
- if(document.body.classList.contains('morning') && currentIndex === MORNING.length) {
-  loadMorningChecklist();
-  backBtn.style.display='inline-block'; 
-  nextBtn.style.display='inline-block';
-  return;
-}
-
-if (currentIndex >= questions.length) {
-  if (document.body.classList.contains('morning')) {
-    // Morning section finished, show checklist
+  // Morning questions done → show checklist
+  if (document.body.classList.contains('morning') && currentIndex === MORNING.length) {
     loadMorningChecklist();
     backBtn.style.display = 'inline-block';
     nextBtn.style.display = 'inline-block';
-  } else {
-    // Night section finished, all done
-    contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
-    backBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-    progressBar.style.width = '100%';
+    return;
   }
-  return;
-}
-    const q=questions[currentIndex];
-    let html=`<div class="question">${q.label}</div><div class="options">`;
-    if(q.type==='single'){
-      q.options.forEach(opt=>{
-        const selected = answers[q.key]===opt ? 'selected' : '';
-        html+=`<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-      });
-    } else if(q.type==='multi' && q.key==='caffeine_alcohol'){
-      q.options.forEach(opt=>{
-        html+=`<div class="counter-item"><span>${opt}</span>
-        <div class="counter-controls">
-        <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
-        <span id="count-${opt}">${(answers[q.key]&&answers[q.key][opt])||0}</span>
-        <button type="button" onclick="updateCounter('${opt}',1)">+</button>
-        </div></div>`;
-      });
-      nextBtn.disabled=false;
-    } else if(q.type==='time'){
-      html+=`<input type="time" value="${answers[q.key]||''}" onchange="selectOption(this.value)"/>`;
+
+  // Night questions done → show final "All done"
+  if (currentIndex >= questions.length) {
+    if (document.body.classList.contains('night')) {
+      contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
+      backBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+      progressBar.style.width = '100%';
     }
-    html+='</div>';
-    contentArea.innerHTML=html;
-    backBtn.style.display=(currentIndex>0)?'inline-block':'none';
-    nextBtn.style.display='inline-block';
+    return;
   }
+
+  // Normal question UI
+  const q = questions[currentIndex];
+  let html = `<div class="question">${q.label}</div><div class="options">`;
+
+  if (q.type === 'single') {
+    q.options.forEach(opt => {
+      const selected = answers[q.key] === opt ? 'selected' : '';
+      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+    });
+  } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+    q.options.forEach(opt => {
+      html += `<div class="counter-item"><span>${opt}</span>
+        <div class="counter-controls">
+          <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
+          <span id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
+          <button type="button" onclick="updateCounter('${opt}',1)">+</button>
+        </div>
+      </div>`;
+    });
+    nextBtn.disabled = false;
+  } else if (q.type === 'time') {
+    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
+  }
+
+  html += '</div>';
+  contentArea.innerHTML = html;
+  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+  nextBtn.style.display = 'inline-block';
+}
 
   window.selectOption=opt=>{
     const q=getQuestions()[currentIndex];
