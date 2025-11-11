@@ -59,27 +59,32 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   text-align: center;
   user-select: none;
 }
-.opt-btn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
-}
-/* Highlight selected option buttons */
+/* Subtle animated highlight for selected option buttons */
 .opt-btn.selected {
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  transform: scale(1.03);
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
 }
 
-/* Morning mode selected button */
 body.morning .opt-btn.selected {
-  background: rgba(255, 255, 255, 0.25);
-  color: #3b1b10; /* slightly darker text for contrast */
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
 }
 
-/* Night mode selected button */
 body.night .opt-btn.selected {
-  background: rgba(0, 0, 0, 0.3);
-  color: #fff; /* bright text for dark background */
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
 }
+
+/* Smooth hover effect for unselected buttons */
+.opt-btn:not(.selected):hover {
+  transform: scale(1.03);
+  background: rgba(255,255,255,0.12);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
 
 /* Morning / Night backgrounds */
 body.morning .opt-btn { background: rgba(255,255,255,0.12); color: #fff; }
