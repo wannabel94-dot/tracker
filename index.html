@@ -524,7 +524,7 @@ function loadUI() {
   const questions = mode === 'morning' ? MORNING : NIGHT;
 
   // Night mode has no progress bar at the top
-  progressBar.parentElement.style.display = mode === 'morning' ? 'block' : 'none';
+progressBar.parentElement.style.display = 'block';
 
   if(currentIndex >= questions.length){
     if(mode === 'morning'){
@@ -653,6 +653,8 @@ function clearChecklist(){
     document.body.classList.add('night'); document.body.classList.remove('morning');
     currentIndex=0; answers={}; editingDate=null;
     loadSavedData(); loadUI();
+    progressBar.style.width = '0%';
+
   };
 
   document.getElementById('btnClearToday').onclick=()=>{
