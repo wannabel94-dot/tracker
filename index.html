@@ -82,22 +82,35 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 
 /* ---------- CHECKLIST ITEM (pill style) ---------- */
 .check-item {
-  cursor: pointer;
+  margin-bottom: 8px;
   padding: 10px 14px;
   border-radius: 16px;
   background: rgba(255,255,255,0.05);
-  margin-bottom: 6px;
-  transition: all 0.25s ease;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
-
 .check-item:hover {
   background: rgba(255,255,255,0.1);
 }
-
 .check-item.selected .check-text {
   text-decoration: line-through;
   opacity: 0.6;
 }
+.clear-btn {
+  display: block;
+  margin: 14px auto 0;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+.clear-btn:hover {
+  background: rgba(255,255,255,0.18);
+}
+
 
 /* Morning / Night backgrounds */
 body.morning .opt-btn { background: rgba(255,255,255,0.12); color: #fff; }
@@ -381,18 +394,26 @@ const NIGHT = [
 
 /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  let html = '<div class="checklist">';
-  MORNING_CHECKLIST_ITEMS.forEach(item => {
-    const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-    html += `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-               <span class="check-text">${item.label}</span>
-             </div>`;
-  });
-  html += '</div>';
+  let html = `
+    <div class="checklist">
+      ${MORNING_CHECKLIST_ITEMS.map(item => {
+        const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+        return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+                  <span class="check-text">${item.label}</span>
+                </div>`;
+      }).join('')}
+    </div>
+    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>
+  `;
+
   contentArea.innerHTML = html;
   updateChecklistProgress();
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
+
+  // Attach the Clear All button event
+  const clearBtn = document.getElementById('clearChecklistBtn');
+  if (clearBtn) clearBtn.onclick = clearChecklist;
 }
 
 window.toggleChecklist = (key) => {
@@ -402,6 +423,15 @@ window.toggleChecklist = (key) => {
   updateChecklistProgress();
   saveData();
 };
+
+function clearChecklist() {
+  MORNING_CHECKLIST_ITEMS.forEach(item => {
+    answers[item.key] = 'No';
+  });
+  document.querySelectorAll('.check-item').forEach(el => el.classList.remove('selected'));
+  updateChecklistProgress();
+  saveData();
+}
 
 function updateChecklistProgress() {
   const totalChecklist = MORNING_CHECKLIST_ITEMS.length;
