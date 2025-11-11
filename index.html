@@ -427,24 +427,31 @@ const NIGHT = [
 
 /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  let html = `
-    <div class="checklist">
-      ${MORNING_CHECKLIST_ITEMS.map(item => {
-        const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-        return `
-          <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-            <span class="check-text">${item.label}</span>
-            <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
-          </div>`;
-      }).join('')}
-    </div>
-    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>
-  `;
+  let html = '<div class="checklist">';
+  
+  MORNING_CHECKLIST_ITEMS.forEach(item => {
+    const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+    html += `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+               <img src="icons/${item.key}.svg" class="check-icon">
+               <span class="check-text">${item.label}</span>
+             </div>`;
+  });
+
+  html += '</div>';
+
+  // Add central buttons
+  html += `<div class="checklist-buttons">
+             <button class="back-btn" onclick="backBtn.onclick()">Back</button>
+             <button class="next-btn" onclick="nextBtn.onclick()">Next</button>
+             <button class="next-btn" onclick="clearChecklist()">Clear All</button>
+           </div>`;
 
   contentArea.innerHTML = html;
   updateChecklistProgress();
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
+}
+
 
   // Attach Clear All event
   const clearBtn = document.getElementById('clearChecklistBtn');
