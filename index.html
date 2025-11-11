@@ -408,43 +408,46 @@ const NIGHT = [
     currentIndex++; loadUI();
   };
 
-  /* ---------- MORNING CHECKLIST ---------- */
+/* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  let html = '<div class="checklist-progress-wrap"><div class="checklist-progress-bar" id="checklistBar"></div></div>';
-  MORNING_CHECKLIST_KEYS.forEach(key => {
-    const q = MORNING.find(q => q.key === key);
-    if (!q) return;
-    const selected = answers[key] === 'Yes' ? 'selected' : '';
-    html += `<div class="check-item ${selected}" onclick="toggleChecklist('${key}')">
-               <span>${q.label}</span>
+  let html = '<div class="checklist">';
+  MORNING_CHECKLIST_ITEMS.forEach(item => {
+    const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+    html += `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+               <span>${item.label}</span>
                <span class="checkmark">✓</span>
              </div>`;
   });
+  html += '</div>';
   contentArea.innerHTML = html;
   updateChecklistProgress();
+  backBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
 }
 
 window.toggleChecklist = (key) => {
-  if (answers[key] === 'Yes') {
-    answers[key] = 'No';
-  } else {
-    answers[key] = 'Yes';
-  }
-  // Update the UI
+  answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
   const el = document.querySelector(`.check-item[onclick="toggleChecklist('${key}')"]`);
   if (el) el.classList.toggle('selected', answers[key] === 'Yes');
   updateChecklistProgress();
   saveData();
 };
 
+function updateChecklistProgress() {
+  const totalChecklist = MORNING_CHECKLIST_ITEMS.length;
+  const doneChecklist = MORNING_CHECKLIST_ITEMS.filter(i => answers[i.key] === 'Yes').length;
 
-  function updateChecklistProgress() {
-    const total = MORNING_CHECKLIST_KEYS.length;
-    const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === 'Yes').length;
-    const pct = Math.round((done/total)*100);
-    const bar = document.getElementById('checklistBar');
-    if (bar) bar.style.width = pct + '%';
-  }
+  // Morning has 2 normal questions + checklist items
+  const baseQuestions = 2;
+  const totalAll = baseQuestions + totalChecklist;
+
+  let doneAll = doneChecklist;
+  if (answers['wake_time']) doneAll++;
+  if (answers['how_slept']) doneAll++;
+
+  const pct = Math.round((doneAll / totalAll) * 100);
+  progressBar.style.width = pct + '%';
+}
 
   /* ---------- SETTINGS ---------- */
   btnSettings.onclick=e=>{
