@@ -418,34 +418,41 @@ const NIGHT = [
 
 /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
+  // Build checklist HTML
   let html = `
     <div class="checklist">
       ${MORNING_CHECKLIST_ITEMS.map(item => {
         const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-        return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-                  <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
-                  <span class="check-text">${item.label}</span>
-                </div>`;
+        return `
+          <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+            <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
+            <span class="check-text">${item.label}</span>
+          </div>
+        `;
       }).join('')}
     </div>
     <button id="clearChecklistBtn" class="clear-btn">Clear All</button>
   `;
 
   contentArea.innerHTML = html;
-  updateChecklistProgress();
+
+  // Show navigation buttons
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
 
-  // Attach Clear All event
+  // Attach Clear All button event
   const clearBtn = document.getElementById('clearChecklistBtn');
   if (clearBtn) clearBtn.onclick = clearChecklist;
+
+  // Update the main progress bar
+  updateProgressBar();
 }
 
 window.toggleChecklist = (key) => {
   answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
   const el = document.querySelector(`.check-item[onclick="toggleChecklist('${key}')"]`);
   if (el) el.classList.toggle('selected', answers[key] === 'Yes');
-  updateChecklistProgress();
+  updateProgressBar();
   saveData();
 };
 
@@ -454,23 +461,22 @@ function clearChecklist() {
     answers[item.key] = 'No';
   });
   document.querySelectorAll('.check-item').forEach(el => el.classList.remove('selected'));
-  updateChecklistProgress();
+  updateProgressBar();
   saveData();
 }
 
-function updateChecklistProgress() {
-  const totalChecklist = MORNING_CHECKLIST_ITEMS.length;
-  const doneChecklist = MORNING_CHECKLIST_ITEMS.filter(i => answers[i.key] === 'Yes').length;
+/* ---------- PROGRESS BAR (morning questions + checklist) ---------- */
+function updateProgressBar() {
+  const baseQuestions = 2; // wake_time + how_slept
+  const checklistTotal = MORNING_CHECKLIST_ITEMS.length;
 
-  // Morning has 2 normal questions + checklist items
-  const baseQuestions = 2;
-  const totalAll = baseQuestions + totalChecklist;
+  let done = 0;
+  if (answers['wake_time']) done++;
+  if (answers['how_slept']) done++;
+  done += MORNING_CHECKLIST_ITEMS.filter(item => answers[item.key] === 'Yes').length;
 
-  let doneAll = doneChecklist;
-  if (answers['wake_time']) doneAll++;
-  if (answers['how_slept']) doneAll++;
-
-  const pct = Math.round((doneAll / totalAll) * 100);
+  const total = baseQuestions + checklistTotal;
+  const pct = Math.round((done / total) * 100);
   progressBar.style.width = pct + '%';
 }
 
