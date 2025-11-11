@@ -415,30 +415,27 @@ const NIGHT = [
   nextBtn.addEventListener('click', saveData);
   backBtn.addEventListener('click', saveData);
 
-  /* ---------- UI ---------- */
 function loadUI() {
   const questions = getQuestions();
 
-  // Morning questions done → show checklist
-  if (document.body.classList.contains('morning') && currentIndex === MORNING.length) {
-    loadMorningChecklist();
-    backBtn.style.display = 'inline-block';
-    nextBtn.style.display = 'inline-block';
-    return;
-  }
-
-  // Night questions done → show final "All done"
+  // ----- End of questions -----
   if (currentIndex >= questions.length) {
-    if (document.body.classList.contains('night')) {
+    if (document.body.classList.contains('morning')) {
+      // Morning checklist
+      loadMorningChecklist();
+    } else {
+      // Night done message
       contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
-      backBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
       progressBar.style.width = '100%';
     }
+
+    // Always allow back button
+    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+    nextBtn.style.display = 'none'; // No next after done
     return;
   }
 
-  // Normal question UI
+  // ----- Normal question rendering -----
   const q = questions[currentIndex];
   let html = `<div class="question">${q.label}</div><div class="options">`;
 
@@ -464,9 +461,11 @@ function loadUI() {
 
   html += '</div>';
   contentArea.innerHTML = html;
+
   backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
   nextBtn.style.display = 'inline-block';
 }
+
 
   window.selectOption=opt=>{
     const q=getQuestions()[currentIndex];
