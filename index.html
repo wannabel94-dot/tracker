@@ -71,53 +71,62 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 }
 .opt-btn:hover { transform: scale(1.03); box-shadow: 0 6px 10px rgba(0,0,0,0.15); }
 .opt-btn.selected { border: 2px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.2); }
-
 /* ---------- CHECKLIST CONTAINER ---------- */
 .checklist {
   display: flex;
-  flex-direction: column; /* stack items vertically */
-  gap: 8px;               /* spacing between items */
+  flex-direction: column;
+  gap: 8px;
   margin-top: 12px;
+  align-items: center; /* center the checklist horizontally */
 }
 
-/* ---------- CHECKLIST ITEM (pill style) ---------- */
+/* ---------- CHECKLIST ITEM ---------- */
 .check-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
+  gap: 10px;
   padding: 10px 14px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s, transform 0.15s;
+  max-width: fit-content; /* shrink to fit content */
 }
 
 .check-item:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
 }
 
+/* Icon on the left */
+.check-icon {
+  width: 24px;
+  height: 24px;
+  filter: invert(1); /* makes black icons white */
+  flex-shrink: 0;
+}
+
+/* Text inside checklist item */
 .check-text {
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 16px;
 }
 
+/* Selected state: crossed-out text and dimmed icon */
 .check-item.selected .check-text {
   text-decoration: line-through;
-  opacity: 0.6;
+  opacity: 0.7;
 }
-
-.check-icon {
-  width: 22px;
-  height: 22px;
-  filter: invert(1);     /* makes black SVG white */
-  opacity: 0.9;
-  flex-shrink: 0;
-  margin-left: 10px;
-  transition: opacity 0.25s ease;
-}
-
 .check-item.selected .check-icon {
   opacity: 0.4;
+}
+
+/* Central buttons below checklist */
+.checklist-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
 }
 
 .clear-btn {
