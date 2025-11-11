@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   nextBtn.addEventListener('click', saveData);
   backBtn.addEventListener('click', saveData);
 
- /* ---------- LOAD UI & NAVIGATION ---------- */
+/* ---------- LOAD UI & NAVIGATION ---------- */
 function loadUI() {
   const questionsAll = getQuestions(); // morning or night
   let questions = [...questionsAll];
@@ -359,7 +359,7 @@ function loadUI() {
     contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
     backBtn.style.display = 'none';
     nextBtn.style.display = 'none';
-    updateChecklistProgress(); // update progress for checklist if morning
+    updateChecklistProgress();
     return;
   }
 
@@ -369,7 +369,7 @@ function loadUI() {
   if (q.type === 'single') {
     q.options.forEach(opt => {
       const selected = answers[q.key] === opt ? 'selected' : '';
-      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}', ${currentIndex})">${opt}</button>`;
+      html += `<button class="opt-btn ${selected}" data-idx="${currentIndex}" data-opt="${opt}">${opt}</button>`;
     });
   } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
     q.options.forEach(opt => {
@@ -377,15 +377,15 @@ function loadUI() {
       html += `<div class="counter-item">
                  <span>${opt}</span>
                  <div class="counter-controls">
-                   <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
+                   <button type="button" data-opt="${opt}" data-delta="-1">−</button>
                    <span id="count-${opt}">${count}</span>
-                   <button type="button" onclick="updateCounter('${opt}',1)">+</button>
+                   <button type="button" data-opt="${opt}" data-delta="1">+</button>
                  </div>
                </div>`;
     });
     nextBtn.disabled = false;
   } else if (q.type === 'time') {
-    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value, ${currentIndex})"/>`;
+    html += `<input type="time" value="${answers[q.key] || ''}" data-idx="${currentIndex}"/>`;
   }
 
   html += '</div>';
@@ -396,6 +396,30 @@ function loadUI() {
   nextBtn.style.display = 'inline-block';
 
   updateProgressBar();
+
+  // Attach event listeners for dynamically generated buttons
+  document.querySelectorAll('.opt-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx = parseInt(e.currentTarget.dataset.idx);
+      const opt = e.currentTarget.dataset.opt;
+      selectOption(opt, idx);
+    });
+  });
+
+  document.querySelectorAll('.counter-controls button').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const opt = e.currentTarget.dataset.opt;
+      const delta = parseInt(e.currentTarget.dataset.delta);
+      updateCounter(opt, delta);
+    });
+  });
+
+  document.querySelectorAll('input[type="time"]').forEach(input => {
+    input.addEventListener('change', e => {
+      const idx = parseInt(e.currentTarget.dataset.idx);
+      selectOption(e.currentTarget.value, idx);
+    });
+  });
 }
 
 // Selecting an option
@@ -405,7 +429,6 @@ window.selectOption = (opt, idx) => {
   if (document.body.classList.contains('morning')) {
     questions = questions.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key));
   }
-
   const q = questions[idx];
   answers[q.key] = opt;
 
@@ -430,10 +453,8 @@ nextBtn.onclick = () => {
   if (document.body.classList.contains('morning')) {
     questions = questions.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key));
   }
-
   const q = questions[currentIndex];
 
-  // Special handling for multi counter
   if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
     if (Object.values(answers[q.key] || {}).every(v => v === 0)) {
       if (!confirm('Save with no caffeine/alcohol?')) return;
@@ -443,6 +464,7 @@ nextBtn.onclick = () => {
   currentIndex++;
   loadUI();
 };
+
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
