@@ -410,7 +410,7 @@ if (document.body.classList.contains('morning')) {
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  let html = '<div class="checklist-progress-wrap"><div class="checklist-progress-bar" id="checklistBar"></div></div>';
+let html = ''; // no separate bar, we use main #progressBar
   MORNING_CHECKLIST_KEYS.forEach(key => {
     const q = MORNING.find(q => q.key === key);
     if (!q) return;
@@ -438,13 +438,13 @@ window.toggleChecklist = (key) => {
 };
 
 
-  function updateChecklistProgress() {
+function updateChecklistProgress() {
     const total = MORNING_CHECKLIST_KEYS.length;
     const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === 'Yes').length;
     const pct = Math.round((done/total)*100);
-    const bar = document.getElementById('checklistBar');
+    const bar = document.getElementById('progressBar'); // use main progress bar
     if (bar) bar.style.width = pct + '%';
-  }
+}
 
   /* ---------- SETTINGS ---------- */
   btnSettings.onclick=e=>{
