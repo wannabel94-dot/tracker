@@ -487,21 +487,34 @@ function getMorningProgressKeys(){
   return [...morningQuestions, ...checklistKeys];
 }
 
-/* ---------- UPDATE PROGRESS BAR ---------- */
-function updateProgressBar(){
-  const allKeys = getMorningProgressKeys();
+/* ---------- PROGRESS BAR (separate for morning & night) ---------- */
+function updateProgressBar() {
+  let total = 0;
   let done = 0;
 
-  allKeys.forEach(key => {
-    const isChecklistItem = MORNING_CHECKLIST_ITEMS.find(i => i.key === key);
-    if(isChecklistItem){
-      if(answers[key]==='Yes') done++;
-    } else {
-      if(answers[key]) done++;
-    }
-  });
+  // --- Morning Mode ---
+  if (document.body.classList.contains('morning')) {
+    const morningQuestions = ['wake_time', 'how_slept'];
+    const morningChecklist = MORNING_CHECKLIST_ITEMS.map(i => i.key);
+    const allMorning = [...morningQuestions, ...morningChecklist];
 
-  const pct = Math.round(done / allKeys.length * 100);
+    total = allMorning.length;
+    done = allMorning.filter(key =>
+      morningChecklist.includes(key)
+        ? answers[key] === 'Yes'
+        : !!answers[key]
+    ).length;
+  }
+
+  // --- Night Mode ---
+  else if (document.body.classList.contains('night')) {
+    const nightQuestions = NIGHT.map(q => q.key);
+    total = nightQuestions.length;
+    done = nightQuestions.filter(key => !!answers[key]).length;
+  }
+
+  // --- Update visual progress bar ---
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   progressBar.style.width = pct + '%';
 }
 
