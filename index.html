@@ -72,7 +72,61 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .opt-btn:hover { transform: scale(1.03); box-shadow: 0 6px 10px rgba(0,0,0,0.15); }
 .opt-btn.selected { border: 2px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.2); }
 
-.check-item { display: flex; align-items: center; padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.1); cursor: pointer; } .check-item input { margin-right: 12px; }
+.check-item {
+  display: flex;
+  justify-content: space-between; /* text left, checkbox right */
+  align-items: center;
+  padding: 10px 18px;
+  border-radius: 20px; /* pill shape */
+  margin-bottom: 8px;
+  background: rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  position: relative;
+}
+
+.check-item:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.02);
+}
+
+/* Hide default checkbox */
+.check-item input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #fff;
+  border-radius: 50%; /* circle */
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s, border 0.2s;
+}
+
+/* Checked state */
+.check-item input[type="checkbox"]:checked {
+  background: #fff;
+  border-color: #fff;
+}
+
+/* Add checkmark inside when checked */
+.check-item input[type="checkbox"]:checked::after {
+  content: '✔';
+  color: #000;
+  font-size: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Optional: smooth hover effect for checkbox */
+.check-item input[type="checkbox"]:hover {
+  border-color: rgba(255,255,255,0.8);
+}
+
 
 /* Morning / Night backgrounds */
 body.morning .opt-btn { background: rgba(255,255,255,0.12); color: #fff; }
