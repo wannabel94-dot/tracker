@@ -461,17 +461,20 @@ function clearChecklist() {
   updateProgressBar();
   saveData();
 }
-
+  
 function updateProgressBar() {
-  const baseQuestions = 2; // wake_time + how_slept
-  const checklistTotal = MORNING_CHECKLIST_ITEMS.length;
+  // Questions that count for progress
+  const morningQuestions = ['wake_time', 'how_slept'];
+  const checklistItems = MORNING_CHECKLIST_ITEMS.map(i => i.key);
+
+  const allItems = [...morningQuestions, ...checklistItems];
+  const total = allItems.length;
 
   let done = 0;
-  if (answers['wake_time']) done++;
-  if (answers['how_slept']) done++;
-  done += MORNING_CHECKLIST_ITEMS.filter(item => answers[item.key] === 'Yes').length;
+  allItems.forEach(key => {
+    if (answers[key] && answers[key] !== '') done++;
+  });
 
-  const total = baseQuestions + checklistTotal;
   const pct = Math.round((done / total) * 100);
   progressBar.style.width = pct + '%';
 }
