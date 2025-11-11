@@ -463,20 +463,27 @@ function clearChecklist() {
 }
   
 function updateProgressBar() {
-  // Questions that count for progress
+  // Combine the morning questions and checklist items into one array
   const morningQuestions = ['wake_time', 'how_slept'];
   const checklistItems = MORNING_CHECKLIST_ITEMS.map(i => i.key);
-
   const allItems = [...morningQuestions, ...checklistItems];
-  const total = allItems.length;
 
+  const total = allItems.length;
   let done = 0;
+
   allItems.forEach(key => {
-    if (answers[key] && answers[key] !== '') done++;
+    // Consider 'Yes' for checklist and any non-empty value for questions as done
+    if ((MORNING_CHECKLIST_ITEMS.find(i => i.key === key) && answers[key] === 'Yes') ||
+        (!MORNING_CHECKLIST_ITEMS.find(i => i.key === key) && answers[key])) {
+      done++;
+    }
   });
 
   const pct = Math.round((done / total) * 100);
   progressBar.style.width = pct + '%';
+
+  // Auto-next to "Morning completed" if everything is done
+  if (done === total) showMorningCompleted();
 }
 
 function showMorningCompleted() {
