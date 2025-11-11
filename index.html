@@ -360,7 +360,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
       progressBar.style.width='100%';
       return;
     }
-
+// If morning, filter out checklist questions
+if (document.body.classList.contains('morning')) {
+  questions = questions.filter(q => !MORNING_CHECKLIST_KEYS.includes(q.key));
+}
     const q=questions[currentIndex];
     let html=`<div class="question">${q.label}</div><div class="options">`;
     if(q.type==='single'){
