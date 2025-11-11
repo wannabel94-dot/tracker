@@ -38,10 +38,10 @@ body.night .switch-btn.night img { opacity:1; transform:scale(1.15); }
 /* ---------- SETTINGS MENU ---------- */
 .settings-menu {
   position: absolute;
-  top: 50px;                 /* slightly lower for better spacing */
+  top: 50px;                 
   right: 0;
-  background: rgba(255, 255, 255, 0.1);  /* subtle translucent background */
-  backdrop-filter: blur(12px);          /* soft blur */
+  background: rgba(255, 255, 255, 0.1);  
+  backdrop-filter: blur(12px);          
   border-radius: 16px;
   flex-direction: column;
   padding: 10px 0;
@@ -78,7 +78,7 @@ body.night .switch-btn.night img { opacity:1; transform:scale(1.15); }
 .settings-menu button:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: translateX(4px);
-  border-left: 4px solid #fff;   /* subtle indicator on hover */
+  border-left: 4px solid #fff;   
   border-radius: 0 8px 8px 0;
 }
 
@@ -128,8 +128,8 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 /* ---------- CHECKLIST CONTAINER ---------- */
 .checklist {
   display: flex;
-  flex-direction: column; /* stack items vertically */
-  gap: 8px;               /* spacing between items */
+  flex-direction: column; 
+  gap: 8px;               
   margin-top: 12px;
 }
 
@@ -161,10 +161,10 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .check-icon {
   width: 22px;
   height: 22px;
-  filter: invert(1);     /* makes black SVG white */
+  filter: invert(1);     
   opacity: 0.9;
   flex-shrink: 0;
-  margin-right: 10px;    /* space between icon and text */
+  margin-right: 10px;    
   transition: opacity 0.25s ease;
 }
 
@@ -276,7 +276,6 @@ body.morning::before { content:""; position:fixed; inset:0; z-index:-1; backgrou
   input[type=time]{font-size:16px;padding:12px;} 
 }
 </style>
-
 </head>
 <body class="night">
 <div class="wrap">
@@ -313,52 +312,50 @@ body.morning::before { content:""; position:fixed; inset:0; z-index:-1; backgrou
 
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
-
   /* ---------- QUESTIONS ---------- */
-const MORNING = [
-  {key:'wake_time', type:'time', label:'What time did you wake up?'},
-  {key:'how_slept', type:'single', label:'How do you think you slept?', options:[
-    'Went to bed late but slept in','Went to bed late but woke early',
-    'Went to bed early but woke really early',"Couldn't fall asleep",
-    'Lightly disrupted','Frequently disrupted','Fine'
-  ], autoNext:true}
-];
+  const MORNING = [
+    {key:'wake_time', type:'time', label:'What time did you wake up?'},
+    {key:'how_slept', type:'single', label:'How do you think you slept?', options:[
+      'Went to bed late but slept in','Went to bed late but woke early',
+      'Went to bed early but woke really early',"Couldn't fall asleep",
+      'Lightly disrupted','Frequently disrupted','Fine'
+    ], autoNext:true}
+  ];
 
-// Checklist items are now separate
-const MORNING_CHECKLIST_ITEMS = [
-  { key: 'made_bed', label: 'Make bed', icon: 'bed.svg' },
-  { key: 'took_meds_morn', label: 'Take meds', icon: 'meds.svg' },
-  { key: 'tidy_up', label: 'Tidy up', icon: 'tidy.svg' },
-  { key: 'tea_meditate', label: 'Have tea', icon: 'tea.svg' },
-  { key: 'shower_morn', label: 'Shower', icon: 'shower.svg' },
-  { key: 'led_mask_morn', label: 'LED mask', icon: 'led.svg' },
-  { key: 'skincare_morn', label: 'Skincare', icon: 'skincare2.svg' },
-  { key: 'eat_breakfast', label: 'Breakfast', icon: 'break2.svg' },
-  { key: 'supplements_morn', label: 'Supplements', icon: 'supplements.svg' },
-  { key: 'get_dressed', label: 'Get dressed', icon: 'dressed.svg' },
-  { key: 'brush_teeth_morn', label: 'Brush teeth', icon: 'toothbrush.svg' }
-];
+  const MORNING_CHECKLIST_ITEMS = [
+    { key: 'made_bed', label: 'Make bed', icon: 'bed.svg' },
+    { key: 'took_meds_morn', label: 'Take meds', icon: 'meds.svg' },
+    { key: 'tidy_up', label: 'Tidy up', icon: 'broom.svg' },
+    { key: 'tea_meditate', label: 'Have tea', icon: 'tea.svg' },
+    { key: 'shower_morn', label: 'Shower', icon: 'shower.svg' },
+    { key: 'led_mask_morn', label: 'LED mask', icon: 'led.svg' },
+    { key: 'skincare_morn', label: 'Skincare', icon: 'skincare2.svg' },
+    { key: 'eat_breakfast', label: 'Breakfast', icon: 'break2.svg' },
+    { key: 'supplements_morn', label: 'Supplements', icon: 'supplements.svg' },
+    { key: 'get_dressed', label: 'Get dressed', icon: 'dressed.svg' },
+    { key: 'brush_teeth_morn', label: 'Brush teeth', icon: 'toothbrush.svg' }
+  ];
 
-const NIGHT = [
-  {key:'psyillium', type:'single', label:'Did you take psyllium?', options:['Yes','No'], autoNext:true},
-  {key:'magnesium', type:'single', label:'Magnesium?', options:['Yes','No'], autoNext:true},
-  {key:'pillowcase', type:'single', label:'Did you change the pillowcase?', options:['Yes','No'], autoNext:true},
-  {key:'shower_night', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
-  {key:'skincare_night', type:'single', label:'Skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true},
-  {key:'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true},
-  {key:'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None'], autoNext:true},
-  {key:'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true},
-  {key:'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true},
-  {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['Coffee','Tea','Beer','Spirits','Wine']}
-  {key:'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting', 'none']},
-  {key:'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none']},
-  {key:'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy (in-person)','Doctor','Blood tests','none']},
-  {key:'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none']},
-  {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none']},
-  {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none']},
-  {key:'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading', 'none']},
-  {key:'closed_eyes_time', type:'time', label:'What time did you close your eyes?', autoNext:true},
-];
+  const NIGHT = [
+    {key:'psyillium', type:'single', label:'Did you take psyllium?', options:['Yes','No'], autoNext:true},
+    {key:'magnesium', type:'single', label:'Magnesium?', options:['Yes','No'], autoNext:true},
+    {key:'pillowcase', type:'single', label:'Did you change the pillowcase?', options:['Yes','No'], autoNext:true},
+    {key:'shower_night', type:'single', label:'Shower?', options:['Yes','No'], autoNext:true},
+    {key:'skincare_night', type:'single', label:'Skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true},
+    {key:'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true},
+    {key:'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None'], autoNext:true},
+    {key:'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true},
+    {key:'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true},
+    {key:'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['Coffee','Tea','Beer','Spirits','Wine']},
+    {key:'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','none']},
+    {key:'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none']},
+    {key:'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy (in-person)','Doctor','Blood tests','none']},
+    {key:'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none']},
+    {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none']},
+    {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none']},
+    {key:'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','none']},
+    {key:'closed_eyes_time', type:'time', label:'What time did you close your eyes?', autoNext:true}
+  ];
 
   /* ---------- STATE ---------- */
   let currentIndex=0;
@@ -415,68 +412,67 @@ const NIGHT = [
   nextBtn.addEventListener('click', saveData);
   backBtn.addEventListener('click', saveData);
 
-function loadUI() {
-  const questions = getQuestions();
+  /* ---------- UI ---------- */
+  function loadUI() {
+    const questions = getQuestions();
 
-  // ----- End of questions -----
-  if (currentIndex >= questions.length) {
-    if (document.body.classList.contains('morning')) {
-      // Morning checklist
-      loadMorningChecklist();
-    } else {
-      // Night done message
-      contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
+    if(currentIndex >= questions.length){
+      if(document.body.classList.contains('morning')){
+        loadMorningChecklist();
+        backBtn.style.display = 'inline-block';
+        nextBtn.style.display = 'inline-block';
+      } else {
+        contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
+        backBtn.style.display = currentIndex>0?'inline-block':'none';
+        nextBtn.style.display = 'none';
+      }
       progressBar.style.width = '100%';
+      return;
     }
 
-    // Always allow back button
-    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-    nextBtn.style.display = 'none'; // No next after done
-    return;
+    const q = questions[currentIndex];
+    let html = `<div class="question">${q.label}</div><div class="options">`;
+
+    if(q.type==='single'){
+      q.options.forEach(opt=>{
+        const selected = answers[q.key]===opt?'selected':'';
+        html+=`<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+      });
+    } else if(q.type==='multi' && q.key==='caffeine_alcohol'){
+      q.options.forEach(opt=>{
+        html+=`<div class="counter-item"><span>${opt}</span>
+          <div class="counter-controls">
+            <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
+            <span id="count-${opt}">${(answers[q.key]&&answers[q.key][opt])||0}</span>
+            <button type="button" onclick="updateCounter('${opt}',1)">+</button>
+          </div>
+        </div>`;
+      });
+      nextBtn.disabled=false;
+    } else if(q.type==='time'){
+      html+=`<input type="time" value="${answers[q.key]||''}" onchange="selectOption(this.value)"/>`;
+    }
+
+    html+='</div>';
+    contentArea.innerHTML=html;
+    backBtn.style.display=currentIndex>0?'inline-block':'none';
+    nextBtn.style.display='inline-block';
   }
-
-  // ----- Normal question rendering -----
-  const q = questions[currentIndex];
-  let html = `<div class="question">${q.label}</div><div class="options">`;
-
-  if (q.type === 'single') {
-    q.options.forEach(opt => {
-      const selected = answers[q.key] === opt ? 'selected' : '';
-      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-    });
-  } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-    q.options.forEach(opt => {
-      html += `<div class="counter-item"><span>${opt}</span>
-        <div class="counter-controls">
-          <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
-          <span id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
-          <button type="button" onclick="updateCounter('${opt}',1)">+</button>
-        </div>
-      </div>`;
-    });
-    nextBtn.disabled = false;
-  } else if (q.type === 'time') {
-    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
-  }
-
-  html += '</div>';
-  contentArea.innerHTML = html;
-
-  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-  nextBtn.style.display = 'inline-block';
-}
-
 
   window.selectOption=opt=>{
-    const q=getQuestions()[currentIndex];
-    answers[q.key]=opt;
-    if(q.autoNext){currentIndex++; loadUI();}
+    const questions = getQuestions();
+    if(currentIndex<questions.length){
+      const q=questions[currentIndex];
+      answers[q.key]=opt;
+      updateProgressBar();
+      if(q.autoNext){currentIndex++; loadUI();}
+    }
   }
 
   backBtn.onclick=()=>{if(currentIndex>0){currentIndex--; loadUI();}};
   nextBtn.onclick=()=>{
     const q=getQuestions()[currentIndex];
-    if(q.type==='multi' && q.key==='caffeine_alcohol'){
+    if(q && q.type==='multi' && q.key==='caffeine_alcohol'){
       if(Object.values(answers[q.key]||{}).every(v=>v===0)){
         if(!confirm('Save with no caffeine/alcohol?')) return;
       }
@@ -484,88 +480,57 @@ function loadUI() {
     currentIndex++; loadUI();
   };
 
-/* ---------- MORNING CHECKLIST ---------- */
-function loadMorningChecklist() {
-  let html = `
-    <div class="checklist">
-      ${MORNING_CHECKLIST_ITEMS.map(item => {
-        const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-        return `
-          <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-            <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
-            <span class="check-text">${item.label}</span>
-          </div>
-        `;
-      }).join('')}
-    </div>
-    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>
-  `;
-  contentArea.innerHTML = html;
-
-  backBtn.style.display = 'inline-block';
-  nextBtn.style.display = 'inline-block';
-
-  const clearBtn = document.getElementById('clearChecklistBtn');
-  if (clearBtn) clearBtn.onclick = clearChecklist;
-
-  updateProgressBar();
-}
-
-// Selecting a normal question option
-window.selectOption = opt => {
-  const q = getQuestions()[currentIndex];
-  answers[q.key] = opt;
-  updateProgressBar(); // live update
-  if (q.autoNext) {
-    currentIndex++;
-    loadUI();
+  /* ---------- MORNING CHECKLIST ---------- */
+  function loadMorningChecklist() {
+    let html=`<div class="checklist">${MORNING_CHECKLIST_ITEMS.map(item=>{
+      const selected = answers[item.key]==='Yes'?'selected':'';
+      return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+        <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
+        <span class="check-text">${item.label}</span>
+      </div>`;
+    }).join('')}</div>
+    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>`;
+    contentArea.innerHTML=html;
+    backBtn.style.display='inline-block';
+    nextBtn.style.display='inline-block';
+    const clearBtn=document.getElementById('clearChecklistBtn');
+    if(clearBtn) clearBtn.onclick=clearChecklist;
+    updateProgressBar();
   }
-};
 
-// Toggling checklist items
-window.toggleChecklist = key => {
-  answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
-  const el = document.querySelector(`.check-item[onclick="toggleChecklist('${key}')"]`);
-  if (el) el.classList.toggle('selected', answers[key] === 'Yes');
+  window.toggleChecklist=key=>{
+    answers[key] = answers[key]==='Yes'?'No':'Yes';
+    const el=document.querySelector(`.check-item[onclick="toggleChecklist('${key}')"]`);
+    if(el) el.classList.toggle('selected',answers[key]==='Yes');
+    updateProgressBar();
+    saveData();
+  }
 
-  updateProgressBar(); // live progress update
-  saveData();
-};
+  function clearChecklist(){
+    MORNING_CHECKLIST_ITEMS.forEach(i=>answers[i.key]='No');
+    document.querySelectorAll('.check-item').forEach(el=>el.classList.remove('selected'));
+    updateProgressBar();
+    saveData();
+  }
 
-// Clear all checklist items
-function clearChecklist() {
-  MORNING_CHECKLIST_ITEMS.forEach(item => answers[item.key] = 'No');
-  document.querySelectorAll('.check-item').forEach(el => el.classList.remove('selected'));
-  updateProgressBar();
-  saveData();
-}
+  function getAllDailyKeys(){
+    const morningQuestions=['wake_time','how_slept'];
+    const morningChecklist=MORNING_CHECKLIST_ITEMS.map(i=>i.key);
+    const nightQuestions=NIGHT.map(q=>q.key);
+    return [...morningQuestions,...morningChecklist,...nightQuestions];
+  }
 
-// Returns all keys for the entire day
-function getAllDailyKeys() {
-  const morningQuestions = ['wake_time', 'how_slept'];
-  const morningChecklist = MORNING_CHECKLIST_ITEMS.map(i => i.key);
-  const nightQuestions = NIGHT.map(q => q.key);
-  return [...morningQuestions, ...morningChecklist, ...nightQuestions];
-}
-
-// Update progress bar based on entire day's completion
-function updateProgressBar() {
-  const allKeys = getAllDailyKeys();
-  let done = 0;
-
-  allKeys.forEach(key => {
-    // Checklist items must be 'Yes'
-    if (MORNING_CHECKLIST_ITEMS.find(i => i.key === key)) {
-      if (answers[key] === 'Yes') done++;
-    }
-    // Morning and night questions: any value counts
-    else if (answers[key]) done++;
-  });
-
-  const pct = Math.round((done / allKeys.length) * 100);
-  progressBar.style.width = pct + '%';
-}
-
+  function updateProgressBar(){
+    const allKeys=getAllDailyKeys();
+    let done=0;
+    allKeys.forEach(key=>{
+      if(MORNING_CHECKLIST_ITEMS.find(i=>i.key===key)){
+        if(answers[key]==='Yes') done++;
+      } else if(answers[key]) done++;
+    });
+    const pct=Math.round(done/allKeys.length*100);
+    progressBar.style.width=pct+'%';
+  }
 
   /* ---------- SETTINGS ---------- */
   btnSettings.onclick=e=>{
@@ -577,16 +542,14 @@ function updateProgressBar() {
   });
 
   document.getElementById('morningBtn').onclick=()=>{
-    saveData(); 
-    document.body.classList.add('morning'); 
-    document.body.classList.remove('night'); 
-    currentIndex=0; answers={}; editingDate=null; 
+    saveData();
+    document.body.classList.add('morning'); document.body.classList.remove('night');
+    currentIndex=0; answers={}; editingDate=null;
     loadSavedData(); loadUI();
   };
   document.getElementById('nightBtn').onclick=()=>{
-    saveData(); 
-    document.body.classList.add('night'); 
-    document.body.classList.remove('morning'); 
+    saveData();
+    document.body.classList.add('night'); document.body.classList.remove('morning');
     currentIndex=0; answers={}; editingDate=null;
     loadSavedData(); loadUI();
   };
@@ -596,8 +559,7 @@ function updateProgressBar() {
     const day=getTodayDate();
     delete all[day];
     localStorage.setItem('dailyTrackerData',JSON.stringify(all));
-    answers={}; currentIndex=0; loadUI();
-    editingDate=null;
+    answers={}; currentIndex=0; editingDate=null; loadUI();
     alert("Today's data cleared.");
   };
 
@@ -621,8 +583,7 @@ function updateProgressBar() {
     settingsMenu.classList.remove('show');
   };
 
-  /* ---------- EDIT & DELETE ---------- */
-  window.showHistoryEntry = (date)=>{
+  window.showHistoryEntry=(date)=>{
     const all=JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
     const d=all[date]; if(!d) return;
     let html=`<div class="question">🗓 ${date}</div>`;
@@ -635,15 +596,13 @@ function updateProgressBar() {
       }
       return s;
     };
-    html+=render('☀️ Morning', d.morning);
-    html+=render('🌙 Night', d.night);
-    html+=`
-      <div class="controls" style="margin-top:18px; gap:8px;">
-        <button class="back-btn" onclick="document.getElementById('btnEntries').onclick()">Back</button>
-        <button class="next-btn" onclick="editPastDay('${date}')">Edit</button>
-        <button class="next-btn" style="background:rgba(255,0,0,0.25);" onclick="deletePastDay('${date}')">Delete</button>
-      </div>
-    `;
+    html+=render('☀️ Morning',d.morning);
+    html+=render('🌙 Night',d.night);
+    html+=`<div class="controls" style="margin-top:18px; gap:8px;">
+      <button class="back-btn" onclick="document.getElementById('btnEntries').onclick()">Back</button>
+      <button class="next-btn" onclick="editPastDay('${date}')">Edit</button>
+      <button class="next-btn" style="background:rgba(255,0,0,0.25);" onclick="deletePastDay('${date}')">Delete</button>
+    </div>`;
     historyInner.innerHTML=html;
     historyModal.classList.add('show');
     settingsMenu.classList.remove('show');
@@ -654,8 +613,7 @@ function updateProgressBar() {
     const dayData=all[date];
     if(!dayData) return alert("No data for that day.");
     editingDate=date;
-    document.body.classList.add('morning'); 
-    document.body.classList.remove('night');
+    document.body.classList.add('morning'); document.body.classList.remove('night');
     answers=dayData.morning||{};
     currentIndex=0;
     historyModal.classList.remove('show');
