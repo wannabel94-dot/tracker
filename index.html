@@ -80,39 +80,18 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   margin-top: 12px;
 }
 
-/* ---------- CHECKLIST ITEM ---------- */
+/* ---------- CHECKLIST ITEM (pill style) ---------- */
 .check-item {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* text left, checkbox right */
-  padding: 10px 16px;
-  border-radius: 20px; /* pill shape */
-  background: rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-}
-
-.check-item:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: scale(1.02);
-}
-
-/* ---------- CHECKLIST ---------- */
-.checklist {
-  display: flex;
-  flex-direction: column;
-  gap: 8px; /* spacing between items */
-}
-
-.check-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* text left, checkbox right */
+  justify-content: flex-start; /* text left */
   padding: 12px 18px;
   border-radius: 24px; /* pill shape */
   background: rgba(255, 255, 255, 0.12);
   cursor: pointer;
   transition: background 0.2s, transform 0.15s;
+  user-select: none;
 }
 
 .check-item:hover {
@@ -120,29 +99,31 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   transform: scale(1.02);
 }
 
+/* Text inside the pill */
 .check-item span {
   font-weight: 600;
   font-size: 16px;
-  user-select: none;
 }
 
-.check-item input[type="checkbox"] {
-  margin: 0;
-  width: 20px;
-  height: 20px;
-  accent-color: #fff; /* theme color */
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* Tick mark on the right */
+.check-item .checkmark {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none; /* ensures tick does not block clicks */
 }
 
-.check-item input[type="checkbox"]:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+/* Show tick when selected */
+.check-item.selected {
+  background: rgba(255, 255, 255, 0.25); /* optional: highlight selected pill */
 }
 
-.check-item input[type="checkbox"]:checked {
-  transform: scale(1.15);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+.check-item.selected .checkmark {
+  opacity: 1;
 }
 
 /* Morning / Night backgrounds */
@@ -423,26 +404,34 @@ document.addEventListener('DOMContentLoaded', ()=>{
   };
 
   /* ---------- MORNING CHECKLIST ---------- */
- function loadMorningChecklist() {
+function loadMorningChecklist() {
   let html = '<div class="checklist-progress-wrap"><div class="checklist-progress-bar" id="checklistBar"></div></div>';
   MORNING_CHECKLIST_KEYS.forEach(key => {
     const q = MORNING.find(q => q.key === key);
     if (!q) return;
-    const checked = answers[key] === 'Yes' ? 'checked' : '';
-    html += `<label class="check-item">
+    const selected = answers[key] === 'Yes' ? 'selected' : '';
+    html += `<div class="check-item ${selected}" onclick="toggleChecklist('${key}')">
                <span>${q.label}</span>
-               <input type="checkbox" ${checked} onchange="toggleChecklist('${key}', this.checked)">
-             </label>`;
+               <span class="checkmark">✓</span>
+             </div>`;
   });
   contentArea.innerHTML = html;
   updateChecklistProgress();
 }
 
-  window.toggleChecklist = (key, checked) => {
-    answers[key] = checked ? 'Yes' : 'No';
-    updateChecklistProgress();
-    saveData();
-  };
+window.toggleChecklist = (key) => {
+  if (answers[key] === 'Yes') {
+    answers[key] = 'No';
+  } else {
+    answers[key] = 'Yes';
+  }
+  // Update the UI
+  const el = document.querySelector(`.check-item[onclick="toggleChecklist('${key}')"]`);
+  if (el) el.classList.toggle('selected', answers[key] === 'Yes');
+  updateChecklistProgress();
+  saveData();
+};
+
 
   function updateChecklistProgress() {
     const total = MORNING_CHECKLIST_KEYS.length;
