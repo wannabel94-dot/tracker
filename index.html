@@ -510,14 +510,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(el) el.classList.toggle('selected',answers[key]==='Yes');
     updateProgressBar();
     saveData();
-  }
+  };
 
   function clearChecklist(){
     MORNING_CHECKLIST_ITEMS.forEach(i=>answers[i.key]='No');
     document.querySelectorAll('.check-item').forEach(el=>el.classList.remove('selected'));
     updateProgressBar();
     saveData();
-  };
+  }
 
   function getAllDailyKeys(){
     const morningQuestions=['wake_time','how_slept'];
