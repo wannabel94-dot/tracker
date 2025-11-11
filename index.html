@@ -423,17 +423,20 @@ document.addEventListener('DOMContentLoaded', ()=>{
   };
 
   /* ---------- MORNING CHECKLIST ---------- */
-  function loadMorningChecklist() {
-    let html = '<div class="checklist-progress-wrap"><div class="checklist-progress-bar" id="checklistBar"></div></div>';
-    MORNING_CHECKLIST_KEYS.forEach(key => {
-      const q = MORNING.find(q => q.key === key);
-      if (!q) return;
-      const checked = answers[key] === 'Yes' ? 'checked' : '';
-      html += `<label class="check-item"><input type="checkbox" ${checked} onchange="toggleChecklist('${key}', this.checked)">${q.label}</label>`;
-    });
-    contentArea.innerHTML = html;
-    updateChecklistProgress();
-  }
+ function loadMorningChecklist() {
+  let html = '<div class="checklist-progress-wrap"><div class="checklist-progress-bar" id="checklistBar"></div></div>';
+  MORNING_CHECKLIST_KEYS.forEach(key => {
+    const q = MORNING.find(q => q.key === key);
+    if (!q) return;
+    const checked = answers[key] === 'Yes' ? 'checked' : '';
+    html += `<label class="check-item">
+               <span>${q.label}</span>
+               <input type="checkbox" ${checked} onchange="toggleChecklist('${key}', this.checked)">
+             </label>`;
+  });
+  contentArea.innerHTML = html;
+  updateChecklistProgress();
+}
 
   window.toggleChecklist = (key, checked) => {
     answers[key] = checked ? 'Yes' : 'No';
