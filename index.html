@@ -71,62 +71,53 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 }
 .opt-btn:hover { transform: scale(1.03); box-shadow: 0 6px 10px rgba(0,0,0,0.15); }
 .opt-btn.selected { border: 2px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.2); }
+
 /* ---------- CHECKLIST CONTAINER ---------- */
 .checklist {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: column; /* stack items vertically */
+  gap: 8px;               /* spacing between items */
   margin-top: 12px;
-  align-items: center; /* center the checklist horizontally */
 }
 
-/* ---------- CHECKLIST ITEM ---------- */
+/* ---------- CHECKLIST ITEM (pill style) ---------- */
 .check-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 8px;
   padding: 10px 14px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.05);
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-  max-width: fit-content; /* shrink to fit content */
+  transition: background 0.2s ease;
 }
 
 .check-item:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.02);
+  background: rgba(255,255,255,0.1);
 }
 
-/* Icon on the left */
-.check-icon {
-  width: 24px;
-  height: 24px;
-  filter: invert(1); /* makes black icons white */
-  flex-shrink: 0;
-}
-
-/* Text inside checklist item */
 .check-text {
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: 500;
 }
 
-/* Selected state: crossed-out text and dimmed icon */
 .check-item.selected .check-text {
   text-decoration: line-through;
-  opacity: 0.7;
-}
-.check-item.selected .check-icon {
-  opacity: 0.4;
+  opacity: 0.6;
 }
 
-/* Central buttons below checklist */
-.checklist-buttons {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-top: 16px;
+.check-icon {
+  width: 22px;
+  height: 22px;
+  filter: invert(1);     /* makes black SVG white */
+  opacity: 0.9;
+  flex-shrink: 0;
+  margin-left: 10px;
+  transition: opacity 0.25s ease;
+}
+
+.check-item.selected .check-icon {
+  opacity: 0.4;
 }
 
 .clear-btn {
@@ -427,31 +418,24 @@ const NIGHT = [
 
 /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  let html = '<div class="checklist">';
-  
-  MORNING_CHECKLIST_ITEMS.forEach(item => {
-    const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-    html += `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-               <img src="icons/${item.key}.svg" class="check-icon">
-               <span class="check-text">${item.label}</span>
-             </div>`;
-  });
-
-  html += '</div>';
-
-  // Add central buttons
-  html += `<div class="checklist-buttons">
-             <button class="back-btn" onclick="backBtn.onclick()">Back</button>
-             <button class="next-btn" onclick="nextBtn.onclick()">Next</button>
-             <button class="next-btn" onclick="clearChecklist()">Clear All</button>
-           </div>`;
+  let html = `
+    <div class="checklist">
+      ${MORNING_CHECKLIST_ITEMS.map(item => {
+        const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+        return `
+          <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+            <span class="check-text">${item.label}</span>
+            <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
+          </div>`;
+      }).join('')}
+    </div>
+    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>
+  `;
 
   contentArea.innerHTML = html;
   updateChecklistProgress();
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
-}
-
 
   // Attach Clear All event
   const clearBtn = document.getElementById('clearChecklistBtn');
