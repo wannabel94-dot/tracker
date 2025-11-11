@@ -35,13 +35,66 @@ header { display:flex; align-items:center; justify-content:space-between; margin
 body.morning .switch-btn.morning img { opacity:1; transform:scale(1.15); }
 body.night .switch-btn.night img { opacity:1; transform:scale(1.15); }
 
-/* Settings */
-#btnSettings { font-size:22px; padding:6px 10px; background:transparent; border:none; color:#fff; cursor:pointer; }
-#btnSettings:hover { opacity:0.8; }
-.settings-menu { position:absolute; top:42px; right:0; background:rgba(255,255,255,0.25); backdrop-filter:blur(16px); border-radius:12px; flex-direction:column; padding:6px; z-index:20; display:none; min-width:150px; }
-.settings-menu.show { display:flex; }
-.settings-menu button { background:transparent; border:none; padding:10px 16px; width:100%; text-align:left; cursor:pointer; font-weight:600; }
-.settings-menu button:hover { background:rgba(0,0,0,0.05); }
+/* ---------- SETTINGS MENU ---------- */
+.settings-menu {
+  position: absolute;
+  top: 50px;                 /* slightly lower for better spacing */
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);  /* subtle translucent background */
+  backdrop-filter: blur(12px);          /* soft blur */
+  border-radius: 16px;
+  flex-direction: column;
+  padding: 10px 0;
+  z-index: 20;
+  display: none;
+  min-width: 180px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+}
+
+/* Show menu */
+.settings-menu.show {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Settings buttons inside menu */
+.settings-menu button {
+  background: transparent;
+  border: none;
+  padding: 12px 18px;
+  width: 100%;
+  text-align: left;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.settings-menu button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(4px);
+  border-left: 4px solid #fff;   /* subtle indicator on hover */
+  border-radius: 0 8px 8px 0;
+}
+
+/* Make menu more mobile friendly */
+@media (max-width: 480px) {
+  .settings-menu {
+    top: 45px;
+    right: 5px;
+    min-width: 140px;
+    padding: 8px 0;
+  }
+  .settings-menu button {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
 
 /* Card + questions */
 main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
