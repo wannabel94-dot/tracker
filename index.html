@@ -365,12 +365,18 @@ const NIGHT = [
   return;
 }
 
-    if(currentIndex>=questions.length){
-      contentArea.innerHTML='<div class="done-note">All done for today!</div>';
-      backBtn.style.display='none'; nextBtn.style.display='none';
-      progressBar.style.width='100%';
-      return;
-    }
+if (currentIndex >= questions.length) {
+  if (document.body.classList.contains('morning')) {
+    loadMorningChecklist(); // stay on morning checklist
+  } else {
+    // Night section finished: final done
+    contentArea.innerHTML = '<div class="done-note">All done for today!</div>';
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    progressBar.style.width = '100%';
+  }
+  return;
+}
 
     const q=questions[currentIndex];
     let html=`<div class="question">${q.label}</div><div class="options">`;
@@ -455,9 +461,7 @@ window.toggleChecklist = (key) => {
   updateProgressBar();
   saveData();
 
-  const allDone = MORNING_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
-  if (allDone) showMorningCompleted();
-};
+updateProgressBar(); // progress updates without showing a popup
 
 function clearChecklist() {
   MORNING_CHECKLIST_ITEMS.forEach(item => answers[item.key] = 'No');
@@ -466,27 +470,28 @@ function clearChecklist() {
   saveData();
 }
   
-function updateProgressBar() {
+function getAllDailyKeys() {
   const morningQuestions = ['wake_time', 'how_slept'];
-  const checklistItems = MORNING_CHECKLIST_ITEMS.map(i => i.key);
-  const allItems = [...morningQuestions, ...checklistItems];
+  const morningChecklist = MORNING_CHECKLIST_ITEMS.map(i => i.key);
+  const nightQuestions = NIGHT.map(q => q.key);
+  return [...morningQuestions, ...morningChecklist, ...nightQuestions];
+}
 
-  const total = allItems.length;
+function updateProgressBar() {
+  const allKeys = getAllDailyKeys();
   let done = 0;
 
-  allItems.forEach(key => {
-    if (
-      morningQuestions.includes(key) && answers[key] // any value counts
-      || checklistItems.includes(key) && answers[key] === 'Yes' // only Yes counts
-    ) {
-      done++;
+  allKeys.forEach(key => {
+    // Checklist items must be 'Yes'
+    if (MORNING_CHECKLIST_ITEMS.find(i => i.key === key)) {
+      if (answers[key] === 'Yes') done++;
     }
+    // Any value counts for morning or night questions
+    else if (answers[key]) done++;
   });
 
-  const pct = Math.round((done / total) * 100);
+  const pct = Math.round((done / allKeys.length) * 100);
   progressBar.style.width = pct + '%';
-
-  if (done === total) showMorningCompleted();
 }
 
 function showMorningCompleted() {
