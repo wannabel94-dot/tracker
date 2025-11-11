@@ -520,6 +520,110 @@ function updateProgressBar() {
   keys.forEach(key=>{
     if(MORNING_CHECKLIST_ITEMS.find(i=>i.key===key)){
       if(answers[key]==='Yes') done++;
+    } 
+    else if(!isMorning && NIGHT.find(q=>q.key===key)?.type==='multi'){
+      // Night multi-choice question: count as done if at least one option is filled
+      const val = answers[key];
+      if(val && Object.values(val).some(v => v && v!==0)) done++;
+    }
+    else if(answers[key]){
+      done++;
+    }
+  });
+
+  const pct = total > 0 ? Math.round((done/total)*100) : 0;
+  progressBar.style.width = pct + '%';
+}
+
+/* ---------- MORNING CHECKLIST ---------- */
+function loadMorningChecklist() {
+  let html = `<div class="checklist">
+      ${MORNING_CHECKLIST_ITEMS.map(item=>{
+        const selected = answers[item.key]==='Yes'?'selected':'';
+        return `
+          <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+            <img src="icons/${item.icon}" alt="${item.label}" class="check-icon">
+            <span class="check-text">${item.label}</span>
+          </div>`;
+      }).join('')}
+    </div>
+    <button id="clearChecklistBtn" class="clear-btn">Clear All</button>`;
+
+  contentArea.innerHTML = html;
+  backBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
+
+  const clearBtn = document.getElementById('clearChecklistBtn');
+  if(clearBtn) clearBtn.onclick = clearChecklist;
+
+  progressBar.parentElement.style.display = 'block';
+  updateProgressBar();
+}
+
+/* ---------- TOGGLE CHECKLIST ITEM ---------- */
+window.toggleChecklist = key => {
+  answers[key] = answers[key]==='Yes'?'No':'Yes';
+  const els = document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`);
+  els.forEach(el => el.classList.toggle('selected', answers[key]==='Yes'));
+  updateProgressBar();
+  saveData();
+}
+
+/* ---------- CLEAR CHECKLIST ---------- */
+function clearChecklist(){
+  MORNING_CHECKLIST_ITEMS.forEach(i=>answers[i.key]='No');
+  document.querySelectorAll('.check-item').forEach(el=>el.classList.remove('selected'));
+  updateProgressBar();
+  saveData();
+}
+
+/* ---------- SWITCH MODES ---------- */
+document.getElementById('morningBtn').onclick=()=>{
+  saveData();
+  document.body.classList.add('morning'); document.body.classList.remove('night');
+  currentIndex=0; answers={}; editingDate=null;
+  loadSavedData(); 
+  progressBar.style.width = '0%';
+  loadUI();
+};
+document.getElementById('nightBtn').onclick=()=>{
+  saveData();
+  document.body.classList.add('night'); document.body.classList.remove('morning');
+  currentIndex=0; answers={}; editingDate=null;
+  loadSavedData(); 
+  progressBar.style.width = '0%';
+  loadUI();
+};
+
+/* ---------- BACK/NEXT BUTTONS ---------- */
+backBtn.onclick=()=>{if(currentIndex>0){currentIndex--; loadUI();}};
+nextBtn.onclick=()=>{
+  const q=getQuestions()[currentIndex];
+  if(q && q.type==='multi' && q.key==='caffeine_alcohol'){
+    if(Object.values(answers[q.key]||{}).every(v=>v===0)){
+      if(!confirm('Save with no caffeine/alcohol?')) return;
+    }
+  }
+  currentIndex++; loadUI();
+};
+
+/* ---------- PROGRESS BAR (separate for morning & night) ---------- */
+function updateProgressBar() {
+  const isMorning = document.body.classList.contains('morning');
+  let keys = [];
+
+  if(isMorning){
+    keys = ['wake_time','how_slept', ...MORNING_CHECKLIST_ITEMS.map(i=>i.key)];
+  } else {
+    keys = NIGHT.map(q => q.key);
+  }
+
+  const total = keys.length;
+  let done = 0;
+
+  keys.forEach(key=>{
+    if(MORNING_CHECKLIST_ITEMS.find(i=>i.key===key)){
+      if(answers[key]==='Yes') done++;
     } else if(answers[key]) done++;
   });
 
