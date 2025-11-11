@@ -293,7 +293,14 @@ body.morning::before { content:""; position:fixed; inset:0; z-index:-1; backgrou
   </header>
 
   <main class="card">
-    <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div></div>
+<div class="progress-wrap">
+  <div class="progress" id="morningProgress" style="display:none;">
+    <div class="bar" id="morningBar"></div>
+  </div>
+  <div class="progress" id="nightProgress" style="display:none;">
+    <div class="bar" id="nightBar"></div>
+  </div>
+</div>
     <div id="contentArea"></div>
     <div class="controls">
       <button class="back-btn" id="backBtn">Back</button>
@@ -578,8 +585,8 @@ window.selectOption = (opt) => {
 
 /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  let html = <div class="question">☀️ Morning Checklist</div>
-    <div class="checklist">
+let html = `
+  <div class="checklist">
       ${MORNING_CHECKLIST_ITEMS.map(item=>{
         const selected = answers[item.key]==='Yes'?'selected':'';
         return `
