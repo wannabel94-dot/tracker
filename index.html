@@ -1,4 +1,4 @@
-12<!DOCTYPE html>
+13<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -752,11 +752,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`;
       }).join('')}
       </div>
-      <button id="clearChecklistBtn" class="clear-btn">Clear All</button>`;
     contentArea.innerHTML = html;
     backBtn.style.display = 'inline-block';
     nextBtn.style.display = 'inline-block';
-    document.getElementById('clearChecklistBtn').onclick = clearChecklist;
     updateProgressBar();
     checkMorningCompletion();
   }
