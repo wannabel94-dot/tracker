@@ -1,4 +1,4 @@
-5<!DOCTYPE html>
+6<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -262,34 +262,6 @@ body.night #clearDrinksBtn, body.night #clearChecklistBtn {
 .counter-btn:focus {
   outline: none;
 }
-
-/* ===============================================
-   SETTINGS MENU (kept as in original)
-================================================= */
-#btnSettings { background:transparent; border:none; font-size:24px; color:#fff; cursor:pointer; padding:0; line-height:1; }
-#btnSettings:hover { color:#ddd; background:none; }
-.settings-menu {
-  position:absolute; top:40px; right:12px;
-  background:rgba(0,0,0,0.65);
-  backdrop-filter:blur(18px) saturate(180%);
-  -webkit-backdrop-filter:blur(18px) saturate(180%);
-  border:none; padding:10px 0;
-  display:none; flex-direction:column; align-items:stretch;
-  min-width:200px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-  z-index:50; transform-origin:top right;
-  transform:scale(0.95); opacity:0;
-  transition:all 0.25s ease;
-}
-.settings-menu.show { display:flex; opacity:1; transform:translateY(0); }
-.settings-menu button {
-  background:transparent; border:none; padding:12px 18px;
-  width:100%; text-align:left;
-  font-weight:600; color:#fff;
-  cursor:pointer; display:flex; align-items:center; gap:10px;
-  transition:background 0.2s, transform 0.2s;
-}
-.settings-menu button:hover { background:rgba(255,255,255,0.2); transform:translateX(4px); border-left:4px solid #fff; border-radius:0 8px 8px 0; }
 
 /* ===============================================
    RESPONSIVE / SMALL SCREENS
