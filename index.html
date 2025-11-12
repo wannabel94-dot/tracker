@@ -166,6 +166,28 @@ body.morning #clearDrinksBtn, body.morning #clearChecklistBtn { background:rgba(
 body.night #clearDrinksBtn, body.night #clearChecklistBtn { background:rgba(255,255,255,0.12); color:#fff; }
 #clearDrinksBtn:hover, #clearChecklistBtn:hover { background:rgba(255,255,255,0.3); transform:scale(1.04); }
 
+   /* ===============================================
+drinks counter   -----------------------------------------------
+================================================= */
+   .drink-counter {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* space between icon, buttons, and number */
+}
+
+.counter-btn {
+  background: transparent; /* fully transparent background */
+  border: none;            /* no border */
+  color: #fff;             /* white text */
+  font-size: 20px;         /* size of plus/minus */
+  cursor: pointer;         /* pointer cursor on hover */
+  padding: 0 6px;          /* optional spacing around the symbol */
+}
+
+.counter-btn:focus {
+  outline: none;           /* remove the default focus ring */
+}
+
 /* ===============================================
    SETTINGS MENU
    -----------------------------------------------
