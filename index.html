@@ -34,6 +34,40 @@ header { display:flex; align-items:center; justify-content:space-between; margin
 .switch-btn:hover { background: rgba(255,255,255,0.08); border-radius:50%; }
 body.morning .switch-btn.morning img { opacity:1; transform:scale(1.15); }
 body.night .switch-btn.night img { opacity:1; transform:scale(1.15); }
+
+  /* Make counter buttons match night mode option buttons */
+.counter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s, box-shadow 0.3s, border 0.3s, color 0.3s;
+  background: rgba(255,255,255,0.08); /* Night mode lighter background */
+  color: #fff; /* White text/icons */
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+body.night .counter-btn:hover {
+  background: rgba(255,255,255,0.18);
+}
+.counter-btn.selected {
+  border: 2px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.2);
+}
+
+/* Icon inside counter buttons */
+.counter-icon {
+  filter: invert(1); /* makes dark icons white */
+  width: 28px;
+  height: 28px;
+}
+
   
 /* ---------- SETTINGS MENU ---------- */
   #btnSettings {
@@ -462,17 +496,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
       });
 } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
   q.options.forEach(opt => {
-    // lowercase and remove spaces for filename consistency
     const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
-    html += `<div class="counter-item">
-        <img src="icons/${filename}" alt="${opt}" class="counter-icon" style="width:28px;height:28px;margin-right:8px;">
-        <div class="counter-controls">
-          <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
-          <span id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
-          <button type="button" onclick="updateCounter('${opt}',1)">+</button>
-        </div>
-      </div>`;
+    html += `
+      <button class="opt-btn counter-btn ${answers[q.key] && answers[q.key][opt] > 0 ? 'selected' : ''}" 
+              onclick="updateCounter('${opt}',1)">
+        <img src="icons/${filename}" alt="${opt}" class="counter-icon">
+        <span id="count-${opt}" style="margin-left:6px;">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
+      </button>
+    `;
   });
+}
+
       nextBtn.disabled = false;
     } else if (q.type === 'multi') {
       if (!answers[q.key]) answers[q.key] = [];
