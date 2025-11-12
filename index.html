@@ -549,7 +549,7 @@ body.morning::before {
   </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
   /* ---------- QUESTIONS ---------- */
   const MORNING = [
     {key:'wake_time', type:'time', label:'What time did you wake up?'},
@@ -600,6 +600,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   let answers = {};
   let editingDate = null;
 
+  /* ---------- ELEMENTS ---------- */
   const contentArea = document.getElementById('contentArea');
   const backBtn = document.getElementById('backBtn');
   const nextBtn = document.getElementById('nextBtn');
@@ -610,26 +611,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const historyInner = document.getElementById('historyInner');
   const closeHistory = document.getElementById('closeHistory');
 
+  const morningBtn = document.getElementById('morningBtn');
+  const nightBtn = document.getElementById('nightBtn');
+  const historyBtn = document.getElementById('historyBtn');
+  const dataBtn = document.getElementById('dataBtn');
+
   const getQuestions = () => document.body.classList.contains('morning') ? MORNING : NIGHT;
   const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
 
-  /* ---------- COUNTER UPDATES ---------- */
-  window.updateCounter = (opt, delta) => {
-    if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
-    let val = answers['caffeine_alcohol'][opt] || 0;
-    val += delta; if (val < 0) val = 0;
-    answers['caffeine_alcohol'][opt] = val;
-    const el = document.getElementById(`count-${opt}`);
-    if (el) el.textContent = val;
-    updateProgressBar();
-    saveData();
-  };
-
-  /* ---------- LOAD / SAVE ---------- */
-  function getTodayDate() { 
+  /* ---------- SAVE / LOAD ---------- */
+  function getTodayDate() {
     if (editingDate) return editingDate;
-    const d = new Date(); 
-    return d.toLocaleDateString('en-GB'); 
+    const d = new Date();
+    return d.toLocaleDateString('en-GB');
   }
 
   function loadSavedData() {
@@ -650,12 +644,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   window.addEventListener('beforeunload', saveData);
 
+  /* ---------- COUNTER ---------- */
+  window.updateCounter = (opt, delta) => {
+    if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
+    let val = answers['caffeine_alcohol'][opt] || 0;
+    val += delta; if (val < 0) val = 0;
+    answers['caffeine_alcohol'][opt] = val;
+    const el = document.getElementById(`count-${opt}`);
+    if (el) el.textContent = val;
+    updateProgressBar();
+    saveData();
+  };
+
   /* ---------- UI RENDER ---------- */
   function loadUI() {
     const mode = getMode();
     const questions = getQuestions();
 
-    // Show progress bar
     progressBar.parentElement.style.display = 'block';
 
     if (mode === 'morning' && currentIndex >= questions.length) {
@@ -672,46 +677,42 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const q = questions[currentIndex];
     let html = `<div class="question">${q.label}</div><div class="options">`;
 
-if (q.type === 'single') {
-  q.options.forEach(opt => {
-    const selected = answers[q.key] === opt ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-  });
-   // ---------- DRINKS COUNTER ----------
-} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-  q.options.forEach(opt => {
-    const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
-    const count = (answers[q.key] && answers[q.key][opt]) || 0;
-
-    html += `
-      <div class="opt-btn drink-pill">
-        <div class="icon-circle">
-          <img src="icons/${filename}" alt="${opt}" class="counter-icon">
-        </div>
-        <div class="counter-inner">
-          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
-          <span id="count-${opt}">${count}</span>
-          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
-        </div>
-      </div>
-    `;
-  });
-} else if (q.type === 'multi') {
-  if (!answers[q.key]) answers[q.key] = [];
-  q.options.forEach(opt => {
-    const selected = answers[q.key].includes(opt) ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-  });
-} else if (q.type === 'time') {
-  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
-}
+    if (q.type === 'single') {
+      q.options.forEach(opt => {
+        const selected = answers[q.key] === opt ? 'selected' : '';
+        html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+      });
+    } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+      q.options.forEach(opt => {
+        const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
+        const count = (answers[q.key] && answers[q.key][opt]) || 0;
+        html += `
+          <div class="opt-btn drink-pill">
+            <div class="icon-circle">
+              <img src="icons/${filename}" alt="${opt}" class="counter-icon">
+            </div>
+            <div class="counter-inner">
+              <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+              <span id="count-${opt}">${count}</span>
+              <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+            </div>
+          </div>
+        `;
+      });
+    } else if (q.type === 'multi') {
+      if (!answers[q.key]) answers[q.key] = [];
+      q.options.forEach(opt => {
+        const selected = answers[q.key].includes(opt) ? 'selected' : '';
+        html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+      });
+    } else if (q.type === 'time') {
+      html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
+    }
 
     html += '</div>';
     contentArea.innerHTML = html;
-
     backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
     nextBtn.style.display = 'inline-block';
-
     updateProgressBar();
   }
 
@@ -736,15 +737,7 @@ if (q.type === 'single') {
 
   /* ---------- BACK / NEXT ---------- */
   backBtn.onclick = () => { if (currentIndex > 0) { currentIndex--; loadUI(); } };
-  nextBtn.onclick = () => {
-    const q = getQuestions()[currentIndex];
-    if (q && q.type === 'multi' && q.key === 'caffeine_alcohol') {
-      if (Object.values(answers[q.key] || {}).every(v => v === 0)) {
-        if (!confirm('Save with no caffeine/alcohol?')) return;
-      }
-    }
-    currentIndex++; loadUI();
-  };
+  nextBtn.onclick = () => { currentIndex++; loadUI(); };
 
   /* ---------- PROGRESS BAR ---------- */
   function updateProgressBar() {
@@ -763,8 +756,7 @@ if (q.type === 'single') {
       } else if (answers[key]) done++;
     });
 
-    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-    progressBar.style.width = pct + '%';
+    progressBar.style.width = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
   }
 
   /* ---------- MORNING CHECKLIST ---------- */
@@ -772,13 +764,10 @@ if (q.type === 'single') {
     let html = `<div class="checklist">
       ${MORNING_CHECKLIST_ITEMS.map(item => {
         const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-     return `
-  <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-    <div class="icon-circle">
-      <img src="icons/${item.icon}" alt="${item.label}">
-    </div>
-    <span class="check-text">${item.label}</span>
-  </div>`;
+        return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+          <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}"></div>
+          <span class="check-text">${item.label}</span>
+        </div>`;
       }).join('')}
       </div>
       <button id="clearChecklistBtn" class="clear-btn">Clear All</button>`;
@@ -786,17 +775,14 @@ if (q.type === 'single') {
     contentArea.innerHTML = html;
     backBtn.style.display = 'inline-block';
     nextBtn.style.display = 'inline-block';
-
     document.getElementById('clearChecklistBtn').onclick = clearChecklist;
-
     updateProgressBar();
     checkMorningCompletion();
   }
 
   window.toggleChecklist = key => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
-    document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`)
-      .forEach(el => el.classList.toggle('selected', answers[key] === 'Yes'));
+    document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`).forEach(el => el.classList.toggle('selected', answers[key] === 'Yes'));
     updateProgressBar();
     saveData();
     checkMorningCompletion();
@@ -809,70 +795,52 @@ if (q.type === 'single') {
     saveData();
   }
 
-function checkMorningCompletion() {
-  const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-  if (allDone) {
-    // ✅ Show "Morning completed" message + Back button
-    contentArea.innerHTML = `
-      <div class="done-note">
-        Morning completed.
-        <button class="back-to-checklist" onclick="returnToMorningChecklist()">← Back</button>
-      </div>
-    `;
+  function checkMorningCompletion() {
+    if (MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes')) {
+      contentArea.innerHTML = `<div class="done-note">Morning completed.<button class="back-to-checklist" onclick="returnToMorningChecklist()">← Back</button></div>`;
+      backBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+      saveData();
+      window.switchTimeout = setTimeout(() => {
+        document.body.classList.remove('morning');
+        document.body.classList.add('night');
+        currentIndex = 0;
+        answers = {};
+        editingDate = null;
+        loadSavedData();
+        loadUI();
+      }, 3000);
+    }
+  }
+
+  function returnToMorningChecklist() {
+    clearTimeout(window.switchTimeout);
+    loadMorningChecklist();
     backBtn.style.display = 'none';
     nextBtn.style.display = 'none';
-
-    saveData();
-
-    // ✅ Auto switch to Night after 3 seconds (unless Back is pressed)
-    window.switchTimeout = setTimeout(() => {
-      document.body.classList.remove('morning');
-      document.body.classList.add('night');
-      currentIndex = 0;
-      answers = {};
-      editingDate = null;
-      loadSavedData();
-      loadUI();
-    }, 3000);
   }
-}
-   function returnToMorningChecklist() {
-  // Cancel the auto-switch
-  clearTimeout(window.switchTimeout);
 
-  // Reload the morning checklist
-  loadMorningChecklist();
-
-  // Restore buttons if needed
-  backBtn.style.display = 'none';
-  nextBtn.style.display = 'none';
-}
-
-
-  /* ---------- SWITCH MODES ---------- */
-  document.getElementById('morningBtn').onclick = () => {
+  /* ---------- BUTTONS ---------- */
+  morningBtn.onclick = () => {
     saveData();
     document.body.classList.add('morning'); document.body.classList.remove('night');
     currentIndex = 0; answers = {}; editingDate = null;
     loadSavedData(); loadUI();
   };
-  document.getElementById('nightBtn').onclick = () => {
+  nightBtn.onclick = () => {
     saveData();
     document.body.classList.add('night'); document.body.classList.remove('morning');
     currentIndex = 0; answers = {}; editingDate = null;
     loadSavedData(); loadUI();
   };
+  historyBtn.onclick = () => historyModal.classList.toggle('show');
+  closeHistory.onclick = () => historyModal.classList.remove('show');
+  dataBtn.onclick = () => console.log('Data button clicked (no action yet)');
 
-  /* ---------- SETTINGS MENU ---------- */
   btnSettings.onclick = () => settingsMenu.classList.toggle('show');
-// Close settings menu when any menu item is clicked
-document.querySelectorAll('#settingsMenu button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    settingsMenu.classList.remove('show');
-  });
-});
+  document.querySelectorAll('#settingsMenu button').forEach(btn => btn.addEventListener('click', () => settingsMenu.classList.remove('show')));
 
-  document.getElementById('btnClearToday').onclick = () => {
+  document.getElementById('btnClearToday')?.onclick = () => {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
     const day = getTodayDate();
     delete all[day];
@@ -881,67 +849,9 @@ document.querySelectorAll('#settingsMenu button').forEach(btn => {
     alert("Today's data cleared.");
   };
 
-  /* ---------- HISTORY ---------- */
-  closeHistory.onclick = () => historyModal.classList.remove('show');
-});
-
-<!-- Fixed Footer Navigation -->
-<footer class="footer-nav">
-  <button class="switch-btn morning" id="morningBtn">
-    <img src="icons/day.svg" alt="Morning">
-  </button>
-  <button class="switch-btn night" id="nightBtn">
-    <img src="icons/night.svg" alt="Night">
-  </button>
-  <button class="switch-btn history" id="historyBtn">
-    <img src="icons/history.svg" alt="History">
-  </button>
-  <button class="switch-btn data" id="dataBtn">
-    <img src="icons/data.svg" alt="Data">
-  </button>
-</footer>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // BUTTONS
-  const morningBtn = document.getElementById('morningBtn');
-  const nightBtn = document.getElementById('nightBtn');
-  const historyBtn = document.getElementById('historyBtn');
-  const dataBtn = document.getElementById('dataBtn');
-  const historyModal = document.getElementById('historyModal');
-  const closeHistory = document.getElementById('closeHistory');
-
-  // HISTORY MODAL
-  historyBtn.onclick = () => historyModal.classList.toggle('show');
-  closeHistory.onclick = () => historyModal.classList.remove('show');
-
-  // MORNING / NIGHT SWITCH
-  morningBtn.onclick = () => {
-    saveData();
-    document.body.classList.add('morning');
-    document.body.classList.remove('night');
-    currentIndex = 0;
-    answers = {};
-    editingDate = null;
-    loadSavedData();
-    loadUI();
-  };
-
-  nightBtn.onclick = () => {
-    saveData();
-    document.body.classList.add('night');
-    document.body.classList.remove('morning');
-    currentIndex = 0;
-    answers = {};
-    editingDate = null;
-    loadSavedData();
-    loadUI();
-  };
-
-  // DATA BUTTON (placeholder)
-  dataBtn.onclick = () => {
-    console.log('Data button clicked (no action yet)');
-  };
+  /* ---------- INITIAL LOAD ---------- */
+  loadSavedData();
+  loadUI();
 });
 </script>
 </body>
