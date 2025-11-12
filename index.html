@@ -36,34 +36,58 @@ header { display:flex; align-items:center; justify-content:space-between; margin
 body.morning .switch-btn.morning img { opacity:1; transform:scale(1.15); }
 body.night .switch-btn.night img { opacity:1; transform:scale(1.15); }
 
-/* ---------- OPTION BUTTONS ---------- */
+/* ---------- OPTION BUTTONS (Checklist Style) ---------- */
 .opt-btn {
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  padding:16px 18px; border-radius:16px;
-  border:1px solid rgba(255,255,255,0.25);
-  font-size:18px; font-weight:600; cursor:pointer;
-  transition:transform 0.2s, background 0.3s, box-shadow 0.3s;
-  backdrop-filter:blur(6px);
-  text-align:center; user-select:none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 17px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: left;
+  user-select: none;
 }
 
-body.morning .opt-btn {
-  background:rgba(255,255,255,0.25);
-  color:#fff;
-  box-shadow:0 4px 10px rgba(0,0,0,0.15);
-}
-body.night .opt-btn {
-  background:rgba(255,255,255,0.1);
-  color:#fff;
-  box-shadow:0 4px 10px rgba(0,0,0,0.3);
+.opt-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.02);
 }
 
-.opt-btn:hover { transform:scale(1.04); background:rgba(255,255,255,0.25); }
 .opt-btn.selected {
-  background:rgba(255,255,255,0.45);
-  border-color:rgba(255,255,255,0.6);
-  box-shadow:0 0 12px rgba(255,255,255,0.4);
-  transform:scale(1.05);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  transform: scale(1.04);
+}
+
+/* Maintain day/night differences */
+body.morning .opt-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--morning-text);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+body.night .opt-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+body.morning .opt-btn.selected {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+body.night .opt-btn.selected {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 /* ---------- COUNTER BUTTONS ---------- */
