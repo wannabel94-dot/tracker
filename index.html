@@ -1,4 +1,4 @@
-7<!DOCTYPE html>
+3<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -526,24 +526,12 @@ body.morning::before {
   <header>
     <button id="btnSettings">☰</button>
     <div id="settingsMenu" class="settings-menu">
+      <button id="btnEntries">History</button>
       <button id="btnExport">Export data</button>
       <button id="btnClearToday">Clear Today's Data</button>
     </div>
   </header>
-<footer class="footer-nav">
-  <button class="switch-btn morning" id="morningBtn">
-    <img src="icons/day.svg" alt="Morning">
-  </button>
-  <button class="switch-btn night" id="nightBtn">
-    <img src="icons/night.svg" alt="Night">
-  </button>
-  <button class="switch-btn history" id="historyBtn">
-    <img src="icons/history.svg" alt="History">
-  </button>
-  <button class="switch-btn data" id="dataBtn">
-    <img src="icons/data.svg" alt="Data">
-  </button>
-</footer>
+
   <main class="card">
     <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div></div>
     <div id="contentArea"></div>
@@ -696,6 +684,218 @@ if (q.type === 'single') {
     const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
     const count = (answers[q.key] && answers[q.key][opt]) || 0;
 
+    html += `
+      <div class="opt-btn drink-pill">
+        <div class="icon-circle">
+          <img src="icons/${filename}" alt="${opt}" class="counter-icon">
+        </div>
+        <div class="counter-inner">
+          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+          <span id="count-${opt}">${count}</span>
+          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+        </div>
+      </div>
+    `;
+  });
+} else if (q.type === 'multi') {
+  if (!answers[q.key]) answers[q.key] = [];
+  q.options.forEach(opt => {
+    const selected = answers[q.key].includes(opt) ? 'selected' : '';
+    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+  });
+} else if (q.type === 'time') {
+  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
+}
+
+    html += '</div>';
+    contentArea.innerHTML = html;
+
+    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+    nextBtn.style.display = 'inline-block';
+
+    updateProgressBar();
+  }
+
+  /* ---------- SELECT OPTION ---------- */
+  window.selectOption = opt => {
+    const q = getQuestions()[currentIndex];
+    answers[q.key] = opt;
+    updateProgressBar();
+    saveData();
+    if (q.autoNext) { currentIndex++; loadUI(); }
+  };
+
+  /* ---------- MULTI-OPTION TOGGLE ---------- */
+  window.toggleMultiOption = (qKey, opt) => {
+    if (!answers[qKey]) answers[qKey] = [];
+    const idx = answers[qKey].indexOf(opt);
+    if (idx >= 0) answers[qKey].splice(idx, 1);
+    else answers[qKey].push(opt);
+    saveData();
+    loadUI();
+  };
+
+  /* ---------- BACK / NEXT ---------- */
+  backBtn.onclick = () => { if (currentIndex > 0) { currentIndex--; loadUI(); } };
+  nextBtn.onclick = () => {
+    const q = getQuestions()[currentIndex];
+    if (q && q.type === 'multi' && q.key === 'caffeine_alcohol') {
+      if (Object.values(answers[q.key] || {}).every(v => v === 0)) {
+        if (!confirm('Save with no caffeine/alcohol?')) return;
+      }
+    }
+    currentIndex++; loadUI();
+  };
+
+  /* ---------- PROGRESS BAR ---------- */
+  function updateProgressBar() {
+    const isMorning = getMode() === 'morning';
+    let keys = isMorning ? ['wake_time','how_slept', ...MORNING_CHECKLIST_ITEMS.map(i => i.key)] : NIGHT.map(q => q.key);
+    const total = keys.length;
+    let done = 0;
+
+    keys.forEach(key => {
+      const qNight = NIGHT.find(q => q.key === key);
+      if (MORNING_CHECKLIST_ITEMS.find(i => i.key === key)) {
+        if (answers[key] === 'Yes') done++;
+      } else if (qNight?.type === 'multi') {
+        const val = answers[key];
+        if (val && ((Array.isArray(val) && val.length > 0) || (typeof val === 'object' && Object.values(val).some(v => v && v !== 0)))) done++;
+      } else if (answers[key]) done++;
+    });
+
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    progressBar.style.width = pct + '%';
+  }
+
+  /* ---------- MORNING CHECKLIST ---------- */
+  function loadMorningChecklist() {
+    let html = `<div class="checklist">
+      ${MORNING_CHECKLIST_ITEMS.map(item => {
+        const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+     return `
+  <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+    <div class="icon-circle">
+      <img src="icons/${item.icon}" alt="${item.label}">
+    </div>
+    <span class="check-text">${item.label}</span>
+  </div>`;
+      }).join('')}
+      </div>
+      <button id="clearChecklistBtn" class="clear-btn">Clear All</button>`;
+
+    contentArea.innerHTML = html;
+    backBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'inline-block';
+
+    document.getElementById('clearChecklistBtn').onclick = clearChecklist;
+
+    updateProgressBar();
+    checkMorningCompletion();
+  }
+
+  window.toggleChecklist = key => {
+    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
+    document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`)
+      .forEach(el => el.classList.toggle('selected', answers[key] === 'Yes'));
+    updateProgressBar();
+    saveData();
+    checkMorningCompletion();
+  };
+
+  function clearChecklist() {
+    MORNING_CHECKLIST_ITEMS.forEach(i => answers[i.key] = 'No');
+    document.querySelectorAll('.check-item').forEach(el => el.classList.remove('selected'));
+    updateProgressBar();
+    saveData();
+  }
+
+function checkMorningCompletion() {
+  const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+  if (allDone) {
+    // ✅ Show "Morning completed" message + Back button
+    contentArea.innerHTML = `
+      <div class="done-note">
+        Morning completed.
+        <button class="back-to-checklist" onclick="returnToMorningChecklist()">← Back</button>
+      </div>
+    `;
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+
+    saveData();
+
+    // ✅ Auto switch to Night after 3 seconds (unless Back is pressed)
+    window.switchTimeout = setTimeout(() => {
+      document.body.classList.remove('morning');
+      document.body.classList.add('night');
+      currentIndex = 0;
+      answers = {};
+      editingDate = null;
+      loadSavedData();
+      loadUI();
+    }, 3000);
+  }
+}
+   function returnToMorningChecklist() {
+  // Cancel the auto-switch
+  clearTimeout(window.switchTimeout);
+
+  // Reload the morning checklist
+  loadMorningChecklist();
+
+  // Restore buttons if needed
+  backBtn.style.display = 'none';
+  nextBtn.style.display = 'none';
+}
+
+
+  /* ---------- SWITCH MODES ---------- */
+  document.getElementById('morningBtn').onclick = () => {
+    saveData();
+    document.body.classList.add('morning'); document.body.classList.remove('night');
+    currentIndex = 0; answers = {}; editingDate = null;
+    loadSavedData(); loadUI();
+  };
+  document.getElementById('nightBtn').onclick = () => {
+    saveData();
+    document.body.classList.add('night'); document.body.classList.remove('morning');
+    currentIndex = 0; answers = {}; editingDate = null;
+    loadSavedData(); loadUI();
+  };
+
+  /* ---------- SETTINGS MENU ---------- */
+  btnSettings.onclick = () => settingsMenu.classList.toggle('show');
+// Close settings menu when any menu item is clicked
+document.querySelectorAll('#settingsMenu button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    settingsMenu.classList.remove('show');
+  });
+});
+
+  document.getElementById('btnClearToday').onclick = () => {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const day = getTodayDate();
+    delete all[day];
+    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+    answers = {}; currentIndex = 0; editingDate = null; loadUI();
+    alert("Today's data cleared.");
+  };
+
+  /* ---------- HISTORY ---------- */
+  closeHistory.onclick = () => historyModal.classList.remove('show');
+});
+</script>
+   <footer class="footer-nav">
+  <button class="switch-btn morning" id="morningBtn">
+    <img src="icons/day.svg" alt="Morning">
+  </button>
+  <button class="switch-btn night" id="nightBtn">
+    <img src="icons/night.svg" alt="Night">
+  </button>
+</footer>
+</body>
+</html>
     html += `
       <div class="opt-btn drink-pill">
         <div class="icon-circle">
