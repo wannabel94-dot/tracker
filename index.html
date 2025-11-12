@@ -1,4 +1,4 @@
-15<!DOCTYPE html>
+17<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -200,6 +200,45 @@ body.morning .opt-btn.selected {
 body.night .opt-btn.selected {
   background: rgba(255,255,255,0.25);
   border-color: rgba(255,255,255,0.4);
+}
+
+
+   /* question icons*/
+
+   .question-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between icon and text */
+  margin-bottom: 12px;
+}
+
+.question-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.question-icon {
+  width: 38px;          /* circular button size */
+  height: 38px;
+  border-radius: 50%;   /* makes it a circle */
+  background: rgba(255,255,255,0.12);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  transition: background 0.25s, transform 0.2s;
+}
+
+.question-icon img {
+  width: 20px;
+  height: 20px;
+  filter: invert(1);  /* white icons for night mode */
+}
+
+.question-icon:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.1);
 }
 
 /* ===============================================
