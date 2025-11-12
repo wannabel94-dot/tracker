@@ -1,4 +1,4 @@
-2<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -818,7 +818,7 @@ let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' colu
 function loadMorningChecklist() {
   let html = `
      <div class="checklist-wrapper">
-       <div class="Morning routine">
+      <div class="checklist-title">Morning routine</div>
              <div class="checklist">
       ${MORNING_CHECKLIST_ITEMS.map(item => {
         const selected = answers[item.key] === 'Yes' ? 'selected' : '';
