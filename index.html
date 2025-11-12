@@ -1,4 +1,4 @@
-13<!DOCTYPE html>
+14<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -742,8 +742,9 @@ document.addEventListener('DOMContentLoaded', () => {
   nextBtn.onclick = () => { currentIndex++; loadUI(); };
 
   /* ---------- MORNING CHECKLIST ---------- */
-  function loadMorningChecklist() {
-    let html = `<div class="checklist">
+function loadMorningChecklist() {
+  let html = `<div class="checklist-wrapper">
+    <div class="checklist">
       ${MORNING_CHECKLIST_ITEMS.map(item => {
         const selected = answers[item.key] === 'Yes' ? 'selected' : '';
         return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
@@ -751,13 +752,15 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="check-text">${item.label}</span>
         </div>`;
       }).join('')}
-      </div>
-    contentArea.innerHTML = html;
-    backBtn.style.display = 'inline-block';
-    nextBtn.style.display = 'inline-block';
-    updateProgressBar();
-    checkMorningCompletion();
-  }
+    </div>
+  </div>`;
+
+  contentArea.innerHTML = html;
+  backBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
+  updateProgressBar();
+  checkMorningCompletion();
+}
 
   window.toggleChecklist = (key) => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
