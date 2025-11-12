@@ -857,8 +857,8 @@ function loadMorningChecklist() {
   for (let i = 0; i < items.length; i++) {
     if (items[i].classList.contains('selected')) checkedCount++;
     if (checkedCount === 6) {
-      // Scroll down 5 more items if they exist
-      const targetIndex = Math.min(i + 5, items.length - 1);
+      // Scroll down 4 more items if they exist
+      const targetIndex = Math.min(i + 4, items.length - 1);
       const scrollTarget = items[targetIndex].offsetTop + items[targetIndex].offsetHeight - wrapper.clientHeight + 10;
       if (scrollTarget > wrapper.scrollTop) {
         wrapper.scrollTo({ top: scrollTarget, behavior: 'smooth' });
