@@ -1,4 +1,4 @@
-2<!DOCTYPE html>
+3<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -234,6 +234,10 @@ body.night .opt-btn.selected {
  width: 60%;    /* 70% of circle size */
   height: 60%;
   filter: invert(1);  /* white icons for night mode */
+}
+   .question-icon.special-icon img {
+  width: 85%;   /* larger than default */
+  height: 85%;
 }
 
 .question-icon:hover {
@@ -622,7 +626,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'talked_to_anyone', type:'multi', label:'Talk to anyone?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none'], icon:'talk.svg' },
     { key: 'wellness', type:'multi', label:'Any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none'], icon:'lotus.svg' },
     { key: 'creative', type:'multi', label:'Anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','none'], icon:'paint.svg' },
-    { key: 'closed_eyes_time', type:'time', label:'Sleeptime?', autoNext:true, icon:'sleeptime.svg' }
+    { key: 'closed_eyes_time', type:'time', label:'Sleeptime?', autoNext:true, icon:'sleeptime.svg', specialIcon:true }
   ];
 
   /* ---------- STATE ---------- */
@@ -726,6 +730,11 @@ if (q.icon) {
 
 // Start HTML with question header (above the options)
 let html = questionHeader + '<div class="options">';
+let iconHtml = '';
+if (q.icon) {
+  const specialClass = q.specialIcon ? ' special-icon' : '';
+  iconHtml = `<div class="question-icon${specialClass}"><img src="icons/${q.icon}" alt="${q.label}"></div>`;
+}
 
 // Render options
 if (q.type === 'single') {
