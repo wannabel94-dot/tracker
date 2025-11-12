@@ -1,4 +1,4 @@
-19<!DOCTYPE html>
+20<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -202,14 +202,13 @@ body.night .opt-btn.selected {
   border-color: rgba(255,255,255,0.4);
 }
 
-
-   /* question icons*/
+/* ---------- QUESTION ICONS ---------- */
 
 .question-with-icon {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .question-text {
@@ -217,7 +216,8 @@ body.night .opt-btn.selected {
   font-weight: 600;
   color: #fff;
 }
-   
+
+/* circular wrapper for the icon */
 .question-icon {
   width: 42px;
   height: 42px;
@@ -227,18 +227,22 @@ body.night .opt-btn.selected {
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+  transition: background 0.25s ease, transform 0.2s ease;
 }
 
+/* the actual image inside the circle */
 .question-icon img {
   width: 22px;
   height: 22px;
   filter: invert(1);
   opacity: 0.9;
+  transition: transform 0.2s ease;
 }
 
+/* hover effect */
 .question-icon:hover {
   background: rgba(255,255,255,0.25);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 /* ===============================================
@@ -718,12 +722,12 @@ if (q.type === 'single') {
     iconHtml = `<div class="question-icon"><img src="icons/${q.icon}" alt="${q.label}"></div>`;
   }
 
-  let html = `
-  <div class="question">
-    <div class="question-with-icon">
-      ${q.icon ? `<img src="icons/${q.icon}" class="question-icon" alt="">` : ''}
-      <span class="question-text">${q.label}</span>
-    </div>
+// Render question with icon
+let iconHtml = q.icon ? `<img src="${q.icon}" alt="${q.label}" class="question-icon">` : '';
+html += `
+  <div class="question-with-icon">
+    ${iconHtml}
+    <span class="question-text">${q.label}</span>
   </div>
   <div class="options">
 `;
