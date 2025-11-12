@@ -612,23 +612,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const NIGHT = [
     { key: 'psyillium', type: 'single', label: 'Did you take psyllium?', options: ['Yes','No'], autoNext:true, icon:'grain.svg' },
-    { key: 'magnesium', type: 'single', label: 'Magnesium?', options:['Yes','No'], autoNext:true, icon:'mg.svg' },
-    { key: 'pillowcase', type: 'single', label: 'Change pillowcase?', options:['Yes','No'], autoNext:true, icon:'pillow.svg'},
-    { key: 'shower_night', type: 'single', label:'Shower?', options:['Yes','No'], autoNext:true, icon:'shower.svg' },
-    { key: 'skincare_night', type: 'single', label:'Skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true, icon:'skincare2.svg' },
-    { key: 'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true, icon:'toothbrush.svg' },
-    { key: 'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None'], autoNext:true, icon:'floss.svg' },
+    { key: 'magnesium', type: 'single', label: 'Did you take magnesium?', options:['Yes','No'], autoNext:true, icon:'mg.svg' },
+    { key: 'pillowcase', type: 'single', label: 'Did you change pillowcase?', options:['Yes','No'], autoNext:true, icon:'pillow.svg'},
+    { key: 'shower_night', type: 'single', label:'Did you shower?', options:['Yes','No'], autoNext:true, icon:'shower.svg' },
+    { key: 'skincare_night', type: 'single', label:'Did you do skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true, icon:'skincare2.svg' },
+    { key: 'teeth_night', type:'single', label:'Did you brush teeth?', options:['Once','Twice','None'], autoNext:true, icon:'toothbrush.svg' },
+    { key: 'flossed', type:'single', label:'Did you floss teeth?', options:['Once','Twice','None'], autoNext:true, icon:'floss.svg' },
     { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true, icon:'key.svg' },
     { key: 'day_description', type:'single', label:'How was today?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true, icon:'clock.svg' },
-    { key: 'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['Coffee','Tea','Beer','Spirits','Wine','Mate'], icon:'beans.svg' },
+    { key: 'caffeine_alcohol', type:'multi', label:'How much caffeine / alcohol?', options:['Coffee','Tea','Beer','Spirits','Wine','Mate'], icon:'beans.svg' },
     { key: 'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','none'], icon:'health.svg' },
-    { key: 'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none'], icon:'sense.svg' },
-    { key: 'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy','Doctor','Blood tests','none'], icon:'dr.svg' },
+    { key: 'sensory_triggers', type:'multi', label:'Any sensory triggers?', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none'], icon:'sense.svg' },
+    { key: 'appointments', type:'multi', label:'Did you have appointments?', options:['Psych','Therapy (online)','Therapy','Doctor','Blood tests','none'], icon:'dr.svg' },
     { key: 'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none'], icon:'move.svg' },
-    { key: 'talked_to_anyone', type:'multi', label:'Talk to anyone?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none'], icon:'talk.svg' },
-    { key: 'wellness', type:'multi', label:'Any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none'], icon:'lotus.svg' },
-    { key: 'creative', type:'multi', label:'Anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','none'], icon:'paint.svg' },
-    { key: 'closed_eyes_time', type:'time', label:'Sleeptime?', autoNext:true, icon:'sleeptime.svg', specialIcon:true }
+    { key: 'talked_to_anyone', type:'multi', label:'Who did you talk to?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none'], icon:'talk.svg' },
+    { key: 'wellness', type:'multi', label:'Do any wellness shit?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none'], icon:'lotus.svg' },
+    { key: 'creative', type:'multi', label:'Do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','none'], icon:'paint.svg' },
+    { key: 'closed_eyes_time', type:'time', label:'When are lights off?', autoNext:true, icon:'sleeptime.svg', specialIcon:true }
   ];
 
   /* ---------- STATE ---------- */
