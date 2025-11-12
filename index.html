@@ -1,4 +1,4 @@
-11<!DOCTYPE html>
+1<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -38,6 +38,61 @@ body {
   color: var(--night-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+/* ===============================================
+   FIXED FOOTER NAV
+================================================= */
+.footer-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  z-index: 100;
+}
+
+.footer-nav .switch-btn {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  transition: transform 0.25s, background 0.25s;
+}
+
+.footer-nav .switch-btn img {
+  width: 32px;
+  height: 32px;
+  filter: invert(1);
+  opacity: 0.6;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.footer-nav .switch-btn:hover {
+  background: rgba(255,255,255,0.1);
+  transform: scale(1.1);
+}
+
+body.morning .footer-nav .switch-btn.morning img {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+body.night .footer-nav .switch-btn.night img {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* Push main content above footer */
+body {
+  padding-bottom: 90px; /* prevent overlap with footer */
 }
 
 /* ===============================================
@@ -469,10 +524,6 @@ body.morning::before {
 <body class="night">
 <div class="wrap">
   <header>
-    <div class="top-switch">
-      <button class="switch-btn morning" id="morningBtn"><img src="icons/day.svg" alt="Morning"></button>
-      <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
-    </div>
     <button id="btnSettings">☰</button>
     <div id="settingsMenu" class="settings-menu">
       <button id="btnEntries">History</button>
@@ -834,6 +885,15 @@ document.querySelectorAll('#settingsMenu button').forEach(btn => {
   /* ---------- HISTORY ---------- */
   closeHistory.onclick = () => historyModal.classList.remove('show');
 });
+   <!-- Fixed Footer Navigation -->
+<footer class="footer-nav">
+  <button class="switch-btn morning" id="morningBtn">
+    <img src="icons/day.svg" alt="Morning">
+  </button>
+  <button class="switch-btn night" id="nightBtn">
+    <img src="icons/night.svg" alt="Night">
+  </button>
+</footer>
 </script>
 </body>
 </html>
