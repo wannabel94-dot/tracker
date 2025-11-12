@@ -606,6 +606,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   /* ---------- SETTINGS MENU ---------- */
   btnSettings.onclick = () => settingsMenu.classList.toggle('show');
+// Close settings menu when any menu item is clicked
+document.querySelectorAll('#settingsMenu button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    settingsMenu.classList.remove('show');
+  });
+});
 
   document.getElementById('btnClearToday').onclick = () => {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
