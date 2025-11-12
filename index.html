@@ -1,4 +1,4 @@
-9<!DOCTYPE html>
+10<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -740,14 +740,28 @@ if (q.type === 'single') {
     saveData();
   }
 
-  function checkMorningCompletion() {
-    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-    if (allDone) {
-      contentArea.innerHTML = '<div class="done-note">Morning completed.</div>';
-      backBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-    }
+function checkMorningCompletion() {
+  const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+  if (allDone) {
+    contentArea.innerHTML = '<div class="done-note">Morning completed.</div>';
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+
+    // ✅ Save data first
+    saveData();
+
+    // ✅ After 3 seconds, switch to night mode
+    setTimeout(() => {
+      document.body.classList.remove('morning');
+      document.body.classList.add('night');
+      currentIndex = 0;
+      answers = {};
+      editingDate = null;
+      loadSavedData();
+      loadUI();
+    }, 3000);
   }
+}
 
   /* ---------- SWITCH MODES ---------- */
   document.getElementById('morningBtn').onclick = () => {
