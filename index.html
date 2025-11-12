@@ -1,4 +1,4 @@
-3<!DOCTYPE html>
+4<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -526,7 +526,6 @@ body.morning::before {
   <header>
     <button id="btnSettings">☰</button>
     <div id="settingsMenu" class="settings-menu">
-      <button id="btnEntries">History</button>
       <button id="btnExport">Export data</button>
       <button id="btnClearToday">Clear Today's Data</button>
     </div>
@@ -885,14 +884,53 @@ document.querySelectorAll('#settingsMenu button').forEach(btn => {
   /* ---------- HISTORY ---------- */
   closeHistory.onclick = () => historyModal.classList.remove('show');
 });
-</script>
-   <footer class="footer-nav">
+<!-- Fixed Footer Navigation -->
+<footer class="footer-nav">
   <button class="switch-btn morning" id="morningBtn">
     <img src="icons/day.svg" alt="Morning">
   </button>
   <button class="switch-btn night" id="nightBtn">
     <img src="icons/night.svg" alt="Night">
   </button>
+  <button class="switch-btn history" id="historyBtn">
+    <img src="icons/history.svg" alt="History">
+  </button>
 </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  /* ---------- HISTORY ---------- */
+  const historyModal = document.getElementById('historyModal');
+  const closeHistory = document.getElementById('closeHistory');
+
+  // Close button inside modal
+  closeHistory.onclick = () => historyModal.classList.remove('show');
+
+  // Open modal from footer button
+  const historyBtn = document.getElementById('historyBtn');
+  historyBtn.onclick = () => historyModal.classList.toggle('show');
+
+  /* ---------- MORNING/NIGHT SWITCH ---------- */
+  document.getElementById('morningBtn').onclick = () => {
+    document.body.classList.add('morning');
+    document.body.classList.remove('night');
+    currentIndex = 0;
+    answers = {};
+    editingDate = null;
+    loadSavedData();
+    loadUI();
+  };
+
+  document.getElementById('nightBtn').onclick = () => {
+    document.body.classList.add('night');
+    document.body.classList.remove('morning');
+    currentIndex = 0;
+    answers = {};
+    editingDate = null;
+    loadSavedData();
+    loadUI();
+  };
+});
+</script>
 </body>
 </html>
