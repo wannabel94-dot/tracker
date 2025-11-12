@@ -256,12 +256,32 @@ body.night .opt-btn:hover { background: rgba(255,255,255,0.18); }
 }
 
 /* Drinks counter */
-.counter-item { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:12px; margin-bottom:8px; background:rgba(255,255,255,0.1); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.15); transition:background 0.3s,border 0.3s; }
+.counter-item {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 14px;
+  border-radius:16px;
+  margin-bottom:8px;
+  background: rgba(255,255,255,0.08); /* lighter night-mode look */
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
 body.night .counter-item { background: rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2); }
 body.morning .counter-item { background: rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); }
 .counter-controls { display:flex; gap:6px; align-items:center; }
-.counter-controls button { background: rgba(255,255,255,0.2); border:none; color:#fff; font-size:18px; padding:4px 10px; border-radius:8px; cursor:pointer; transition:background 0.2s; }
-.counter-controls button:hover { background: rgba(255,255,255,0.35); }
+.counter-controls button {
+  background: rgba(255,255,255,0.15);
+  border:none;
+  color:#fff;
+  font-size:16px;
+  padding:4px 10px;
+  border-radius:8px;
+  cursor:pointer;
+  transition: background 0.2s;
+}
+.counter-controls button:hover {
+  background: rgba(255,255,255,0.3);
 body.night .counter-controls button { background: rgba(255,255,255,0.15); }
 body.night .counter-controls button:hover { background: rgba(255,255,255,0.3); }
 
