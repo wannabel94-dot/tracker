@@ -1,4 +1,4 @@
-11<!DOCTYPE html>
+12<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -370,7 +370,13 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .check-item:hover { background:rgba(255,255,255,0.1); }
 .check-text { font-weight:500; color:#fff; }
 .check-item.selected .check-text { text-decoration:line-through; opacity:0.6; }
-
+.checklist-wrapper {
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+}
    .icon-circle {
   width: 38px;
   height: 38px;
