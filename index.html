@@ -531,20 +531,24 @@ if (q.type === 'single') {
     const selected = answers[q.key] === opt ? 'selected' : '';
     html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
   });
-   // drinks counter //
+   // ---------- DRINKS COUNTER ----------
 } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-q.options.forEach(opt => {
-  const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
-  const count = (answers[q.key] && answers[q.key][opt]) || 0;
-  html += `
-    <div class="counter-wrapper">
-      <img src="icons/${filename}" alt="${opt}" class="counter-icon">
-      <button class="counter-btn" onclick="updateCounter('${opt}',-1)" style="background:none;color:#fff;border:none;font-size:20px;">-</button>
-      <span id="count-${opt}" style="margin:0 6px;color:#fff;">${count}</span>
-      <button class="counter-btn" onclick="updateCounter('${opt}',1)" style="background:none;color:#fff;border:none;font-size:20px;">+</button>
-    </div>
+  q.options.forEach(opt => {
+    const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
+    const count = (answers[q.key] && answers[q.key][opt]) || 0;
+
+    html += `
+      <div class="opt-btn drink-pill">
+        <img src="icons/${filename}" alt="${opt}" class="counter-icon">
+        <div class="counter-inner">
+          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+          <span id="count-${opt}">${count}</span>
+          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+        </div>
+      </div>
     `;
   });
+}
 } else if (q.type === 'multi') {
   if (!answers[q.key]) answers[q.key] = [];
   q.options.forEach(opt => {
