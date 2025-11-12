@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+1<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -487,16 +487,16 @@ if (q.type === 'single') {
   });
    // drinks counter //
 } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-  q.options.forEach(opt => {
-    const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
-    const val = (answers[q.key] && answers[q.key][opt]) || 0;
-    html += `
-<div class="drink-counter">
-  <img src="icons/coffee.svg" alt="Coffee" class="counter-icon">
-  <button class="counter-btn minus" onclick="updateCounter('Coffee', -1)">-</button>
-  <span id="count-Coffee">0</span>
-  <button class="counter-btn plus" onclick="updateCounter('Coffee', 1)">+</button>
-</div>
+q.options.forEach(opt => {
+  const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
+  const count = (answers[q.key] && answers[q.key][opt]) || 0;
+  html += `
+    <div class="counter-wrapper">
+      <img src="icons/${filename}" alt="${opt}" class="counter-icon">
+      <button class="counter-btn" onclick="updateCounter('${opt}',-1)" style="background:none;color:#fff;border:none;font-size:20px;">-</button>
+      <span id="count-${opt}" style="margin:0 6px;color:#fff;">${count}</span>
+      <button class="counter-btn" onclick="updateCounter('${opt}',1)" style="background:none;color:#fff;border:none;font-size:20px;">+</button>
+    </div>
     `;
   });
 } else if (q.type === 'multi') {
