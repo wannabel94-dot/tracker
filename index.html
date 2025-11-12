@@ -1,4 +1,4 @@
-3<!DOCTYPE html>
+4<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -608,7 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   const MORNING_CHECKLIST_ITEMS = [
-    { key: 'made_bed', label: 'Make bed', icon: 'bed.svg' },
+    { key: 'made_bed', label: 'Make bed', icon: 'sheets.svg' },
     { key: 'took_meds_morn', label: 'Take meds', icon: 'meds.svg' },
     { key: 'tidy_up', label: 'Tidy up', icon: 'sweep.svg' },
     { key: 'tea_meditate', label: 'Have tea', icon: 'tea.svg' },
@@ -850,15 +850,20 @@ function loadMorningChecklist() {
     saveData(); updateProgressBar(); checkMorningCompletion();
       // Auto-scroll if the last visible item is checked
   const wrapper = document.querySelector('.checklist-wrapper');
-  const checklist = document.querySelector('.checklist');
-  const lastVisibleItem = Array.from(checklist.children)
-    .find(item => item.offsetTop + item.offsetHeight > wrapper.scrollTop + wrapper.clientHeight);
-
-  if (lastVisibleItem && answers[key] === 'Yes') {
-    wrapper.scrollTo({
-      top: lastVisibleItem.offsetTop,
-      behavior: 'smooth'
-    });
+  const items = wrapper.querySelectorAll('.check-item');
+  
+  // Count how many items are currently checked
+  let checkedCount = 0;
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].classList.contains('selected')) checkedCount++;
+    // Only scroll when 6 items above have been checked
+    if (checkedCount === 6) {
+      const scrollTarget = items[i].offsetTop + items[i].offsetHeight - wrapper.clientHeight + 10;
+      if (scrollTarget > wrapper.scrollTop) {
+        wrapper.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+      }
+      break;
+    }
   }
 };
 
