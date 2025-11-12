@@ -405,6 +405,11 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .bar { height:100%; width:0%; background:linear-gradient(90deg,rgba(255,255,255,0.15),rgba(255,255,255,0.3)); border-radius:8px; transition:width 0.25s; }
 .question { font-size:18px; margin-bottom:12px; font-weight:600; color:#f0f4ff; }
 .options { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.options.column-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* optional spacing between buttons */
+}
 
 /* ===============================================
    MORNING CHECKLIST
@@ -734,7 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Start HTML with question header
-  let html = questionHeader + '<div class="options">';
+let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
 
   // Render options
   if (q.type === 'single') {
