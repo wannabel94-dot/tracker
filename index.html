@@ -1,4 +1,4 @@
-8<!DOCTYPE html>
+9<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -689,91 +689,89 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('nightBtn').onclick = () => switchMode('night');
 
   /* ---------- UI RENDER ---------- */
-  function loadUI() {
-    const mode = getMode();
-    const questions = getQuestions();
+ function loadUI() {
+  const mode = getMode();
+  const questions = getQuestions();
 
-    // Show progress bar
-    progressBar.parentElement.style.display = 'block';
+  // Show progress bar
+  progressBar.parentElement.style.display = 'block';
 
-    // Morning checklist
-    if (mode === 'morning' && currentIndex >= MORNING.length) {
-      loadMorningChecklist();
-      return;
-    }
-
-    // Night completion
-    if (mode === 'night' && currentIndex >= NIGHT.length) {
-      contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
-      backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-      nextBtn.style.display = 'none';
-      updateProgressBar();
-      return;
-    }
-
-    // Render question
-    // Render question
-const q = questions[currentIndex];
-
-// Build question header with optional icon
-let questionHeader = '';
-if (q.icon) {
-  questionHeader = `
-    <div class="question-with-icon">
-      <div class="question-icon"><img src="icons/${q.icon}" alt="${q.label}"></div>
-      <span class="question-text">${q.label}</span>
-    </div>
-  `;
-} else {
-  questionHeader = `<div class="question">${q.label}</div>`;
-}
-
-// Start HTML with question header (above the options)
-let html = questionHeader + '<div class="options">';
-let iconHtml = '';
-if (q.icon) {
-  const specialClass = q.specialIcon ? ' special-icon' : '';
-  iconHtml = `<div class="question-icon${specialClass}"><img src="icons/${q.icon}" alt="${q.label}"></div>`;
-}
-
-// Render options
-if (q.type === 'single') {
-  q.options.forEach(opt => {
-    const selected = answers[q.key] === opt ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-  });
-} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-  q.options.forEach(opt => {
-    const filename = opt.toLowerCase().replace(/\s+/g,'_') + '.svg';
-    const count = (answers[q.key] && answers[q.key][opt]) || 0;
-    html += `<div class="opt-btn drink-pill">
-      <div class="icon-circle"><img src="icons/${filename}" alt="${opt}" class="counter-icon"></div>
-      <div class="counter-inner">
-        <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
-        <span id="count-${opt}">${count}</span>
-        <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
-      </div>
-    </div>`;
-  });
-} else if (q.type === 'multi') {
-  if (!answers[q.key]) answers[q.key] = [];
-  q.options.forEach(opt => {
-    const selected = answers[q.key].includes(opt) ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-  });
-} else if (q.type === 'time') {
-  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
-}
-
-// Close .options div
-html += '</div>';
-
-contentArea.innerHTML = html;
-
-    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-    nextBtn.style.display = 'inline-block';
-    updateProgressBar();
+  // Morning checklist
+  if (mode === 'morning' && currentIndex >= MORNING.length) {
+    loadMorningChecklist();
+    return;
   }
+
+  // Night completion
+  if (mode === 'night' && currentIndex >= NIGHT.length) {
+    contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
+    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+    nextBtn.style.display = 'none';
+    updateProgressBar();
+    return;
+  }
+
+  // Current question
+  const q = questions[currentIndex];
+
+    // ------ funcion UI -------- //
+  // Build question header with optional icon
+  let questionHeader = '';
+  if (q.icon) {
+    const specialClass = q.specialIcon ? ' special-icon' : '';
+    questionHeader = `
+      <div class="question-with-icon">
+        <div class="question-icon${specialClass}">
+          <img src="icons/${q.icon}" alt="${q.label}">
+        </div>
+        <span class="question-text">${q.label}</span>
+      </div>
+    `;
+  } else {
+    questionHeader = `<div class="question">${q.label}</div>`;
+  }
+
+  // Start HTML with question header
+  let html = questionHeader + '<div class="options">';
+
+  // Render options
+  if (q.type === 'single') {
+    q.options.forEach(opt => {
+      const selected = answers[q.key] === opt ? 'selected' : '';
+      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+    });
+  } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+    q.options.forEach(opt => {
+      const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
+      const count = (answers[q.key] && answers[q.key][opt]) || 0;
+      html += `<div class="opt-btn drink-pill">
+        <div class="icon-circle"><img src="icons/${filename}" alt="${opt}" class="counter-icon"></div>
+        <div class="counter-inner">
+          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+          <span id="count-${opt}">${count}</span>
+          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+        </div>
+      </div>`;
+    });
+  } else if (q.type === 'multi') {
+    if (!answers[q.key]) answers[q.key] = [];
+    q.options.forEach(opt => {
+      const selected = answers[q.key].includes(opt) ? 'selected' : '';
+      html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+    });
+  } else if (q.type === 'time') {
+    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
+  }
+
+  // Close .options div
+  html += '</div>';
+
+  contentArea.innerHTML = html;
+
+  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+  nextBtn.style.display = 'inline-block';
+  updateProgressBar();
+}
 
   /* ---------- SELECT OPTION ---------- */
   window.selectOption = (opt) => {
