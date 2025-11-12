@@ -1,4 +1,4 @@
-6<!DOCTYPE html>
+7<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -530,7 +530,20 @@ body.morning::before {
       <button id="btnClearToday">Clear Today's Data</button>
     </div>
   </header>
-
+<footer class="footer-nav">
+  <button class="switch-btn morning" id="morningBtn">
+    <img src="icons/day.svg" alt="Morning">
+  </button>
+  <button class="switch-btn night" id="nightBtn">
+    <img src="icons/night.svg" alt="Night">
+  </button>
+  <button class="switch-btn history" id="historyBtn">
+    <img src="icons/history.svg" alt="History">
+  </button>
+  <button class="switch-btn data" id="dataBtn">
+    <img src="icons/data.svg" alt="Data">
+  </button>
+</footer>
   <main class="card">
     <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div></div>
     <div id="contentArea"></div>
@@ -885,21 +898,6 @@ document.querySelectorAll('#settingsMenu button').forEach(btn => {
   closeHistory.onclick = () => historyModal.classList.remove('show');
 });
 
-   //-- Fixed Footer Navigation --//
-<footer class="footer-nav">
-  <button class="switch-btn morning" id="morningBtn">
-    <img src="icons/day.svg" alt="Morning">
-  </button>
-  <button class="switch-btn night" id="nightBtn">
-    <img src="icons/night.svg" alt="Night">
-  </button>
-  <button class="switch-btn history" id="historyBtn">
-    <img src="icons/history.svg" alt="History">
-  </button>
-  <button class="switch-btn data" id="dataBtn">
-    <img src="icons/data.svg" alt="Data">
-  </button>
-</footer>
 document.addEventListener('DOMContentLoaded', () => {
   // HISTORY MODAL
   const historyModal = document.getElementById('historyModal');
