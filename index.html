@@ -337,18 +337,14 @@ body.morning::before {
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
   /* ---------- QUESTIONS ---------- */
- const MORNING = [
-  {key:'wake_time', type:'time', label:'What time did you wake up?'},
-  {key:'how_slept', type:'single', label:'How do you think you slept?', options:[
-      {label:'Went to bed late but slept in', value:'late_sleep_in'},
-      {label:'Went to bed late but woke early', value:'late_wake_early'},
-      {label:'Went to bed early but woke really early', value:'early_wake_early'},
-      {label:"Couldn't fall asleep", value:'could_not_sleep'},
-      {label:'Lightly disrupted', value:'lightly_disrupted'},
-      {label:'Frequently disrupted', value:'frequently_disrupted'},
-      {label:'Fine', value:'fine'}
-  ], autoNext:true}
-];
+  const MORNING = [
+    {key:'wake_time', type:'time', label:'What time did you wake up?'},
+    {key:'how_slept', type:'single', label:'How do you think you slept?', options:[
+      'Went to bed late but slept in','Went to bed late but woke early',
+      'Went to bed early but woke really early',"Couldn't fall asleep",
+      'Lightly disrupted','Frequently disrupted','Fine'
+    ], autoNext:true}
+  ];
 
   const MORNING_CHECKLIST_ITEMS = [
     { key: 'made_bed', label: 'Make bed', icon: 'bed.svg' },
