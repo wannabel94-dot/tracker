@@ -35,81 +35,81 @@ header { display:flex; align-items:center; justify-content:space-between; margin
 body.morning .switch-btn.morning img { opacity:1; transform:scale(1.15); }
 body.night .switch-btn.night img { opacity:1; transform:scale(1.15); }
 
-/* Option & counter buttons */
-.opt-btn, .counter-btn {
+/* --- FIX: Option Buttons --- */
+.opt-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   padding: 16px 18px;
   border-radius: 16px;
-  border: 1px solid transparent;
+  border: 1px solid rgba(255,255,255,0.25);
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, background 0.3s, box-shadow 0.3s, border 0.3s, color 0.3s;
+  transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
   backdrop-filter: blur(6px);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   text-align: center;
   user-select: none;
 }
-.opt-btn:hover, .counter-btn:hover { transform: scale(1.03); box-shadow: 0 6px 10px rgba(0,0,0,0.15); }
 
-.opt-btn.selected, .counter-btn.selected { border: 2px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.2); }
-
-/* Counter icons */
-.counter-icon { width:28px; height:28px; filter:invert(1); }
-
-/* Drinks counter */
-.counter-item {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 14px;
-  border-radius:16px;
-  margin-bottom:8px;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255,255,255,0.2);
+/* Default states for morning and night */
+body.morning .opt-btn {
+  background: rgba(255,255,255,0.25);
+  color: var(--morning-text);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
-body.night .counter-item { background: rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2); }
-body.morning .counter-item { background: rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); }
-
-.counter-controls { display:flex; gap:6px; align-items:center; }
-.counter-controls button {
-  background: rgba(255,255,255,0.15);
-  border:none;
-  color:#fff;
-  font-size:16px;
-  padding:4px 10px;
-  border-radius:8px;
-  cursor:pointer;
-  transition: background 0.2s;
+body.night .opt-btn {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
-.counter-controls button:hover { background: rgba(255,255,255,0.3); }
-body.night .counter-controls button { background: rgba(255,255,255,0.15); }
-body.night .counter-controls button:hover { background: rgba(255,255,255,0.3); }
 
-/* Clear All Drinks Button */
-#clearDrinksBtn {
-  display:block;
-  margin:12px auto 0;
-  padding:14px 18px;
-  border-radius:16px;
-  background: rgba(255,255,255,0.08);
-  color:#fff;
-  font-weight:600;
-  border:none;
-  cursor:pointer;
+.opt-btn:hover {
+  transform: scale(1.04);
+  background: rgba(255,255,255,0.3);
+}
+
+.opt-btn.selected {
+  background: rgba(255,255,255,0.45);
+  border-color: rgba(255,255,255,0.6);
+  box-shadow: 0 0 12px rgba(255,255,255,0.4);
+  transform: scale(1.05);
+}
+
+/* --- FIX: Checklist Clear Button (and Drinks Clear) --- */
+#clearDrinksBtn,
+#clearChecklistBtn {
+  display: block;
+  margin: 16px auto 0;
+  padding: 14px 20px;
+  border-radius: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
   transition: background 0.25s, transform 0.2s;
-  text-align:center;
+  text-align: center;
+  width: fit-content;
 }
-#clearDrinksBtn:hover { background: rgba(255,255,255,0.18); transform: scale(1.03); }
-body.morning #clearDrinksBtn { background: rgba(255,255,255,0.12); color:#fff; }
-body.morning #clearDrinksBtn:hover { background: rgba(255,255,255,0.25); }
-body.night #clearDrinksBtn { background: rgba(255,255,255,0.08); color:#fff; }
-body.night #clearDrinksBtn:hover { background: rgba(255,255,255,0.18); }
 
+/* Morning/Night versions */
+body.morning #clearDrinksBtn,
+body.morning #clearChecklistBtn {
+  background: rgba(255,255,255,0.25);
+  color: var(--morning-text);
+}
+
+body.night #clearDrinksBtn,
+body.night #clearChecklistBtn {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+
+#clearDrinksBtn:hover,
+#clearChecklistBtn:hover {
+  background: rgba(255,255,255,0.35);
+  transform: scale(1.04);
+}
 /* ---------- SETTINGS MENU ---------- */
 #btnSettings { background:transparent; border:none; font-size:24px; color:#fff; cursor:pointer; padding:0; line-height:1; }
 #btnSettings:hover { color:#ddd; background:none; }
