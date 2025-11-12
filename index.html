@@ -566,17 +566,17 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   const NIGHT = [
-    { key: 'psyillium', type: 'single', label: 'Did you take psyllium?', options: ['Yes','No'], autoNext:true },
-    { key: 'magnesium', type: 'single', label: 'Magnesium?', options:['Yes','No'], autoNext:true },
-    { key: 'pillowcase', type: 'single', label:'Did you change the pillowcase?', options:['Yes','No'], autoNext:true },
-    { key: 'shower_night', type: 'single', label:'Shower?', options:['Yes','No'], autoNext:true },
-    { key: 'skincare_night', type: 'single', label:'Skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true },
-    { key: 'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true },
-    { key: 'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None'], autoNext:true },
-    { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true },
-    { key: 'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true },
+    { key: 'psyillium', type: 'single', label: 'Did you take psyllium?', options: ['Yes','No'], autoNext:true, icon:'grain.svg' },
+    { key: 'magnesium', type: 'single', label: 'Magnesium?', options:['Yes','No'], autoNext:true, icon:'magnesium.svg' },
+    { key: 'pillowcase', type: 'single', label:'Did you change the pillowcase?', options:['Yes','No'], autoNext:true, icon:'pillow.svg'},
+    { key: 'shower_night', type: 'single', label:'Shower?', options:['Yes','No'], autoNext:true, icon:'shower.svg' },
+    { key: 'skincare_night', type: 'single', label:'Skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true, icon:'skin.svg' },
+    { key: 'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true, icon:'toothbrush.svg' },
+    { key: 'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None'], autoNext:true, icon:'floss.svg' },
+    { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true, icon:'key.svg' },
+    { key: 'day_description', type:'single', label:'How would you best describe the day?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true, icon:'calendar.svg' },
     { key: 'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['Coffee','Tea','Beer','Spirits','Wine','Mate'] },
-    { key: 'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','none'] },
+    { key: 'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','none'], icon:'health.svg' },
     { key: 'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none'] },
     { key: 'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy','Doctor','Blood tests','none'] },
     { key: 'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none'] },
@@ -672,12 +672,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const q = questions[currentIndex];
     let html = `<div class="question">${q.label}</div><div class="options">`;
 
-    if (q.type === 'single') {
-      q.options.forEach(opt => {
-        const selected = answers[q.key] === opt ? 'selected' : '';
-        html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-      });
-    } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+if (q.type === 'single') {
+  // optional icon HTML
+  let iconHtml = '';
+  if (q.icon) {
+    iconHtml = `<div class="question-icon"><img src="icons/${q.icon}" alt="${q.label}"></div>`;
+  }
+
+  // render question with icon
+  html += `<div class="question-with-icon">
+             ${iconHtml}
+             <span class="question-text">${q.label}</span>
+           </div>`;
+
+  // render options
+  q.options.forEach(opt => {
+    const selected = answers[q.key] === opt ? 'selected' : '';
+    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+  });
+}
+ else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
       q.options.forEach(opt => {
         const filename = opt.toLowerCase().replace(/\s+/g,'_') + '.svg';
         const count = (answers[q.key] && answers[q.key][opt]) || 0;
