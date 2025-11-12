@@ -1,4 +1,4 @@
-1<!DOCTYPE html>
+2<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -493,9 +493,9 @@ q.options.forEach(opt => {
   html += `
     <div class="counter-wrapper">
       <img src="icons/${filename}" alt="${opt}" class="counter-icon">
-      <button class="counter-btn" onclick="updateCounter('${opt}',-1)" style="background:none;color:#fff;border:none;font-size:20px;">-</button>
+      <button class="counter-btn" onclick="updateCounter('${opt}',-1)" style="background:rgba(255, 255, 255, 0.05);color:#fff;border:none;font-size:20px;">-</button>
       <span id="count-${opt}" style="margin:0 6px;color:#fff;">${count}</span>
-      <button class="counter-btn" onclick="updateCounter('${opt}',1)" style="background:none;color:#fff;border:none;font-size:20px;">+</button>
+      <button class="counter-btn" onclick="updateCounter('${opt}',1)" style="background:rgba(255, 255, 255, 0.05);color:#fff;border:none;font-size:20px;">+</button>
     </div>
     `;
   });
