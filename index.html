@@ -489,11 +489,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const q = questions[currentIndex];
     let html = `<div class="question">${q.label}</div><div class="options">`;
 
-    if (q.type === 'single') {
-      q.options.forEach(opt => {
-        const selected = answers[q.key] === opt ? 'selected' : '';
-        html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-      });
+if (q.type === 'single') {
+  q.options.forEach(opt => {
+    const selected = answers[q.key] === opt ? 'selected' : '';
+    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+  });
 } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
   q.options.forEach(opt => {
     const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
@@ -505,18 +505,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
       </button>
     `;
   });
+} else if (q.type === 'multi') {
+  if (!answers[q.key]) answers[q.key] = [];
+  q.options.forEach(opt => {
+    const selected = answers[q.key].includes(opt) ? 'selected' : '';
+    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+  });
+} else if (q.type === 'time') {
+  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
 }
-
-      nextBtn.disabled = false;
-    } else if (q.type === 'multi') {
-      if (!answers[q.key]) answers[q.key] = [];
-      q.options.forEach(opt => {
-        const selected = answers[q.key].includes(opt) ? 'selected' : '';
-        html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-      });
-    } else if (q.type === 'time') {
-      html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
-    }
 
     html += '</div>';
     contentArea.innerHTML = html;
