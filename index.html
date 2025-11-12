@@ -1,4 +1,4 @@
-17<!DOCTYPE html>
+18<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -205,11 +205,11 @@ body.night .opt-btn.selected {
 
    /* question icons*/
 
-   .question-with-icon {
+.question-with-icon {
   display: flex;
   align-items: center;
-  gap: 10px; /* space between icon and text */
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .question-text {
@@ -217,23 +217,23 @@ body.night .opt-btn.selected {
   font-weight: 600;
   color: #fff;
 }
-
+   
 .question-icon {
-  width: 38px;          /* circular button size */
-  height: 38px;
-  border-radius: 50%;   /* makes it a circle */
-  background: rgba(255,255,255,0.12);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
-  transition: background 0.25s, transform 0.2s;
 }
 
 .question-icon img {
-  width: 20px;
-  height: 20px;
-  filter: invert(1);  /* white icons for night mode */
+  width: 22px;
+  height: 22px;
+  filter: invert(1);
+  opacity: 0.9;
 }
 
 .question-icon:hover {
@@ -709,7 +709,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render question
     const q = questions[currentIndex];
-    let html = `<div class="question">${q.label}</div><div class="options">`;
+let html = `<div class="options">`;
 
 if (q.type === 'single') {
   // optional icon HTML
