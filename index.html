@@ -460,16 +460,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
         const selected = answers[q.key] === opt ? 'selected' : '';
         html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
       });
-    } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-      q.options.forEach(opt => {
-        html += `<div class="counter-item"><span>${opt}</span>
-          <div class="counter-controls">
-            <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
-            <span id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
-            <button type="button" onclick="updateCounter('${opt}',1)">+</button>
-          </div>
-        </div>`;
-      });
+} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+  q.options.forEach(opt => {
+    // lowercase and remove spaces for filename consistency
+    const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
+    html += `<div class="counter-item">
+        <img src="icons/${filename}" alt="${opt}" class="counter-icon" style="width:28px;height:28px;margin-right:8px;">
+        <div class="counter-controls">
+          <button type="button" onclick="updateCounter('${opt}',-1)">−</button>
+          <span id="count-${opt}">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
+          <button type="button" onclick="updateCounter('${opt}',1)">+</button>
+        </div>
+      </div>`;
+  });
       nextBtn.disabled = false;
     } else if (q.type === 'multi') {
       if (!answers[q.key]) answers[q.key] = [];
