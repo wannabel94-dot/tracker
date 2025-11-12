@@ -1,4 +1,4 @@
-4<!DOCTYPE html>
+5<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -884,7 +884,8 @@ document.querySelectorAll('#settingsMenu button').forEach(btn => {
   /* ---------- HISTORY ---------- */
   closeHistory.onclick = () => historyModal.classList.remove('show');
 });
-<!-- Fixed Footer Navigation -->
+
+   //-- Fixed Footer Navigation --//
 <footer class="footer-nav">
   <button class="switch-btn morning" id="morningBtn">
     <img src="icons/day.svg" alt="Morning">
@@ -895,40 +896,43 @@ document.querySelectorAll('#settingsMenu button').forEach(btn => {
   <button class="switch-btn history" id="historyBtn">
     <img src="icons/history.svg" alt="History">
   </button>
+  <button class="switch-btn data" id="dataBtn">
+    <img src="icons/data.svg" alt="Data">
+  </button>
 </footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  /* ---------- HISTORY ---------- */
+  // HISTORY MODAL
   const historyModal = document.getElementById('historyModal');
   const closeHistory = document.getElementById('closeHistory');
-
-  // Close button inside modal
-  closeHistory.onclick = () => historyModal.classList.remove('show');
-
-  // Open modal from footer button
   const historyBtn = document.getElementById('historyBtn');
+
+  closeHistory.onclick = () => historyModal.classList.remove('show');
   historyBtn.onclick = () => historyModal.classList.toggle('show');
 
-  /* ---------- MORNING/NIGHT SWITCH ---------- */
-  document.getElementById('morningBtn').onclick = () => {
+  // MORNING/NIGHT SWITCH
+  const morningBtn = document.getElementById('morningBtn');
+  const nightBtn = document.getElementById('nightBtn');
+
+  morningBtn.onclick = () => {
     document.body.classList.add('morning');
     document.body.classList.remove('night');
-    currentIndex = 0;
-    answers = {};
-    editingDate = null;
-    loadSavedData();
-    loadUI();
+    currentIndex = 0; answers = {}; editingDate = null;
+    loadSavedData(); loadUI();
   };
 
-  document.getElementById('nightBtn').onclick = () => {
+  nightBtn.onclick = () => {
     document.body.classList.add('night');
     document.body.classList.remove('morning');
-    currentIndex = 0;
-    answers = {};
-    editingDate = null;
-    loadSavedData();
-    loadUI();
+    currentIndex = 0; answers = {}; editingDate = null;
+    loadSavedData(); loadUI();
+  };
+
+  // DATA BUTTON (placeholder)
+  const dataBtn = document.getElementById('dataBtn');
+  dataBtn.onclick = () => {
+    console.log('Data button clicked (no action yet)');
   };
 });
 </script>
