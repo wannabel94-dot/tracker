@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+3<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -415,8 +415,13 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
    MORNING CHECKLIST
    -----------------------------------------------
 ================================================= */
-.checklist { display:flex; flex-direction:column; gap:8px; margin-top:12px; max-height: 60vh; /* adjust as needed */ overflow-y: auto; padding-right: 6px; padding-bottom: 80px; }
-.checklist-title { font-size: 18px; font-weight: 600; color:#f0f4ff; /* or var(--morning-text) for morning mode */ margin-bottom: 12px; text-align: center;}
+
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 60px; /* ensures last item isn't hidden under gradient */
+}.checklist-title { font-size: 18px; font-weight: 600; color:#f0f4ff; /* or var(--morning-text) for morning mode */ margin-bottom: 12px; text-align: center;}
 .check-item { display:flex; align-items:center; margin-bottom:8px; padding:10px 14px; border-radius:16px; background:rgba(255,255,255,0.05); cursor:pointer; transition:background 0.2s ease; }
 .check-item:hover { background:rgba(255,255,255,0.1); }
 .check-text { font-weight:500; color:#f0f4ff; }
@@ -817,18 +822,20 @@ let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' colu
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
   let html = `
-     <div class="checklist-wrapper">
-      <div class="checklist-title">Morning routine</div>
-             <div class="checklist">
-      ${MORNING_CHECKLIST_ITEMS.map(item => {
-        const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-        return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-          <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}"></div>
-          <span class="check-text">${item.label}</span>
-        </div>`;
-      }).join('')}
+    <div class="checklist-title">Morning Routine</div>
+    <div class="checklist-wrapper">
+      <div class="checklist">
+        ${MORNING_CHECKLIST_ITEMS.map(item => {
+          const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+          return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+            <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}"></div>
+            <span class="check-text">${item.label}</span>
+          </div>`;
+        }).join('')}
+        <div style="height:80px;"></div> <!-- extra bottom padding -->
+      </div>
     </div>
-  </div>`;
+  `;
 
   contentArea.innerHTML = html;
   backBtn.style.display = 'inline-block';
