@@ -463,15 +463,18 @@ if (q.type === 'single') {
     const selected = answers[q.key] === opt ? 'selected' : '';
     html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
   });
+   // drinks counter //
 } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
   q.options.forEach(opt => {
     const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
+    const val = (answers[q.key] && answers[q.key][opt]) || 0;
     html += `
-      <button class="opt-btn counter-btn ${answers[q.key] && answers[q.key][opt] > 0 ? 'selected' : ''}" 
-              onclick="updateCounter('${opt}',1)">
+      <div class="opt-btn" style="display:flex;align-items:center;gap:8px;">
         <img src="icons/${filename}" alt="${opt}" class="counter-icon">
-        <span id="count-${opt}" style="margin-left:6px;">${(answers[q.key] && answers[q.key][opt]) || 0}</span>
-      </button>
+        <button onclick="updateCounter('${opt}',-1)">-</button>
+        <span id="count-${opt}">${val}</span>
+        <button onclick="updateCounter('${opt}',1)">+</button>
+      </div>
     `;
   });
 } else if (q.type === 'multi') {
