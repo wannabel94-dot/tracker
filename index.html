@@ -517,7 +517,7 @@ body.morning::before {
   body{padding:12px;}
   .opt-btn, .counter-btn{font-size:16px;padding:12px;}
   .counter-icon{width:20px;height:20px;}
-  input[type=time]{font-size:16px;padding:24px;}
+  input[type=time]{font-size:16px;padding:12px;}
 }
 </style>
 </head>
@@ -663,70 +663,78 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   window.addEventListener('beforeunload', saveData);
 
-  /* ---------- UI RENDER ---------- */
   function loadUI() {
-    const mode = getMode();
-    const questions = getQuestions();
+  const mode = getMode();
+  const questions = getQuestions();
 
-    // Show progress bar
-    progressBar.parentElement.style.display = 'block';
+  // Show progress bar
+  progressBar.parentElement.style.display = 'block';
 
-    if (mode === 'morning' && currentIndex >= questions.length) {
+  // ---------- MORNING MODE ----------
+  if (mode === 'morning') {
+    // If we've answered all morning questions, show the checklist
+    if (currentIndex >= MORNING.length) {
       loadMorningChecklist();
       return;
-    } else if (mode === 'night' && currentIndex >= questions.length) {
+    }
+  }
+
+  // ---------- NIGHT MODE ----------
+  if (mode === 'night') {
+    if (currentIndex >= NIGHT.length) {
       contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
       backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
       nextBtn.style.display = 'none';
       updateProgressBar();
       return;
     }
-
-    const q = questions[currentIndex];
-    let html = `<div class="question">${q.label}</div><div class="options">`;
-
-if (q.type === 'single') {
-  q.options.forEach(opt => {
-    const selected = answers[q.key] === opt ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-  });
-   // ---------- DRINKS COUNTER ----------
-} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-  q.options.forEach(opt => {
-    const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
-    const count = (answers[q.key] && answers[q.key][opt]) || 0;
-
-    html += `
-      <div class="opt-btn drink-pill">
-        <div class="icon-circle">
-          <img src="icons/${filename}" alt="${opt}" class="counter-icon">
-        </div>
-        <div class="counter-inner">
-          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
-          <span id="count-${opt}">${count}</span>
-          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
-        </div>
-      </div>
-    `;
-  });
-} else if (q.type === 'multi') {
-  if (!answers[q.key]) answers[q.key] = [];
-  q.options.forEach(opt => {
-    const selected = answers[q.key].includes(opt) ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-  });
-} else if (q.type === 'time') {
-  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
-}
-
-    html += '</div>';
-    contentArea.innerHTML = html;
-
-    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-    nextBtn.style.display = 'inline-block';
-
-    updateProgressBar();
   }
+
+  // ---------- RENDER QUESTION ----------
+  const q = questions[currentIndex];
+  let html = `<div class="question">${q.label}</div><div class="options">`;
+
+  if (q.type === 'single') {
+    q.options.forEach(opt => {
+      const selected = answers[q.key] === opt ? 'selected' : '';
+      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+    });
+  } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+    q.options.forEach(opt => {
+      const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
+      const count = (answers[q.key] && answers[q.key][opt]) || 0;
+      html += `
+        <div class="opt-btn drink-pill">
+          <div class="icon-circle">
+            <img src="icons/${filename}" alt="${opt}" class="counter-icon">
+          </div>
+          <div class="counter-inner">
+            <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+            <span id="count-${opt}">${count}</span>
+            <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+          </div>
+        </div>
+      `;
+    });
+  } else if (q.type === 'multi') {
+    if (!answers[q.key]) answers[q.key] = [];
+    q.options.forEach(opt => {
+      const selected = answers[q.key].includes(opt) ? 'selected' : '';
+      html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+    });
+  } else if (q.type === 'time') {
+    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
+  }
+
+  html += '</div>';
+  contentArea.innerHTML = html;
+
+  // Show/hide navigation buttons
+  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+  nextBtn.style.display = 'inline-block';
+
+  updateProgressBar();
+}
 
   /* ---------- SELECT OPTION ---------- */
   window.selectOption = opt => {
