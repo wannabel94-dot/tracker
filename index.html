@@ -1,4 +1,4 @@
-9<!DOCTYPE html>
+10<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -393,7 +393,7 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
    MORNING CHECKLIST
    -----------------------------------------------
 ================================================= */
-.checklist { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+.checklist { display:flex; flex-direction:column; gap:8px; margin-top:12px; max-height: 60vh; /* adjust as needed */ overflow-y: auto; padding-right: 6px; /* for scrollbar spacing */}
 .check-item { display:flex; align-items:center; margin-bottom:8px; padding:10px 14px; border-radius:16px; background:rgba(255,255,255,0.05); cursor:pointer; transition:background 0.2s ease; }
 .check-item:hover { background:rgba(255,255,255,0.1); }
 .check-text { font-weight:500; color:#fff; }
