@@ -885,7 +885,7 @@ document.querySelectorAll('#settingsMenu button').forEach(btn => {
   closeHistory.onclick = () => historyModal.classList.remove('show');
 });
 
-   //-- Fixed Footer Navigation --//
+<!-- Fixed Footer Navigation -->
 <footer class="footer-nav">
   <button class="switch-btn morning" id="morningBtn">
     <img src="icons/day.svg" alt="Morning">
@@ -900,35 +900,45 @@ document.querySelectorAll('#settingsMenu button').forEach(btn => {
     <img src="icons/data.svg" alt="Data">
   </button>
 </footer>
+
+<script>
 document.addEventListener('DOMContentLoaded', () => {
-  // HISTORY MODAL
-  const historyModal = document.getElementById('historyModal');
-  const closeHistory = document.getElementById('closeHistory');
-  const historyBtn = document.getElementById('historyBtn');
-
-  closeHistory.onclick = () => historyModal.classList.remove('show');
-  historyBtn.onclick = () => historyModal.classList.toggle('show');
-
-  // MORNING/NIGHT SWITCH
+  // BUTTONS
   const morningBtn = document.getElementById('morningBtn');
   const nightBtn = document.getElementById('nightBtn');
+  const historyBtn = document.getElementById('historyBtn');
+  const dataBtn = document.getElementById('dataBtn');
+  const historyModal = document.getElementById('historyModal');
+  const closeHistory = document.getElementById('closeHistory');
 
+  // HISTORY MODAL
+  historyBtn.onclick = () => historyModal.classList.toggle('show');
+  closeHistory.onclick = () => historyModal.classList.remove('show');
+
+  // MORNING / NIGHT SWITCH
   morningBtn.onclick = () => {
+    saveData();
     document.body.classList.add('morning');
     document.body.classList.remove('night');
-    currentIndex = 0; answers = {}; editingDate = null;
-    loadSavedData(); loadUI();
+    currentIndex = 0;
+    answers = {};
+    editingDate = null;
+    loadSavedData();
+    loadUI();
   };
 
   nightBtn.onclick = () => {
+    saveData();
     document.body.classList.add('night');
     document.body.classList.remove('morning');
-    currentIndex = 0; answers = {}; editingDate = null;
-    loadSavedData(); loadUI();
+    currentIndex = 0;
+    answers = {};
+    editingDate = null;
+    loadSavedData();
+    loadUI();
   };
 
   // DATA BUTTON (placeholder)
-  const dataBtn = document.getElementById('dataBtn');
   dataBtn.onclick = () => {
     console.log('Data button clicked (no action yet)');
   };
