@@ -1,4 +1,4 @@
-18<!DOCTYPE html>
+19<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -582,12 +582,12 @@ body.morning::before {
 document.addEventListener('DOMContentLoaded', () => {
   /* ---------- QUESTIONS ---------- */
   const MORNING = [
-    { key: 'wake_time', type: 'time', label: 'What time did you wake up?' },
+    { key: 'wake_time', type: 'time', label: 'What time did you wake up?', icon:'waketime.svg' },
     { key: 'how_slept', type: 'single', label: 'How do you think you slept?', options: [
       'Went to bed late but slept in','Went to bed late but woke early',
       'Went to bed early but woke really early',"Couldn't fall asleep",
       'Lightly disrupted','Frequently disrupted','Fine'
-    ], autoNext:true }
+    ], autoNext:true, icon:'slept.svg' }
   ];
 
   const MORNING_CHECKLIST_ITEMS = [
@@ -609,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'magnesium', type: 'single', label: 'Magnesium?', options:['Yes','No'], autoNext:true, icon:'magnesium.svg' },
     { key: 'pillowcase', type: 'single', label:'Did you change the pillowcase?', options:['Yes','No'], autoNext:true, icon:'pillow.svg'},
     { key: 'shower_night', type: 'single', label:'Shower?', options:['Yes','No'], autoNext:true, icon:'shower.svg' },
-    { key: 'skincare_night', type: 'single', label:'Skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true, icon:'skin.svg' },
+    { key: 'skincare_night', type: 'single', label:'Skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true, icon:skincare2.svg' },
     { key: 'teeth_night', type:'single', label:'Teeth?', options:['Once','Twice','None'], autoNext:true, icon:'toothbrush.svg' },
     { key: 'flossed', type:'single', label:'Flossed?', options:['Once','Twice','None'], autoNext:true, icon:'floss.svg' },
     { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true, icon:'key.svg' },
@@ -617,12 +617,12 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'caffeine_alcohol', type:'multi', label:'Caffeine / alcohol', options:['Coffee','Tea','Beer','Spirits','Wine','Mate'] },
     { key: 'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','none'], icon:'health.svg' },
     { key: 'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none'] },
-    { key: 'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy','Doctor','Blood tests','none'] },
-    { key: 'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none'] },
-    { key: 'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none'] },
-    { key: 'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none'] },
-    { key: 'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','none'] },
-    { key: 'closed_eyes_time', type:'time', label:'What time did you close your eyes?', autoNext:true }
+    { key: 'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy','Doctor','Blood tests','none'], icon:'doctor.svg' },
+    { key: 'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none'], icon:'run.svg' },
+    { key: 'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none'], icon:'social.svg' },
+    { key: 'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none'], icon:'shatki.svg' },
+    { key: 'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','none'], icon:'art.svg' },
+    { key: 'closed_eyes_time', type:'time', label:'What time did you close your eyes?', autoNext:true, icon:'sleeptime.svg' }
   ];
 
   /* ---------- STATE ---------- */
@@ -718,11 +718,15 @@ if (q.type === 'single') {
     iconHtml = `<div class="question-icon"><img src="icons/${q.icon}" alt="${q.label}"></div>`;
   }
 
-  // render question with icon
-  html += `<div class="question-with-icon">
-             ${iconHtml}
-             <span class="question-text">${q.label}</span>
-           </div>`;
+  let html = `
+  <div class="question">
+    <div class="question-with-icon">
+      ${q.icon ? `<img src="icons/${q.icon}" class="question-icon" alt="">` : ''}
+      <span class="question-text">${q.label}</span>
+    </div>
+  </div>
+  <div class="options">
+`;
 
   // render options
   q.options.forEach(opt => {
