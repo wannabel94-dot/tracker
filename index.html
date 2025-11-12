@@ -388,6 +388,25 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .back-btn[disabled], .next-btn[disabled] { opacity:0.5; cursor:not-allowed; }
 .done-note { font-size:20px; text-align:center; font-weight:700; margin-top:120px; }
 
+   .back-to-checklist {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.back-to-checklist:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.05);
+}
+   
 /* ===============================================
    BACKGROUNDS
    -----------------------------------------------
@@ -742,16 +761,23 @@ if (q.type === 'single') {
 
 function checkMorningCompletion() {
   const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+function checkMorningCompletion() {
+  const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
   if (allDone) {
-    contentArea.innerHTML = '<div class="done-note">Morning completed.</div>';
+    // ✅ Show "Morning completed" message + Back button
+    contentArea.innerHTML = `
+      <div class="done-note">
+        Morning completed.
+        <button class="back-to-checklist" onclick="returnToMorningChecklist()">← Back</button>
+      </div>
+    `;
     backBtn.style.display = 'none';
     nextBtn.style.display = 'none';
 
-    // ✅ Save data first
     saveData();
 
-    // ✅ After 3 seconds, switch to night mode
-    setTimeout(() => {
+    // ✅ Auto switch to Night after 3 seconds (unless Back is pressed)
+    window.switchTimeout = setTimeout(() => {
       document.body.classList.remove('morning');
       document.body.classList.add('night');
       currentIndex = 0;
@@ -762,6 +788,18 @@ function checkMorningCompletion() {
     }, 3000);
   }
 }
+   function returnToMorningChecklist() {
+  // Cancel the auto-switch
+  clearTimeout(window.switchTimeout);
+
+  // Reload the morning checklist
+  loadMorningChecklist();
+
+  // Restore buttons if needed
+  backBtn.style.display = 'none';
+  nextBtn.style.display = 'none';
+}
+
 
   /* ---------- SWITCH MODES ---------- */
   document.getElementById('morningBtn').onclick = () => {
