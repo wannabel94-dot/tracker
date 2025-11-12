@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+1<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -841,7 +841,19 @@ function loadMorningChecklist() {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`).forEach(el => el.classList.toggle('selected', answers[key]==='Yes'));
     saveData(); updateProgressBar(); checkMorningCompletion();
-  };
+      // Auto-scroll if the last visible item is checked
+  const wrapper = document.querySelector('.checklist-wrapper');
+  const checklist = document.querySelector('.checklist');
+  const lastVisibleItem = Array.from(checklist.children)
+    .find(item => item.offsetTop + item.offsetHeight > wrapper.scrollTop + wrapper.clientHeight);
+
+  if (lastVisibleItem && answers[key] === 'Yes') {
+    wrapper.scrollTo({
+      top: lastVisibleItem.offsetTop,
+      behavior: 'smooth'
+    });
+  }
+};
 
   function checkMorningCompletion() {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
