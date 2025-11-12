@@ -1,4 +1,4 @@
-2<!DOCTYPE html>
+7<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -530,7 +530,20 @@ body.morning::before {
       <button id="btnClearToday">Clear Today's Data</button>
     </div>
   </header>
-
+<footer class="footer-nav">
+  <button class="switch-btn morning" id="morningBtn">
+    <img src="icons/day.svg" alt="Morning">
+  </button>
+  <button class="switch-btn night" id="nightBtn">
+    <img src="icons/night.svg" alt="Night">
+  </button>
+  <button class="switch-btn history" id="historyBtn">
+    <img src="icons/history.svg" alt="History">
+  </button>
+  <button class="switch-btn data" id="dataBtn">
+    <img src="icons/data.svg" alt="Data">
+  </button>
+</footer>
   <main class="card">
     <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div></div>
     <div id="contentArea"></div>
@@ -548,21 +561,18 @@ body.morning::before {
     <div id="historyInner"></div>
   </div>
 </div>
-
-<!-- Fixed Footer Navigation -->
-<footer class="footer-nav">
-  <button class="switch-btn morning" id="morningBtn"><img src="icons/day.svg" alt="Morning"></button>
-  <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
-  <button class="switch-btn history" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
-</footer>
-
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', ()=>{
   /* ---------- QUESTIONS ---------- */
   const MORNING = [
     {key:'wake_time', type:'time', label:'What time did you wake up?'},
-    {key:'how_slept', type:'single', label:'How do you think you slept?', options:['Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine'], autoNext:true}
+    {key:'how_slept', type:'single', label:'How do you think you slept?', options:[
+      'Went to bed late but slept in','Went to bed late but woke early',
+      'Went to bed early but woke really early',"Couldn't fall asleep",
+      'Lightly disrupted','Frequently disrupted','Fine'
+    ], autoNext:true}
   ];
+
   const MORNING_CHECKLIST_ITEMS = [
     { key: 'made_bed', label: 'Make bed', icon: 'bed.svg' },
     { key: 'took_meds_morn', label: 'Take meds', icon: 'meds.svg' },
@@ -576,6 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'get_dressed', label: 'Get dressed', icon: 'dressed.svg' },
     { key: 'brush_teeth_morn', label: 'Brush teeth', icon: 'toothbrush.svg' }
   ];
+
   const NIGHT = [
     {key:'psyillium', type:'single', label:'Did you take psyllium?', options:['Yes','No'], autoNext:true},
     {key:'magnesium', type:'single', label:'Magnesium?', options:['Yes','No'], autoNext:true},
@@ -591,84 +602,334 @@ document.addEventListener('DOMContentLoaded', () => {
     {key:'sensory_triggers', type:'multi', label:'Sensory triggers', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','none']},
     {key:'appointments', type:'multi', label:'Appointments', options:['Psych','Therapy (online)','Therapy (in-person)','Doctor','Blood tests','none']},
     {key:'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','none']},
-    {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone?', options:['Parents','Friends','Co-worker','Classmate','Social','none']}
+    {key:'talked_to_anyone', type:'multi', label:'Did you talk to anyone besides L today?', options:['none','General public','Health professional','Acquaintances','Friends','Friends of L','Family','none']},
+    {key:'wellness', type:'multi', label:'Did you do any wellness stuff?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','none']},
+    {key:'creative', type:'multi', label:'Did you do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','none']},
+    {key:'closed_eyes_time', type:'time', label:'What time did you close your eyes?', autoNext:true}
   ];
-  
-  /* ---------- STATE ---------- */
-  let mode = 'night';
-  let currentStep = 0;
-  let answers = {};
 
-  /* ---------- ELEMENTS ---------- */
+  /* ---------- STATE ---------- */
+  let currentIndex = 0;
+  let answers = {};
+  let editingDate = null;
+
   const contentArea = document.getElementById('contentArea');
   const backBtn = document.getElementById('backBtn');
   const nextBtn = document.getElementById('nextBtn');
   const progressBar = document.getElementById('progressBar');
-  const morningBtn = document.getElementById('morningBtn');
-  const nightBtn = document.getElementById('nightBtn');
-  const historyBtn = document.getElementById('historyBtn');
+  const btnSettings = document.getElementById('btnSettings');
+  const settingsMenu = document.getElementById('settingsMenu');
   const historyModal = document.getElementById('historyModal');
+  const historyInner = document.getElementById('historyInner');
   const closeHistory = document.getElementById('closeHistory');
 
-  /* ---------- MODE SWITCH ---------- */
-  function switchMode(newMode) {
-    mode = newMode;
-    document.body.classList.remove('morning','night');
-    document.body.classList.add(mode);
-    currentStep = 0;
-    answers = {};
-    renderStep();
+  const getQuestions = () => document.body.classList.contains('morning') ? MORNING : NIGHT;
+  const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
+
+  /* ---------- COUNTER UPDATES ---------- */
+  window.updateCounter = (opt, delta) => {
+    if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
+    let val = answers['caffeine_alcohol'][opt] || 0;
+    val += delta; if (val < 0) val = 0;
+    answers['caffeine_alcohol'][opt] = val;
+    const el = document.getElementById(`count-${opt}`);
+    if (el) el.textContent = val;
+    updateProgressBar();
+    saveData();
+  };
+
+  /* ---------- LOAD / SAVE ---------- */
+  function getTodayDate() { 
+    if (editingDate) return editingDate;
+    const d = new Date(); 
+    return d.toLocaleDateString('en-GB'); 
   }
 
-  morningBtn.addEventListener('click',()=>switchMode('morning'));
-  nightBtn.addEventListener('click',()=>switchMode('night'));
-  historyBtn.addEventListener('click',()=>historyModal.classList.add('show'));
-  closeHistory.addEventListener('click',()=>historyModal.classList.remove('show'));
+  function loadSavedData() {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const day = getTodayDate();
+    const mode = getMode();
+    if (all[day] && all[day][mode]) answers = all[day][mode];
+  }
 
-  /* ---------- RENDER ---------- */
-  function renderStep() {
-    const steps = (mode==='morning')?MORNING:MORNING_CHECKLIST_ITEMS.concat(NIGHT);
-    const step = steps[currentStep];
-    if(!step){ contentArea.innerHTML = `<p>All done for ${mode}!</p>`; progressBar.style.width='100%'; return; }
-    let html = '';
-    if(step.type==='time'){
-      html = `<label>${step.label}</label><input type="time" id="inputTime">`;
-    } else if(step.type==='single' || step.type==='multi'){
-      html = `<p class="question">${step.label}</p><div class="options">`;
-      step.options.forEach((opt,i)=>html+=`<button class="opt-btn" data-index="${i}">${opt}</button>`);
-      html += `</div>`;
-    } else {
-      html = `<p>${step.label}</p>`;
+  function saveData() {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const day = getTodayDate();
+    const mode = getMode();
+    if (!all[day]) all[day] = {};
+    all[day][mode] = answers;
+    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+  }
+
+  window.addEventListener('beforeunload', saveData);
+
+  /* ---------- UI RENDER ---------- */
+  function loadUI() {
+    const mode = getMode();
+    const questions = getQuestions();
+
+    // Show progress bar
+    progressBar.parentElement.style.display = 'block';
+
+    if (mode === 'morning' && currentIndex >= questions.length) {
+      loadMorningChecklist();
+      return;
+    } else if (mode === 'night' && currentIndex >= questions.length) {
+      contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
+      backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+      nextBtn.style.display = 'none';
+      updateProgressBar();
+      return;
     }
+
+    const q = questions[currentIndex];
+    let html = `<div class="question">${q.label}</div><div class="options">`;
+
+if (q.type === 'single') {
+  q.options.forEach(opt => {
+    const selected = answers[q.key] === opt ? 'selected' : '';
+    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+  });
+   // ---------- DRINKS COUNTER ----------
+} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+  q.options.forEach(opt => {
+    const filename = opt.toLowerCase().replace(/\s+/g, '_') + '.svg';
+    const count = (answers[q.key] && answers[q.key][opt]) || 0;
+
+    html += `
+      <div class="opt-btn drink-pill">
+        <div class="icon-circle">
+          <img src="icons/${filename}" alt="${opt}" class="counter-icon">
+        </div>
+        <div class="counter-inner">
+          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+          <span id="count-${opt}">${count}</span>
+          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+        </div>
+      </div>
+    `;
+  });
+} else if (q.type === 'multi') {
+  if (!answers[q.key]) answers[q.key] = [];
+  q.options.forEach(opt => {
+    const selected = answers[q.key].includes(opt) ? 'selected' : '';
+    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+  });
+} else if (q.type === 'time') {
+  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)"/>`;
+}
+
+    html += '</div>';
     contentArea.innerHTML = html;
-    updateProgress();
-    attachOptionHandlers(step);
+
+    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+    nextBtn.style.display = 'inline-block';
+
+    updateProgressBar();
   }
 
-  function attachOptionHandlers(step){
-    document.querySelectorAll('.opt-btn').forEach(btn=>{
-      btn.onclick = ()=>{
-        const val = step.type==='multi' ? (answers[step.key]||[]).includes(btn.textContent) ? answers[step.key].filter(v=>v!==btn.textContent) : [...(answers[step.key]||[]),btn.textContent] : btn.textContent;
-        answers[step.key]=val;
-        if(step.type==='single'){ document.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); if(step.autoNext) nextStep(); }
-        if(step.type==='multi'){ btn.classList.toggle('selected'); }
+  /* ---------- SELECT OPTION ---------- */
+  window.selectOption = opt => {
+    const q = getQuestions()[currentIndex];
+    answers[q.key] = opt;
+    updateProgressBar();
+    saveData();
+    if (q.autoNext) { currentIndex++; loadUI(); }
+  };
+
+  /* ---------- MULTI-OPTION TOGGLE ---------- */
+  window.toggleMultiOption = (qKey, opt) => {
+    if (!answers[qKey]) answers[qKey] = [];
+    const idx = answers[qKey].indexOf(opt);
+    if (idx >= 0) answers[qKey].splice(idx, 1);
+    else answers[qKey].push(opt);
+    saveData();
+    loadUI();
+  };
+
+  /* ---------- BACK / NEXT ---------- */
+  backBtn.onclick = () => { if (currentIndex > 0) { currentIndex--; loadUI(); } };
+  nextBtn.onclick = () => {
+    const q = getQuestions()[currentIndex];
+    if (q && q.type === 'multi' && q.key === 'caffeine_alcohol') {
+      if (Object.values(answers[q.key] || {}).every(v => v === 0)) {
+        if (!confirm('Save with no caffeine/alcohol?')) return;
       }
+    }
+    currentIndex++; loadUI();
+  };
+
+  /* ---------- PROGRESS BAR ---------- */
+  function updateProgressBar() {
+    const isMorning = getMode() === 'morning';
+    let keys = isMorning ? ['wake_time','how_slept', ...MORNING_CHECKLIST_ITEMS.map(i => i.key)] : NIGHT.map(q => q.key);
+    const total = keys.length;
+    let done = 0;
+
+    keys.forEach(key => {
+      const qNight = NIGHT.find(q => q.key === key);
+      if (MORNING_CHECKLIST_ITEMS.find(i => i.key === key)) {
+        if (answers[key] === 'Yes') done++;
+      } else if (qNight?.type === 'multi') {
+        const val = answers[key];
+        if (val && ((Array.isArray(val) && val.length > 0) || (typeof val === 'object' && Object.values(val).some(v => v && v !== 0)))) done++;
+      } else if (answers[key]) done++;
     });
-    if(step.type==='time'){ document.getElementById('inputTime').value=answers[step.key]||''; document.getElementById('inputTime').onchange=e=>{answers[step.key]=e.target.value; nextStep();}; }
+
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    progressBar.style.width = pct + '%';
   }
 
-  function nextStep(){ currentStep++; renderStep(); }
-  function prevStep(){ if(currentStep>0) currentStep--; renderStep(); }
+  /* ---------- MORNING CHECKLIST ---------- */
+  function loadMorningChecklist() {
+    let html = `<div class="checklist">
+      ${MORNING_CHECKLIST_ITEMS.map(item => {
+        const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+     return `
+  <div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+    <div class="icon-circle">
+      <img src="icons/${item.icon}" alt="${item.label}">
+    </div>
+    <span class="check-text">${item.label}</span>
+  </div>`;
+      }).join('')}
+      </div>
+      <button id="clearChecklistBtn" class="clear-btn">Clear All</button>`;
 
-  backBtn.addEventListener('click',prevStep);
-  nextBtn.addEventListener('click',nextStep);
+    contentArea.innerHTML = html;
+    backBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'inline-block';
 
-  function updateProgress(){
-    const total = (mode==='morning')?MORNING.length:MORNING_CHECKLIST_ITEMS.length+NIGHT.length;
-    progressBar.style.width = `${Math.round(currentStep/total*100)}%`;
+    document.getElementById('clearChecklistBtn').onclick = clearChecklist;
+
+    updateProgressBar();
+    checkMorningCompletion();
   }
 
-  renderStep();
+  window.toggleChecklist = key => {
+    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
+    document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`)
+      .forEach(el => el.classList.toggle('selected', answers[key] === 'Yes'));
+    updateProgressBar();
+    saveData();
+    checkMorningCompletion();
+  };
+
+  function clearChecklist() {
+    MORNING_CHECKLIST_ITEMS.forEach(i => answers[i.key] = 'No');
+    document.querySelectorAll('.check-item').forEach(el => el.classList.remove('selected'));
+    updateProgressBar();
+    saveData();
+  }
+
+function checkMorningCompletion() {
+  const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+  if (allDone) {
+    // ✅ Show "Morning completed" message + Back button
+    contentArea.innerHTML = `
+      <div class="done-note">
+        Morning completed.
+        <button class="back-to-checklist" onclick="returnToMorningChecklist()">← Back</button>
+      </div>
+    `;
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+
+    saveData();
+
+    // ✅ Auto switch to Night after 3 seconds (unless Back is pressed)
+    window.switchTimeout = setTimeout(() => {
+      document.body.classList.remove('morning');
+      document.body.classList.add('night');
+      currentIndex = 0;
+      answers = {};
+      editingDate = null;
+      loadSavedData();
+      loadUI();
+    }, 3000);
+  }
+}
+   function returnToMorningChecklist() {
+  // Cancel the auto-switch
+  clearTimeout(window.switchTimeout);
+
+  // Reload the morning checklist
+  loadMorningChecklist();
+
+  // Restore buttons if needed
+  backBtn.style.display = 'none';
+  nextBtn.style.display = 'none';
+}
+
+
+  /* ---------- SWITCH MODES ---------- */
+  document.getElementById('morningBtn').onclick = () => {
+    saveData();
+    document.body.classList.add('morning'); document.body.classList.remove('night');
+    currentIndex = 0; answers = {}; editingDate = null;
+    loadSavedData(); loadUI();
+  };
+  document.getElementById('nightBtn').onclick = () => {
+    saveData();
+    document.body.classList.add('night'); document.body.classList.remove('morning');
+    currentIndex = 0; answers = {}; editingDate = null;
+    loadSavedData(); loadUI();
+  };
+
+  /* ---------- SETTINGS MENU ---------- */
+  btnSettings.onclick = () => settingsMenu.classList.toggle('show');
+// Close settings menu when any menu item is clicked
+document.querySelectorAll('#settingsMenu button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    settingsMenu.classList.remove('show');
+  });
+});
+
+  document.getElementById('btnClearToday').onclick = () => {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const day = getTodayDate();
+    delete all[day];
+    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+    answers = {}; currentIndex = 0; editingDate = null; loadUI();
+    alert("Today's data cleared.");
+  };
+
+  /* ---------- HISTORY ---------- */
+  closeHistory.onclick = () => historyModal.classList.remove('show');
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  // HISTORY MODAL
+  const historyModal = document.getElementById('historyModal');
+  const closeHistory = document.getElementById('closeHistory');
+  const historyBtn = document.getElementById('historyBtn');
+
+  closeHistory.onclick = () => historyModal.classList.remove('show');
+  historyBtn.onclick = () => historyModal.classList.toggle('show');
+
+  // MORNING/NIGHT SWITCH
+  const morningBtn = document.getElementById('morningBtn');
+  const nightBtn = document.getElementById('nightBtn');
+
+  morningBtn.onclick = () => {
+    document.body.classList.add('morning');
+    document.body.classList.remove('night');
+    currentIndex = 0; answers = {}; editingDate = null;
+    loadSavedData(); loadUI();
+  };
+
+  nightBtn.onclick = () => {
+    document.body.classList.add('night');
+    document.body.classList.remove('morning');
+    currentIndex = 0; answers = {}; editingDate = null;
+    loadSavedData(); loadUI();
+  };
+
+  // DATA BUTTON (placeholder)
+  const dataBtn = document.getElementById('dataBtn');
+  dataBtn.onclick = () => {
+    console.log('Data button clicked (no action yet)');
+  };
 });
 </script>
 </body>
