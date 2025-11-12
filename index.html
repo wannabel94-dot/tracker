@@ -13,7 +13,7 @@
    These can be reused throughout the CSS using var().
 ================================================= */
 :root {
-  --morning-text: #444C4F;   /* Text color for morning mode */
+  --morning-text: #ffffff;   /* Text color for morning mode */
   --night-text: #f0f4ff;     /* Text color for night mode */
   --card-radius: 14px;       /* Rounded corners for cards/buttons */
   --bg-blur: 6px;
@@ -105,7 +105,7 @@ input[type="time"] {
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.3);
   background: rgba(255,255,255,0.08);
-  color: #444C4F;
+  color: #ffffff;
   font-family: inherit;
   backdrop-filter: blur(var(--bg-blur));
   transition: background 0.2s, border 0.2s;
@@ -165,7 +165,7 @@ body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
   border: 1px solid var(--glass-border);
   font-size: 17px;
   font-weight: 500;
-  color: #444C4F;
+  color: #ffffff;
   cursor: pointer;
   transition: transform 0.2s, background 0.2s;
   text-align: center;
@@ -217,7 +217,7 @@ body.night .opt-btn.selected {
 .question-text {
   font-size: 18px;
   font-weight: 600;
-  color: #444C4F;
+  color: #ffffff;
 }
 
 .question-icon {
@@ -403,7 +403,7 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .progress-wrap { display:flex; align-items:center; margin-bottom:12px; }
 .progress { flex:1.2; height:10px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.06); }
 .bar { height:100%; width:0%; background:linear-gradient(90deg,rgba(255,255,255,0.15),rgba(255,255,255,0.3)); border-radius:8px; transition:width 0.25s; }
-.question { font-size:18px; margin-bottom:12px; font-weight:600; color:#444C4F; }
+.question { font-size:18px; margin-bottom:12px; font-weight:600; color:#ffffff; }
 .options { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 
 /* ===============================================
@@ -413,7 +413,7 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .checklist { display:flex; flex-direction:column; gap:8px; margin-top:12px; max-height: 60vh; /* adjust as needed */ overflow-y: auto; padding-right: 6px; padding-bottom: 60px; }
 .check-item { display:flex; align-items:center; margin-bottom:8px; padding:10px 14px; border-radius:16px; background:rgba(255,255,255,0.05); cursor:pointer; transition:background 0.2s ease; }
 .check-item:hover { background:rgba(255,255,255,0.1); }
-.check-text { font-weight:500; color:#444C4F; }
+.check-text { font-weight:500; color:#ffffff; }
 .check-item.selected .check-text { text-decoration:line-through; opacity:0.6; }
 .checklist-wrapper {
   max-height: 60vh;
@@ -454,7 +454,7 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .controls { display:flex; gap:10px; justify-content:space-between; margin-top:16px; }
 .back-btn, .next-btn {
   background:rgba(255,255,255,0.15);
-  color:##444C4F;
+  color:##ffffff;
   font-weight:700;
   border:0; padding:12px 16px;
   border-radius:12px;
@@ -473,7 +473,7 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   border: none;
   border-radius: 20px;
   background: rgba(255,255,255,0.15);
-  color: ##444C4F;
+  color: ##ffffff;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
