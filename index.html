@@ -348,46 +348,55 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 </style>
 </head>
 <body class="night">
-<div class="wrap">
-     <header id="topHeader">
-  <div id="dayOfWeek">Monday</div>
-  <button id="btnSettings">☰</button>
-     <div id="menuOverlay" class="menu-overlay"></div>
-    <div id="settingsMenu" class="settings-menu">
-      <button id="btnExport">Export data</button>
-      <button id="btnClearToday">Clear Today's Data</button>
-    </div>
-<footer class="footer-nav">
-  <button class="switch-btn morning" id="morningBtn">
-    <img src="icons/day.svg" alt="Morning">
-  </button>
-  <button class="switch-btn night" id="nightBtn">
-    <img src="icons/night.svg" alt="Night">
-  </button>
-  <button class="switch-btn history" id="historyBtn">
-    <img src="icons/history.svg" alt="History">
-  </button>
-  <button class="switch-btn data" id="dataBtn">
-    <img src="icons/data.svg" alt="Data">
-  </button>
-</footer>
-  <main class="card">
-    <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div></div>
-    <div id="contentArea"></div>
-    <div class="controls">
-      <button class="back-btn" id="backBtn">Back</button>
-      <button class="next-btn" id="nextBtn">Next</button>
-    </div>
-  </main>
-</div>
+  <!-- Sticky header -->
+  <header id="topHeader">
+    <div id="dayOfWeek">Monday</div>
+    <button id="btnSettings">☰</button>
+  </header>
 
-<!-- History Modal -->
-<div id="historyModal" class="history-modal">
-  <div class="history-content">
-    <button class="close-history" id="closeHistory">×</button>
-    <div id="historyInner"></div>
+  <!-- Menu overlay & settings -->
+  <div id="menuOverlay" class="menu-overlay"></div>
+  <div id="settingsMenu" class="settings-menu">
+    <button id="btnExport">Export data</button>
+    <button id="btnClearToday">Clear Today's Data</button>
   </div>
-</div>
+
+  <!-- Main content wrapper -->
+  <div class="wrap">
+    <main class="card">
+      <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div></div>
+      <div id="contentArea"></div>
+      <div class="controls">
+        <button class="back-btn" id="backBtn">Back</button>
+        <button class="next-btn" id="nextBtn">Next</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Sticky footer nav -->
+  <footer class="footer-nav">
+    <button class="switch-btn morning" id="morningBtn">
+      <img src="icons/day.svg" alt="Morning">
+    </button>
+    <button class="switch-btn night" id="nightBtn">
+      <img src="icons/night.svg" alt="Night">
+    </button>
+    <button class="switch-btn history" id="historyBtn">
+      <img src="icons/history.svg" alt="History">
+    </button>
+    <button class="switch-btn data" id="dataBtn">
+      <img src="icons/data.svg" alt="Data">
+    </button>
+  </footer>
+
+  <!-- History Modal -->
+  <div id="historyModal" class="history-modal">
+    <div class="history-content">
+      <button class="close-history" id="closeHistory">×</button>
+      <div id="historyInner"></div>
+    </div>
+  </div>
+</body>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   /* ---------- QUESTIONS ---------- */
