@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+2<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -817,8 +817,44 @@ document.querySelectorAll('#settingsMenu button').forEach(btn =>
   };
 
   /* ---------- HISTORY ---------- */
-  closeHistory.onclick = () => historyModal.classList.remove('show');
-  document.getElementById('historyBtn').onclick = () => historyModal.classList.toggle('show');
+closeHistory.onclick = () => historyModal.classList.remove('show');
+
+document.getElementById('historyBtn').onclick = () => {
+  renderHistory();                 // load saved data into modal
+  historyModal.classList.toggle('show');
+};
+
+
+  // Sort days descending (latest first)
+  const days = Object.keys(all).sort((a,b)=> new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-')));
+
+  if(days.length === 0){
+    html = '<p>No history yet.</p>';
+  } else {
+    days.forEach(day => {
+      html += `<h3>${day}</h3>`;
+
+      const modes = Object.keys(all[day]);
+      modes.forEach(mode => {
+        html += `<strong>${mode.toUpperCase()}</strong><ul>`;
+        const ans = all[day][mode].answers;
+        for(const key in ans){
+          const val = ans[key];
+          let displayVal = '';
+
+          if(Array.isArray(val)) displayVal = val.join(', ');
+          else if(typeof val === 'object') displayVal = Object.entries(val).map(([k,v])=>`${k}: ${v}`).join(', ');
+          else displayVal = val;
+
+          html += `<li><strong>${key}:</strong> ${displayVal}</li>`;
+        }
+        html += '</ul>';
+      });
+    });
+  }
+
+  historyInner.innerHTML = html;
+}
 
   /* ---------- INITIAL LOAD ---------- */
   loadSavedData();
