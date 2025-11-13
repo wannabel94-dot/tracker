@@ -432,11 +432,7 @@ if (isEdit && editingDate) {
         currentIndex = 0;         // start at first question
     }
 
-    // Update header to show editing
-    const header = document.getElementById('dayOfWeek');
-    if (header) header.textContent = `Editing ${editingDate}`;
-
-    // Force morning mode
+// Force morning mode
     document.body.classList.add('morning');
     document.body.classList.remove('night');
 }
