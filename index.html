@@ -409,6 +409,43 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 </body>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+
+
+   let currentIndex = 0;
+let answers = {};
+let switchTimeout;
+
+   
+   /* ---------- EDIT MODE ---------- */
+const params = new URLSearchParams(window.location.search);
+const isEdit = params.get('edit') === 'true';
+let editingDate = localStorage.getItem('editDate'); // day being edited
+let editAnswers = null;
+
+// Force morning mode if editing
+if (isEdit && editingDate) {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const existing = all[editingDate]?.morning?.answers; // always start in morning mode
+    if (existing) {
+        editAnswers = existing;
+        answers = { ...existing }; // preload saved answers
+        currentIndex = 0;         // start at first question
+    }
+
+    // Update header to show editing
+    const header = document.getElementById('dayOfWeek');
+    if (header) header.textContent = `Editing ${editingDate}`;
+
+    // Force morning mode
+    document.body.classList.add('morning');
+    document.body.classList.remove('night');
+}
+
+// Replace getTodayDate to use editingDate if present
+function getTodayDate() {
+    return editingDate || new Date().toLocaleDateString('en-GB');
+}
+
   /* ---------- QUESTIONS ---------- */
   const MORNING = [
     { key: 'wake_time', type: 'time', label: 'What time did you wake up?', icon: 'alarm.svg' },
@@ -465,12 +502,6 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'closed_eyes_time', type:'time', label:'When are lights off?', autoNext:true, icon:'sleeptime.svg', specialIcon:true }
   ];
 
-  /* ---------- STATE ---------- */
-  let currentIndex = 0;
-  let answers = {};
-  let editingDate = null;
-  let switchTimeout;
-
   /* ---------- DOM ELEMENTS ---------- */
   const contentArea = document.getElementById('contentArea');
   const backBtn = document.getElementById('backBtn');
@@ -484,12 +515,6 @@ document.getElementById('historyBtn').addEventListener('click', () => {
 
   const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
   const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
-
-  /* ---------- DATA SAVE / LOAD ---------- */
-function getTodayDate() {
-  if (editingDate) return editingDate; // use the day being edited
-  return new Date().toLocaleDateString('en-GB'); // otherwise use today
-}
 
 const params = new URLSearchParams(window.location.search);
 const isEdit = params.get('edit') === 'true';
@@ -543,25 +568,7 @@ function saveData() {
 
 // Make sure data is saved before leaving the page
 window.addEventListener('beforeunload', saveData);
-// --- Edit mode detection ---
-const isEdit = params.get('edit') === 'true';
-const editDate = localStorage.getItem('editDate');
 
-let editAnswers = null;
-
-if (isEdit && editDate) {
-  // Load stored data for that specific day
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const existing = all[editDate]?.[mode]?.answers;
-
-  if (existing) {
-    editAnswers = existing;
-  }
-
-  // Change header to reflect edit mode
-  const header = document.getElementById('dayOfWeek');
-  if (header) header.textContent = `Editing ${editDate}`;
-}
   /* ---------- MODE SWITCH ---------- */
 function switchMode(mode) {
   saveData();
