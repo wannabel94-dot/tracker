@@ -579,15 +579,20 @@ function switchMode(mode) {
   // Current question
   const q = questions[currentIndex];
 
-    function updateDayOfWeek() {
+function updateDayOfWeek() {
   const dayOfWeekElement = document.getElementById('dayOfWeek');
   const today = new Date();
-  const dayName = today.toLocaleDateString(undefined, { weekday: 'long' });
-  dayOfWeekElement.textContent = dayName;
+
+  // Format options
+  const options = { weekday: 'long', month: 'short', day: 'numeric' };
+  const formattedDate = today.toLocaleDateString('en-US', options);
+
+  dayOfWeekElement.textContent = formattedDate; // e.g., "Thursday, Nov 13"
 }
 
-// Call it on load
+// Call on load
 updateDayOfWeek();
+
 
     // ------ funcion UI -------- //
   // Build question header with optional icon
