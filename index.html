@@ -816,14 +816,15 @@ document.querySelectorAll('#settingsMenu button').forEach(btn =>
     alert("Today's data cleared.");
   };
 
-  /* ---------- HISTORY ---------- */
+ /* ---------- HISTORY ---------- */
+
+// Close history modal
 closeHistory.onclick = () => historyModal.classList.remove('show');
 
-document.getElementById('historyBtn').onclick = () => {
-  renderHistory();                 // load saved data into modal
-  historyModal.classList.toggle('show');
-};
-
+// Function to render saved history
+function renderHistory() {
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  let html = '';
 
   // Sort days descending (latest first)
   const days = Object.keys(all).sort((a,b)=> new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-')));
@@ -833,11 +834,10 @@ document.getElementById('historyBtn').onclick = () => {
   } else {
     days.forEach(day => {
       html += `<h3>${day}</h3>`;
-
       const modes = Object.keys(all[day]);
       modes.forEach(mode => {
         html += `<strong>${mode.toUpperCase()}</strong><ul>`;
-        const ans = all[day][mode].answers;
+        const ans = all[day][mode].answers || {};
         for(const key in ans){
           const val = ans[key];
           let displayVal = '';
@@ -855,6 +855,12 @@ document.getElementById('historyBtn').onclick = () => {
 
   historyInner.innerHTML = html;
 }
+
+// Assign history button
+document.getElementById('historyBtn').onclick = () => {
+  renderHistory();                 // load saved data into modal
+  historyModal.classList.toggle('show');
+};
 
   /* ---------- INITIAL LOAD ---------- */
   loadSavedData();
