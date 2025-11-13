@@ -41,52 +41,37 @@ h1 { text-align:center; margin-top:20px; margin-bottom:24px; }
 </footer>
 
 <script>
-// ---------- RENDER HISTORY ----------
-const container = document.getElementById('historyContainer');
-const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-const days = Object.keys(all).sort((a,b)=>new Date(b.split('/').reverse().join('-'))-new Date(a.split('/').reverse().join('-')));
+// ---------- MODE & HISTORY BUTTON ACTIVE STATES ----------
+const bodyEl = document.body;
+const morningBtn = document.getElementById('morningBtn');
+const nightBtn = document.getElementById('nightBtn');
+const historyBtn = document.getElementById('historyBtn');
 
-if(days.length===0){
-  container.innerHTML='<p style="text-align:center;">No history yet.</p>';
-}else{
-  days.forEach(day=>{
-    const div=document.createElement('div');
-    div.className='day-entry';
-    let html=`<h3>${day}</h3>`;
-    const modes=Object.keys(all[day]);
-    modes.forEach(mode=>{
-      html+=`<strong>${mode.toUpperCase()}</strong><ul>`;
-      const ans=all[day][mode].answers;
-      for(const key in ans){
-        const val=ans[key];
-        let displayVal='';
-        if(Array.isArray(val)) displayVal=val.join(', ');
-        else if(typeof val==='object') displayVal=Object.entries(val).map(([k,v])=>`${k}: ${v}`).join(', ');
-        else displayVal=val;
-        html+=`<li><strong>${key}:</strong> ${displayVal}</li>`;
-      }
-      html+='</ul>';
-    });
-    div.innerHTML=html;
-    container.appendChild(div);
-  });
-}
+// On History page: make history button active
+bodyEl.classList.add('night'); // keep night mode styling
+morningBtn.classList.remove('active');
+nightBtn.classList.remove('active');
+historyBtn.classList.add('active');
 
-// ---------- MODE SWITCH ----------
-const bodyEl=document.body;
+// ---------- FOOTER BUTTONS ----------
+morningBtn.onclick = () => {
+  // Go to main page in morning mode
+  window.location.href = 'index.html?mode=morning';
+};
 
-function switchMode(mode){
-  bodyEl.classList.toggle('morning', mode==='morning');
-  bodyEl.classList.toggle('night', mode==='night');
-  // Redirect to main tracker page with query param to indicate mode
-  window.location.href=`index.html?mode=${mode}`;
-}
+nightBtn.onclick = () => {
+  // Go to main page in night mode, start at first night question
+  window.location.href = 'index.html?mode=night&start=0';
+};
 
-// Footer buttons
-document.getElementById('morningBtn').onclick = ()=>switchMode('morning');
-document.getElementById('nightBtn').onclick = ()=>switchMode('night');
-document.getElementById('historyBtn').onclick = ()=>location.reload();
-document.getElementById('dataBtn').onclick = ()=>window.location.href='index.html';
+historyBtn.onclick = () => {
+  // Stay on history page
+  location.reload();
+};
+
+document.getElementById('dataBtn').onclick = () => {
+  window.location.href = 'index.html';
+};
 </script>
 </body>
 </html>
