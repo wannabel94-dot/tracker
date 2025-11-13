@@ -95,7 +95,8 @@ body.morning::before {
 .wrap {
   width: 100%;
   max-width: 740px;
-  margin-top: 60px; /* ensures content below header */
+  margin-top: 60px; /* keeps content below header */
+  display: block; /* important: prevents flex/stretch */
 }
 
 /* ===============================================
@@ -238,8 +239,26 @@ body.night .opt-btn.selected { background: rgba(255,255,255,0.25); border-color:
 ================================================= */
 .drink-pill { display:flex; align-items:center; gap:6px; margin-bottom:12px; background:none; border:none; padding:4px 0; }
 .drink-label { font-size:18px; font-weight:500; color:#fff; min-width:72px; }
-.icon-circle { width:52px; height:52px; border-radius:50%; background: rgba(255,255,255,0.15); display:flex; justify-content:center; align-items:center; margin-right:6px; transition: background 0.25s ease, transform 0.2s ease; }
-.icon-circle img.counter-icon { width:80%; height:80%; filter:invert(1); opacity:0.9; transition: transform 0.2s ease; }
+.icon-circle {
+  width: 52px; 
+  height: 52px; 
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 6px;
+  flex-shrink: 0; /* prevent parent from shrinking it */
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+.icon-circle img.counter-icon {
+  width: 80%;
+  height: 80%;
+  max-width: 52px;
+  max-height: 52px;
+  filter: invert(1); /* ok if icons are black */
+  opacity: 0.9;
+}
 .drink-pill:hover .icon-circle { background: rgba(255,255,255,0.25); transform: scale(1.05); }
 .drink-pill:hover .counter-icon { transform: scale(1.06); opacity:0.95; }
 
