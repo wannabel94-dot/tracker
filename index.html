@@ -1,4 +1,4 @@
-2<!DOCTYPE html>
+3<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -39,6 +39,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+   #dayOfWeek {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  pointer-events: none; /* doesn’t block clicks */
+}
+
 /* ===============================================
    FIXED FOOTER NAV
 ================================================= */
@@ -592,6 +605,7 @@ body.morning::before {
 <div class="wrap">
   <header>
     <button id="btnSettings">☰</button>
+     <h1 id="dayOfWeek"></h1>
      <div id="menuOverlay" class="menu-overlay"></div>
     <div id="settingsMenu" class="settings-menu">
       <button id="btnExport">Export data</button>
@@ -771,6 +785,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Current question
   const q = questions[currentIndex];
+
+    function updateDayOfWeek() {
+  const dayOfWeekElement = document.getElementById('dayOfWeek');
+  const today = new Date();
+  const dayName = today.toLocaleDateString(undefined, { weekday: 'long' });
+  dayOfWeekElement.textContent = dayName;
+}
+
+// Call it on load
+updateDayOfWeek();
 
     // ------ funcion UI -------- //
   // Build question header with optional icon
