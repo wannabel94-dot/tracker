@@ -666,13 +666,31 @@ let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' colu
   };
 
   /* ---------- MULTI OPTION TOGGLE ---------- */
-  window.toggleMultiOption = (qKey,opt) => {
-    if (!answers[qKey]) answers[qKey] = [];
-    const idx = answers[qKey].indexOf(opt);
-    if (idx >= 0) answers[qKey].splice(idx,1);
-    else answers[qKey].push(opt);
-    saveData(); loadUI();
-  };
+window.toggleMultiOption = (qKey, opt) => {
+  if (!answers[qKey]) answers[qKey] = [];
+
+  const selected = answers[qKey].includes(opt);
+
+  if (opt === 'None') {
+    // If "None" is selected, deselect all others
+    answers[qKey] = selected ? [] : ['None'];
+  } else {
+    // Deselect "None" if selecting any other option
+    answers[qKey] = answers[qKey].filter(o => o !== 'None');
+    if (!selected) answers[qKey].push(opt);
+    else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
+  }
+
+  saveData();
+  loadUI();
+
+  // Auto-next if "None" is selected
+  const q = getQuestions()[currentIndex];
+  if (opt === 'None' && !selected && q.autoNext) {
+    currentIndex++;
+    loadUI();
+  }
+};
 
   /* ---------- COUNTERS ---------- */
   window.updateCounter = (opt,delta) => {
