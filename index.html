@@ -570,7 +570,7 @@ function switchMode(mode) {
   // Night completion
   if (mode === 'night' && currentIndex >= NIGHT.length) {
     contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
-    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+    backBtn.style.display = 'none';
     nextBtn.style.display = 'none';
     updateProgressBar();
     return;
@@ -759,7 +759,7 @@ function loadMorningChecklist() {
   function checkMorningCompletion() {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
     if(allDone){
-      contentArea.innerHTML = `<div class="done-note">Morning completed.<button class="back-to-checklist" onclick="returnToMorningChecklist()">← Back</button></div>`;
+      contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
       backBtn.style.display='none'; nextBtn.style.display='none';
       saveData();
       switchTimeout = setTimeout(()=>switchMode('night'),3000);
