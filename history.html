@@ -235,12 +235,10 @@ h1 {
     }
   }
 
-  // When Edit is clicked:
-  // Store which date is being edited, then go to morning mode edit mode.
-  function editEntry(day) {
-    localStorage.setItem('editDate', day);
-    window.location.href = 'index.html?mode=morning&edit=true';
-  }
+function editEntry(day) {
+  localStorage.setItem('editDate', day);       // Save the date to localStorage
+  window.location.href = 'index.html?edit=true'; // Tell index.html we are in edit mode
+}
 
   // Footer navigation
   document.getElementById('morningBtn').onclick = () => window.location.href = 'index.html?mode=morning';
