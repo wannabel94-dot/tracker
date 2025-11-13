@@ -51,11 +51,12 @@ body.morning::before {
 }
 
 /* ===============================================
-   STICKY HEADER
+   STICKY HEADER (Day + Menu)
 ================================================= */
 #topHeader {
   position: sticky;
   top: 0;
+  left: 0;
   width: 100%;
   display: flex;
   align-items: center;
@@ -66,6 +67,7 @@ body.morning::before {
   z-index: 100;
 }
 
+/* Day of Week text inside header */
 #dayOfWeek {
   flex: 1;
   text-align: center;
@@ -73,9 +75,10 @@ body.morning::before {
   font-weight: 600;
   color: #f0f4ff;
   margin: 0;
-  pointer-events: none;
+  pointer-events: none; /* text is not interactive */
 }
 
+/* Settings / Menu button */
 #btnSettings {
   background: transparent;
   border: none;
@@ -86,7 +89,9 @@ body.morning::before {
   z-index: 101;
 }
 
-#btnSettings:hover { color: #ddd; }
+#btnSettings:hover {
+  color: #ddd;
+}
 
 /* ===============================================
    WRAP / MAIN CONTENT
@@ -346,16 +351,14 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 </head>
 <body class="night">
 <div class="wrap">
-  <header>
      <header id="topHeader">
-    <button id="btnSettings">☰</button>
-     <h1 id="dayOfWeek"></h1>
+  <div id="dayOfWeek">Monday</div>
+  <button id="btnSettings">☰</button>
      <div id="menuOverlay" class="menu-overlay"></div>
     <div id="settingsMenu" class="settings-menu">
       <button id="btnExport">Export data</button>
       <button id="btnClearToday">Clear Today's Data</button>
     </div>
-  </header>
 <footer class="footer-nav">
   <button class="switch-btn morning" id="morningBtn">
     <img src="icons/day.svg" alt="Morning">
