@@ -6,8 +6,13 @@
 <title>History</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body { margin:0; padding:18px 18px 90px; font-family:Inter,sans-serif; min-height:100vh; color:#f0f4ff; }
-body::before { content:""; position:fixed; inset:0; z-index:-1; background:url("https://i.pinimg.com/736x/5a/62/e0/5a62e0d170bdd225f171db6520d5bb83.jpg") center/cover no-repeat; }
+body {
+  margin:0; padding:18px 18px 90px; font-family:Inter,sans-serif; min-height:100vh; color:#f0f4ff;
+}
+body::before {
+  content:""; position:fixed; inset:0; z-index:-1;
+  background:url("https://i.pinimg.com/736x/5a/62/e0/5a62e0d170bdd225f171db6520d5bb83.jpg") center/cover no-repeat;
+}
 .wrap { max-width:740px; margin:0 auto; }
 h1 { text-align:center; margin-top:20px; margin-bottom:24px; }
 .day-entry { background: rgba(255,255,255,0.05); border-radius:14px; padding:16px; margin-bottom:16px; }
@@ -25,7 +30,9 @@ h1 { text-align:center; margin-top:20px; margin-bottom:24px; }
 .footer-nav .switch-btn { background:transparent; border:none; border-radius:50%; padding:10px; transition: transform 0.25s, background 0.25s; }
 .footer-nav .switch-btn img { width:32px; height:32px; filter:invert(1); opacity:0.6; transition: opacity 0.3s, transform 0.3s; }
 .footer-nav .switch-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
-.footer-nav .switch-btn.night img { opacity:1; transform: scale(1.2); }
+
+/* Enlarged active button */
+.footer-nav .switch-btn.active img { opacity:1; transform: scale(1.2); }
 </style>
 </head>
 <body class="night">
@@ -41,37 +48,68 @@ h1 { text-align:center; margin-top:20px; margin-bottom:24px; }
 </footer>
 
 <script>
-// ---------- MODE & HISTORY BUTTON ACTIVE STATES ----------
-const bodyEl = document.body;
+// ---------- ACTIVE BUTTON STATES ----------
 const morningBtn = document.getElementById('morningBtn');
 const nightBtn = document.getElementById('nightBtn');
 const historyBtn = document.getElementById('historyBtn');
+const dataBtn = document.getElementById('dataBtn');
 
-// On History page: make history button active
-bodyEl.classList.add('night'); // keep night mode styling
+// Highlight History button
 morningBtn.classList.remove('active');
 nightBtn.classList.remove('active');
 historyBtn.classList.add('active');
 
 // ---------- FOOTER BUTTONS ----------
 morningBtn.onclick = () => {
-  // Go to main page in morning mode
   window.location.href = 'index.html?mode=morning';
 };
 
 nightBtn.onclick = () => {
-  // Go to main page in night mode, start at first night question
   window.location.href = 'index.html?mode=night&start=0';
 };
 
 historyBtn.onclick = () => {
-  // Stay on history page
   location.reload();
 };
 
-document.getElementById('dataBtn').onclick = () => {
+dataBtn.onclick = () => {
   window.location.href = 'index.html';
 };
+
+// ---------- LOAD HISTORY ----------
+const container = document.getElementById('historyContainer');
+const allData = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+const days = Object.keys(allData).sort((a, b) => {
+  return new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-'));
+});
+
+if (days.length === 0) {
+  container.innerHTML = '<p style="text-align:center;">No history yet.</p>';
+} else {
+  days.forEach(day => {
+    const dayData = allData[day];
+    const div = document.createElement('div');
+    div.className = 'day-entry';
+    let html = `<h3>${day}</h3>`;
+
+    for (const mode in dayData) {
+      html += `<strong>${mode.toUpperCase()}</strong><ul>`;
+      const answers = dayData[mode].answers || {};
+      for (const key in answers) {
+        const val = answers[key];
+        let displayVal = '';
+        if (Array.isArray(val)) displayVal = val.join(', ');
+        else if (typeof val === 'object') displayVal = Object.entries(val).map(([k,v]) => `${k}: ${v}`).join(', ');
+        else displayVal = val;
+        html += `<li><strong>${key}:</strong> ${displayVal}</li>`;
+      }
+      html += '</ul>';
+    }
+
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
 </script>
 </body>
 </html>
