@@ -478,9 +478,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const progressBar = document.getElementById('progressBar');
   const btnSettings = document.getElementById('btnSettings');
   const settingsMenu = document.getElementById('settingsMenu');
-  const historyModal = document.getElementById('historyModal');
-  const historyInner = document.getElementById('historyInner');
-  const closeHistory = document.getElementById('closeHistory');
+document.getElementById('historyBtn').addEventListener('click', () => {
+  window.location.href = 'history.html';
+});
 
   const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
   const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
