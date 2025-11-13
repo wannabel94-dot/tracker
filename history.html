@@ -68,6 +68,18 @@ body.night .footer-nav .switch-btn.night img { opacity: 1; transform: scale(1.2)
     </button>
   </footer>
   <script>
+      document.getElementById('morningBtn').onclick = () => {
+  document.body.classList.add('morning');
+  document.body.classList.remove('night');
+};
+document.getElementById('nightBtn').onclick = () => {
+  document.body.classList.add('night');
+  document.body.classList.remove('morning');
+};
+// historyBtn can just reload the page
+document.getElementById('historyBtn').onclick = () => location.reload();
+// dataBtn could navigate to your main tracker page if you have one
+document.getElementById('dataBtn').onclick = () => location.href = 'index.html';
     const container = document.getElementById('historyContainer');
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
     const days = Object.keys(all).sort((a,b) => new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-')));
