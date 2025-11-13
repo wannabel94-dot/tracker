@@ -615,23 +615,23 @@ let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' colu
       const selected = answers[q.key] === opt ? 'selected' : '';
       html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
     });
-} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
   if (!answers[q.key]) answers[q.key] = {};
   q.options.forEach(opt => {
     const count = answers[q.key][opt] || 0;
-    const filename = opt.replace(/\s+/g, '_') + '.svg'; // make it match file names if needed
-    html += `<div class="opt-btn drink-pill">
-      <div class="icon-circle">
-        <img src="icons/${filename}" alt="${opt}" class="counter-icon">
+    html += `
+      <div class="opt-btn drink-pill">
+        <span style="flex:1">${opt}</span>
+        <div class="counter-inner">
+          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+          <span id="count-${opt}">${count}</span>
+          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+        </div>
       </div>
-      <div class="counter-inner">
-        <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
-        <span id="count-${opt}">${count}</span>
-        <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
-      </div>
-    </div>`;
+    `;
   });
 }
+
  else if (q.type === 'multi') {
     if (!answers[q.key]) answers[q.key] = [];
     q.options.forEach(opt => {
