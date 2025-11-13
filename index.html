@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+2<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -372,28 +372,61 @@ body.night .opt-btn.selected {
 #btnSettings { background:transparent; border:none; font-size:24px; color:#fff; cursor:pointer; padding:0; line-height:1; }
 #btnSettings:hover { color:#ddd; background:none; }
 .settings-menu {
-  position:absolute; top:40px; right:12px;
-  background:rgba(0,0,0,0.65);
-  backdrop-filter:blur(18px) saturate(180%);
-  -webkit-backdrop-filter:blur(18px) saturate(180%);
-  border:none; padding:10px 0;
-  display:none; flex-direction:column; align-items:stretch;
-  min-width:200px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-  z-index:50; transform-origin:top right;
-  transform:scale(0.95); opacity:0;
-  transition:all 0.25s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 50%; /* slide out to half the screen */
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 20px 0;
+  transform: translateX(-100%); /* hidden off-screen left */
+  transition: transform 0.4s ease;
+  z-index: 200;
 }
-.settings-menu.show { display:flex; opacity:1; transform:translateY(0); }
-.settings-menu button {
-  background:transparent; border:none; padding:12px 18px;
-  width:100%; text-align:left;
-  font-weight:600; color:#fff;
-  cursor:pointer; display:flex; align-items:center; gap:10px;
-  transition:background 0.2s, transform 0.2s;
-}
-.settings-menu button:hover { background:rgba(255,255,255,0.2); transform:translateX(4px); border-left:4px solid #fff; border-radius:0 8px 8px 0; }
 
+/* When visible */
+.settings-menu.show {
+  transform: translateX(0); /* slide in */
+}
+
+/* Menu items */
+.settings-menu button {
+  background: transparent;
+  border: none;
+  padding: 16px 20px;
+  width: 100%;
+  text-align: left;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.settings-menu button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(6px);
+}
+
+/* Optional: dark overlay when menu is open */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 150;
+}
+.menu-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+   
 /* ===============================================
    CARD + QUESTIONS
    -----------------------------------------------
@@ -559,6 +592,7 @@ body.morning::before {
 <div class="wrap">
   <header>
     <button id="btnSettings">☰</button>
+     <div id="menuOverlay" class="menu-overlay"></div>
     <div id="settingsMenu" class="settings-menu">
       <button id="btnExport">Export data</button>
       <button id="btnClearToday">Clear Today's Data</button>
@@ -913,8 +947,24 @@ function loadMorningChecklist() {
   }
 
   /* ---------- SETTINGS MENU ---------- */
-  btnSettings.onclick = () => settingsMenu.classList.toggle('show');
-  document.querySelectorAll('#settingsMenu button').forEach(btn => btn.addEventListener('click',()=>settingsMenu.classList.remove('show')));
+ const menuOverlay = document.getElementById('menuOverlay');
+
+btnSettings.onclick = () => {
+  const isOpen = settingsMenu.classList.toggle('show');
+  menuOverlay.classList.toggle('show', isOpen);
+};
+
+// Close menu when clicking outside or on any menu button
+menuOverlay.onclick = () => {
+  settingsMenu.classList.remove('show');
+  menuOverlay.classList.remove('show');
+};
+document.querySelectorAll('#settingsMenu button').forEach(btn => 
+  btn.addEventListener('click', () => {
+    settingsMenu.classList.remove('show');
+    menuOverlay.classList.remove('show');
+  })
+);
   document.getElementById('btnClearToday').onclick = () => {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
     delete all[getTodayDate()];
