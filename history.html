@@ -164,91 +164,64 @@ h1 {
     <button class="switch-btn history active" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
     <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"></button>
   </footer>
+<script>
+const container = document.getElementById('historyContainer');
 
-  <script>
-  const container = document.getElementById('historyContainer');
+function loadHistory() {
+  container.innerHTML = '';
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  const days = Object.keys(all).sort(
+    (a, b) => new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-'))
+  );
 
-  function loadHistory() {
-    container.innerHTML = '';
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const days = Object.keys(all).sort(
-      (a, b) => new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-'))
-    );
-
-    if (days.length === 0) {
-      container.innerHTML = '<p>No history yet.</p>';
-      return;
-    }
-
-    days.forEach(day => {
-      const entry = document.createElement('div');
-      entry.className = 'day-entry';
-
-      const header = document.createElement('div');
-      header.className = 'day-header';
-      header.innerHTML = `
-        <h3>${day}</h3>
-        <div class="day-actions">
-          <button class="mini-btn" onclick="editEntry('${day}')">Edit</button>
-          <button class="mini-btn delete" onclick="deleteEntry('${day}')">Delete</button>
-        </div>
-      `;
-
-      const content = document.createElement('div');
-      content.className = 'day-content';
-
-      const modes = Object.keys(all[day]);
-      let html = '';
-      modes.forEach(mode => {
-        html += `<strong>${mode.toUpperCase()}</strong><ul>`;
-        const ans = all[day][mode].answers;
-        for (const key in ans) {
-          const val = ans[key];
-          let displayVal = '';
-          if (Array.isArray(val)) displayVal = val.join(', ');
-          else if (typeof val === 'object') displayVal = Object.entries(val).map(([k,v]) => `${k}: ${v}`).join(', ');
-          else displayVal = val;
-          html += `<li><strong>${key}:</strong> ${displayVal}</li>`;
-        }
-        html += '</ul>';
-      });
-      content.innerHTML = html;
-
-      // Toggle expand
-      header.addEventListener('click', (e) => {
-        if (e.target.tagName.toLowerCase() === 'button') return;
-        content.style.display = content.style.display === 'block' ? 'none' : 'block';
-      });
-
-      entry.appendChild(header);
-      entry.appendChild(content);
-      container.appendChild(entry);
-    });
+  if (days.length === 0) {
+    container.innerHTML = '<p>No history yet.</p>';
+    return;
   }
 
-  function deleteEntry(day) {
-    if (confirm(`Delete all data for ${day}?`)) {
-      const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-      delete all[day];
-      localStorage.setItem('dailyTrackerData', JSON.stringify(all));
-      loadHistory();
-    }
-  }
+  days.forEach(day => {
+    const entry = document.createElement('div');
+    entry.className = 'day-entry';
 
-function editEntry(day) {
-  localStorage.setItem('editDate', day);       // Save the date to localStorage
-  window.location.href = 'index.html?edit=true'; // Tell index.html we are in edit mode
+    const header = document.createElement('div');
+    header.className = 'day-header';
+    header.innerHTML = `
+      <h3>${day}</h3>
+      <div class="day-actions">
+        <button class="mini-btn" onclick="editEntry('${day}')">Edit</button>
+        <button class="mini-btn delete" onclick="deleteEntry('${day}')">Delete</button>
+      </div>
+    `;
+
+    entry.appendChild(header);
+    container.appendChild(entry);
+  });
 }
 
-  // Footer navigation
-  document.getElementById('morningBtn').onclick = () => window.location.href = 'index.html?mode=morning';
-  document.getElementById('nightBtn').onclick = () => window.location.href = 'index.html?mode=night&start=0';
-  document.getElementById('dataBtn').onclick = () => window.location.href = 'index.html';
-  document.getElementById('historyBtn').onclick = () => location.reload();
+function deleteEntry(day) {
+  if (confirm(`Delete all data for ${day}?`)) {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    delete all[day];
+    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+    loadHistory();
+  }
+}
 
-  document.getElementById('btnSettings').onclick = () => alert('Settings menu coming soon.');
+function editEntry(day) {
+  localStorage.setItem('editDate', day);
+  window.location.href = 'index.html?edit=true';
+}
 
-  loadHistory();
-  </script>
+// Footer navigation
+document.getElementById('morningBtn').onclick = () => window.location.href = 'index.html?mode=morning';
+document.getElementById('nightBtn').onclick = () => window.location.href = 'index.html?mode=night&start=0';
+document.getElementById('dataBtn').onclick = () => window.location.href = 'index.html';
+document.getElementById('historyBtn').onclick = () => location.reload();
+
+document.getElementById('btnSettings').onclick = () => alert('Settings menu coming soon.');
+
+loadHistory();
+</script>
+
 </body>
 </html>
