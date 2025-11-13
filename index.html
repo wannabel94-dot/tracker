@@ -610,12 +610,12 @@ updateDayOfWeek();
 let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
 
   // Render options
-  if (q.type === 'single') {
-    q.options.forEach(opt => {
-      const selected = answers[q.key] === opt ? 'selected' : '';
-      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-    });
-else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+ if (q.type === 'single') {
+  q.options.forEach(opt => {
+    const selected = answers[q.key] === opt ? 'selected' : '';
+    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+  });
+} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
   if (!answers[q.key]) answers[q.key] = {};
   q.options.forEach(opt => {
     const count = answers[q.key][opt] || 0;
@@ -630,17 +630,16 @@ else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
       </div>
     `;
   });
+} else if (q.type === 'multi') {
+  if (!answers[q.key]) answers[q.key] = [];
+  q.options.forEach(opt => {
+    const selected = answers[q.key].includes(opt) ? 'selected' : '';
+    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+  });
+} else if (q.type === 'time') {
+  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
 }
 
- else if (q.type === 'multi') {
-    if (!answers[q.key]) answers[q.key] = [];
-    q.options.forEach(opt => {
-      const selected = answers[q.key].includes(opt) ? 'selected' : '';
-      html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-    });
-  } else if (q.type === 'time') {
-    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
-  }
 
   // Close .options div
   html += '</div>';
