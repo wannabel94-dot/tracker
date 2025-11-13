@@ -486,10 +486,34 @@ document.getElementById('historyBtn').addEventListener('click', () => {
   const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
 
   /* ---------- DATA SAVE / LOAD ---------- */
-  function getTodayDate() {
-    if (editingDate) return editingDate;
-    return new Date().toLocaleDateString('en-GB');
-  }
+function getTodayDate() {
+  if (editingDate) return editingDate; // use the day being edited
+  return new Date().toLocaleDateString('en-GB'); // otherwise use today
+}
+
+const params = new URLSearchParams(window.location.search);
+const isEdit = params.get('edit') === 'true';
+let editingDate = localStorage.getItem('editDate'); // set when user clicks Edit in history
+let editAnswers = null;
+
+if (isEdit && editingDate) {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const existing = all[editingDate]?.morning?.answers; // always start in morning mode
+
+    if (existing) {
+        editAnswers = existing;
+        answers = {...existing}; // preload saved answers
+        currentIndex = 0;        // start at first question
+    }
+
+    // Update header
+    const header = document.getElementById('dayOfWeek');
+    if (header) header.textContent = `Editing ${editingDate}`;
+
+    // Force morning mode
+    document.body.classList.add('morning');
+    document.body.classList.remove('night');
+}
 
 function loadSavedData() {
   const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
@@ -519,7 +543,25 @@ function saveData() {
 
 // Make sure data is saved before leaving the page
 window.addEventListener('beforeunload', saveData);
+// --- Edit mode detection ---
+const isEdit = params.get('edit') === 'true';
+const editDate = localStorage.getItem('editDate');
 
+let editAnswers = null;
+
+if (isEdit && editDate) {
+  // Load stored data for that specific day
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  const existing = all[editDate]?.[mode]?.answers;
+
+  if (existing) {
+    editAnswers = existing;
+  }
+
+  // Change header to reflect edit mode
+  const header = document.getElementById('dayOfWeek');
+  if (header) header.textContent = `Editing ${editDate}`;
+}
   /* ---------- MODE SWITCH ---------- */
 function switchMode(mode) {
   saveData();
