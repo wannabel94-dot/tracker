@@ -133,8 +133,6 @@ body.morning::before {
   background: rgba(255,255,255,0.1);
   transform: scale(1.1);
 }
-body.morning .footer-nav .switch-btn.morning img { opacity: 1; transform: scale(1.2); }
-body.night .footer-nav .switch-btn.night img { opacity: 1; transform: scale(1.2); }
 
 /* ===============================================
    TIME INPUT
@@ -469,7 +467,7 @@ function getTodayDate() {
     { key: 'brush_teeth_morn', label: 'Brush teeth', icon: 'toothbrush.svg' }
   ];
 
-  const NIGHT = [
+  const_NIGHT = [
     { key: 'psyillium', type: 'single', label: 'Did you take psyllium?', options: ['Yes','No'], autoNext:true, icon:'grain.svg' },
     { key: 'magnesium', type: 'single', label: 'Did you take magnesium?', options:['Yes','No'], autoNext:true, icon:'mg.svg' },
     { key: 'pillowcase', type: 'single', label: 'Did you change pillowcase?', options:['Yes','No'], autoNext:true, icon:'pillow.svg'},
@@ -499,7 +497,7 @@ function getTodayDate() {
     { key: 'creative', type:'multi', label:'Do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','None'], icon:'paint.svg' }
        ];
      
-      const NIGHT = [
+      const NIGHT_TIME = [
     { key: 'closed_eyes_time', type:'time', label:'Bedtime?', autoNext:true, icon:'sleeptime.svg', specialIcon:true }
   ];
 
@@ -515,7 +513,7 @@ document.getElementById('historyBtn').addEventListener('click', () => {
 });
 
   const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
-  const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
+const getQuestions = () => getMode() === 'morning' ? MORNING : [...NIGHT_QUESTIONS, ...NIGHT_TIME];
 
 if (isEdit && editingDate) {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
@@ -581,7 +579,7 @@ function switchMode(mode) {
   /* ---------- UI RENDER ---------- */
  function loadUI() {
   const mode = getMode();
-  const questions = getQuestions();
+  const questions = ();
 
   // Show progress bar
   progressBar.parentElement.style.display = 'block';
