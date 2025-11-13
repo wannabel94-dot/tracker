@@ -467,7 +467,7 @@ function getTodayDate() {
     { key: 'brush_teeth_morn', label: 'Brush teeth', icon: 'toothbrush.svg' }
   ];
 
-  const_NIGHT = [
+  const NIGHT = [
     { key: 'psyillium', type: 'single', label: 'Did you take psyllium?', options: ['Yes','No'], autoNext:true, icon:'grain.svg' },
     { key: 'magnesium', type: 'single', label: 'Did you take magnesium?', options:['Yes','No'], autoNext:true, icon:'mg.svg' },
     { key: 'pillowcase', type: 'single', label: 'Did you change pillowcase?', options:['Yes','No'], autoNext:true, icon:'pillow.svg'},
@@ -513,7 +513,7 @@ document.getElementById('historyBtn').addEventListener('click', () => {
 });
 
   const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
-const getQuestions = () => getMode() === 'morning' ? MORNING : [...NIGHT_QUESTIONS, ...NIGHT_TIME];
+const getQuestions = () => getMode() === 'morning' ? MORNING : [...NIGHT, ...NIGHT_TIME];
 
 if (isEdit && editingDate) {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
@@ -579,7 +579,7 @@ function switchMode(mode) {
   /* ---------- UI RENDER ---------- */
  function loadUI() {
   const mode = getMode();
-  const questions = ();
+const questions = getQuestions();
 
   // Show progress bar
   progressBar.parentElement.style.display = 'block';
@@ -825,38 +825,29 @@ function loadNightChecklist() {
 
 /* ---------- TOGGLE CHECKLIST ITEM ---------- */
 window.toggleChecklist = (key, mode) => {
-    const checklistMode = mode || getMode();
+  const checklistMode = mode || getMode();
 
-    // Handle morning checklist (Yes/No)
-    if (checklistMode === 'morning') {
-        answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
-    } 
-    // Handle night checklist
-    else if (checklistMode === 'night') {
-        // If single type, toggle Yes/No
-        const item = NIGHT_CHECKLIST_ITEMS.find(i => i.key === key);
-        if (item.type === 'single') {
-            answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
-        }
-        // If multi type, just mark as selected array placeholder
-        else if (item.type === 'multi') {
-            if (!answers[key]) answers[key] = [];
-            // For toggle placeholder: mark as selected when clicked (no actual multi-selection yet)
-            if (answers[key].length === 0) answers[key] = ['Checked'];
-            else answers[key] = [];
-        }
+  if (checklistMode === 'morning') {
+    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
+  } else if (checklistMode === 'night') {
+    const item = NIGHT_CHECKLIST_ITEMS.find(i => i.key === key);
+    if (item.type === 'single') {
+      answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
+    } else if (item.type === 'multi') {
+      if (!answers[key]) answers[key] = [];
+      answers[key] = answers[key].length === 0 ? ['Checked'] : [];
     }
+  }
 
-    // Update DOM
-    document.querySelectorAll(`[onclick="toggleChecklist('${key}','${checklistMode}')"]`)
-        .forEach(el => el.classList.toggle('selected', 
-            checklistMode==='morning' ? answers[key]==='Yes' : (answers[key]?.length>0)));
+  document.querySelectorAll(`[onclick="toggleChecklist('${key}','${checklistMode}')"]`)
+      .forEach(el => el.classList.toggle('selected',
+        checklistMode==='morning' ? answers[key]==='Yes' : (answers[key]?.length>0)));
 
-    saveData();
-    updateProgressBar();
+  saveData();
+  updateProgressBar();
 
-    if (checklistMode === 'morning') checkMorningCompletion();
-    else if (checklistMode === 'night') checkNightCompletion();
+  if (checklistMode === 'morning') checkMorningCompletion();
+  else if (checklistMode === 'night') checkNightCompletion();
 };
 
 /* ---------- NIGHT CHECKLIST COMPLETION ---------- */
