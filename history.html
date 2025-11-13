@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>History</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
 <style>
 body {
   margin: 0;
-  padding: 18px 18px 90px;
+  padding: 0 18px 90px;
   font-family: Inter, sans-serif;
   min-height: 100vh;
   color: #f0f4ff;
@@ -20,17 +21,53 @@ body::before {
   z-index: -1;
   background: url("https://i.pinimg.com/736x/5a/62/e0/5a62e0d170bdd225f171db6520d5bb83.jpg") center/cover no-repeat;
 }
+
+/* HEADER */
+#topHeader {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  z-index: 100;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(12px) saturate(180%);
+}
+#dayOfWeek {
+  flex: 1;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f0f4ff;
+  margin: 0;
+  pointer-events: none;
+}
+#btnSettings {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+  z-index: 101;
+}
+#btnSettings:hover { color: #ddd; }
+
+/* HISTORY */
 .wrap {
   max-width: 740px;
   margin: 0 auto;
+  padding-top: 10px;
 }
 h1 {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 16px;
   margin-bottom: 24px;
 }
 
-/* History entries */
 .day-entry {
   background: rgba(255,255,255,0.05);
   border-radius: 14px;
@@ -64,7 +101,6 @@ h1 {
 .mini-btn:hover { background: rgba(255,255,255,0.25); }
 .mini-btn.delete { background: rgba(255,50,50,0.25); }
 .mini-btn.delete:hover { background: rgba(255,50,50,0.4); }
-
 .day-content {
   margin-top: 8px;
   display: none;
@@ -72,7 +108,7 @@ h1 {
   line-height: 1.4;
 }
 
-/* Sticky footer nav */
+/* FOOTER NAV */
 .footer-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -112,10 +148,16 @@ h1 {
 </head>
 
 <body class="night">
-  <h1>History</h1>
+  <!-- HEADER -->
+  <header id="topHeader">
+    <button id="btnSettings">☰</button>
+    <h3 id="dayOfWeek">History</h3>
+    <div style="width:24px;"></div>
+  </header>
+
   <div class="wrap" id="historyContainer"></div>
 
-  <!-- Sticky footer nav -->
+  <!-- FOOTER -->
   <footer class="footer-nav">
     <button class="switch-btn morning" id="morningBtn"><img src="icons/day.svg" alt="Morning"></button>
     <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
@@ -126,7 +168,6 @@ h1 {
   <script>
   const container = document.getElementById('historyContainer');
 
-  // Load saved history
   function loadHistory() {
     container.innerHTML = '';
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
@@ -143,7 +184,6 @@ h1 {
       const entry = document.createElement('div');
       entry.className = 'day-entry';
 
-      // Header (click to toggle)
       const header = document.createElement('div');
       header.className = 'day-header';
       header.innerHTML = `
@@ -174,7 +214,7 @@ h1 {
       });
       content.innerHTML = html;
 
-      // Toggle details on header click (ignore button clicks)
+      // Toggle expand
       header.addEventListener('click', (e) => {
         if (e.target.tagName.toLowerCase() === 'button') return;
         content.style.display = content.style.display === 'block' ? 'none' : 'block';
@@ -186,7 +226,6 @@ h1 {
     });
   }
 
-  // Delete entry
   function deleteEntry(day) {
     if (confirm(`Delete all data for ${day}?`)) {
       const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
@@ -196,10 +235,11 @@ h1 {
     }
   }
 
-  // Edit entry
+  // When Edit is clicked:
+  // Store which date is being edited, then go to morning mode edit mode.
   function editEntry(day) {
     localStorage.setItem('editDate', day);
-    window.location.href = 'index.html';
+    window.location.href = 'index.html?mode=morning&edit=true';
   }
 
   // Footer navigation
@@ -208,7 +248,8 @@ h1 {
   document.getElementById('dataBtn').onclick = () => window.location.href = 'index.html';
   document.getElementById('historyBtn').onclick = () => location.reload();
 
-  // Initialize
+  document.getElementById('btnSettings').onclick = () => alert('Settings menu coming soon.');
+
   loadHistory();
   </script>
 </body>
