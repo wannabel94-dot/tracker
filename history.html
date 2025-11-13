@@ -9,7 +9,21 @@
 <body class="morning">
   <h1>History</h1>
   <div id="historyContainer"></div>
-
+  <!-- Sticky footer nav -->
+  <footer class="footer-nav">
+    <button class="switch-btn morning" id="morningBtn">
+      <img src="icons/day.svg" alt="Morning">
+    </button>
+    <button class="switch-btn night" id="nightBtn">
+      <img src="icons/night.svg" alt="Night">
+    </button>
+    <button class="switch-btn history" id="historyBtn">
+      <img src="icons/history.svg" alt="History">
+    </button>
+    <button class="switch-btn data" id="dataBtn">
+      <img src="icons/data.svg" alt="Data">
+    </button>
+  </footer>
   <script>
     const container = document.getElementById('historyContainer');
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
