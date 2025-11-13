@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>History</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body {
+  margin: 0;
+  padding: 18px 18px 90px;
+  font-family: Inter, sans-serif;
+  min-height: 100vh;
+  color: #f0f4ff;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url("https://i.pinimg.com/736x/5a/62/e0/5a62e0d170bdd225f171db6520d5bb83.jpg") center/cover no-repeat;
+}
+.wrap {
+  max-width: 740px;
+  margin: 0 auto;
+}
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 24px;
+}
+
+/* History entries */
+.day-entry {
+  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.day-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.day-actions {
+  display: flex;
+  gap: 8px;
+}
+.mini-btn {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s ease;
+}
+.mini-btn:hover { background: rgba(255,255,255,0.25); }
+.mini-btn.delete { background: rgba(255,50,50,0.25); }
+.mini-btn.delete:hover { background: rgba(255,50,50,0.4); }
+
+.day-content {
+  margin-top: 8px;
+  display: none;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Sticky footer nav */
+.footer-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 70px;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(14px) saturate(180%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  z-index: 100;
+}
+.footer-nav .switch-btn {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  transition: transform 0.25s, background 0.25s;
+}
+.footer-nav .switch-btn img {
+  width: 32px;
+  height: 32px;
+  filter: invert(1);
+  opacity: 0.6;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.footer-nav .switch-btn:hover {
+  background: rgba(255,255,255,0.1);
+  transform: scale(1.1);
+}
+.footer-nav .switch-btn.active img {
+  opacity: 1;
+  transform: scale(1.2);
+}
+</style>
+</head>
+
+<body class="night">
+  <h1>History</h1>
+  <div class="wrap" id="historyContainer"></div>
+
+  <!-- Sticky footer nav -->
+  <footer class="footer-nav">
+    <button class="switch-btn morning" id="morningBtn"><img src="icons/day.svg" alt="Morning"></button>
+    <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
+    <button class="switch-btn history active" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
+    <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"></button>
+  </footer>
+
+  <script>
+  const container = document.getElementById('historyContainer');
+
+  // Load saved history
+  function loadHistory() {
+    container.innerHTML = '';
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const days = Object.keys(all).sort(
+      (a, b) => new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-'))
+    );
+
+    if (days.length === 0) {
+      container.innerHTML = '<p>No history yet.</p>';
+      return;
+    }
+
+    days.forEach(day => {
+      const entry = document.createElement('div');
+      entry.className = 'day-entry';
+
+      // Header (click to toggle)
+      const header = document.createElement('div');
+      header.className = 'day-header';
+      header.innerHTML = `
+        <h3>${day}</h3>
+        <div class="day-actions">
+          <button class="mini-btn" onclick="editEntry('${day}')">Edit</button>
+          <button class="mini-btn delete" onclick="deleteEntry('${day}')">Delete</button>
+        </div>
+      `;
+
+      const content = document.createElement('div');
+      content.className = 'day-content';
+
+      const modes = Object.keys(all[day]);
+      let html = '';
+      modes.forEach(mode => {
+        html += `<strong>${mode.toUpperCase()}</strong><ul>`;
+        const ans = all[day][mode].answers;
+        for (const key in ans) {
+          const val = ans[key];
+          let displayVal = '';
+          if (Array.isArray(val)) displayVal = val.join(', ');
+          else if (typeof val === 'object') displayVal = Object.entries(val).map(([k,v]) => `${k}: ${v}`).join(', ');
+          else displayVal = val;
+          html += `<li><strong>${key}:</strong> ${displayVal}</li>`;
+        }
+        html += '</ul>';
+      });
+      content.innerHTML = html;
+
+      // Toggle details on header click (ignore button clicks)
+      header.addEventListener('click', (e) => {
+        if (e.target.tagName.toLowerCase() === 'button') return;
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+      });
+
+      entry.appendChild(header);
+      entry.appendChild(content);
+      container.appendChild(entry);
+    });
+  }
+
+  // Delete entry
+  function deleteEntry(day) {
+    if (confirm(`Delete all data for ${day}?`)) {
+      const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+      delete all[day];
+      localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+      loadHistory();
+    }
+  }
+
+  // Edit entry
+  function editEntry(day) {
+    localStorage.setItem('editDate', day);
+    window.location.href = 'index.html';
+  }
+
+  // Footer navigation
+  document.getElementById('morningBtn').onclick = () => window.location.href = 'index.html?mode=morning';
+  document.getElementById('nightBtn').onclick = () => window.location.href = 'index.html?mode=night&start=0';
+  document.getElementById('dataBtn').onclick = () => window.location.href = 'index.html';
+  document.getElementById('historyBtn').onclick = () => location.reload();
+
+  // Initialize
+  loadHistory();
+  </script>
+</body>
+</html>
