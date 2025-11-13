@@ -4,150 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>History</title>
-<link rel="stylesheet" href="style.css"> <!-- reuse your main CSS -->
- <style>
-/* ===============================================
-   GLOBAL STYLES + NIGHT MODE BACKGROUND
-================================================= */
-body {
-  margin: 0;
-  padding: 18px 18px 90px;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-  color: #f0f4ff;
-  min-height: 100vh;
-}
-body::before {
-  content:""; position:fixed; inset:0; z-index:-1;
-  background:url("https://i.pinimg.com/736x/5a/62/e0/5a62e0d170bdd225f171db6520d5bb83.jpg") center/cover no-repeat;
-}
-.wrap { max-width: 740px; margin: 0 auto; }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body { margin:0; padding:18px 18px 90px; font-family:Inter,sans-serif; min-height:100vh; color:#f0f4ff; }
+body::before { content:""; position:fixed; inset:0; z-index:-1; background:url("https://i.pinimg.com/736x/5a/62/e0/5a62e0d170bdd225f171db6520d5bb83.jpg") center/cover no-repeat; }
+.wrap { max-width:740px; margin:0 auto; }
 h1 { text-align:center; margin-top:20px; margin-bottom:24px; }
-/* ===============================================
-   DAY ENTRIES
-================================================= */
-.day-entry { background: rgba(255,255,255,0.05); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
-.day-entry h3 { margin-top:0; margin-bottom:8px; font-size:1.2rem; }
+.day-entry { background: rgba(255,255,255,0.05); border-radius:14px; padding:16px; margin-bottom:16px; }
+.day-entry h3 { margin:0 0 8px 0; font-size:1.2rem; }
 .day-entry ul { padding-left:18px; margin:0; }
 .day-entry ul li { margin-bottom:4px; }
 
-/* ===============================================
-   STICKY FOOTER NAV
-================================================= */
+/* Sticky footer nav */
 .footer-nav {
-  position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
-  background: rgba(0,0,0,0.35); backdrop-filter: blur(14px) saturate(180%);
-  display: flex; justify-content: center; align-items: center; gap: 28px;
-  border-top: 1px solid rgba(255,255,255,0.15); z-index: 100;
+  position:fixed; bottom:0; left:0; right:0; height:70px;
+  background:rgba(0,0,0,0.35); backdrop-filter:blur(14px) saturate(180%);
+  display:flex; justify-content:center; align-items:center; gap:28px;
+  border-top:1px solid rgba(255,255,255,0.15); z-index:100;
 }
-.footer-nav .switch-btn {
-  background: transparent; border: none; border-radius: 50%; padding: 10px; transition: transform 0.25s, background 0.25s;
-}
-.footer-nav .switch-btn img { width:32px; height:32px; filter: invert(1); opacity:0.6; transition: opacity 0.3s, transform 0.3s; }
+.footer-nav .switch-btn { background:transparent; border:none; border-radius:50%; padding:10px; transition: transform 0.25s, background 0.25s; }
+.footer-nav .switch-btn img { width:32px; height:32px; filter:invert(1); opacity:0.6; transition: opacity 0.3s, transform 0.3s; }
 .footer-nav .switch-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
-.footer-nav .switch-btn.night img { opacity: 1; transform: scale(1.2); }
-
-  /* ===============================================
-   FIXED FOOTER NAV
-================================================= */
-.footer-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 70px;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(14px) saturate(180%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 28px;
-  border-top: 1px solid rgba(255,255,255,0.15);
-  z-index: 100;
-}
-
-.footer-nav .switch-btn {
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  padding: 10px;
-  transition: transform 0.25s, background 0.25s;
-}
-.footer-nav .switch-btn img {
-  width: 32px;
-  height: 32px;
-  filter: invert(1);
-  opacity: 0.6;
-  transition: opacity 0.3s, transform 0.3s;
-}
-.footer-nav .switch-btn:hover {
-  background: rgba(255,255,255,0.1);
-  transform: scale(1.1);
-}
-body.morning .footer-nav .switch-btn.morning img { opacity: 1; transform: scale(1.2); }
-body.night .footer-nav .switch-btn.night img { opacity: 1; transform: scale(1.2); }
-        </style>
-
+.footer-nav .switch-btn.night img { opacity:1; transform: scale(1.2); }
+</style>
 </head>
-<body class="morning">
-  <h1>History</h1>
-  <div id="historyContainer"></div>
-  <!-- Sticky footer nav -->
-  <footer class="footer-nav">
-    <button class="switch-btn morning" id="morningBtn">
-      <img src="icons/day.svg" alt="Morning">
-    </button>
-    <button class="switch-btn night" id="nightBtn">
-      <img src="icons/night.svg" alt="Night">
-    </button>
-    <button class="switch-btn history" id="historyBtn">
-      <img src="icons/history.svg" alt="History">
-    </button>
-    <button class="switch-btn data" id="dataBtn">
-      <img src="icons/data.svg" alt="Data">
-    </button>
-  </footer>
-  <script>
-      document.getElementById('morningBtn').onclick = () => {
-  document.body.classList.add('morning');
-  document.body.classList.remove('night');
-};
-document.getElementById('nightBtn').onclick = () => {
-  document.body.classList.add('night');
-  document.body.classList.remove('morning');
-};
-// historyBtn can just reload the page
-document.getElementById('historyBtn').onclick = () => location.reload();
-// dataBtn could navigate to your main tracker page if you have one
-document.getElementById('dataBtn').onclick = () => location.href = 'index.html';
-    const container = document.getElementById('historyContainer');
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const days = Object.keys(all).sort((a,b) => new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-')));
+<body class="night">
 
-    if(days.length === 0){
-      container.innerHTML = '<p>No history yet.</p>';
-    } else {
-      days.forEach(day => {
-        const div = document.createElement('div');
-        div.className = 'day-entry';
-        let html = `<h3>${day}</h3>`;
-        const modes = Object.keys(all[day]);
-        modes.forEach(mode => {
-          html += `<strong>${mode.toUpperCase()}</strong><ul>`;
-          const ans = all[day][mode].answers;
-          for(const key in ans){
-            const val = ans[key];
-            let displayVal = '';
-            if(Array.isArray(val)) displayVal = val.join(', ');
-            else if(typeof val === 'object') displayVal = Object.entries(val).map(([k,v]) => `${k}: ${v}`).join(', ');
-            else displayVal = val;
-            html += `<li><strong>${key}:</strong> ${displayVal}</li>`;
-          }
-          html += '</ul>';
-        });
-        div.innerHTML = html;
-        container.appendChild(div);
-      });
-    }
-  </script>
+<h1>History</h1>
+<div class="wrap" id="historyContainer"></div>
+
+<footer class="footer-nav">
+  <button class="switch-btn morning" id="morningBtn"><img src="icons/day.svg" alt="Morning"></button>
+  <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
+  <button class="switch-btn history" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
+  <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"></button>
+</footer>
+
+<script>
+// ---------- RENDER HISTORY ----------
+const container = document.getElementById('historyContainer');
+const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+const days = Object.keys(all).sort((a,b)=>new Date(b.split('/').reverse().join('-'))-new Date(a.split('/').reverse().join('-')));
+
+if(days.length===0){
+  container.innerHTML='<p style="text-align:center;">No history yet.</p>';
+}else{
+  days.forEach(day=>{
+    const div=document.createElement('div');
+    div.className='day-entry';
+    let html=`<h3>${day}</h3>`;
+    const modes=Object.keys(all[day]);
+    modes.forEach(mode=>{
+      html+=`<strong>${mode.toUpperCase()}</strong><ul>`;
+      const ans=all[day][mode].answers;
+      for(const key in ans){
+        const val=ans[key];
+        let displayVal='';
+        if(Array.isArray(val)) displayVal=val.join(', ');
+        else if(typeof val==='object') displayVal=Object.entries(val).map(([k,v])=>`${k}: ${v}`).join(', ');
+        else displayVal=val;
+        html+=`<li><strong>${key}:</strong> ${displayVal}</li>`;
+      }
+      html+='</ul>';
+    });
+    div.innerHTML=html;
+    container.appendChild(div);
+  });
+}
+
+// ---------- MODE SWITCH ----------
+const bodyEl=document.body;
+
+function switchMode(mode){
+  bodyEl.classList.toggle('morning', mode==='morning');
+  bodyEl.classList.toggle('night', mode==='night');
+  // Redirect to main tracker page with query param to indicate mode
+  window.location.href=`index.html?mode=${mode}`;
+}
+
+// Footer buttons
+document.getElementById('morningBtn').onclick = ()=>switchMode('morning');
+document.getElementById('nightBtn').onclick = ()=>switchMode('night');
+document.getElementById('historyBtn').onclick = ()=>location.reload();
+document.getElementById('dataBtn').onclick = ()=>window.location.href='index.html';
+</script>
 </body>
 </html>
