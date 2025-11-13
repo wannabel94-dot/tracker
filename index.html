@@ -139,10 +139,27 @@ body.night .footer-nav .switch-btn.night img { opacity: 1; transform: scale(1.2)
 /* ===============================================
    TIME INPUT
 ================================================= */
-.options input[type="time"] {
-  grid-column: 1 / -1; /* span all columns */
-  width: 100%;
-  box-sizing: border-box;
+input[type="time"] {
+  width: 100%;                  /* span full width of card */
+  padding: 14px 18px;           /* match option padding */
+  font-size: 17px;               /* match option font size */
+  font-weight: 500;
+  border-radius: 16px;           /* rounded pill shape */
+  border: 1px solid rgba(255,255,255,0.12); /* like opt-btn */
+  background: rgba(255,255,255,0.05);
+  color: #f0f4ff;                /* match opt-btn text */
+  text-align: center;            /* center time text */
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;      /* remove default arrow styles */
+  -moz-appearance: none;
+  appearance: none;
+  transition: transform 0.2s, background 0.2s;
+}
+
+input[type="time"]:hover {
+  background: rgba(255,255,255,0.10);
+  transform: scale(1.02);
 }
 
 input[type="time"]:focus {
