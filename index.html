@@ -1,4 +1,4 @@
-8<!DOCTYPE html>
+9<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -40,16 +40,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-   #dayOfWeek {
-  position: absolute;
-  top: 5px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1rem;
+#dayOfWeek {
+  position: sticky;    /* keeps it at top while scrolling */
+  top: 0;              /* distance from top of viewport */
+  left: 0;
+  width: 100%;         /* span full width */
+  text-align: center;  /* center the text */
+  font-size: 1.2rem;
   font-weight: 600;
   color: #f0f4ff;
-  pointer-events: none; /* doesn’t block clicks */
+  background: rgba(0,0,0,0.3); /* optional: add semi-transparent bg so text is readable */
+  z-index: 50;         /* stay above content */
+  padding: 10px 0;     /* optional spacing */
 }
+
 
 /* ===============================================
    FIXED FOOTER NAV
@@ -131,7 +135,7 @@ input[type="time"]:focus {
 /* ===============================================
    LAYOUT
 ================================================= */
-.wrap { width: 100%; max-width: 740px;  margin-top: 80px; /* pushes all content below the day-of-week heading */ }
+.wrap { width: 100%; max-width: 740px;  margin-top: 60px; /* pushes all content below the day-of-week heading */ }
 header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .top-switch { display: flex; gap: 8px; }
 
