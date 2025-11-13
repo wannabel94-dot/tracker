@@ -494,10 +494,9 @@ document.getElementById('historyBtn').addEventListener('click', () => {
 function loadSavedData() {
   const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
   const day = getTodayDate();
-  const mode = getMode();
-  if (all[day] && all[day][mode]) {
-    answers = all[day][mode].answers || {};
-    currentIndex = all[day][mode].currentIndex || 0;
+  if (all[day]) {
+    answers = all[day].answers || {};
+    currentIndex = all[day].currentIndex || 0;
   } else {
     answers = {};
     currentIndex = 0;
@@ -507,16 +506,19 @@ function loadSavedData() {
 function saveData() {
   const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
   const day = getTodayDate();
-  const mode = getMode();
-  if (!all[day]) all[day] = {};
-  if (!all[day][mode]) all[day][mode] = {};
-  all[day][mode].answers = answers;
-  all[day][mode].currentIndex = currentIndex;
+
+  // Store all answers for the day in a single object, overwriting any previous save
+  all[day] = {
+    answers: answers,
+    currentIndex: currentIndex,
+    mode: getMode() // optional: keeps track if it was morning/night last
+  };
+
   localStorage.setItem('dailyTrackerData', JSON.stringify(all));
 }
 
-
-  window.addEventListener('beforeunload', saveData);
+// Make sure data is saved before leaving the page
+window.addEventListener('beforeunload', saveData);
 
   /* ---------- MODE SWITCH ---------- */
 function switchMode(mode) {
