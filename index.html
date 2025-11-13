@@ -439,14 +439,6 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
       <img src="icons/data.svg" alt="Data">
     </button>
   </footer>
-
-  <!-- History Modal -->
-  <div id="historyModal" class="history-modal">
-    <div class="history-content">
-      <button class="close-history" id="closeHistory">×</button>
-      <div id="historyInner"></div>
-    </div>
-  </div>
 </body>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -834,52 +826,6 @@ document.querySelectorAll('#settingsMenu button').forEach(btn =>
     answers={}; currentIndex=0; editingDate=null; loadUI();
     alert("Today's data cleared.");
   };
-
- /* ---------- HISTORY ---------- */
-
-// Close history modal
-closeHistory.onclick = () => historyModal.classList.remove('show');
-
-// Function to render saved history
-function renderHistory() {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  let html = '';
-
-  // Sort days descending (latest first)
-  const days = Object.keys(all).sort((a,b)=> new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-')));
-
-  if(days.length === 0){
-    html = '<p>No history yet.</p>';
-  } else {
-    days.forEach(day => {
-      html += `<h3>${day}</h3>`;
-      const modes = Object.keys(all[day]);
-      modes.forEach(mode => {
-        html += `<strong>${mode.toUpperCase()}</strong><ul>`;
-        const ans = all[day][mode].answers || {};
-        for(const key in ans){
-          const val = ans[key];
-          let displayVal = '';
-
-          if(Array.isArray(val)) displayVal = val.join(', ');
-          else if(typeof val === 'object') displayVal = Object.entries(val).map(([k,v])=>`${k}: ${v}`).join(', ');
-          else displayVal = val;
-
-          html += `<li><strong>${key}:</strong> ${displayVal}</li>`;
-        }
-        html += '</ul>';
-      });
-    });
-  }
-
-  historyInner.innerHTML = html;
-}
-
-// Assign history button
-document.getElementById('historyBtn').onclick = () => {
-  renderHistory();                 // load saved data into modal
-  historyModal.classList.toggle('show');
-};
 
   /* ---------- INITIAL LOAD ---------- */
   loadSavedData();
