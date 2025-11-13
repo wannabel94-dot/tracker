@@ -139,18 +139,12 @@ body.night .footer-nav .switch-btn.night img { opacity: 1; transform: scale(1.2)
 /* ===============================================
    TIME INPUT
 ================================================= */
-input[type="time"] {
+.options input[type="time"] {
+  grid-column: 1 / -1; /* span all columns */
   width: 100%;
-  padding: 12px 24px;
-  font-size: 18px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.3);
-  background: rgba(255,255,255,0.08);
-  color: #f0f4ff;
-  font-family: inherit;
-  backdrop-filter: blur(var(--bg-blur));
-  transition: background 0.2s, border 0.2s;
+  box-sizing: border-box;
 }
+
 input[type="time"]:focus {
   outline: none;
   border: 1px solid rgba(255,255,255,0.6);
