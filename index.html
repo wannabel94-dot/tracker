@@ -588,16 +588,13 @@ function switchMode(mode) {
   }
 
   // Night completion
-if (mode === 'night' && currentIndex >= NIGHT.length) {
+  if (mode === 'night' && currentIndex >= NIGHT.length) {
     contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
     backBtn.style.display = 'none';
     nextBtn.style.display = 'none';
     updateProgressBar();
-
-    // Show daily review 3 seconds later
-    setTimeout(showDailyReview, 3000);
     return;
-}
+  }
 
   // Current question
   const q = questions[currentIndex];
@@ -808,50 +805,39 @@ items.forEach((item, i) => {
 }
 
 function showDailyReview() {
-    let reviewHtml = `<div class="checklist-title">Daily Review</div><div class="review-wrapper">`;
+    let reviewHtml = `
+        <div class="checklist-title">Daily Review</div>
+        <div class="review-wrapper">
+            <div class="review-list">
+    `;
 
-    // Morning checklist items
+    // Morning section
     reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
     MORNING_CHECKLIST_ITEMS.forEach(item => {
         reviewHtml += `
             <div class="review-item">
                 <span>${item.label}</span>
-                <span class="review-answer">${answers[item.key] || '-'}</span>
+                <span class="review-answer">${answers[item.key]}</span>
             </div>
         `;
     });
 
-    // Morning questions
-    reviewHtml += `<div class="review-section-title">Morning Questions</div>`;
-    MORNING.forEach(q => {
+    // Night section
+    reviewHtml += `<div class="review-section-title">Night Checklist</div>`;
+    NIGHT_CHECKLIST_ITEMS.forEach(item => {
         reviewHtml += `
             <div class="review-item">
-                <span>${q.label}</span>
-                <span class="review-answer">${answers[q.key] || '-'}</span>
+                <span>${item.label}</span>
+                <span class="review-answer">${answers[item.key]}</span>
             </div>
         `;
     });
 
-    // Night questions
-    reviewHtml += `<div class="review-section-title">Night Questions</div>`;
-    NIGHT.forEach(q => {
-        const ans = answers[q.key];
-        let displayAns = '-';
-        if (q.type === 'multi') {
-            if (Array.isArray(ans)) displayAns = ans.join(', ');
-            else if (typeof ans === 'object') displayAns = Object.entries(ans).filter(([k,v])=>v>0).map(([k,v])=>`${k}(${v})`).join(', ');
-        } else {
-            displayAns = ans || '-';
-        }
-        reviewHtml += `
-            <div class="review-item">
-                <span>${q.label}</span>
-                <span class="review-answer">${displayAns}</span>
+    reviewHtml += `
             </div>
-        `;
-    });
+        </div>
+    `;
 
-    reviewHtml += `</div></div>`;
     contentArea.innerHTML = reviewHtml;
 
     backBtn.style.display = 'none';
