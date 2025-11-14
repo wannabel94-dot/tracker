@@ -231,6 +231,57 @@ function loadHistory() {
     container.appendChild(entry);
   });
 }
+function viewEntry(day) {
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  const entry = all[day];
+  if (!entry) return alert("No data for this day.");
+
+  // Remove previous view
+  const existingView = document.getElementById('entryView');
+  if (existingView) existingView.remove();
+
+  const div = document.createElement('div');
+  div.id = 'entryView';
+
+  let html = `<h3>${day} — Review</h3>`;
+
+  // Custom labels lookup (optional, you can make your own)
+  const CUSTOM_LABELS = {
+    wake_time: "Wake Time",
+    how_slept: "Sleep Quality",
+    psyllium: "Took Psyllium",
+    magnesium: "Took Magnesium",
+    pillowcase: "Changed Pillowcase",
+    shower_night: "Night Shower",
+    // Add more as needed
+  };
+
+  if (entry.answers) {
+    html += `<h4>Answers</h4><ul style="padding-left:16px;">`;
+    for (const key in entry.answers) {
+      let val = entry.answers[key];
+
+      // Convert Yes/No to ticks/crosses
+      if (typeof val === 'string') {
+        if (val === "Yes") val = '✓';
+        else if (val === "No") val = '✗';
+      } else if (Array.isArray(val)) {
+        // For multiple choice, convert each Yes/No inside the array
+        val = val.map(v => v === "Yes" ? '✓' : v === "No" ? '✗' : v).join(', ');
+      }
+
+      const label = CUSTOM_LABELS[key] || key; // Use custom label if available
+      html += `<li><strong>${label}</strong>: ${val}</li>`;
+    }
+    html += '</ul>';
+  } else {
+    html += '<p>No answers recorded.</p>';
+  }
+
+  div.innerHTML = html;
+  container.insertBefore(div, container.firstChild);
+  div.scrollIntoView({ behavior: 'smooth' });
+}
 
 function deleteEntry(day) {
   if (confirm(`Delete all data for ${day}?`)) {
