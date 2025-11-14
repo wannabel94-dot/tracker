@@ -1,53 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Daily Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>History</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
-/* ===============================================
-   ROOT VARIABLES
-================================================= */
-:root {
-  --morning-text: #f0f4ff;
-  --night-text: #f0f4ff;
-  --card-radius: 14px;
-  --bg-blur: 6px;
-  --glass-bg: rgba(255,255,255,0.08);
-  --glass-border: rgba(255,255,255,0.12);
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-}
-
-/* ===============================================
-   GLOBAL SETTINGS
-================================================= */
-* { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
 body {
   margin: 0;
   padding: 0 18px 90px;
+  font-family: Inter, sans-serif;
   min-height: 100vh;
-  color: var(--night-text);
+  color: #f0f4ff;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url("https://i.pinimg.com/736x/5a/62/e0/5a62e0d170bdd225f171db6520d5bb83.jpg") center/cover no-repeat;
 }
 
-/* ===============================================
-   BACKGROUNDS
-================================================= */
-body.night { color:#fff; }
-body.night::before {
-  content:""; position:fixed; inset:0; z-index:-1;
-  background:url("https://i.pinimg.com/736x/5a/62/e0/5a62e0d170bdd225f171db6520d5bb83.jpg") center/cover no-repeat;
-}
-body.morning { color:#fff; }
-body.morning::before {
-  content:""; position:fixed; inset:0; z-index:-1;
-  background:url("https://i.pinimg.com/736x/69/44/51/694451017e620165ffc4408bcfa3fdf8.jpg") center/cover no-repeat;
-}
-
-/* ===============================================
-   STICKY HEADER (Day + Menu)
-================================================= */
+/* STICKY HEADER */
 #topHeader {
   position: sticky;
   top: 0;
@@ -59,8 +33,6 @@ body.morning::before {
   padding: 10px 18px;
   z-index: 100;
 }
-
-/* Day of Week text inside header */
 #dayOfWeek {
   flex: 1;
   text-align: center;
@@ -68,10 +40,8 @@ body.morning::before {
   font-weight: 600;
   color: #f0f4ff;
   margin: 0;
-  pointer-events: none; /* text is not interactive */
+  pointer-events: none;
 }
-
-/* Settings / Menu button */
 #btnSettings {
   background: transparent;
   border: none;
@@ -81,214 +51,9 @@ body.morning::before {
   padding: 0;
   z-index: 101;
 }
+#btnSettings:hover { color: #ddd; }
 
-#btnSettings:hover {
-  color: #ddd;
-}
-
-/* ===============================================
-   WRAP / MAIN CONTENT
-================================================= */
-.wrap {
-  width: 100%;
-  max-width: 740px;
-  margin-top: 40px; /* keeps content below header */
-  display: block; /* important: prevents flex/stretch */
-}
-
-/* ===============================================
-   FIXED FOOTER NAV
-================================================= */
-.footer-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 70px;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(14px) saturate(180%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 28px;
-  border-top: 1px solid rgba(255,255,255,0.15);
-  z-index: 100;
-}
-
-.footer-nav .switch-btn {
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  padding: 10px;
-  transition: transform 0.25s, background 0.25s;
-}
-.footer-nav .switch-btn img {
-  width: 32px;
-  height: 32px;
-  filter: invert(1);
-  opacity: 0.6;
-  transition: opacity 0.3s, transform 0.3s;
-}
-.footer-nav .switch-btn:hover {
-  background: rgba(255,255,255,0.1);
-  transform: scale(1.1);
-}
-body.morning .footer-nav .switch-btn.morning img { opacity: 1; transform: scale(1.2); }
-body.night .footer-nav .switch-btn.night img { opacity: 1; transform: scale(1.2); }
-
-/* ===============================================
-   TIME INPUT
-================================================= */
-input[type="time"] {
-     grid-column: 1 / -1; /* span all columns in the grid */
-  width: 100%;                  /* span full width of card */
-  padding: 14px 18px;           /* match option padding */
-  font-size: 17px;               /* match option font size */
-  font-weight: 500;
-  border-radius: 16px;           /* rounded pill shape */
-  border: 1px solid rgba(255,255,255,0.12); /* like opt-btn */
-  background: rgba(255,255,255,0.05);
-  color: #f0f4ff;                /* match opt-btn text */
-  text-align: center;            /* center time text */
-  font-family: inherit;
-  cursor: pointer;
-  -webkit-appearance: none;      /* remove default arrow styles */
-  -moz-appearance: none;
-  appearance: none;
-  transition: transform 0.2s, background 0.2s;
-}
-
-input[type="time"]:hover {
-  background: rgba(255,255,255,0.10);
-  transform: scale(1.02);
-}
-
-input[type="time"]:focus {
-  outline: none;
-  border: 1px solid rgba(255,255,255,0.6);
-  background: rgba(255,255,255,0.12);
-}
-
-/* ===============================================
-   DAY NIGHT MODE BUTTONS
-   ================================================= */
-.switch-btn {
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background 0.25s;
-}
-.switch-btn img {
-  width: 28px;
-  height: 28px;
-  filter: invert(1);
-  opacity: 0.5;
-  transform: scale(1);
-  transition: opacity 0.25s, transform 0.25s, filter 0.25s;
-}
-.switch-btn:hover { background: rgba(255,255,255,0.08); border-radius:50%; }
-body.morning .switch-btn.morning img { opacity: 1; transform: scale(1.15); }
-body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
-
-/* ===============================================
-   ANSWER BUTTONS
-================================================= */
-.opt-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px 18px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--glass-border);
-  font-size: 17px;
-  font-weight: 500;
-  color: #f0f4ff;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
-  text-align: center;
-  user-select: none;
-}
-.opt-btn:hover { background: rgba(255,255,255,0.10); transform: scale(1.02); }
-.opt-btn.selected {
-  background: rgba(255,255,255,0.25);
-  border-color: rgba(255,255,255,0.5);
-  box-shadow: 0 0 10px rgba(255,255,255,0.22);
-  transform: scale(1.04);
-}
-body.morning .opt-btn { background: rgba(255,255,255,0.15); color: var(--morning-text); border-color: rgba(255,255,255,0.25); }
-body.night .opt-btn { background: rgba(255,255,255,0.05); color:#fff; border-color: rgba(255,255,255,0.12); }
-body.morning .opt-btn.selected { background: rgba(255,255,255,0.35); border-color: rgba(255,255,255,0.5); }
-body.night .opt-btn.selected { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.4); }
-
-/* ===============================================
-   QUESTIONS + ICONS
-================================================= */
-.question-with-icon { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:12px; text-align:center; }
-.question-text { font-size:18px; font-weight:600; color:#f0f4ff; }
-.question-icon {
-  width:38px; height:38px; border-radius:50%;
-  background: rgba(255,255,255,0.12);
-  display:flex; justify-content:center; align-items:center;
-  flex-shrink:0;
-  transition: background 0.25s, transform 0.2s;
-}
-.question-icon img { width:60%; height:60%; filter:invert(1); }
-.question-icon.special-icon img { width:80%; height:80%; }
-.question-icon:hover { background: rgba(255,255,255,0.25); transform: scale(1.1); }
-
-/* ===============================================
-   DRINK COUNTERS
-================================================= */
-.drink-pill { display:flex; align-items:center; gap:6px; margin-bottom:12px; background:none; border:none; padding:4px 0; }
-.drink-label { font-size:18px; font-weight:500; color:#fff; min-width:72px; }
-
-.drink-pill:hover .icon-circle { background: rgba(255,255,255,0.25); transform: scale(1.05); }
-.drink-pill:hover .counter-icon { transform: scale(1.06); opacity:0.95; }
-
-.counter-inner { display:flex; align-items:center; gap:4px; }
-.counter-inner .minus, .counter-inner .plus { background:none; border:none; color:#fff; font-weight:700; font-size:22px; cursor:pointer; padding:0 3px; transition: opacity 0.16s; }
-.counter-inner .minus:hover, .counter-inner .plus:hover { opacity:0.72; }
-.counter-inner span[id^="count-"] { color:#fff; font-size:18px; min-width:20px; text-align:center; }
-.drink-counter { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-
-.counter-btn { background:transparent; border:none; color:#fff; font-size:20px; cursor:pointer; padding:0 6px; }
-.counter-btn:focus { outline:none; }
-
-   /* ===============================================
-         secondary icons
- ================================================= */
-.icon-circle img.counter-icon {
-  width: 70%;
-  height: 70%;
-  max-width: 52px;
-  max-height: 52px;
-  filter: invert(1); /* ok if icons are black */
-  opacity: 0.9;
-}
-
-   .icon-circle {
-  width: 40px; 
-  height: 40px; 
-  border-radius: 50%;
-  background: rgba(255,255,255,0.15);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 6px;
-  flex-shrink: 0; /* prevent parent from shrinking it */
-  transition: background 0.25s ease, transform 0.2s ease;
-}
-
-/* ===============================================
-   MENU
-================================================= */
+/* SETTINGS MENU */
 .settings-menu {
   position: fixed; top:0; left:0; height:100vh; width:50%;
   background: rgba(0,0,0,0.7); backdrop-filter: blur(18px) saturate(180%);
@@ -305,599 +70,144 @@ body.night .opt-btn.selected { background: rgba(255,255,255,0.25); border-color:
 .menu-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition: opacity 0.3s ease; z-index:150; }
 .menu-overlay.show { opacity:1; pointer-events:all; }
 
-/* ===============================================
-   CARDS & QUESTIONS
-================================================= */
-main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
-.progress-wrap { display:flex; align-items:center; margin-bottom:12px; }
-.progress { flex:1.2; height:10px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.06); }
-.bar { height:100%; width:0%; background:linear-gradient(90deg,rgba(255,255,255,0.15),rgba(255,255,255,0.3)); border-radius:8px; transition:width 0.25s; }
-.question { font-size:18px; margin-bottom:12px; font-weight:600; color:#f0f4ff; }
-.options { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.options.column-options { display:flex; flex-direction:column; gap:8px; }
-
-/* ===============================================
-   MORNING CHECKLIST
-================================================= */
-.checklist { display:flex; flex-direction:column; gap:8px; padding-bottom:60px; }
-.checklist-title { font-size:18px; font-weight:600; color:#f0f4ff; margin-bottom:12px; text-align:center; }
-.check-item { display:flex; align-items:center; margin-bottom:8px; padding:10px 14px; border-radius:16px; background:rgba(255,255,255,0.05); cursor:pointer; transition:background 0.2s ease; }
-.check-item:hover { background:rgba(255,255,255,0.1); }
-.check-text { font-weight:500; color:#f0f4ff; }
-.check-item.selected .check-text { text-decoration:line-through; opacity:0.6; }
-.checklist-wrapper { max-height:60vh; overflow-y:auto; -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
-
-/* ===============================================
-   BACK NEXT BUTTONS
-================================================= */
-.controls { display:flex; gap:10px; justify-content:space-between; margin-top:16px; }
-.back-btn, .next-btn {
-  background:rgba(255,255,255,0.15); color:#f0f4ff; font-weight:700;
-  border:0; padding:12px 16px; border-radius:12px; cursor:pointer; backdrop-filter:blur(6px);
-  transition:opacity 0.2s;
+/* HISTORY */
+.wrap { max-width: 740px; margin: 0 auto; padding-top: 10px; }
+.day-entry {
+  background: rgba(255,255,255,0.05);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
 }
-.back-btn:hover, .next-btn:hover { opacity:0.85; }
-.back-btn[disabled], .next-btn[disabled] { opacity:0.5; cursor:not-allowed; }
-.done-note { font-size:20px; text-align:center; font-weight:700; margin-top:80px; }
-
-.back-to-checklist {
-  display:inline-block; margin-top:40px; padding:10px 18px; border:none; border-radius:20px;
-  background: rgba(255,255,255,0.15); color:#f0f4ff; font-size:16px; font-weight:500; cursor:pointer;
-  transition: background 0.25s ease, transform 0.2s ease;
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.back-to-checklist:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
-
-   /* ===============================================
-   ANIMATIONS
-================================================= */
-@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-@keyframes slideUp { from{transform:translateY(40px); opacity:0;} to{transform:translateY(0); opacity:1;} }
-
-/* ===============================================
-   RESPONSIVE / MOBILE
-================================================= */
-@media (max-width:480px) { 
-  body{padding:12px;}
-  .opt-btn, .counter-btn{font-size:16px;padding:12px;}
-  .counter-icon{width:20px;height:20px;}
-  input[type=time]{font-size:16px;padding:12px;}
+.day-header h3 { margin: 0; font-size: 1.1rem; }
+.day-actions { display: flex; gap: 8px; }
+.mini-btn {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s ease;
 }
+.mini-btn:hover { background: rgba(255,255,255,0.25); }
+.mini-btn.delete { background: rgba(255,50,50,0.25); }
+.mini-btn.delete:hover { background: rgba(255,50,50,0.4); }
 
+/* FOOTER NAV */
+.footer-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
+  background: rgba(0,0,0,0.35); backdrop-filter: blur(14px) saturate(180%);
+  display: flex; justify-content: center; align-items: center; gap: 28px;
+  border-top: 1px solid rgba(255,255,255,0.15); z-index: 100;
+}
+.footer-nav .switch-btn {
+  background: transparent; border: none; border-radius: 50%; padding: 10px;
+  transition: transform 0.25s, background 0.25s;
+}
+.footer-nav .switch-btn img {
+  width: 32px; height: 32px; filter: invert(1); opacity: 0.6;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.footer-nav .switch-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
+.footer-nav .switch-btn.active img { opacity: 1; transform: scale(1.2); }
 </style>
 </head>
-<body class="morning">
-  <!-- Sticky header -->
-  <header id="topHeader">
-    <div id="dayOfWeek">Monday</div>
-    <button id="btnSettings">☰</button>
-  </header>
+<body class="night">
 
-  <!-- Menu overlay & settings -->
-  <div id="menuOverlay" class="menu-overlay"></div>
-  <div id="settingsMenu" class="settings-menu">
-    <button id="btnExport">Export data</button>
-    <button id="btnClearToday">Clear Today's Data</button>
-  </div>
+<header id="topHeader">
+  <div id="dayOfWeek">History</div>
+  <button id="btnSettings">☰</button>
+</header>
 
-  <!-- Main content wrapper -->
-  <div class="wrap">
-    <main class="card">
-      <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div></div>
-      <div id="contentArea"></div>
-      <div class="controls">
-        <button class="back-btn" id="backBtn">Back</button>
-        <button class="next-btn" id="nextBtn">Next</button>
-      </div>
-    </main>
-  </div>
+<!-- Menu overlay & settings -->
+<div id="menuOverlay" class="menu-overlay"></div>
+<div id="settingsMenu" class="settings-menu">
+  <button id="btnExport">Export data</button>
+  <button id="btnClearToday">Clear Today's Data</button>
+</div>
 
-  <!-- Sticky footer nav -->
-  <footer class="footer-nav">
-    <button class="switch-btn morning" id="morningBtn">
-      <img src="icons/sun.svg" alt="Morning">
-    </button>
-    <button class="switch-btn night" id="nightBtn">
-      <img src="icons/night.svg" alt="Night">
-    </button>
-    <button class="switch-btn history" id="historyBtn">
-      <img src="icons/history.svg" alt="History">
-    </button>
-    <button class="switch-btn data" id="dataBtn">
-      <img src="icons/data.svg" alt="Data">
-    </button>
-  </footer>
-</body>
+<div class="wrap" id="historyContainer"></div>
+
+<footer class="footer-nav">
+  <button class="switch-btn morning" id="morningBtn"><img src="icons/day.svg" alt="Morning"></button>
+  <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
+  <button class="switch-btn history active" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
+  <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"></button>
+</footer>
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+const container = document.getElementById('historyContainer');
 
-
-   let currentIndex = 0;
-let answers = {};
-let switchTimeout;
-
-   
-   /* ---------- EDIT MODE ---------- */
-const params = new URLSearchParams(window.location.search);
-const isEdit = params.get('edit') === 'true';
-let editingDate = localStorage.getItem('editDate'); // day being edited
-let editAnswers = null;
-
-// Force morning mode if editing
-if (isEdit && editingDate) {
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const existing = all[editingDate]?.morning?.answers; // always start in morning mode
-    if (existing) {
-        editAnswers = existing;
-        answers = { ...existing }; // preload saved answers
-        currentIndex = 0;         // start at first question
-    }
-
-// Force morning mode
-    document.body.classList.add('morning');
-    document.body.classList.remove('night');
-}
-
-// Replace getTodayDate to use editingDate if present
-function getTodayDate() {
-    return editingDate || new Date().toLocaleDateString('en-GB');
-}
-
-  /* ---------- QUESTIONS ---------- */
-  const MORNING = [
-    { key: 'wake_time', type: 'time', label: 'What time did you wake up?', icon: 'alarm.svg' },
-    { key: 'how_slept', type: 'single', label: 'How do you think you slept?', options: [
-      'Went to bed late but slept in','Went to bed late but woke early',
-      'Went to bed early but woke really early',"Couldn't fall asleep",
-      'Lightly disrupted','Frequently disrupted','Fine'
-    ], autoNext:true, icon: 'zzz.svg' }
-  ];
-
-  const MORNING_CHECKLIST_ITEMS = [
-   { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
-    { key: 'made_bed', label: 'Make bed', icon: 'bedsheet.svg' },
-    { key: 'kettle', label: 'Boil kettle', icon: 'kettle1.svg' },
-    { key: 'took_meds_morn', label: 'Take meds', icon: 'blister.svg' },
-    { key: 'tidy_up', label: 'Tidy up', icon: 'sweep.svg' },
-    { key: 'tea', label: 'Have tea', icon: 'tea.svg' },
-    { key: 'poop', label: 'Poop', icon: 'poop.svg' },
-    { key: 'shower_morn', label: 'Shower', icon: 'shower.svg' },
-     { key: 'get_dressed', label: 'Get dressed', icon: 'hanger.svg' },
-    { key: 'led_mask_morn', label: 'LED mask', icon: 'led.svg' },
-    { key: 'skincare_morn', label: 'Skincare', icon: 'skincare2.svg' },
-    { key: 'eat_breakfast', label: 'Breakfast', icon: 'break2.svg' },
-    { key: 'supplements_morn', label: 'Supplements', icon: 'supplements-cropped.svg' },
-    { key: 'brush_teeth_morn', label: 'Brush teeth', icon: 'toothbrush.svg' }
-  ];
-
-  const NIGHT = [
-    { key: 'psyillium', type: 'single', label: 'Did you take psyllium?', options: ['Yes','No'], autoNext:true, icon:'grain.svg' },
-    { key: 'magnesium', type: 'single', label: 'Did you take magnesium?', options:['Yes','No'], autoNext:true, icon:'mg.svg' },
-    { key: 'pillowcase', type: 'single', label: 'Did you change pillowcase?', options:['Yes','No'], autoNext:true, icon:'pillow.svg'},
-    { key: 'shower_night', type: 'single', label:'Did you shower?', options:['Yes','No'], autoNext:true, icon:'shower.svg' },
-    { key: 'skincare_night', type: 'single', label:'Did you do skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true, icon:'skincare2.svg' },
-    { key: 'teeth_night', type:'single', label:'Did you brush teeth?', options:['Once','Twice','None'], autoNext:true, icon:'toothbrush.svg' },
-    { key: 'flossed', type:'single', label:'Did you floss teeth?', options:['Once','Twice','None'], autoNext:true, icon:'floss.svg' },
-    { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true, icon:'key.svg' },
-    { key: 'day_description', type:'single', label:'How was today?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true, icon:'clock.svg' },
-    { key: 'caffeine_alcohol', type:'multi', label:'How much caffeine / alcohol?', options:['Coffee','Tea','Beer','Spirits','Wine','Mate'], icon:'beans.svg' },
-    { key: 'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','None'], icon:'health.svg' },
-    {key:'saw_dogs', type:'single', label:'Did you see the dogs today?', options:['Little ones','Yes','No'], autoNext:true, icon:'dog.svg'},
-    {key:'feel_with_L', type:'single', label:'How do you feel with L today?', options:['Elated','Sensitive','Pretty good','Fine','Irritated','Somewhat insecure','Anxiously insecure','Anguish'], autoNext:true, icon: 'l.svg'},
-    {key:'house_state', type:'single', label:'What is the state of the house?', options:['Disaster','Very messy','A bit messy','Fine - a few dishes','Pretty tidy','Spotless'], autoNext:true, icon: 'dirty.svg' },
-    {key:'drove', type:'single', label:'Did you drive today?', options:['No','<30 mins','30 mins+','1h+'], autoNext:true, icon: 'drive.svg' },
-    {key:'body_feelings', type:'single', label:'Feeling about your body?', options:["Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"], autoNext:true, icon: 'body.svg'},
-    {key:'food_desc', type:'single', label:'How did you eat?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions'], autoNext:true, icon: 'veg.svg' },
-    {key:'most_prominent', type:'multi', label:'What is most prominent?', options:['Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD', 'None'], autoNext:true, icon: 'mh.svg'  },
-    {key:'meds', type:'multi', label:'Any extra medication?', options:['1mg benzo','Painkillers','2mg benzo','Antisickness','3mg benzo','Antihistamine','D-Mannose','Antibiotic', 'Antinausea', 'None'], icon: 'meds.svg' },
-    { key: 'sensory_triggers', type:'multi', label:'Any sensory triggers?', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','None'], icon:'sense.svg' },
-    { key: 'appointments', type:'multi', label:'Did you have appointments?', options:['Psych','Therapy (online)','Therapy','Doctor','Blood tests','None'], icon:'dr.svg' },
-    { key: 'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','None'], icon:'move.svg' },
-    { key: 'talked_to_anyone', type:'multi', label:'Who did you talk to?', options:['General public','Health professional','Acquaintances','Friends','Friends of L','Family','None'], icon:'speak.svg' },
-    { key: 'wellness', type:'multi', label:'Do any wellness shit?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','None'], icon:'lotus.svg' },
-    { key: 'creative', type:'multi', label:'Do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','None'], icon:'paint.svg' },
-    { key: 'closed_eyes_time', type:'time', label:'What time are you closing your eyes?', autoNext:true, icon:'sleeptime.svg', specialIcon:true }
-  ];
-
-  /* ---------- DOM ELEMENTS ---------- */
-  const contentArea = document.getElementById('contentArea');
-  const backBtn = document.getElementById('backBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const progressBar = document.getElementById('progressBar');
-  const btnSettings = document.getElementById('btnSettings');
-  const settingsMenu = document.getElementById('settingsMenu');
-document.getElementById('historyBtn').addEventListener('click', () => {
-  window.location.href = 'history.html';
-});
-
-  const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
-  const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
-
-if (isEdit && editingDate) {
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const existing = all[editingDate]?.morning?.answers; // always start in morning mode
-
-    if (existing) {
-        editAnswers = existing;
-        answers = {...existing}; // preload saved answers
-        currentIndex = 0;        // start at first question
-    }
-
-    // Update header
-    const header = document.getElementById('dayOfWeek');
-    if (header) header.textContent = `Editing ${editingDate}`;
-
-    // Force morning mode
-    document.body.classList.add('morning');
-    document.body.classList.remove('night');
-}
-
-function loadSavedData() {
+function loadHistory() {
+  container.innerHTML = '';
   const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const day = getTodayDate();
-  if (all[day]) {
-    answers = all[day].answers || {};
-    currentIndex = all[day].currentIndex || 0;
-  } else {
-    answers = {};
-    currentIndex = 0;
-  }
-}
+  const days = Object.keys(all).sort(
+    (a, b) => new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-'))
+  );
 
-function saveData() {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const day = getTodayDate();
-
-  // Store all answers for the day in a single object, overwriting any previous save
-  all[day] = {
-    answers: answers,
-    currentIndex: currentIndex,
-    mode: getMode() // optional: keeps track if it was morning/night last
-  };
-
-  localStorage.setItem('dailyTrackerData', JSON.stringify(all));
-}
-
-// Make sure data is saved before leaving the page
-window.addEventListener('beforeunload', saveData);
-
-  /* ---------- MODE SWITCH ---------- */
-function switchMode(mode) {
-  saveData();
-  document.body.classList.toggle('morning', mode === 'morning');
-  document.body.classList.toggle('night', mode === 'night');
-  // Don't reset answers/currentIndex here
-  loadSavedData();
-  loadUI();
-}
-
-  document.getElementById('morningBtn').onclick = () => switchMode('morning');
-  document.getElementById('nightBtn').onclick = () => switchMode('night');
-
-  /* ---------- UI RENDER ---------- */
- function loadUI() {
-  const mode = getMode();
-  const questions = getQuestions();
-
-  // Show progress bar
-  progressBar.parentElement.style.display = 'block';
-
-  // Morning checklist
-  if (mode === 'morning' && currentIndex >= MORNING.length) {
-    loadMorningChecklist();
+  if (days.length === 0) {
+    container.innerHTML = '<p>No history yet.</p>';
     return;
   }
 
-  // Night completion
-  if (mode === 'night' && currentIndex >= NIGHT.length) {
-    contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
-    backBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-    updateProgressBar();
-    return;
-  }
-
-  // Current question
-  const q = questions[currentIndex];
-
-function updateDayOfWeek() {
-  const dayOfWeekElement = document.getElementById('dayOfWeek');
-  const today = new Date();
-
-  // Format options
-  const options = { weekday: 'long', month: 'short', day: 'numeric' };
-  const formattedDate = today.toLocaleDateString('en-US', options);
-
-  dayOfWeekElement.textContent = formattedDate; // e.g., "Thursday, Nov 13"
-}
-
-// Call on load
-updateDayOfWeek();
-
-
-    // ------ funcion UI -------- //
-  // Build question header with optional icon
-  let questionHeader = '';
-  if (q.icon) {
-    const specialClass = q.specialIcon ? ' special-icon' : '';
-    questionHeader = `
-      <div class="question-with-icon">
-        <div class="question-icon${specialClass}">
-          <img src="icons/${q.icon}" alt="${q.label}">
-        </div>
-        <span class="question-text">${q.label}</span>
-      </div>
-    `;
-  } else {
-    questionHeader = `<div class="question">${q.label}</div>`;
-  }
-
-  // Start HTML with question header
-let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
-
-  // Render options
- if (q.type === 'single') {
-  q.options.forEach(opt => {
-    const selected = answers[q.key] === opt ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-  });
-} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-  if (!answers[q.key]) answers[q.key] = {};
-  q.options.forEach(opt => {
-    const count = answers[q.key][opt] || 0;
-    html += `
-      <div class="opt-btn drink-pill">
-        <span style="flex:1">${opt}</span>
-        <div class="counter-inner">
-          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
-          <span id="count-${opt}">${count}</span>
-          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+  days.forEach(day => {
+    const entry = document.createElement('div');
+    entry.className = 'day-entry';
+    entry.innerHTML = `
+      <div class="day-header">
+        <h3>${day}</h3>
+        <div class="day-actions">
+          <button class="mini-btn" onclick="editEntry('${day}')">Edit</button>
+          <button class="mini-btn delete" onclick="deleteEntry('${day}')">Delete</button>
         </div>
       </div>
     `;
+    container.appendChild(entry);
   });
-} else if (q.type === 'multi') {
-  if (!answers[q.key]) answers[q.key] = [];
-  q.options.forEach(opt => {
-    const selected = answers[q.key].includes(opt) ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-  });
-} else if (q.type === 'time') {
-  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
 }
 
-
-  // Close .options div
-  html += '</div>';
-
-  contentArea.innerHTML = html;
-
-  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-  nextBtn.style.display = 'inline-block';
-  updateProgressBar();
-}
-
-  /* ---------- SELECT OPTION ---------- */
-  window.selectOption = (opt) => {
-    const q = getQuestions()[currentIndex];
-    answers[q.key] = opt;
-    saveData();
-    updateProgressBar();
-    if (q.autoNext) { currentIndex++; loadUI(); }
-  };
-
-  /* ---------- MULTI OPTION TOGGLE ---------- */
-window.toggleMultiOption = (qKey, opt) => {
-  if (!answers[qKey]) answers[qKey] = [];
-
-  const selected = answers[qKey].includes(opt);
-
-  if (opt === 'None') {
-    // If "None" is selected, deselect all others
-    answers[qKey] = selected ? [] : ['None'];
-  } else {
-    // Deselect "None" if selecting any other option
-    answers[qKey] = answers[qKey].filter(o => o !== 'None');
-    if (!selected) answers[qKey].push(opt);
-    else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
+function deleteEntry(day) {
+  if (confirm(`Delete all data for ${day}?`)) {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    delete all[day];
+    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+    loadHistory();
   }
-
-  saveData();
-  loadUI();
-
-  // Auto-next if "None" is selected
-  const q = getQuestions()[currentIndex];
-  if (opt === 'None' && !selected && q.autoNext) {
-    currentIndex++;
-    loadUI();
-  }
-};
-
-  /* ---------- COUNTERS ---------- */
-  window.updateCounter = (opt,delta) => {
-    if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
-    let val = answers['caffeine_alcohol'][opt] || 0;
-    val += delta; if (val < 0) val = 0;
-    answers['caffeine_alcohol'][opt] = val;
-    const el = document.getElementById(`count-${opt}`);
-    if (el) el.textContent = val;
-    saveData(); updateProgressBar();
-  };
-
-  /* ---------- BACK / NEXT ---------- */
-  backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
-  nextBtn.onclick = () => { currentIndex++; loadUI(); };
-
-  /* ---------- MORNING CHECKLIST ---------- */
-function loadMorningChecklist() {
-  let html = `
-    <div class="checklist-title">Morning Routine</div>
-    <div class="checklist-wrapper">
-      <div class="checklist">
-        ${MORNING_CHECKLIST_ITEMS.map(item => {
-          const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-          return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-<div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
-            <span class="check-text">${item.label}</span>
-          </div>`;
-        }).join('')}
-        <div style="height:80px;"></div> <!-- extra bottom padding -->
-      </div>
-    </div>
-  `;
-
-  contentArea.innerHTML = html;
-  backBtn.style.display = 'inline-block';
-  nextBtn.style.display = 'inline-block';
-  updateProgressBar();
-  checkMorningCompletion();
 }
 
-  window.toggleChecklist = (key) => {
-    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
-    document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`).forEach(el => el.classList.toggle('selected', answers[key]==='Yes'));
-    saveData(); updateProgressBar(); checkMorningCompletion();
-     
-// Auto-scroll when checking the last visible item
-const wrapper = document.querySelector('.checklist-wrapper');
-const items = wrapper.querySelectorAll('.check-item');
-
-const wrapperBottom = wrapper.scrollTop + wrapper.clientHeight;
-
-items.forEach((item, i) => {
-    const itemTop = item.offsetTop;
-    const itemBottom = itemTop + item.offsetHeight;
-
-    const isLastVisible =
-        itemBottom <= wrapperBottom &&
-        (items[i+1] ? items[i+1].offsetTop > wrapperBottom : true);
-
-    if (isLastVisible && item.classList.contains('selected')) {
-
-        // ★ NEW FIX: Scroll so this same item becomes the 3rd item from the top
-        const targetScroll =
-            itemTop - (wrapper.clientHeight * 0.25); // top buffer so items never disappear
-
-        wrapper.scrollTo({
-            top: Math.max(0, targetScroll),
-            behavior: 'smooth'
-        });
-    }
-});
-
-  function checkMorningCompletion() {
-    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
-    if(allDone){
-      contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-      backBtn.style.display='none'; nextBtn.style.display='none';
-      saveData();
-      switchTimeout = setTimeout(()=>switchMode('night'),3000);
-    }
-  }
-
-   function checkDayCompletion() {
-    const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
-
-    const allAnswered = allKeys.every(key => answers[key] === 'Yes');
-
-    if (allAnswered) {
-        showDailyReview();
-    }
+function editEntry(day) {
+  localStorage.setItem('editDate', day);
+  window.location.href = 'index.html?edit=true';
 }
 
-function showDailyReview() {
-    let reviewHtml = `
-        <div class="checklist-title">Daily Review</div>
-        <div class="review-wrapper">
-            <div class="review-list">
-    `;
-
-    // Morning section
-    reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
-    MORNING_CHECKLIST_ITEMS.forEach(item => {
-        reviewHtml += `
-            <div class="review-item">
-                <span>${item.label}</span>
-                <span class="review-answer">${answers[item.key]}</span>
-            </div>
-        `;
-    });
-
-    // Night section
-    reviewHtml += `<div class="review-section-title">Night Checklist</div>`;
-    NIGHT_CHECKLIST_ITEMS.forEach(item => {
-        reviewHtml += `
-            <div class="review-item">
-                <span>${item.label}</span>
-                <span class="review-answer">${answers[item.key]}</span>
-            </div>
-        `;
-    });
-
-    reviewHtml += `
-            </div>
-        </div>
-    `;
-
-    contentArea.innerHTML = reviewHtml;
-
-    backBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-}
-
-  window.returnToMorningChecklist = () => {
-    clearTimeout(switchTimeout);
-    loadMorningChecklist();
-    backBtn.style.display='none'; nextBtn.style.display='none';
-  };
-
-  /* ---------- PROGRESS BAR ---------- */
-  function updateProgressBar() {
-    const isMorning = getMode() === 'morning';
-    const keys = isMorning ? ['wake_time','how_slept', ...MORNING_CHECKLIST_ITEMS.map(i=>i.key)] : NIGHT.map(q=>q.key);
-    let done = 0;
-    keys.forEach(key => {
-      if(MORNING_CHECKLIST_ITEMS.find(i=>i.key===key)) { if(answers[key]==='Yes') done++; }
-      else {
-        const q = NIGHT.find(q=>q.key===key);
-        const val = answers[key];
-        if(q?.type==='multi') { if(val && ((Array.isArray(val) && val.length>0) || (typeof val==='object' && Object.values(val).some(v=>v!==0)))) done++; }
-        else if(val) done++;
-      }
-    });
-    progressBar.style.width = keys.length>0 ? Math.round((done/keys.length)*100)+'%' : '0%';
-  }
-
-  /* ---------- SETTINGS MENU ---------- */
- const menuOverlay = document.getElementById('menuOverlay');
+// SETTINGS MENU
+const btnSettings = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
+const menuOverlay = document.getElementById('menuOverlay');
 
 btnSettings.onclick = () => {
-  const isOpen = settingsMenu.classList.toggle('show');
-  menuOverlay.classList.toggle('show', isOpen);
+  settingsMenu.classList.add('show');
+  menuOverlay.classList.add('show');
 };
-
-// Close menu when clicking outside or on any menu button
 menuOverlay.onclick = () => {
   settingsMenu.classList.remove('show');
   menuOverlay.classList.remove('show');
 };
-document.querySelectorAll('#settingsMenu button').forEach(btn => 
-  btn.addEventListener('click', () => {
-    settingsMenu.classList.remove('show');
-    menuOverlay.classList.remove('show');
-  })
-);
-  document.getElementById('btnClearToday').onclick = () => {
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
-    delete all[getTodayDate()];
-    localStorage.setItem('dailyTrackerData',JSON.stringify(all));
-    answers={}; currentIndex=0; editingDate=null; loadUI();
-    alert("Today's data cleared.");
-  };
 
-  /* ---------- INITIAL LOAD ---------- */
-  loadSavedData();
-  loadUI();
-});
-  </script>
+// Footer navigation
+document.getElementById('morningBtn').onclick = () => window.location.href = 'index.html?mode=morning';
+document.getElementById('nightBtn').onclick = () => window.location.href = 'index.html?mode=night&start=0';
+document.getElementById('dataBtn').onclick = () => window.location.href = 'index.html';
+document.getElementById('historyBtn').onclick = () => location.reload();
+
+loadHistory();
+</script>
+
 </body>
 </html>
