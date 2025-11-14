@@ -793,6 +793,56 @@ items.forEach((item, i) => {
     }
   }
 
+   function checkDayCompletion() {
+    const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
+
+    const allAnswered = allKeys.every(key => answers[key] === 'Yes');
+
+    if (allAnswered) {
+        showDailyReview();
+    }
+}
+
+function showDailyReview() {
+    let reviewHtml = `
+        <div class="checklist-title">Daily Review</div>
+        <div class="review-wrapper">
+            <div class="review-list">
+    `;
+
+    // Morning section
+    reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
+    MORNING_CHECKLIST_ITEMS.forEach(item => {
+        reviewHtml += `
+            <div class="review-item">
+                <span>${item.label}</span>
+                <span class="review-answer">${answers[item.key]}</span>
+            </div>
+        `;
+    });
+
+    // Night section
+    reviewHtml += `<div class="review-section-title">Night Checklist</div>`;
+    NIGHT_CHECKLIST_ITEMS.forEach(item => {
+        reviewHtml += `
+            <div class="review-item">
+                <span>${item.label}</span>
+                <span class="review-answer">${answers[item.key]}</span>
+            </div>
+        `;
+    });
+
+    reviewHtml += `
+            </div>
+        </div>
+    `;
+
+    contentArea.innerHTML = reviewHtml;
+
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+}
+
   window.returnToMorningChecklist = () => {
     clearTimeout(switchTimeout);
     loadMorningChecklist();
