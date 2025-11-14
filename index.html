@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="theme-color" content="#1A1A1A" id="navColor">
 <meta name="viewport" content="width=device-width,initial-scale=1">
    <!-- Theme color for Android navigation bar -->
-<meta name="theme-color" content="#1A1A1A" id="navColor">
 <title>Daily Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -904,25 +904,26 @@ document.querySelectorAll('#settingsMenu button').forEach(btn =>
   loadUI();
 });
 
-function syncNavBarWithFooter() {
+function updateNavBarColor() {
   const footer = document.querySelector('.footer-nav');
-  if (!footer) return;
+  const themeMeta = document.getElementById('themeColor');
 
-  const footerColor = window.getComputedStyle(footer).backgroundColor;
-  
-  // Update meta theme-color dynamically
-  let meta = document.querySelector('meta[name="theme-color"]');
-  if (!meta) {
-    meta = document.createElement('meta');
-    meta.name = 'theme-color';
-    document.head.appendChild(meta);
-  }
-  meta.content = footerColor;
+  if (!footer || !themeMeta) return;
+
+  // Get the REAL rendered color of the footer
+  const footerColor = getComputedStyle(footer).backgroundColor;
+
+  // Override Android nav bar
+  themeMeta.setAttribute("content", footerColor);
 }
 
-// Run on page load
-syncNavBarWithFooter();
-   
+// Run after everything is painted
+window.addEventListener("load", () => {
+  setTimeout(updateNavBarColor, 150);
+});
+
+// Run again if your theme (morning/night) changes
+window.updateNavBarColor = updateNavBarColor; 
   </script>
 </body>
 </html>
