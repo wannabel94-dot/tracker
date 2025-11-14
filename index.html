@@ -511,6 +511,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'history.html';
   });
 
+   document.addEventListener('click', (e) => {
+    if (e.target.id === 'reviewOverrideBtn') {
+        showDailyReview();
+    }
+});
+
+
   const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
   const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
 
@@ -532,6 +539,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.add('morning');
     document.body.classList.remove('night');
   }
+   
+function showReviewOverrideButton() {
+    const btn = document.getElementById('reviewOverrideBtn');
+
+    if (!btn) return; // if HTML not added yet
+
+    if (isEntireDayComplete()) {
+        btn.style.display = 'block';
+    } else {
+        btn.style.display = 'none';
+    }
+}
 
   function loadSavedData() {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
@@ -591,11 +610,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Night completion
     if (mode === 'night' && currentIndex >= NIGHT.length) {
-      contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
+contentArea.innerHTML = `
+    <div class="done-note">Day completed.</div>
+    <button id="reviewOverrideBtn" class="review-override-btn" style="
+        margin-top: 20px;
+        padding: 12px;
+        width: 100%;
+        display: none;
+        border-radius: 10px;
+        border: none;
+        background: #4a4a4a;
+        color: white;
+        font-size: 16px;
+    ">View Daily Review</button>
+`;
       backBtn.style.display = 'none';
       nextBtn.style.display = 'none';
       updateProgressBar();
-
+       
+    showReviewOverrideButton();
+    return;
+}
       // After a short delay, show the review IF day is fully completed (morning + night)
       setTimeout(() => {
         // If everything completed (including morning checklist), show review
