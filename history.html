@@ -21,36 +21,46 @@ body::before {
   background: url("https://i.pinimg.com/736x/5a/62/e0/5a62e0d170bdd225f171db6520d5bb83.jpg") center/cover no-repeat;
 }
 
+/* ==========================
+   HEADER (same as index)
+=========================== */
 #topHeader {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* centers the dayOfWeek */
   position: sticky;
   top: 0;
   left: 0;
   width: 100%;
-  padding: 10px 18px;
-  gap: 12px; /* space between dayOfWeek and menu */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* keeps menu left/right, day centered */
+  padding: 10px 18px; /* same as index */
   z-index: 100;
+  background: transparent; /* no background color */
 }
 
 #dayOfWeek {
-  margin: 0;
+  flex: 1;
+  text-align: center;
   font-size: 1rem;
   font-weight: 600;
-  color: #f0f4ff;
+  color: #f0f4ff; /* same text color as index */
+  margin: 0;
+  pointer-events: none;
 }
 
+/* Settings/Menu button */
 #btnSettings {
-  font-size: 24px;
   background: transparent;
   border: none;
-  cursor: pointer;
+  font-size: 24px;
   color: #fff;
+  cursor: pointer;
   padding: 0;
-
+  z-index: 101;
 }
-#btnSettings:hover { color: #ddd; }
+
+#btnSettings:hover {
+  color: #ddd;
+}
 
 /* SETTINGS MENU */
 .settings-menu {
@@ -141,7 +151,7 @@ body::before {
 <body class="night">
 
 <header id="topHeader">
-  <div id="dayOfWeek">History</div>
+  <div id="dayOfWeek">Monday</div>
   <button id="btnSettings">☰</button>
 </header>
 
