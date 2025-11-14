@@ -608,29 +608,46 @@ function showReviewOverrideButton() {
       return;
     }
 
-    // Night completion
-    if (mode === 'night' && currentIndex >= NIGHT.length) {
-contentArea.innerHTML = `
-    <div class="done-note">Day completed.</div>
-    <button id="reviewOverrideBtn" class="review-override-btn" style="
-        margin-top: 20px;
-        padding: 12px;
-        width: 100%;
-        display: none;
-        border-radius: 10px;
-        border: none;
-        background: #4a4a4a;
-        color: white;
-        font-size: 16px;
-    ">View Daily Review</button>
-`;
-      backBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-      updateProgressBar();
-       
+// Night completion
+if (mode === 'night' && currentIndex >= NIGHT.length) {
+    // Render done-note + review override button
+    contentArea.innerHTML = `
+        <div class="done-note">Day completed.</div>
+        <button id="reviewOverrideBtn" class="review-override-btn" style="
+            margin-top: 20px;
+            padding: 12px;
+            width: 100%;
+            display: none;
+            border-radius: 10px;
+            border: none;
+            background: #4a4a4a;
+            color: white;
+            font-size: 16px;
+        ">View Daily Review</button>
+    `;
+
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+
+    // Show the override button only if the entire day is complete
     showReviewOverrideButton();
+
+    // Add click listener safely here, after button exists
+    const reviewBtn = document.getElementById('reviewOverrideBtn');
+    if (reviewBtn) {
+        reviewBtn.onclick = showDailyReview;
+    }
+
+    // Optional: after a delay, automatically show review if everything is complete
+    setTimeout(() => {
+        if (isEntireDayComplete()) {
+            showDailyReview();
+        }
+    }, REVIEW_DELAY_AFTER_COMPLETE_MS);
+
     return;
 }
+
       // After a short delay, show the review IF day is fully completed (morning + night)
       setTimeout(() => {
         // If everything completed (including morning checklist), show review
