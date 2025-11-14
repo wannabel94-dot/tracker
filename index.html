@@ -757,33 +757,15 @@ function loadMorningChecklist() {
     document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`).forEach(el => el.classList.toggle('selected', answers[key]==='Yes'));
     saveData(); updateProgressBar(); checkMorningCompletion();
      
-// Auto-scroll when checking the last visible item
-const wrapper = document.querySelector('.checklist-wrapper');
-const items = wrapper.querySelectorAll('.check-item');
-
-const wrapperBottom = wrapper.scrollTop + wrapper.clientHeight;
-
-items.forEach((item, i) => {
-    const itemTop = item.offsetTop;
-    const itemBottom = itemTop + item.offsetHeight;
-
-    const isLastVisible =
-        itemBottom <= wrapperBottom &&
-        (items[i+1] ? items[i+1].offsetTop > wrapperBottom : true);
-
-    if (isLastVisible && item.classList.contains('selected')) {
-
-        // ★ NEW FIX: Scroll so this same item becomes the 3rd item from the top
-        const targetScroll =
-            itemTop - (wrapper.clientHeight * 0.25); // top buffer so items never disappear
-
-        wrapper.scrollTo({
-            top: Math.max(0, targetScroll),
-            behavior: 'smooth'
+ // Auto-scroll the clicked item into view
+    const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
+    if (el && answers[key] === 'Yes') {
+        el.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center' // aligns it vertically in the center of wrapper
         });
     }
-});
-
+};
 
   function checkMorningCompletion() {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
