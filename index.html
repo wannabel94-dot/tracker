@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+   <!-- Theme color for Android navigation bar -->
+<meta name="theme-color" content="#1E90FF" id="themeColorMeta">
 <title>Daily Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -901,6 +903,26 @@ document.querySelectorAll('#settingsMenu button').forEach(btn =>
   loadSavedData();
   loadUI();
 });
+
+function updateNavBarColor() {
+  const themeMeta = document.getElementById('themeColorMeta');
+  
+  // Footer color (same for both modes)
+  const footerColor = '#1E90FF'; // solid blue or whatever color you want
+  
+  // Optional: Different color for night mode
+  // const nightColor = '#000000';
+  
+  // Apply the color
+  themeMeta.setAttribute('content', footerColor);
+  
+  // Also update your footer background
+  const footer = document.querySelector('.footer-nav');
+  if (footer) footer.style.background = footerColor;
+}
+
+// Run on page load
+updateNavBarColor();
   </script>
 </body>
 </html>
