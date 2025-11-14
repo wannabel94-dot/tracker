@@ -767,22 +767,21 @@ items.forEach((item, i) => {
     const itemTop = item.offsetTop;
     const itemBottom = itemTop + item.offsetHeight;
 
+    // If the item is the last fully-visible one AND just got checked → scroll
     const isLastVisible =
         itemBottom <= wrapperBottom &&
         (items[i+1] ? items[i+1].offsetTop > wrapperBottom : true);
 
     if (isLastVisible && item.classList.contains('selected')) {
+        // Scroll so the next 3–4 items come into view
+        const nextIndex = Math.min(i + 3, items.length - 1);
+        const targetTop = items[nextIndex].offsetTop;
 
-        // ★ NEW FIX: Scroll so this same item becomes the 3rd item from the top
-        const targetScroll =
-            itemTop - (wrapper.clientHeight * 0.25); // top buffer so items never disappear
-
-        wrapper.scrollTo({
-            top: Math.max(0, targetScroll),
-            behavior: 'smooth'
-        });
+        wrapper.scrollTo({ top: targetTop - 20, behavior: 'smooth' });
     }
 });
+
+};
 
   function checkMorningCompletion() {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
