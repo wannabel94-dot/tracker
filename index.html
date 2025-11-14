@@ -756,23 +756,31 @@ function loadMorningChecklist() {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`).forEach(el => el.classList.toggle('selected', answers[key]==='Yes'));
     saveData(); updateProgressBar(); checkMorningCompletion();
-      // Auto-scroll if the last visible item is checked
-  const wrapper = document.querySelector('.checklist-wrapper');
-  const items = wrapper.querySelectorAll('.check-item');
-  
-  // Count how many items are currently checked
-  let checkedCount = 0;
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].classList.contains('selected')) checkedCount++;
-  if (checkedCount === 6 || checkedCount === 12) {
-            const targetIndex = Math.min(i + 4, items.length - 1);
-            const scrollTarget = items[targetIndex].offsetTop + items[targetIndex].offsetHeight - wrapper.clientHeight + 10;
-            if (scrollTarget > wrapper.scrollTop) {
-                wrapper.scrollTo({ top: scrollTarget, behavior: 'smooth' });
-            }
-            break;
+     
+// Auto-scroll when checking the last visible item
+const wrapper = document.querySelector('.checklist-wrapper');
+const items = wrapper.querySelectorAll('.check-item');
+
+const wrapperBottom = wrapper.scrollTop + wrapper.clientHeight;
+
+items.forEach((item, i) => {
+    const itemTop = item.offsetTop;
+    const itemBottom = itemTop + item.offsetHeight;
+
+    // If the item is the last fully-visible one AND just got checked → scroll
+    const isLastVisible =
+        itemBottom <= wrapperBottom &&
+        (items[i+1] ? items[i+1].offsetTop > wrapperBottom : true);
+
+    if (isLastVisible && item.classList.contains('selected')) {
+        // Scroll so the next 3–4 items come into view
+        const nextIndex = Math.min(i + 3, items.length - 1);
+        const targetTop = items[nextIndex].offsetTop;
+
+        wrapper.scrollTo({ top: targetTop - 20, behavior: 'smooth' });
     }
-  }
+});
+
 };
 
   function checkMorningCompletion() {
