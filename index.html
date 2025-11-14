@@ -38,8 +38,7 @@ body {
 ================================================= */
 /* NIGHT MODE */
 body.night {
-  background: #1a1a1a; /* solid dark color */
-  color: #fff;
+  background: url("images/stars.jpg") center/cover no-repeat;
 }
 
 /* MORNING / DAY MODE */
@@ -143,10 +142,9 @@ body.morning {
   transform: scale(1.2);
 }
 
-/* override day/night mode colors */
-body.morning .footer-nav,
+/* override night mode colors */
 body.night .footer-nav {
-  background: transparent; /* same solid color for both modes */
+  background: 374866;
 }
 
 
