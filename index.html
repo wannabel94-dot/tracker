@@ -409,31 +409,38 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 </body>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  let currentIndex = 0;
-  let answers = {};
-  let switchTimeout;
 
-  /* ---------- EDIT MODE ---------- */
-  const params = new URLSearchParams(window.location.search);
-  const isEdit = params.get('edit') === 'true';
-  let editingDate = localStorage.getItem('editDate'); // day being edited
-  let editAnswers = null;
 
-  if (isEdit && editingDate) {
+   let currentIndex = 0;
+let answers = {};
+let switchTimeout;
+
+   
+   /* ---------- EDIT MODE ---------- */
+const params = new URLSearchParams(window.location.search);
+const isEdit = params.get('edit') === 'true';
+let editingDate = localStorage.getItem('editDate'); // day being edited
+let editAnswers = null;
+
+// Force morning mode if editing
+if (isEdit && editingDate) {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const existing = all[editingDate]?.morning?.answers;
+    const existing = all[editingDate]?.morning?.answers; // always start in morning mode
     if (existing) {
-      editAnswers = existing;
-      answers = { ...existing };
-      currentIndex = 0;
+        editAnswers = existing;
+        answers = { ...existing }; // preload saved answers
+        currentIndex = 0;         // start at first question
     }
+
+// Force morning mode
     document.body.classList.add('morning');
     document.body.classList.remove('night');
-  }
+}
 
-  function getTodayDate() {
+// Replace getTodayDate to use editingDate if present
+function getTodayDate() {
     return editingDate || new Date().toLocaleDateString('en-GB');
-  }
+}
 
   /* ---------- QUESTIONS ---------- */
   const MORNING = [
@@ -446,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   const MORNING_CHECKLIST_ITEMS = [
-    { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
+   { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
     { key: 'made_bed', label: 'Make bed', icon: 'bedsheet.svg' },
     { key: 'kettle', label: 'Boil kettle', icon: 'kettle1.svg' },
     { key: 'took_meds_morn', label: 'Take meds', icon: 'blister.svg' },
@@ -454,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'tea', label: 'Have tea', icon: 'tea.svg' },
     { key: 'poop', label: 'Poop', icon: 'poop.svg' },
     { key: 'shower_morn', label: 'Shower', icon: 'shower.svg' },
-    { key: 'get_dressed', label: 'Get dressed', icon: 'hanger.svg' },
+     { key: 'get_dressed', label: 'Get dressed', icon: 'hanger.svg' },
     { key: 'led_mask_morn', label: 'LED mask', icon: 'led.svg' },
     { key: 'skincare_morn', label: 'Skincare', icon: 'skincare2.svg' },
     { key: 'eat_breakfast', label: 'Breakfast', icon: 'break2.svg' },
@@ -467,14 +474,28 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'magnesium', type: 'single', label: 'Did you take magnesium?', options:['Yes','No'], autoNext:true, icon:'mg.svg' },
     { key: 'pillowcase', type: 'single', label: 'Did you change pillowcase?', options:['Yes','No'], autoNext:true, icon:'pillow.svg'},
     { key: 'shower_night', type: 'single', label:'Did you shower?', options:['Yes','No'], autoNext:true, icon:'shower.svg' },
-    { key: 'skincare_night', type:'single', label:'Did you do skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true, icon:'skincare2.svg' },
+    { key: 'skincare_night', type: 'single', label:'Did you do skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true, icon:'skincare2.svg' },
     { key: 'teeth_night', type:'single', label:'Did you brush teeth?', options:['Once','Twice','None'], autoNext:true, icon:'toothbrush.svg' },
     { key: 'flossed', type:'single', label:'Did you floss teeth?', options:['Once','Twice','None'], autoNext:true, icon:'floss.svg' },
     { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true, icon:'key.svg' },
     { key: 'day_description', type:'single', label:'How was today?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true, icon:'clock.svg' },
     { key: 'caffeine_alcohol', type:'multi', label:'How much caffeine / alcohol?', options:['Coffee','Tea','Beer','Spirits','Wine','Mate'], icon:'beans.svg' },
-    { key: 'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','None'], icon:'health.svg' }
-    // ... add remaining NIGHT questions
+    { key: 'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','None'], icon:'health.svg' },
+    {key:'saw_dogs', type:'single', label:'Did you see the dogs today?', options:['Little ones','Yes','No'], autoNext:true, icon:'dog.svg'},
+    {key:'feel_with_L', type:'single', label:'How do you feel with L today?', options:['Elated','Sensitive','Pretty good','Fine','Irritated','Somewhat insecure','Anxiously insecure','Anguish'], autoNext:true, icon: 'l.svg'},
+    {key:'house_state', type:'single', label:'What is the state of the house?', options:['Disaster','Very messy','A bit messy','Fine - a few dishes','Pretty tidy','Spotless'], autoNext:true, icon: 'dirty.svg' },
+    {key:'drove', type:'single', label:'Did you drive today?', options:['No','<30 mins','30 mins+','1h+'], autoNext:true, icon: 'drive.svg' },
+    {key:'body_feelings', type:'single', label:'Feeling about your body?', options:["Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"], autoNext:true, icon: 'body.svg'},
+    {key:'food_desc', type:'single', label:'How did you eat?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions'], autoNext:true, icon: 'veg.svg' },
+    {key:'most_prominent', type:'multi', label:'What is most prominent?', options:['Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD', 'None'], autoNext:true, icon: 'mh.svg'  },
+    {key:'meds', type:'multi', label:'Any extra medication?', options:['1mg benzo','Painkillers','2mg benzo','Antisickness','3mg benzo','Antihistamine','D-Mannose','Antibiotic', 'Antinausea', 'None'], icon: 'meds.svg' },
+    { key: 'sensory_triggers', type:'multi', label:'Any sensory triggers?', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','None'], icon:'sense.svg' },
+    { key: 'appointments', type:'multi', label:'Did you have appointments?', options:['Psych','Therapy (online)','Therapy','Doctor','Blood tests','None'], icon:'dr.svg' },
+    { key: 'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','None'], icon:'move.svg' },
+    { key: 'talked_to_anyone', type:'multi', label:'Who did you talk to?', options:['General public','Health professional','Acquaintances','Friends','Friends of L','Family','None'], icon:'speak.svg' },
+    { key: 'wellness', type:'multi', label:'Do any wellness shit?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','None'], icon:'lotus.svg' },
+    { key: 'creative', type:'multi', label:'Do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','None'], icon:'paint.svg' },
+    { key: 'closed_eyes_time', type:'time', label:'What time are you closing your eyes?', autoNext:true, icon:'sleeptime.svg', specialIcon:true }
   ];
 
   /* ---------- DOM ELEMENTS ---------- */
@@ -484,136 +505,179 @@ document.addEventListener('DOMContentLoaded', () => {
   const progressBar = document.getElementById('progressBar');
   const btnSettings = document.getElementById('btnSettings');
   const settingsMenu = document.getElementById('settingsMenu');
-  const menuOverlay = document.getElementById('menuOverlay');
-
-  document.getElementById('historyBtn').addEventListener('click', () => {
-    window.location.href = 'history.html';
-  });
+document.getElementById('historyBtn').addEventListener('click', () => {
+  window.location.href = 'history.html';
+});
 
   const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
   const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
 
-  /* ---------- DATA STORAGE ---------- */
-  function loadSavedData() {
+if (isEdit && editingDate) {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const day = getTodayDate();
-    if (all[day]) {
-      answers = all[day].answers || {};
-      currentIndex = all[day].currentIndex || 0;
-    } else {
-      answers = {};
-      currentIndex = 0;
+    const existing = all[editingDate]?.morning?.answers; // always start in morning mode
+
+    if (existing) {
+        editAnswers = existing;
+        answers = {...existing}; // preload saved answers
+        currentIndex = 0;        // start at first question
     }
+
+    // Update header
+    const header = document.getElementById('dayOfWeek');
+    if (header) header.textContent = `Editing ${editingDate}`;
+
+    // Force morning mode
+    document.body.classList.add('morning');
+    document.body.classList.remove('night');
+}
+
+function loadSavedData() {
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  const day = getTodayDate();
+  if (all[day]) {
+    answers = all[day].answers || {};
+    currentIndex = all[day].currentIndex || 0;
+  } else {
+    answers = {};
+    currentIndex = 0;
   }
+}
 
-  function saveData() {
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const day = getTodayDate();
-    all[day] = { answers, currentIndex, mode: getMode() };
-    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
-  }
+function saveData() {
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  const day = getTodayDate();
 
-  window.addEventListener('beforeunload', saveData);
+  // Store all answers for the day in a single object, overwriting any previous save
+  all[day] = {
+    answers: answers,
+    currentIndex: currentIndex,
+    mode: getMode() // optional: keeps track if it was morning/night last
+  };
 
-  /* ---------- DAILY REVIEW ---------- */
-  function showDailyReview() {
-    let reviewHtml = `<div class="checklist-title">Daily Review</div><div class="review-wrapper">`;
+  localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+}
 
-    // Morning checklist items
-    reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
-    MORNING_CHECKLIST_ITEMS.forEach(item => {
-      reviewHtml += `<div class="review-item"><span>${item.label}</span><span class="review-answer">${answers[item.key] || '-'}</span></div>`;
-    });
-
-    // Morning questions
-    reviewHtml += `<div class="review-section-title">Morning Questions</div>`;
-    MORNING.forEach(q => {
-      reviewHtml += `<div class="review-item"><span>${q.label}</span><span class="review-answer">${answers[q.key] || '-'}</span></div>`;
-    });
-
-    // Night questions
-    reviewHtml += `<div class="review-section-title">Night Questions</div>`;
-    NIGHT.forEach(q => {
-      const ans = answers[q.key];
-      let displayAns = '-';
-      if (q.type === 'multi') {
-        if (Array.isArray(ans)) displayAns = ans.join(', ');
-        else if (typeof ans === 'object') displayAns = Object.entries(ans).filter(([k,v])=>v>0).map(([k,v])=>`${k}(${v})`).join(', ');
-      } else displayAns = ans || '-';
-      reviewHtml += `<div class="review-item"><span>${q.label}</span><span class="review-answer">${displayAns}</span></div>`;
-    });
-
-    reviewHtml += `</div></div>`;
-    contentArea.innerHTML = reviewHtml;
-    backBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-  }
+// Make sure data is saved before leaving the page
+window.addEventListener('beforeunload', saveData);
 
   /* ---------- MODE SWITCH ---------- */
-  function switchMode(mode) {
-    saveData();
-    document.body.classList.toggle('morning', mode === 'morning');
-    document.body.classList.toggle('night', mode === 'night');
-    loadSavedData();
-    loadUI();
-  }
+function switchMode(mode) {
+  saveData();
+  document.body.classList.toggle('morning', mode === 'morning');
+  document.body.classList.toggle('night', mode === 'night');
+  // Don't reset answers/currentIndex here
+  loadSavedData();
+  loadUI();
+}
 
   document.getElementById('morningBtn').onclick = () => switchMode('morning');
   document.getElementById('nightBtn').onclick = () => switchMode('night');
 
   /* ---------- UI RENDER ---------- */
-  function loadUI() {
-    const mode = getMode();
-    const questions = getQuestions();
+ function loadUI() {
+  const mode = getMode();
+  const questions = getQuestions();
 
-    progressBar.parentElement.style.display = 'block';
+  // Show progress bar
+  progressBar.parentElement.style.display = 'block';
 
-    // Morning checklist
-    if (mode === 'morning' && currentIndex >= MORNING.length) {
-      loadMorningChecklist();
-      return;
-    }
-
-    // Night completion
-    if (mode === 'night' && currentIndex >= NIGHT.length) {
-      contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
-      backBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-      updateProgressBar();
-      setTimeout(showDailyReview, 3000);
-      return;
-    }
-
-    const q = questions[currentIndex];
-
-    // Update Day Header
-    const dayOfWeekElement = document.getElementById('dayOfWeek');
-    const today = new Date();
-    const options = { weekday: 'long', month: 'short', day: 'numeric' };
-    dayOfWeekElement.textContent = today.toLocaleDateString('en-US', options);
-
-    // Build HTML
-    let html = '';
-    if (q.icon) {
-      html += `<div class="question-with-icon"><div class="question-icon${q.specialIcon?' special-icon':''}"><img src="icons/${q.icon}" alt="${q.label}"></div><span class="question-text">${q.label}</span></div>`;
-    } else html += `<div class="question">${q.label}</div>`;
-    html += `<div class="options${q.key==='how_slept'?' column-options':''}">`;
-
-    if (q.type === 'single') {
-      q.options.forEach(opt => html += `<button class="opt-btn ${answers[q.key]===opt?'selected':''}" onclick="selectOption('${opt}')">${opt}</button>`);
-    } else if (q.type === 'multi') {
-      if (!answers[q.key]) answers[q.key] = [];
-      q.options.forEach(opt => html += `<button class="opt-btn ${answers[q.key].includes(opt)?'selected':''}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`);
-    } else if (q.type === 'time') {
-      html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
-    }
-
-    html += '</div>';
-    contentArea.innerHTML = html;
-    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-    nextBtn.style.display = 'inline-block';
-    updateProgressBar();
+  // Morning checklist
+  if (mode === 'morning' && currentIndex >= MORNING.length) {
+    loadMorningChecklist();
+    return;
   }
+
+  // Night completion
+if (mode === 'night' && currentIndex >= NIGHT.length) {
+    contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    updateProgressBar();
+
+    // Show daily review 3 seconds later
+    setTimeout(showDailyReview, 3000);
+    return;
+}
+
+  // Current question
+  const q = questions[currentIndex];
+
+function updateDayOfWeek() {
+  const dayOfWeekElement = document.getElementById('dayOfWeek');
+  const today = new Date();
+
+  // Format options
+  const options = { weekday: 'long', month: 'short', day: 'numeric' };
+  const formattedDate = today.toLocaleDateString('en-US', options);
+
+  dayOfWeekElement.textContent = formattedDate; // e.g., "Thursday, Nov 13"
+}
+
+// Call on load
+updateDayOfWeek();
+
+
+    // ------ funcion UI -------- //
+  // Build question header with optional icon
+  let questionHeader = '';
+  if (q.icon) {
+    const specialClass = q.specialIcon ? ' special-icon' : '';
+    questionHeader = `
+      <div class="question-with-icon">
+        <div class="question-icon${specialClass}">
+          <img src="icons/${q.icon}" alt="${q.label}">
+        </div>
+        <span class="question-text">${q.label}</span>
+      </div>
+    `;
+  } else {
+    questionHeader = `<div class="question">${q.label}</div>`;
+  }
+
+  // Start HTML with question header
+let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
+
+  // Render options
+ if (q.type === 'single') {
+  q.options.forEach(opt => {
+    const selected = answers[q.key] === opt ? 'selected' : '';
+    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+  });
+} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+  if (!answers[q.key]) answers[q.key] = {};
+  q.options.forEach(opt => {
+    const count = answers[q.key][opt] || 0;
+    html += `
+      <div class="opt-btn drink-pill">
+        <span style="flex:1">${opt}</span>
+        <div class="counter-inner">
+          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+          <span id="count-${opt}">${count}</span>
+          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+        </div>
+      </div>
+    `;
+  });
+} else if (q.type === 'multi') {
+  if (!answers[q.key]) answers[q.key] = [];
+  q.options.forEach(opt => {
+    const selected = answers[q.key].includes(opt) ? 'selected' : '';
+    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+  });
+} else if (q.type === 'time') {
+  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
+}
+
+
+  // Close .options div
+  html += '</div>';
+
+  contentArea.innerHTML = html;
+
+  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+  nextBtn.style.display = 'inline-block';
+  updateProgressBar();
+}
 
   /* ---------- SELECT OPTION ---------- */
   window.selectOption = (opt) => {
@@ -625,33 +689,229 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   /* ---------- MULTI OPTION TOGGLE ---------- */
-  window.toggleMultiOption = (qKey, opt) => {
-    if (!answers[qKey]) answers[qKey] = [];
-    const selected = answers[qKey].includes(opt);
+window.toggleMultiOption = (qKey, opt) => {
+  if (!answers[qKey]) answers[qKey] = [];
 
-    if (opt === 'None') {
-      answers[qKey] = selected ? [] : ['None'];
-    } else {
-      answers[qKey] = answers[qKey].filter(o => o !== 'None');
-      if (!selected) answers[qKey].push(opt);
-      else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
-    }
+  const selected = answers[qKey].includes(opt);
 
-    saveData();
+  if (opt === 'None') {
+    // If "None" is selected, deselect all others
+    answers[qKey] = selected ? [] : ['None'];
+  } else {
+    // Deselect "None" if selecting any other option
+    answers[qKey] = answers[qKey].filter(o => o !== 'None');
+    if (!selected) answers[qKey].push(opt);
+    else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
+  }
+
+  saveData();
+  loadUI();
+
+  // Auto-next if "None" is selected
+  const q = getQuestions()[currentIndex];
+  if (opt === 'None' && !selected && q.autoNext) {
+    currentIndex++;
     loadUI();
+  }
+};
 
-    const q = getQuestions()[currentIndex];
-    if (opt === 'None' && !selected && q.autoNext) { currentIndex++; loadUI(); }
+  /* ---------- COUNTERS ---------- */
+  window.updateCounter = (opt,delta) => {
+    if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
+    let val = answers['caffeine_alcohol'][opt] || 0;
+    val += delta; if (val < 0) val = 0;
+    answers['caffeine_alcohol'][opt] = val;
+    const el = document.getElementById(`count-${opt}`);
+    if (el) el.textContent = val;
+    saveData(); updateProgressBar();
   };
 
   /* ---------- BACK / NEXT ---------- */
   backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
   nextBtn.onclick = () => { currentIndex++; loadUI(); };
 
+  /* ---------- MORNING CHECKLIST ---------- */
+function loadMorningChecklist() {
+  let html = `
+    <div class="checklist-title">Morning Routine</div>
+    <div class="checklist-wrapper">
+      <div class="checklist">
+        ${MORNING_CHECKLIST_ITEMS.map(item => {
+          const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+          return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+<div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+            <span class="check-text">${item.label}</span>
+          </div>`;
+        }).join('')}
+        <div style="height:80px;"></div> <!-- extra bottom padding -->
+      </div>
+    </div>
+  `;
+
+  contentArea.innerHTML = html;
+  backBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
+  updateProgressBar();
+  checkMorningCompletion();
+}
+
+  window.toggleChecklist = (key) => {
+    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
+    document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`).forEach(el => el.classList.toggle('selected', answers[key]==='Yes'));
+    saveData(); updateProgressBar(); checkMorningCompletion();
+     
+// Auto-scroll when checking the last visible item
+const wrapper = document.querySelector('.checklist-wrapper');
+const items = wrapper.querySelectorAll('.check-item');
+
+const wrapperBottom = wrapper.scrollTop + wrapper.clientHeight;
+
+items.forEach((item, i) => {
+    const itemTop = item.offsetTop;
+    const itemBottom = itemTop + item.offsetHeight;
+
+    const isLastVisible =
+        itemBottom <= wrapperBottom &&
+        (items[i+1] ? items[i+1].offsetTop > wrapperBottom : true);
+
+    if (isLastVisible && item.classList.contains('selected')) {
+
+        // ★ NEW FIX: Scroll so this same item becomes the 3rd item from the top
+        const targetScroll =
+            itemTop - (wrapper.clientHeight * 0.25); // top buffer so items never disappear
+
+        wrapper.scrollTo({
+            top: Math.max(0, targetScroll),
+            behavior: 'smooth'
+        });
+    }
+});
+
+  function checkMorningCompletion() {
+    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
+    if(allDone){
+      contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
+      backBtn.style.display='none'; nextBtn.style.display='none';
+      saveData();
+      switchTimeout = setTimeout(()=>switchMode('night'),3000);
+    }
+  }
+
+   function checkDayCompletion() {
+    const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
+
+    const allAnswered = allKeys.every(key => answers[key] === 'Yes');
+
+    if (allAnswered) {
+        showDailyReview();
+    }
+}
+
+function showDailyReview() {
+    let reviewHtml = `<div class="checklist-title">Daily Review</div><div class="review-wrapper">`;
+
+    // Morning checklist items
+    reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
+    MORNING_CHECKLIST_ITEMS.forEach(item => {
+        reviewHtml += `
+            <div class="review-item">
+                <span>${item.label}</span>
+                <span class="review-answer">${answers[item.key] || '-'}</span>
+            </div>
+        `;
+    });
+
+    // Morning questions
+    reviewHtml += `<div class="review-section-title">Morning Questions</div>`;
+    MORNING.forEach(q => {
+        reviewHtml += `
+            <div class="review-item">
+                <span>${q.label}</span>
+                <span class="review-answer">${answers[q.key] || '-'}</span>
+            </div>
+        `;
+    });
+
+    // Night questions
+    reviewHtml += `<div class="review-section-title">Night Questions</div>`;
+    NIGHT.forEach(q => {
+        const ans = answers[q.key];
+        let displayAns = '-';
+        if (q.type === 'multi') {
+            if (Array.isArray(ans)) displayAns = ans.join(', ');
+            else if (typeof ans === 'object') displayAns = Object.entries(ans).filter(([k,v])=>v>0).map(([k,v])=>`${k}(${v})`).join(', ');
+        } else {
+            displayAns = ans || '-';
+        }
+        reviewHtml += `
+            <div class="review-item">
+                <span>${q.label}</span>
+                <span class="review-answer">${displayAns}</span>
+            </div>
+        `;
+    });
+
+    reviewHtml += `</div></div>`;
+    contentArea.innerHTML = reviewHtml;
+
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+}
+
+  window.returnToMorningChecklist = () => {
+    clearTimeout(switchTimeout);
+    loadMorningChecklist();
+    backBtn.style.display='none'; nextBtn.style.display='none';
+  };
+
+  /* ---------- PROGRESS BAR ---------- */
+  function updateProgressBar() {
+    const isMorning = getMode() === 'morning';
+    const keys = isMorning ? ['wake_time','how_slept', ...MORNING_CHECKLIST_ITEMS.map(i=>i.key)] : NIGHT.map(q=>q.key);
+    let done = 0;
+    keys.forEach(key => {
+      if(MORNING_CHECKLIST_ITEMS.find(i=>i.key===key)) { if(answers[key]==='Yes') done++; }
+      else {
+        const q = NIGHT.find(q=>q.key===key);
+        const val = answers[key];
+        if(q?.type==='multi') { if(val && ((Array.isArray(val) && val.length>0) || (typeof val==='object' && Object.values(val).some(v=>v!==0)))) done++; }
+        else if(val) done++;
+      }
+    });
+    progressBar.style.width = keys.length>0 ? Math.round((done/keys.length)*100)+'%' : '0%';
+  }
+
+  /* ---------- SETTINGS MENU ---------- */
+ const menuOverlay = document.getElementById('menuOverlay');
+
+btnSettings.onclick = () => {
+  const isOpen = settingsMenu.classList.toggle('show');
+  menuOverlay.classList.toggle('show', isOpen);
+};
+
+// Close menu when clicking outside or on any menu button
+menuOverlay.onclick = () => {
+  settingsMenu.classList.remove('show');
+  menuOverlay.classList.remove('show');
+};
+document.querySelectorAll('#settingsMenu button').forEach(btn => 
+  btn.addEventListener('click', () => {
+    settingsMenu.classList.remove('show');
+    menuOverlay.classList.remove('show');
+  })
+);
+  document.getElementById('btnClearToday').onclick = () => {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
+    delete all[getTodayDate()];
+    localStorage.setItem('dailyTrackerData',JSON.stringify(all));
+    answers={}; currentIndex=0; editingDate=null; loadUI();
+    alert("Today's data cleared.");
+  };
+
   /* ---------- INITIAL LOAD ---------- */
   loadSavedData();
   loadUI();
 });
-</script>
+  </script>
 </body>
 </html>
