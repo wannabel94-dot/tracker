@@ -545,11 +545,13 @@ function showReviewOverrideButton() {
 
     if (!btn) return; // if HTML not added yet
 
-    if (isEntireDayComplete()) {
-        btn.style.display = 'block';
-    } else {
-        btn.style.display = 'none';
-    }
+function showReviewOverrideButton() {
+    const btn = document.getElementById('reviewOverrideBtn');
+    if (!btn) return;
+
+    const nightDone = NIGHT.every(q => isAnsweredKey(q.key));
+    if (nightDone) btn.style.display = 'block';
+    else btn.style.display = 'none';
 }
 
   function loadSavedData() {
@@ -610,9 +612,8 @@ function showReviewOverrideButton() {
 
 // Night completion
 if (mode === 'night' && currentIndex >= NIGHT.length) {
-    // Render done-note + review override button
     contentArea.innerHTML = `
-        <div class="done-note">Day completed.</div>
+        <div class="done-note">Night completed.</div>
         <button id="reviewOverrideBtn" class="review-override-btn" style="
             margin-top: 20px;
             padding: 12px;
@@ -629,16 +630,15 @@ if (mode === 'night' && currentIndex >= NIGHT.length) {
     backBtn.style.display = 'none';
     nextBtn.style.display = 'none';
 
-    // Show the override button only if the entire day is complete
-    showReviewOverrideButton();
-
-    // Add click listener safely here, after button exists
     const reviewBtn = document.getElementById('reviewOverrideBtn');
     if (reviewBtn) {
         reviewBtn.onclick = showDailyReview;
     }
 
-    // Optional: after a delay, automatically show review if everything is complete
+    // Show the button if all night questions are answered
+    showReviewOverrideButton();
+
+    // Auto-show review after a small delay if entire day is complete
     setTimeout(() => {
         if (isEntireDayComplete()) {
             showDailyReview();
@@ -647,6 +647,7 @@ if (mode === 'night' && currentIndex >= NIGHT.length) {
 
     return;
 }
+
 
       // After a short delay, show the review IF day is fully completed (morning + night)
       setTimeout(() => {
