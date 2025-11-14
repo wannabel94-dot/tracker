@@ -105,16 +105,17 @@ body.morning::before {
   left: 0;
   right: 0;
   height: 70px;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(14px) saturate(180%);
+  background: #1a1a1a; /* change this to any solid color you want */
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 28px;
-  border-top: 1px solid rgba(255,255,255,0.15);
+  border-top: none; /* remove the top border */
   z-index: 100;
+  backdrop-filter: none; /* remove blur/saturation effects */
 }
 
+/* Footer buttons */
 .footer-nav .switch-btn {
   background: transparent;
   border: none;
@@ -122,19 +123,30 @@ body.morning::before {
   padding: 10px;
   transition: transform 0.25s, background 0.25s;
 }
+
 .footer-nav .switch-btn img {
   width: 32px;
   height: 32px;
-  filter: invert(1);
-  opacity: 0.6;
+  opacity: 0.8; /* keeps icons visible */
   transition: opacity 0.3s, transform 0.3s;
 }
+
 .footer-nav .switch-btn:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.1); /* optional hover effect */
   transform: scale(1.1);
 }
-body.morning .footer-nav .switch-btn.morning img { opacity: 1; transform: scale(1.2); }
-body.night .footer-nav .switch-btn.night img { opacity: 1; transform: scale(1.2); }
+
+.footer-nav .switch-btn.active img {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* override day/night mode colors */
+body.morning .footer-nav,
+body.night .footer-nav {
+  background: #1a1a1a; /* same solid color for both modes */
+}
+
 
 /* ===============================================
    TIME INPUT
