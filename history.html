@@ -156,6 +156,52 @@ body::before {
 </footer>
 
 <script>
+// --- CUSTOM LABELS FOR HISTORY REVIEW ---
+const HISTORY_LABELS = {
+  wake_time: "Wake up time",
+  how_slept: "Sleep quality",
+  temp: "Took temperature",
+  made_bed: "Bed made",
+  kettle: "Boiled kettle",
+  took_meds_morn: "Morning meds",
+  tidy_up: "Tidied up",
+  tea: "Had tea",
+  poop: "Bathroom visit",
+  shower_morn: "Morning shower",
+  get_dressed: "Got dressed",
+  led_mask_morn: "LED mask",
+  skincare_morn: "Morning skincare",
+  eat_breakfast: "Breakfast",
+  supplements_morn: "Supplements taken",
+  brush_teeth_morn: "Brushed teeth",
+  psyllium: "Took psyllium",
+  magnesium: "Took magnesium",
+  pillowcase: "Changed pillowcase",
+  shower_night: "Night shower",
+  skincare_night: "Night skincare",
+  teeth_night: "Brushed teeth (night)",
+  flossed: "Flossed",
+  left_house: "Left house",
+  day_description: "Day summary",
+  caffeine_alcohol: "Caffeine / alcohol",
+  sickness: "Symptoms",
+  saw_dogs: "Saw the dogs",
+  feel_with_L: "Feeling with L",
+  house_state: "House state",
+  drove: "Driving",
+  body_feelings: "Body feelings",
+  food_desc: "Eating",
+  most_prominent: "Most prominent mental state",
+  meds: "Extra meds",
+  sensory_triggers: "Sensory triggers",
+  appointments: "Appointments",
+  movement: "Movement",
+  talked_to_anyone: "People interacted with",
+  wellness: "Wellness activities",
+  creative: "Creative activities",
+  closed_eyes_time: "Closed eyes time"
+};
+
 const container = document.getElementById('historyContainer');
 
 function loadHistory() {
@@ -200,7 +246,6 @@ function viewEntry(day) {
   const entry = all[day];
   if (!entry) return alert("No data for this day.");
 
-  // Remove previous view
   const existingView = document.getElementById('entryView');
   if (existingView) existingView.remove();
 
@@ -208,13 +253,13 @@ function viewEntry(day) {
   div.id = 'entryView';
 
   let html = `<h3>${day} — Review</h3>`;
-
   if (entry.answers) {
     html += `<h4>Answers</h4><ul style="padding-left:16px;">`;
     for (const key in entry.answers) {
+      const label = HISTORY_LABELS[key] || key;
       let val = entry.answers[key];
-      if (typeof val === 'object') val = JSON.stringify(val);
-      html += `<li><strong>${key}</strong>: ${val}</li>`;
+      if (Array.isArray(val)) val = val.join(', ');
+      html += `<li><strong>${label}</strong>: ${val}</li>`;
     }
     html += '</ul>';
   } else {
