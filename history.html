@@ -6,24 +6,32 @@
 <title>History</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  
+/* ===============================================
+   GLOBAL SETTINGS
+================================================= */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
 body {
   margin: 0;
   padding: 0 18px 90px;
-  font-family: Inter, sans-serif;
   min-height: 100vh;
-  color: #f0f4ff;
-}
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: url("https://i.pinimg.com/736x/5a/62/e0/5a62e0d170bdd225f171db6520d5bb83.jpg") center/cover no-repeat;
+  color: var(--night-text);
 }
 
-/* ==========================
-   HEADER (same as index)
-=========================== */
+/* ===============================================
+   BACKGROUND
+================================================= */
+  
+body { color:#fff; }
+body::before {
+  content:""; position:fixed; inset:0; z-index:-1;
+  background:url("https://i.pinimg.com/736x/69/44/51/694451017e620165ffc4408bcfa3fdf8.jpg") center/cover no-repeat;
+}
+
+/* ===============================================
+   STICKY HEADER (Day + Menu)
+================================================= */
 #topHeader {
   position: sticky;
   top: 0;
@@ -31,23 +39,23 @@ body::before {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* keeps menu left/right, day centered */
-  padding: 10px 18px; /* same as index */
+  justify-content: space-between;
+  padding: 10px 18px;
   z-index: 100;
-  background: transparent; /* no background color */
 }
 
+/* Day of Week text inside header */
 #dayOfWeek {
   flex: 1;
   text-align: center;
   font-size: 1rem;
   font-weight: 600;
-  color: #f0f4ff; /* same text color as index */
+  color: #f0f4ff;
   margin: 0;
-  pointer-events: none;
+  pointer-events: none; /* text is not interactive */
 }
 
-/* Settings/Menu button */
+/* Settings / Menu button */
 #btnSettings {
   background: transparent;
   border: none;
@@ -62,22 +70,60 @@ body::before {
   color: #ddd;
 }
 
-/* SETTINGS MENU */
-.settings-menu {
-  position: fixed; top:0; left:0; height:100vh; width:50%;
-  background: rgba(0,0,0,0.7); backdrop-filter: blur(18px) saturate(180%);
-  display:flex; flex-direction:column; align-items:stretch;
-  padding:20px 0; transform:translateX(-100%); transition: transform 0.4s ease; z-index:200;
+/* ===============================================
+   WRAP / MAIN CONTENT
+================================================= */
+.wrap {
+  width: 100%;
+  max-width: 740px;
+  margin-top: 40px; /* keeps content below header */
+  display: block; /* important: prevents flex/stretch */
 }
-.settings-menu.show { transform:translateX(0); }
-.settings-menu button {
-  background:transparent; border:none; padding:16px 20px; width:100%; text-align:left;
-  font-weight:600; color:#fff; cursor:pointer; transition: background 0.25s ease, transform 0.2s ease;
-}
-.settings-menu button:hover { background: rgba(255,255,255,0.15); transform: translateX(6px); }
 
-.menu-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition: opacity 0.3s ease; z-index:150; }
-.menu-overlay.show { opacity:1; pointer-events:all; }
+/* ===============================================
+   FIXED FOOTER NAV
+================================================= */
+.footer-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: #1a1a1a; /* change this to any solid color you want */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  border-top: none; /* remove the top border */
+  z-index: 100;
+  backdrop-filter: none; /* remove blur/saturation effects */
+}
+
+/* Footer buttons */
+.footer-nav .switch-btn {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  transition: transform 0.25s, background 0.25s;
+}
+
+.footer-nav .switch-btn img {
+  width: 32px;
+  height: 32px;
+  opacity: 0.8; /* keeps icons visible */
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.footer-nav .switch-btn:hover {
+  background: rgba(255,255,255,0.1); /* optional hover effect */
+  transform: scale(1.1);
+}
+
+.footer-nav .switch-btn.active img {
+  opacity: 1;
+  transform: scale(1.2);
+}
 
 /* HISTORY */
 .wrap { max-width: 740px; margin: 0 auto; padding-top: 10px; }
@@ -120,30 +166,6 @@ body::before {
   margin-bottom: 8px;
   font-size: 1rem;
   font-weight: 600;
-}
-
-/* FOOTER NAV */
-.footer-nav {
-  position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
-  background: rgba(0,0,0,0.35); backdrop-filter: blur(14px) saturate(180%);
-  display: flex; justify-content: center; align-items: center; gap: 28px;
-  border-top: 1px solid rgba(255,255,255,0.15); z-index: 100;
-}
-.footer-nav .switch-btn {
-  background: transparent; border: none; border-radius: 50%; padding: 10px;
-  transition: transform 0.25s, background 0.25s;
-}
-.footer-nav .switch-btn img {
-  width: 32px; height: 32px; filter: invert(1); opacity: 0.6;
-  transition: opacity 0.3s, transform 0.3s;
-}
-.footer-nav .switch-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
-.footer-nav .switch-btn.active img { opacity: 1; transform: scale(1.2); }
-
-@media (max-width:480px) { 
-  .mini-btn {
-    font-size: 16px;
-  }
 }
 
 </style>
