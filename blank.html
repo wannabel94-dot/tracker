@@ -462,6 +462,10 @@ document.querySelectorAll('#settingsMenu button').forEach(btn =>
   })
 );
 
+document.getElementById("dataBtn").addEventListener("click", () => {
+    window.location.href = "data.html";
+});
+   
   /* ---------- INITIAL LOAD ---------- */
   loadSavedData();
   loadUI();
