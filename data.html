@@ -2,161 +2,139 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Monthly Data View</title>
-
+<title>Data Table</title>
 <style>
     body {
-        font-family: Arial, sans-serif;
-        padding-bottom: 80px;
-        margin: 20px;
+        font-family: Inter, sans-serif;
+        padding: 20px;
+        background: #0a0f2c;
+        color: #fff;
     }
 
-    h1 {
-        margin-bottom: 20px;
-    }
+    h2 { margin-top: 0; }
 
     table {
-        border-collapse: collapse;
         width: 100%;
-        font-size: 12px;
+        border-collapse: collapse;
+        background: rgba(255,255,255,0.05);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 20px;
     }
-
-    table th, table td {
-        border: 1px solid #ccc;
-        padding: 6px;
-        text-align: center;
-        vertical-align: top;
+    thead {
+        background: rgba(255,255,255,0.15);
     }
-
-    table th {
-        background: #f0f0f0;
-        font-weight: bold;
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        text-align: left;
+        font-size: 0.9rem;
     }
-
-    footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 60px;
-        background: #222;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        color: white;
+    tr:last-child td {
+        border-bottom: none;
     }
-
-    .switch-btn {
-        color: white;
-        background: none;
-        border: none;
-        font-size: 16px;
-    }
-
 </style>
 </head>
 <body>
 
-<h1>Monthly Overview</h1>
-
-<div id="tableContainer">Loading…</div>
-
-<footer>
-    <button class="switch-btn home" id="homeBtn">Home</button>
-    <button class="switch-btn history" id="historyBtn">History</button>
-    <button class="switch-btn data" id="dataBtn">Data</button>
-    <button class="switch-btn mode" id="modeButton">Mode</button>
-</footer>
+<h2>Data Table</h2>
+<div id="tableContainer"></div>
 
 <script>
-/* -----------------------
-   FOOTER NAVIGATION
------------------------- */
-document.getElementById("homeBtn").addEventListener("click", () => {
-    window.location.href = "index.html";
-});
-document.getElementById("historyBtn").addEventListener("click", () => {
-    window.location.href = "history.html";
-});
-document.getElementById("dataBtn").addEventListener("click", () => {
-    window.location.href = "data.html";
-});
+const LABELS = {
+  wake_time: "Wake Up Time",
+  how_slept: "Sleep Quality",
+  temp: "Took temperature",
+  made_bed: "Made bed",
+  kettle: "Boiled kettle",
+  took_meds_morn: "Morning medication",
+  tidy_up: "Tidied up",
+  tea: "Had tea",
+  poop: "Bathroom visit",
+  shower_morn: "Showered (morning)",
+  get_dressed: "Got dressed",
+  led_mask_morn: "LED mask",
+  skincare_morn: "Skincare morning",
+  eat_breakfast: "Breakfast",
+  supplements_morn: "Supplements",
+  brush_teeth_morn: "Brushed teeth (morning)",
+  psyllium: "Psyllium",
+  magnesium: "Magnesium",
+  pillowcase: "Changed pillowcase",
+  shower_night: "Showered (night)",
+  skincare_night: "Skincare night",
+  teeth_night: "Brushed teeth (night)",
+  flossed: "Flossed",
+  left_house: "Left house",
+  caffeine_alcohol: "Caffeine / Alcohol",
+  sickness: "Symptoms",
+  saw_dogs: "Saw dogs",
+  feel_with_L: "Feeling with L",
+  house_state: "House state",
+  drove: "Driving",
+  body_feelings: "Body feelings",
+  food_desc: "Food",
+  most_prominent: "Most prominent mental state",
+  meds: "Extra meds",
+  sensory_triggers: "Sensory triggers",
+  appointments: "Appointments",
+  movement: "Movement",
+  talked_to_anyone: "Interacted with people",
+  wellness: "Wellness",
+  creative: "Creative",
+  closed_eyes_time: "Closed Eyes Time"
+};
 
-/* -----------------------
-   QUESTIONS (must match index)
------------------------- */
-
-const questions = [
-    { id: "FeelNow", text: "How do you feel right now ?", type: "rating" },
-    { id: "WeekRating", text: "How would you describe your week ?", type: "ratingEx" },
-    { id: "EnergyNow", text: "How much energy do you have right now ?", type: "rating" },
-    { id: "WeekEnergy", text: "How was your energy this week ?", type: "rating" },
-    { id: "StressLevels", text: "How stressed do you feel right now ?", type: "rating" },
-    { id: "StressWeek", text: "How stressed have you been this week ?", type: "rating" },
-    { id: "ChallengesMoment", text: "Are you facing any challenges at the moment ?", type: "options" },
-    { id: "ChallengesWeek", text: "Have you faced any challenges this week ?", type: "options" },
-    { id: "DailySmile", text: "Did something make you smile today ?", type: "options" },
-    { id: "WeeklySmile", text: "Did something make you smile this week ?", type: "options" },
-    { id: "DietDay", text: "How was your diet today ?", type: "options" },
-    { id: "FoodWeek", text: "How was your diet this week ?", type: "options" },
-    { id: "ExerciseMoment", text: "Did you exercise today ?", type: "options" },
-    { id: "ExerciseWeek", text: "Did you exercise this week ?", type: "options" },
-    { id: "SleepQuality", text: "How well did you sleep last night ?", type: "ratingEx" },
-    { id: "SleepWeek", text: "How well have you slept this week ?", type: "ratingEx" },
-    { id: "GratitudeDay", text: "Something you're grateful for today ?", type: "text" },
-    { id: "GratitudeWeek", text: "Something you're grateful for this week ?", type: "text" },
-    { id: "FreeWrite", text: "Write some thoughts for today (optional).", type: "text" }
-];
-
-/* -----------------------
-   LOAD DATA
------------------------- */
-
-const raw = localStorage.getItem("dailyTrackerData");
-const stored = raw ? JSON.parse(raw) : {};
-
-const today = new Date();
-const year = today.getFullYear();
-const month = today.getMonth();
-
-// Days in selected month
-const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-/* -----------------------
-   BUILD TABLE
------------------------- */
+function yesNoToSymbols(value) {
+  if (value === "Yes") return "✓";
+  if (value === "No") return "✗";
+  return value;
+}
 
 function buildTable() {
-    let html = `<table><tr><th>Question</th>`;
+  const data = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
+  const days = Object.keys(data);
 
-    // Column headers → Days
-    for (let d = 1; d <= daysInMonth; d++) {
-        html += `<th>${d}</th>`;
+  if (days.length === 0) {
+    document.getElementById("tableContainer").innerHTML = "<p>No saved data.</p>";
+    return;
+  }
+
+  let html = `<table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Field</th>
+        <th>Value</th>
+      </tr>
+    </thead><tbody>`;
+
+  days.forEach(day => {
+    const entry = data[day];
+
+    if (!entry.answers) return;
+
+    for (const key in entry.answers) {
+      let value = entry.answers[key];
+
+      if (Array.isArray(value)) {
+        value = value.map(v => yesNoToSymbols(v)).join(", ");
+      } else {
+        value = yesNoToSymbols(value);
+      }
+
+      html += `
+        <tr>
+          <td>${day}</td>
+          <td>${LABELS[key] || key}</td>
+          <td>${value}</td>
+        </tr>
+      `;
     }
-    html += `</tr>`;
+  });
 
-    // Rows → Questions
-    for (const q of questions) {
-        html += `<tr><th>${q.text}</th>`;
-
-        for (let d = 1; d <= daysInMonth; d++) {
-
-            const dateKey = `${String(d).padStart(2, "0")}/${String(month+1).padStart(2,"0")}/${year}`;
-            const dayData = stored[dateKey]?.answers || {};
-            let val = dayData[q.id] ?? "";
-
-            // Pretty formatting
-            if (Array.isArray(val)) val = val.join(", ");
-            if (typeof val === "object") val = JSON.stringify(val);
-
-            html += `<td>${val}</td>`;
-        }
-
-        html += `</tr>`;
-    }
-
-    html += `</table>`;
-    document.getElementById("tableContainer").innerHTML = html;
+  html += "</tbody></table>";
+  document.getElementById("tableContainer").innerHTML = html;
 }
 
 buildTable();
