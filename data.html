@@ -1,42 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Data</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding-bottom: 80px; /* prevents footer overlap */
-        }
-        pre {
-            background: #f0f0f0;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: #222;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            color: white;
-        }
-        .switch-btn {
-            color: white;
-            background: none;
-            border: none;
-            font-size: 16px;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Monthly Data View</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding-bottom: 80px;
+        margin: 20px;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 12px;
+    }
+
+    table th, table td {
+        border: 1px solid #ccc;
+        padding: 6px;
+        text-align: center;
+        vertical-align: top;
+    }
+
+    table th {
+        background: #f0f0f0;
+        font-weight: bold;
+    }
+
+    footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: #222;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        color: white;
+    }
+
+    .switch-btn {
+        color: white;
+        background: none;
+        border: none;
+        font-size: 16px;
+    }
+
+</style>
 </head>
 <body>
 
-<h1>Stored Data</h1>
-<pre id="dataOutput">Loading...</pre>
+<h1>Monthly Overview</h1>
+
+<div id="tableContainer">Loading…</div>
 
 <footer>
     <button class="switch-btn home" id="homeBtn">Home</button>
@@ -46,23 +69,97 @@
 </footer>
 
 <script>
-    // Load tracker data
-    const data = localStorage.getItem("dailyTrackerData");
-    document.getElementById("dataOutput").textContent =
-        data ? JSON.stringify(JSON.parse(data), null, 2) : "No data yet.";
+/* -----------------------
+   FOOTER NAVIGATION
+------------------------ */
+document.getElementById("homeBtn").addEventListener("click", () => {
+    window.location.href = "index.html";
+});
+document.getElementById("historyBtn").addEventListener("click", () => {
+    window.location.href = "history.html";
+});
+document.getElementById("dataBtn").addEventListener("click", () => {
+    window.location.href = "data.html";
+});
 
-    // Footer navigation
-    document.getElementById("homeBtn").addEventListener("click", () => {
-        window.location.href = "index.html";
-    });
+/* -----------------------
+   QUESTIONS (must match index)
+------------------------ */
 
-    document.getElementById("historyBtn").addEventListener("click", () => {
-        window.location.href = "history.html";
-    });
+const questions = [
+    { id: "FeelNow", text: "How do you feel right now ?", type: "rating" },
+    { id: "WeekRating", text: "How would you describe your week ?", type: "ratingEx" },
+    { id: "EnergyNow", text: "How much energy do you have right now ?", type: "rating" },
+    { id: "WeekEnergy", text: "How was your energy this week ?", type: "rating" },
+    { id: "StressLevels", text: "How stressed do you feel right now ?", type: "rating" },
+    { id: "StressWeek", text: "How stressed have you been this week ?", type: "rating" },
+    { id: "ChallengesMoment", text: "Are you facing any challenges at the moment ?", type: "options" },
+    { id: "ChallengesWeek", text: "Have you faced any challenges this week ?", type: "options" },
+    { id: "DailySmile", text: "Did something make you smile today ?", type: "options" },
+    { id: "WeeklySmile", text: "Did something make you smile this week ?", type: "options" },
+    { id: "DietDay", text: "How was your diet today ?", type: "options" },
+    { id: "FoodWeek", text: "How was your diet this week ?", type: "options" },
+    { id: "ExerciseMoment", text: "Did you exercise today ?", type: "options" },
+    { id: "ExerciseWeek", text: "Did you exercise this week ?", type: "options" },
+    { id: "SleepQuality", text: "How well did you sleep last night ?", type: "ratingEx" },
+    { id: "SleepWeek", text: "How well have you slept this week ?", type: "ratingEx" },
+    { id: "GratitudeDay", text: "Something you're grateful for today ?", type: "text" },
+    { id: "GratitudeWeek", text: "Something you're grateful for this week ?", type: "text" },
+    { id: "FreeWrite", text: "Write some thoughts for today (optional).", type: "text" }
+];
 
-    document.getElementById("dataBtn").addEventListener("click", () => {
-        window.location.href = "data.html";
-    });
+/* -----------------------
+   LOAD DATA
+------------------------ */
+
+const raw = localStorage.getItem("dailyTrackerData");
+const stored = raw ? JSON.parse(raw) : {};
+
+const today = new Date();
+const year = today.getFullYear();
+const month = today.getMonth();
+
+// Days in selected month
+const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+/* -----------------------
+   BUILD TABLE
+------------------------ */
+
+function buildTable() {
+    let html = `<table><tr><th>Question</th>`;
+
+    // Column headers → Days
+    for (let d = 1; d <= daysInMonth; d++) {
+        html += `<th>${d}</th>`;
+    }
+    html += `</tr>`;
+
+    // Rows → Questions
+    for (const q of questions) {
+        html += `<tr><th>${q.text}</th>`;
+
+        for (let d = 1; d <= daysInMonth; d++) {
+
+            const dateKey = `${String(d).padStart(2, "0")}/${String(month+1).padStart(2,"0")}/${year}`;
+            const dayData = stored[dateKey]?.answers || {};
+            let val = dayData[q.id] ?? "";
+
+            // Pretty formatting
+            if (Array.isArray(val)) val = val.join(", ");
+            if (typeof val === "object") val = JSON.stringify(val);
+
+            html += `<td>${val}</td>`;
+        }
+
+        html += `</tr>`;
+    }
+
+    html += `</table>`;
+    document.getElementById("tableContainer").innerHTML = html;
+}
+
+buildTable();
 </script>
 
 </body>
