@@ -417,6 +417,9 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
     <button class="switch-btn data" id="dataBtn">
       <img src="icons/data.svg" alt="Data">
     </button>
+     <button class="switch-btn blank" id="blankBtn">
+      <img src="icons/balloon.svg" alt="Blank">
+    </button>
   </footer>
 </body>
 <script>
@@ -585,6 +588,9 @@ function switchMode(mode) {
   document.getElementById('morningBtn').onclick = () => switchMode('morning');
   document.getElementById('nightBtn').onclick = () => switchMode('night');
 
+document.getElementById("blankBtn").addEventListener("click", () => {
+    window.location.href = "blank.html";
+   
 document.getElementById("dataBtn").addEventListener("click", () => {
     window.location.href = "data.html";
 });
