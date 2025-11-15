@@ -11,27 +11,43 @@
         color: #fff;
     }
 
-    h2 { margin-top: 0; }
-
     table {
         width: 100%;
         border-collapse: collapse;
+        margin-top: 20px;
         background: rgba(255,255,255,0.05);
         border-radius: 10px;
-        overflow: hidden;
-        margin-top: 20px;
+        overflow-x: scroll;
+        display: block;
+        white-space: nowrap;
     }
+
     thead {
         background: rgba(255,255,255,0.15);
     }
+
     th, td {
         padding: 10px;
         border-bottom: 1px solid rgba(255,255,255,0.1);
         text-align: left;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
+
+    th {
+        font-weight: 600;
+    }
+
     tr:last-child td {
         border-bottom: none;
+    }
+
+    /* Make first column sticky for easier reading */
+    td:first-child, th:first-child {
+        position: sticky;
+        left: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        z-index: 2;
     }
 </style>
 </head>
@@ -44,96 +60,101 @@
 const LABELS = {
   wake_time: "Wake Up Time",
   how_slept: "Sleep Quality",
-  temp: "Took temperature",
-  made_bed: "Made bed",
-  kettle: "Boiled kettle",
-  took_meds_morn: "Morning medication",
-  tidy_up: "Tidied up",
-  tea: "Had tea",
-  poop: "Bathroom visit",
-  shower_morn: "Showered (morning)",
-  get_dressed: "Got dressed",
-  led_mask_morn: "LED mask",
-  skincare_morn: "Skincare morning",
+  temp: "Temperature",
+  made_bed: "Made Bed",
+  kettle: "Kettle",
+  took_meds_morn: "Meds (Morning)",
+  tidy_up: "Tidied Up",
+  tea: "Tea",
+  poop: "Bathroom",
+  shower_morn: "Shower (Morning)",
+  get_dressed: "Dressed",
+  led_mask_morn: "LED Mask",
+  skincare_morn: "Skincare (Morning)",
   eat_breakfast: "Breakfast",
   supplements_morn: "Supplements",
-  brush_teeth_morn: "Brushed teeth (morning)",
+  brush_teeth_morn: "Teeth (Morning)",
   psyllium: "Psyllium",
   magnesium: "Magnesium",
-  pillowcase: "Changed pillowcase",
-  shower_night: "Showered (night)",
-  skincare_night: "Skincare night",
-  teeth_night: "Brushed teeth (night)",
+  pillowcase: "Pillowcase",
+  shower_night: "Shower (Night)",
+  skincare_night: "Skincare (Night)",
+  teeth_night: "Teeth (Night)",
   flossed: "Flossed",
-  left_house: "Left house",
-  caffeine_alcohol: "Caffeine / Alcohol",
+  left_house: "Left House",
+  caffeine_alcohol: "Caffeine/Alcohol",
   sickness: "Symptoms",
-  saw_dogs: "Saw dogs",
-  feel_with_L: "Feeling with L",
-  house_state: "House state",
+  saw_dogs: "Saw Dogs",
+  feel_with_L: "Feeling w/ L",
+  house_state: "House State",
   drove: "Driving",
-  body_feelings: "Body feelings",
+  body_feelings: "Body Feelings",
   food_desc: "Food",
-  most_prominent: "Most prominent mental state",
-  meds: "Extra meds",
-  sensory_triggers: "Sensory triggers",
+  most_prominent: "Mental State",
+  meds: "Extra Meds",
+  sensory_triggers: "Sensory Triggers",
   appointments: "Appointments",
   movement: "Movement",
-  talked_to_anyone: "Interacted with people",
+  talked_to_anyone: "People",
   wellness: "Wellness",
   creative: "Creative",
-  closed_eyes_time: "Closed Eyes Time"
+  closed_eyes_time: "Closed Eyes"
 };
 
-function yesNoToSymbols(value) {
-  if (value === "Yes") return "✓";
-  if (value === "No") return "✗";
-  return value;
+function yesNoToSymbol(v) {
+  if (v === "Yes") return "✓";
+  if (v === "No") return "✗";
+  return v;
 }
 
 function buildTable() {
-  const data = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
-  const days = Object.keys(data);
+  const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
+  const days = Object.keys(raw);
 
   if (days.length === 0) {
-    document.getElementById("tableContainer").innerHTML = "<p>No saved data.</p>";
+    document.getElementById("tableContainer").innerHTML = "<p>No data saved.</p>";
     return;
   }
 
-  let html = `<table>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Field</th>
-        <th>Value</th>
-      </tr>
-    </thead><tbody>`;
-
+  // Collect all possible keys across all days
+  const allKeys = new Set();
   days.forEach(day => {
-    const entry = data[day];
-
-    if (!entry.answers) return;
-
-    for (const key in entry.answers) {
-      let value = entry.answers[key];
-
-      if (Array.isArray(value)) {
-        value = value.map(v => yesNoToSymbols(v)).join(", ");
-      } else {
-        value = yesNoToSymbols(value);
-      }
-
-      html += `
-        <tr>
-          <td>${day}</td>
-          <td>${LABELS[key] || key}</td>
-          <td>${value}</td>
-        </tr>
-      `;
-    }
+    const answers = raw[day]?.answers || {};
+    Object.keys(answers).forEach(k => allKeys.add(k));
   });
 
-  html += "</tbody></table>";
+  const columns = Array.from(allKeys);
+
+  // Build header
+  let html = `<table><thead><tr><th>Date</th>`;
+  columns.forEach(key => {
+    html += `<th>${LABELS[key] || key}</th>`;
+  });
+  html += `</tr></thead><tbody>`;
+
+  // Build rows
+  days.forEach(day => {
+    const answers = raw[day]?.answers || {};
+
+    html += `<tr><td><strong>${day}</strong></td>`;
+
+    columns.forEach(key => {
+      let value = answers[key] ?? "";
+
+      if (Array.isArray(value)) {
+        value = value.map(v => yesNoToSymbol(v)).join(", ");
+      } else {
+        value = yesNoToSymbol(value);
+      }
+
+      html += `<td>${value}</td>`;
+    });
+
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table>`;
+
   document.getElementById("tableContainer").innerHTML = html;
 }
 
