@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        pre {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Stored Data</h1>
+    <pre id="dataOutput">Loading...</pre>
+
+    <script>
+        // Load stored data
+        const data = localStorage.getItem("dailyTrackerData");
+        const output = document.getElementById("dataOutput");
+
+        if (data) {
+            output.textContent = JSON.stringify(JSON.parse(data), null, 2);
+        } else {
+            output.textContent = "No data found.";
+        }
+    </script>
+
+</body>
+</html>
