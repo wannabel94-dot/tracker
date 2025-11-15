@@ -2,38 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Data Viewer</title>
+    <title>Data</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        h1 {
-            margin-bottom: 20px;
+            padding-bottom: 80px; /* prevents footer overlap */
         }
         pre {
             background: #f0f0f0;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #222;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            color: white;
+        }
+        .switch-btn {
+            color: white;
+            background: none;
+            border: none;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Stored Data</h1>
-    <pre id="dataOutput">Loading...</pre>
+<h1>Stored Data</h1>
+<pre id="dataOutput">Loading...</pre>
 
-    <script>
-        // Load stored data
-        const data = localStorage.getItem("dailyTrackerData");
-        const output = document.getElementById("dataOutput");
+<footer>
+    <button class="switch-btn home" id="homeBtn">Home</button>
+    <button class="switch-btn history" id="historyBtn">History</button>
+    <button class="switch-btn data" id="dataBtn">Data</button>
+    <button class="switch-btn mode" id="modeButton">Mode</button>
+</footer>
 
-        if (data) {
-            output.textContent = JSON.stringify(JSON.parse(data), null, 2);
-        } else {
-            output.textContent = "No data found.";
-        }
-    </script>
+<script>
+    // Load tracker data
+    const data = localStorage.getItem("dailyTrackerData");
+    document.getElementById("dataOutput").textContent =
+        data ? JSON.stringify(JSON.parse(data), null, 2) : "No data yet.";
+
+    // Footer navigation
+    document.getElementById("homeBtn").addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
+    document.getElementById("historyBtn").addEventListener("click", () => {
+        window.location.href = "history.html";
+    });
+
+    document.getElementById("dataBtn").addEventListener("click", () => {
+        window.location.href = "data.html";
+    });
+</script>
 
 </body>
 </html>
