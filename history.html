@@ -246,13 +246,25 @@ body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
 
 <div class="wrap" id="historyContainer"></div>
 
-<footer class="footer-nav">
-  <button class="switch-btn morning" id="morningBtn"><img src="icons/day.svg" alt="Morning"></button>
-  <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
-  <button class="switch-btn history active" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
-  <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"></button>
-</footer>
-
+ <!-- Sticky footer nav -->
+  <footer class="footer-nav">
+    <button class="switch-btn morning" id="morningBtn">
+      <img src="icons/sun.svg" alt="Morning">
+    </button>
+    <button class="switch-btn night" id="nightBtn">
+      <img src="icons/night.svg" alt="Night">
+    </button>
+    <button class="switch-btn history" id="historyBtn">
+      <img src="icons/history.svg" alt="History">
+    </button>
+    <button class="switch-btn data" id="dataBtn">
+      <img src="icons/data.svg" alt="Data">
+    </button>
+     <button class="switch-btn blank" id="blankBtn">
+      <img src="icons/balloon.svg" alt="Blank">
+    </button>
+  </footer>
+  
 <script>
 // --- CUSTOM LABELS FOR HISTORY REVIEW ---
 const HISTORY_LABELS = {
