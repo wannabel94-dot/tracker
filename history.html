@@ -447,11 +447,17 @@ menuOverlay.onclick = () => {
 };
 
 // Footer navigation
-document.getElementById('morningBtn').onclick = () => window.location.href = 'index.html?mode=morning';
-document.getElementById('nightBtn').onclick = () => window.location.href = 'index.html?mode=night&start=0';
-document.getElementById('dataBtn').onclick = () => window.location.href = 'index.html';
-document.getElementById('historyBtn').onclick = () => location.reload();
+   document.getElementById('morningBtn').onclick = () => switchMode('morning');
+  document.getElementById('nightBtn').onclick = () => switchMode('night');
 
+document.getElementById("blankBtn").addEventListener("click", () => {
+    window.location.href = "blank.html";
+});
+
+document.getElementById("dataBtn").addEventListener("click", () => {
+    window.location.href = "data.html";
+});
+  
 loadHistory();
 </script>
 </body>
