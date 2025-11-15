@@ -881,6 +881,26 @@ document.querySelectorAll('#settingsMenu button').forEach(btn =>
     menuOverlay.classList.remove('show');
   })
 );
+// ---------- EXPORT DATA ----------
+document.getElementById("btnExport").addEventListener("click", () => {
+    const data = localStorage.getItem("dailyTrackerData");
+
+    if (!data) {
+        alert("No data to export yet.");
+        return;
+    }
+
+    // Create a downloadable JSON file
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "daily-tracker-data.json"; // filename
+    a.click();
+
+    URL.revokeObjectURL(url);
+});
   document.getElementById('btnClearToday').onclick = () => {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
     delete all[getTodayDate()];
