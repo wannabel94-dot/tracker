@@ -585,6 +585,11 @@ function switchMode(mode) {
   document.getElementById('morningBtn').onclick = () => switchMode('morning');
   document.getElementById('nightBtn').onclick = () => switchMode('night');
 
+// ---------- DATA PAGE BUTTON ----------
+document.getElementById("btnData").addEventListener("click", () => {
+    window.location.href = "data.html";
+});
+
   /* ---------- UI RENDER ---------- */
  function loadUI() {
   const mode = getMode();
