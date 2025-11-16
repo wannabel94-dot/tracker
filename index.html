@@ -850,20 +850,28 @@ function loadMorningChecklist() {
   checkMorningCompletion();
 }
 
-  window.toggleChecklist = (key) => {
-    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
-    document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`).forEach(el => el.classList.toggle('selected', answers[key]==='Yes'));
-    saveData(); updateProgressBar(); checkMorningCompletion();
-     
- // Auto-scroll the clicked item into view
+window.toggleChecklist = (key) => {
+    // Toggle Yes <-> null (unchecked)
+    answers[key] = answers[key] === 'Yes' ? null : 'Yes';
+
+    // Update selected class on all matching elements
+    document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`)
+        .forEach(el => el.classList.toggle('selected', answers[key] === 'Yes'));
+
+    saveData();
+    updateProgressBar();
+    checkMorningCompletion();
+
+    // Auto-scroll ONLY when switching to Yes
     const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
     if (el && answers[key] === 'Yes') {
         el.scrollIntoView({
             behavior: 'smooth',
-            block: 'center' // aligns it vertically in the center of wrapper
+            block: 'center'
         });
     }
 };
+
 
 function checkMorningCompletion() {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
