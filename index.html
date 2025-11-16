@@ -776,47 +776,47 @@ window.toggleMultiOption = (qKey, opt) => {
 
   /* ---------- BACK / NEXT ---------- */
 nextBtn.onclick = () => {
-    if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-        // Check for incomplete items
-        const incomplete = MORNING_CHECKLIST_ITEMS.filter(item => answers[item.key] !== 'Yes');
-        
-        if (incomplete.length > 0) {
-            // Ask user: save anyway or go back
+    const mode = getMode();
+
+    if (mode === 'morning' && currentIndex >= MORNING.length) {
+        // Morning checklist save
+        const complete = isMorningChecklistComplete();
+
+        if (!complete) {
             const saveAnyway = confirm(
                 "Some morning tasks are not checked. Do you want to save anyway?"
             );
-
-            if (!saveAnyway) return; // stop here and let user finish checklist
+            if (!saveAnyway) return; // let user continue checking items
         }
 
-        // Save all morning checklist items (unchecked as 'No')
+        // Fill unchecked items as 'No'
         MORNING_CHECKLIST_ITEMS.forEach(item => {
             if (!answers[item.key]) answers[item.key] = 'No';
         });
 
-        saveData(); // Save current answers
+        saveData();
 
-        // Show confirmation message
+        // Show confirmation
         contentArea.innerHTML = '<div class="done-note">Morning saved.</div>';
-
-        // Hide buttons
         backBtn.style.display = 'none';
         nextBtn.style.display = 'none';
 
-        // Optional: switch to night mode after 3 seconds
-        switchTimeout = setTimeout(() => switchMode('night'), 3000);
-    } else {
-        // Normal question flow
-        saveData();
-        currentIndex++;
-        loadUI();
+        // Optional: switch to night mode after delay
+        switchTimeout = setTimeout(() => switchMode('night'), 1500);
+        return;
     }
+
+    // Normal question flow
+    saveData();
+    currentIndex++;
+    loadUI();
 };
+
 
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  let html = `
+    let html = `
     <div class="checklist-title">Morning Routine</div>
     <div class="checklist-wrapper">
       <div class="checklist">
@@ -827,18 +827,18 @@ function loadMorningChecklist() {
             <span class="check-text">${item.label}</span>
           </div>`;
         }).join('')}
-        <div style="height:80px;"></div> <!-- extra bottom padding -->
+        <div style="height:80px;"></div>
       </div>
     </div>
-  `;
+    `;
 
-  contentArea.innerHTML = html;
-  backBtn.style.display = 'inline-block';
-  nextBtn.style.display = 'inline-block';
-   nextBtn.textContent = 'Save'; // show "Save" only on morning checklist
-  updateProgressBar();
-  checkMorningCompletion();
+    contentArea.innerHTML = html;
+    backBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = 'Save';
+    updateProgressBar();
 }
+
 
   window.toggleChecklist = (key) => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
