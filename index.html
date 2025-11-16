@@ -759,32 +759,13 @@ nextBtn.disabled = !hasAnswer;
 nextBtn.onclick = () => {
     saveData(); // save current answers
 
-    // If we're still in the morning checklist
     if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-        // Morning checklist handles its own completion & auto-switch
-        loadMorningChecklist(); // refresh the checklist UI
+        loadMorningChecklist(); // morning checklist
     } else {
-        // For normal questions: move to the next question
         currentIndex++;
         loadUI();
     }
 };
-    saveData();           // ensure current checklist answers saved
-   // Enable/disable Next button for non-checklist questions
-    const q = getQuestions()[currentIndex];
-    let hasAnswer = false;
-
-    if (q.type === 'single' || q.type === 'time') {
-        hasAnswer = answers[q.key] ? true : false;
-    } else if (q.type === 'multi') {
-        const val = answers[q.key];
-        if (Array.isArray(val) && val.length > 0) hasAnswer = true;
-        if (typeof val === 'object' && val && Object.values(val).some(v => v !== 0)) hasAnswer = true;
-    }
-
-    nextBtn.disabled = !hasAnswer;
-}
-
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
