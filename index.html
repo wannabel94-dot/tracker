@@ -781,7 +781,6 @@ function loadMorningChecklist() {
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
 nextBtn.textContent = 'Save';
-nextBtn.onclick = () => {
     saveData();
 
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
