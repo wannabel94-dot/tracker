@@ -884,33 +884,11 @@ window.returnToMorningChecklist = () => {
     `;
   });
 
-  // Night section
-  reviewHtml += `<div class="review-section-title">Night Checklist</div>`;
-  NIGHT_CHECKLIST_ITEMS.forEach(item => {
-    reviewHtml += `
-      <div class="review-item">
-        <span>${item.label}</span>
-        <span class="review-answer">${answers[item.key]}</span>
-      </div>
-    `;
-  });
-
   reviewHtml += `</div></div>`;
   contentArea.innerHTML = reviewHtml;
   backBtn.style.display = 'none';
   nextBtn.style.display = 'none';
 }
-
-    // Night section
-    reviewHtml += `<div class="review-section-title">Night Checklist</div>`;
-    NIGHT_CHECKLIST_ITEMS.forEach(item => {
-        reviewHtml += `
-            <div class="review-item">
-                <span>${item.label}</span>
-                <span class="review-answer">${answers[item.key]}</span>
-            </div>
-        `;
-    });
 
     reviewHtml += `
             </div>
