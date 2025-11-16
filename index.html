@@ -705,6 +705,7 @@ let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' colu
     const q = getQuestions()[currentIndex];
     answers[q.key] = opt;
     saveData();
+     nextBtn.disabled = false;
     updateProgressBar();
     if (q.autoNext) { currentIndex++; loadUI(); }
   };
@@ -725,7 +726,12 @@ window.toggleMultiOption = (qKey, opt) => {
     else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
   }
 
-  saveData();
+  saveData
+     // Enable Next if at least one option selected
+const val = answers[qKey];
+const hasAnswer = (Array.isArray(val) && val.length > 0) || (typeof val === 'object' && Object.values(val).some(v => v !== 0));
+nextBtn.disabled = !hasAnswer;
+
   loadUI();
 
   // Auto-next if "None" is selected
@@ -751,13 +757,25 @@ window.toggleMultiOption = (qKey, opt) => {
   backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
 nextBtn.onclick = () => {
     saveData();           // ensure current checklist answers saved
-    if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-        switchMode('night'); // optional: go to night mode
-    } else {
-        currentIndex++;
-        loadUI();
+   // Enable/disable Next button for non-checklist questions
+if (getMode() === 'morning' && currentIndex >= MORNING.length) {
+    // Morning checklist: always enable
+    nextBtn.disabled = false;
+} else {
+    const q = getQuestions()[currentIndex];
+    let hasAnswer = false;
+
+    if (q.type === 'single' || q.type === 'time') {
+        hasAnswer = answers[q.key] ? true : false;
+    } else if (q.type === 'multi') {
+        const val = answers[q.key];
+        if (Array.isArray(val) && val.length > 0) hasAnswer = true;
+        if (typeof val === 'object' && val && Object.values(val).some(v => v !== 0)) hasAnswer = true;
     }
-};
+
+    nextBtn.disabled = !hasAnswer;
+}
+
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
