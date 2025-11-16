@@ -697,6 +697,7 @@ let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' colu
 
   backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
   nextBtn.style.display = 'inline-block';
+  nextBtn.textContent = 'Next'; // ← ADD THIS LINE
   updateProgressBar();
 }
 
@@ -806,6 +807,7 @@ function loadMorningChecklist() {
   contentArea.innerHTML = html;
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
+   nextBtn.textContent = 'Save'; // show "Save" only on morning checklist
   updateProgressBar();
   checkMorningCompletion();
 }
