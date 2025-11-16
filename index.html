@@ -758,8 +758,6 @@ nextBtn.disabled = !hasAnswer;
 
   /* ---------- BACK / NEXT ---------- */
   backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
-
-  /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
   let html = `
     <div class="checklist-title">Morning Routine</div>
@@ -768,42 +766,26 @@ function loadMorningChecklist() {
         ${MORNING_CHECKLIST_ITEMS.map(item => {
           const selected = answers[item.key] === 'Yes' ? 'selected' : '';
           return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-<div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+            <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
             <span class="check-text">${item.label}</span>
           </div>`;
         }).join('')}
-        <div style="height:80px;"></div> <!-- extra bottom padding -->
+        <div style="height:80px;"></div>
       </div>
     </div>
   `;
-
   contentArea.innerHTML = html;
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
-nextBtn.textContent = 'Save';
-    saveData();
-
+  nextBtn.textContent = 'Save';
+   nextBtn.onclick = () => {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
 
-    if (!allDone) {
-        // Show a simple popup
-        if (confirm("Morning incomplete. Save anyway_")) {
-            // Save anyway
-            contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-            backBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-            switchTimeout = setTimeout(() => switchMode('night'), 3000);
-        }
-        // Cancel just closes the popup and does nothing
-        return;
-    }
+  nextBtn.disabled = false; // enable save immediately
 
-    // All items checked: proceed normally
-    contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-    backBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-    switchTimeout = setTimeout(() => switchMode('night'), 3000);
-};
+  // Assign proper click handler for the checklist save
+  nextBtn.onclick = () => {
+    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
 
 nextBtn.disabled = false;
   updateProgressBar();
