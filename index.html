@@ -831,25 +831,32 @@ function checkMorningCompletion() {
 }
 
 function checkDayCompletion() {
-  const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
+const allKeys = [...MORNING_CHECKLIST_ITEMS.map(i => i.key), ...NIGHT.map(q => q.key)];
   if (allKeys.every(key => answers[key] === 'Yes')) showDailyReview();
 }
-
 function showDailyReview() {
-  let reviewHtml = `
-    <div class="checklist-title">Daily Review</div>
+  let reviewHtml = `<div class="checklist-title">Daily Review</div>
     <div class="review-wrapper">
-      <div class="review-list">
-  `;
+      <div class="review-list">`;
 
+  // Morning checklist answers
   reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
   MORNING_CHECKLIST_ITEMS.forEach(item => {
-    reviewHtml += `<div class="review-item"><span>${item.label}</span><span class="review-answer">${answers[item.key]}</span></div>`;
+    reviewHtml += `<div class="review-item">
+      <span>${item.label}</span>
+      <span class="review-answer">${answers[item.key] || 'No'}</span>
+    </div>`;
   });
 
-  reviewHtml += `<div class="review-section-title">Night Checklist</div>`;
-  NIGHT_CHECKLIST_ITEMS.forEach(item => {
-    reviewHtml += `<div class="review-item"><span>${item.label}</span><span class="review-answer">${answers[item.key]}</span></div>`;
+  // Night questions answers
+  reviewHtml += `<div class="review-section-title">Night Questions</div>`;
+  NIGHT.forEach(q => {
+    let ans = answers[q.key];
+    if (Array.isArray(ans)) ans = ans.join(', ');
+    reviewHtml += `<div class="review-item">
+      <span>${q.label}</span>
+      <span class="review-answer">${ans || 'No answer'}</span>
+    </div>`;
   });
 
   reviewHtml += `</div></div>`;
@@ -857,6 +864,7 @@ function showDailyReview() {
   backBtn.style.display = 'none';
   nextBtn.style.display = 'none';
 }
+
 
 window.returnToMorningChecklist = () => {
   clearTimeout(switchTimeout);
