@@ -622,6 +622,7 @@ document.getElementById("dataBtn").addEventListener("click", () => {
 
   // Current question
   const q = questions[currentIndex];
+   
 
 function updateDayOfWeek() {
   const dayOfWeekElement = document.getElementById('dayOfWeek');
@@ -694,6 +695,7 @@ let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' colu
   html += '</div>';
 
   contentArea.innerHTML = html;
+nextBtn.textContent = "Next";
 
   backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
   nextBtn.style.display = 'inline-block';
@@ -749,7 +751,30 @@ window.toggleMultiOption = (qKey, opt) => {
 
   /* ---------- BACK / NEXT ---------- */
   backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
-  nextBtn.onclick = () => { currentIndex++; loadUI(); };
+nextBtn.onclick = () => {
+    const mode = getMode();
+
+    if (mode === 'morning' && currentIndex >= MORNING.length) {
+        // We are on the morning checklist
+        const allDone = isMorningChecklistComplete();
+
+        if (!allDone) {
+            const proceed = confirm("Save unfinished morning?");
+            if (!proceed) return; // stop if user cancels
+        }
+
+        // Save checklist answers
+        saveData();
+
+        // Switch to night mode
+        switchMode('night');
+        return;
+    }
+
+    // Normal question navigation
+    currentIndex++;
+    loadUI();
+};
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
@@ -774,6 +799,35 @@ function loadMorningChecklist() {
   nextBtn.style.display = 'inline-block';
   updateProgressBar();
   checkMorningCompletion();
+
+   /* ---------- MORNING CHECKLIST ---------- */
+function loadMorningChecklist() {
+  let html = `
+    <div class="checklist-title">Morning Routine</div>
+    <div class="checklist-wrapper">
+      <div class="checklist">
+        ${MORNING_CHECKLIST_ITEMS.map(item => {
+          const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+          return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+<div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+            <span class="check-text">${item.label}</span>
+          </div>`;
+        }).join('')}
+        <div style="height:80px;"></div> <!-- extra bottom padding -->
+      </div>
+    </div>
+  `;
+
+  contentArea.innerHTML = html;
+  backBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
+  updateProgressBar();
+  checkMorningCompletion();
+  nextBtn.textContent = "Save";  // Change Next button text to Save
+}
+
+function isMorningChecklistComplete() {
+    return MORNING_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
 }
 
   window.toggleChecklist = (key) => {
