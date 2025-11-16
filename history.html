@@ -456,8 +456,14 @@ function switchMode(mode) {
 }
 
 // Footer navigation
-   document.getElementById('morningBtn').onclick = () => switchMode('morning');
-  document.getElementById('nightBtn').onclick = () => switchMode('night');
+  document.getElementById('morningBtn').onclick = () => {
+    window.location.href = "index.html";   // or morning.html if that's your file name
+};
+
+document.getElementById('nightBtn').onclick = () => {
+    window.location.href = "night.html";
+};
+
 
 document.getElementById("blankBtn").addEventListener("click", () => {
     window.location.href = "blank.html";
