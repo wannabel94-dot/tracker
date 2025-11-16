@@ -621,18 +621,7 @@ document.getElementById("dataBtn").addEventListener("click", () => {
   }
 
   // Current question
-// Enable/disable Next button based on current answer
-const q = questions[currentIndex];
-if (q.type === 'multi') {
-    if (q.key === 'caffeine_alcohol') {
-        nextBtn.disabled = false; // allow 0 drinks
-    } else {
-        const val = answers[q.key];
-        nextBtn.disabled = !(val && val.length > 0); // at least one option selected
-    }
-} else if (q.type === 'single' || q.type === 'time') {
-    nextBtn.disabled = !answers[q.key]; // single/time requires selection
-}
+  const q = questions[currentIndex];
 
 function updateDayOfWeek() {
   const dayOfWeekElement = document.getElementById('dayOfWeek');
@@ -724,36 +713,27 @@ let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' colu
 
   /* ---------- MULTI OPTION TOGGLE ---------- */
 window.toggleMultiOption = (qKey, opt) => {
-    if (!answers[qKey]) answers[qKey] = [];
+  if (!answers[qKey]) answers[qKey] = [];
 
-    const selected = answers[qKey].includes(opt);
+  const selected = answers[qKey].includes(opt);
 
-    if (opt === 'None') {
-        // Deselect all others if "None" is selected
-        answers[qKey] = selected ? [] : ['None'];
-    } else {
-        // Deselect "None" if selecting other options
-        answers[qKey] = answers[qKey].filter(o => o !== 'None');
-        if (!selected) answers[qKey].push(opt);
-        else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
-    }
+  if (opt === 'None') {
+    // If "None" is selected, deselect all others
+    answers[qKey] = selected ? [] : ['None'];
+  } else {
+    // Deselect "None" if selecting any other option
+    answers[qKey] = answers[qKey].filter(o => o !== 'None');
+    if (!selected) answers[qKey].push(opt);
+    else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
+  }
 
-    saveData();
+  saveData
+     // Enable Next if at least one option selected
+const val = answers[qKey];
+const hasAnswer = (Array.isArray(val) && val.length > 0) || (typeof val === 'object' && Object.values(val).some(v => v !== 0));
+nextBtn.disabled = !hasAnswer;
 
-    // Enable Next button if at least one option is selected
-    const val = answers[qKey];
-    nextBtn.disabled = !(val && val.length > 0);
-
-    loadUI();
-
-    // Auto-next if "None" is selected for questions with autoNext
-    const q = getQuestions()[currentIndex];
-    if (opt === 'None' && !selected && q.autoNext) {
-        currentIndex++;
-        loadUI();
-    }
-};
-
+  loadUI();
 
   // Auto-next if "None" is selected
   const q = getQuestions()[currentIndex];
@@ -775,31 +755,17 @@ window.toggleMultiOption = (qKey, opt) => {
   };
 
   /* ---------- BACK / NEXT ---------- */
+  backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
 nextBtn.onclick = () => {
+    saveData(); // save current answers
+
     if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-        // Save all morning checklist items, including unchecked as 'No'
-        MORNING_CHECKLIST_ITEMS.forEach(item => {
-            if (!answers[item.key]) answers[item.key] = 'No';
-        });
-
-        saveData(); // Save current answers
-
-        // Show confirmation message
-        contentArea.innerHTML = '<div class="done-note">Morning saved.</div>';
-
-        // Hide buttons
-        backBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
-
-        // Optional: switch to night mode after 1 second
-        setTimeout(() => switchMode('night'), 1000);
+        loadMorningChecklist(); // morning checklist
     } else {
-        saveData();
         currentIndex++;
         loadUI();
     }
 };
-
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
@@ -843,10 +809,15 @@ function loadMorningChecklist() {
 };
 
 function checkMorningCompletion() {
-    // Just update progress visually, do NOT auto-complete
-    updateProgressBar();
+    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
+    if(allDone){
+      contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
+      backBtn.style.display='none'; 
+      nextBtn.style.display='none';
+      saveData();
+      switchTimeout = setTimeout(()=>switchMode('night'),3000);
+    }
 }
-
 
    function checkDayCompletion() {
     const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
