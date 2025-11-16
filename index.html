@@ -777,7 +777,19 @@ window.toggleMultiOption = (qKey, opt) => {
   /* ---------- BACK / NEXT ---------- */
 nextBtn.onclick = () => {
     if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-        // Save all morning checklist items, including unchecked as 'No'
+        // Check for incomplete items
+        const incomplete = MORNING_CHECKLIST_ITEMS.filter(item => answers[item.key] !== 'Yes');
+        
+        if (incomplete.length > 0) {
+            // Ask user: save anyway or go back
+            const saveAnyway = confirm(
+                "Some morning tasks are not checked. Do you want to save anyway?"
+            );
+
+            if (!saveAnyway) return; // stop here and let user finish checklist
+        }
+
+        // Save all morning checklist items (unchecked as 'No')
         MORNING_CHECKLIST_ITEMS.forEach(item => {
             if (!answers[item.key]) answers[item.key] = 'No';
         });
@@ -791,9 +803,10 @@ nextBtn.onclick = () => {
         backBtn.style.display = 'none';
         nextBtn.style.display = 'none';
 
-        // Optional: switch to night mode after 1 second
-        setTimeout(() => switchMode('night'), 3000);
+        // Optional: switch to night mode after 3 seconds
+        switchTimeout = setTimeout(() => switchMode('night'), 3000);
     } else {
+        // Normal question flow
         saveData();
         currentIndex++;
         loadUI();
