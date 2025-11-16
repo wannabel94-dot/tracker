@@ -755,17 +755,31 @@ nextBtn.disabled = !hasAnswer;
   };
 
   /* ---------- BACK / NEXT ---------- */
-  backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
 nextBtn.onclick = () => {
-    saveData(); // save current answers
-
     if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-        loadMorningChecklist(); // morning checklist
+        // Save all morning checklist items, including unchecked as 'No'
+        MORNING_CHECKLIST_ITEMS.forEach(item => {
+            if (!answers[item.key]) answers[item.key] = 'No';
+        });
+
+        saveData(); // Save current answers
+
+        // Show confirmation message
+        contentArea.innerHTML = '<div class="done-note">Morning saved.</div>';
+
+        // Hide buttons
+        backBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+
+        // Optional: switch to night mode after 1 second
+        setTimeout(() => switchMode('night'), 1000);
     } else {
+        saveData();
         currentIndex++;
         loadUI();
     }
 };
+
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
@@ -809,15 +823,10 @@ function loadMorningChecklist() {
 };
 
 function checkMorningCompletion() {
-    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
-    if(allDone){
-      contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-      backBtn.style.display='none'; 
-      nextBtn.style.display='none';
-      saveData();
-      switchTimeout = setTimeout(()=>switchMode('night'),3000);
-    }
+    // Just update progress visually, do NOT auto-complete
+    updateProgressBar();
 }
+
 
    function checkDayCompletion() {
     const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
