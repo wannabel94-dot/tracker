@@ -756,12 +756,20 @@ nextBtn.disabled = !hasAnswer;
   /* ---------- BACK / NEXT ---------- */
   backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
 nextBtn.onclick = () => {
+    saveData(); // save current answers
+
+    // If we're still in the morning checklist
+    if (getMode() === 'morning' && currentIndex >= MORNING.length) {
+        // Morning checklist handles its own completion & auto-switch
+        loadMorningChecklist(); // refresh the checklist UI
+    } else {
+        // For normal questions: move to the next question
+        currentIndex++;
+        loadUI();
+    }
+};
     saveData();           // ensure current checklist answers saved
    // Enable/disable Next button for non-checklist questions
-if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-    // Morning checklist: always enable
-    nextBtn.disabled = false;
-} else {
     const q = getQuestions()[currentIndex];
     let hasAnswer = false;
 
@@ -818,20 +826,15 @@ function loadMorningChecklist() {
 };
 
 function checkMorningCompletion() {
-    // Save data and update progress, but don't block next button
-    saveData();
-    updateProgressBar();
-    // Optional: if all done, you could show a small note
-    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-    const note = document.querySelector('.done-note');
-    if (allDone && !note) {
-        const doneNote = document.createElement('div');
-        doneNote.className = 'done-note';
-        doneNote.textContent = 'Morning checklist fully completed!';
-        contentArea.appendChild(doneNote);
+    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
+    if(allDone){
+      contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
+      backBtn.style.display='none'; 
+      nextBtn.style.display='none';
+      saveData();
+      switchTimeout = setTimeout(()=>switchMode('night'),3000);
     }
 }
-
 
    function checkDayCompletion() {
     const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
