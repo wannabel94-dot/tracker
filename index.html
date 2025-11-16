@@ -622,7 +622,6 @@ document.getElementById("dataBtn").addEventListener("click", () => {
 
   // Current question
   const q = questions[currentIndex];
-   
 
 function updateDayOfWeek() {
   const dayOfWeekElement = document.getElementById('dayOfWeek');
@@ -695,7 +694,6 @@ let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' colu
   html += '</div>';
 
   contentArea.innerHTML = html;
-nextBtn.textContent = "Next";
 
   backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
   nextBtn.style.display = 'inline-block';
@@ -751,32 +749,9 @@ window.toggleMultiOption = (qKey, opt) => {
 
   /* ---------- BACK / NEXT ---------- */
   backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
-nextBtn.onclick = () => {
-    const mode = getMode();
+  nextBtn.onclick = () => { currentIndex++; loadUI(); };
 
-    if (mode === 'morning' && currentIndex >= MORNING.length) {
-        // We are on the morning checklist
-        const allDone = isMorningChecklistComplete();
-
-        if (!allDone) {
-            const proceed = confirm("Save unfinished morning?");
-            if (!proceed) return; // stop if user cancels
-        }
-
-        // Save checklist answers
-        saveData();
-
-        // Switch to night mode
-        switchMode('night');
-        return;
-    }
-
-    // Normal question navigation
-    currentIndex++;
-    loadUI();
-};
-
-/* ---------- MORNING CHECKLIST ---------- */
+  /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
   let html = `
     <div class="checklist-title">Morning Routine</div>
@@ -785,7 +760,7 @@ function loadMorningChecklist() {
         ${MORNING_CHECKLIST_ITEMS.map(item => {
           const selected = answers[item.key] === 'Yes' ? 'selected' : '';
           return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-            <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+<div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
             <span class="check-text">${item.label}</span>
           </div>`;
         }).join('')}
@@ -797,98 +772,73 @@ function loadMorningChecklist() {
   contentArea.innerHTML = html;
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
-  nextBtn.textContent = "Save"; // Change Next button to Save
   updateProgressBar();
   checkMorningCompletion();
 }
 
-function isMorningChecklistComplete() {
-  return MORNING_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
-}
-
-window.toggleChecklist = (key) => {
-  answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
-  document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`)
-    .forEach(el => el.classList.toggle('selected', answers[key] === 'Yes'));
-  saveData();
-  updateProgressBar();
-  checkMorningCompletion();
-
-  const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
-  if (el && answers[key] === 'Yes') {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
+  window.toggleChecklist = (key) => {
+    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
+    document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`).forEach(el => el.classList.toggle('selected', answers[key]==='Yes'));
+    saveData(); updateProgressBar(); checkMorningCompletion();
+     
+ // Auto-scroll the clicked item into view
+    const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
+    if (el && answers[key] === 'Yes') {
+        el.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center' // aligns it vertically in the center of wrapper
+        });
+    }
 };
 
-function checkMorningCompletion() {
-  if (isMorningChecklistComplete()) {
-    contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-    backBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-    saveData();
-    switchTimeout = setTimeout(() => switchMode('night'), 3000);
+  function checkMorningCompletion() {
+    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
+    if(allDone){
+      contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
+      backBtn.style.display='none'; nextBtn.style.display='none';
+      saveData();
+      switchTimeout = setTimeout(()=>switchMode('night'),3000);
+    }
   }
+
+   function checkDayCompletion() {
+    const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
+
+    const allAnswered = allKeys.every(key => answers[key] === 'Yes');
+
+    if (allAnswered) {
+        showDailyReview();
+    }
 }
 
-function checkDayCompletion() {
-const allKeys = [...MORNING_CHECKLIST_ITEMS.map(i => i.key), ...NIGHT.map(q => q.key)];
-  if (allKeys.every(key => answers[key] === 'Yes')) showDailyReview();
-}
 function showDailyReview() {
-  let reviewHtml = `<div class="checklist-title">Daily Review</div>
-    <div class="review-wrapper">
-      <div class="review-list">`;
-
-  // Morning checklist answers
-  reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
-  MORNING_CHECKLIST_ITEMS.forEach(item => {
-    reviewHtml += `<div class="review-item">
-      <span>${item.label}</span>
-      <span class="review-answer">${answers[item.key] || 'No'}</span>
-    </div>`;
-  });
-
-  // Night questions answers
-  reviewHtml += `<div class="review-section-title">Night Questions</div>`;
-  NIGHT.forEach(q => {
-    let ans = answers[q.key];
-    if (Array.isArray(ans)) ans = ans.join(', ');
-    reviewHtml += `<div class="review-item">
-      <span>${q.label}</span>
-      <span class="review-answer">${ans || 'No answer'}</span>
-    </div>`;
-  });
-
-  reviewHtml += `</div></div>`;
-  contentArea.innerHTML = reviewHtml;
-  backBtn.style.display = 'none';
-  nextBtn.style.display = 'none';
-}
-
-window.returnToMorningChecklist = () => {
-  clearTimeout(switchTimeout);
-  loadMorningChecklist();
-  backBtn.style.display = 'inline-block';
-  nextBtn.style.display = 'inline-block';
-};
-
-
-  // Morning section
-  reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
-  MORNING_CHECKLIST_ITEMS.forEach(item => {
-    reviewHtml += `
-      <div class="review-item">
-        <span>${item.label}</span>
-        <span class="review-answer">${answers[item.key]}</span>
-      </div>
+    let reviewHtml = `
+        <div class="checklist-title">Daily Review</div>
+        <div class="review-wrapper">
+            <div class="review-list">
     `;
-  });
 
-  reviewHtml += `</div></div>`;
-  contentArea.innerHTML = reviewHtml;
-  backBtn.style.display = 'none';
-  nextBtn.style.display = 'none';
-}
+    // Morning section
+    reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
+    MORNING_CHECKLIST_ITEMS.forEach(item => {
+        reviewHtml += `
+            <div class="review-item">
+                <span>${item.label}</span>
+                <span class="review-answer">${answers[item.key]}</span>
+            </div>
+        `;
+    });
+
+    // Night section
+    reviewHtml += `<div class="review-section-title">Night Checklist</div>`;
+    NIGHT_CHECKLIST_ITEMS.forEach(item => {
+        reviewHtml += `
+            <div class="review-item">
+                <span>${item.label}</span>
+                <span class="review-answer">${answers[item.key]}</span>
+            </div>
+        `;
+    });
 
     reviewHtml += `
             </div>
