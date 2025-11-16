@@ -7,7 +7,8 @@
    <!-- Theme color for Android navigation bar -->
 <title>Daily Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
+<style>nextBtn.onclick = () => {
+
 /* ===============================================
    ROOT VARIABLES
 ================================================= */
@@ -697,7 +698,8 @@ let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' colu
 
   backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
   nextBtn.style.display = 'inline-block';
-  nextBtn.textContent = 'Next'; // ← ADD THIS LINE
+nextBtn.textContent = 'Next';
+nextBtn.disabled = !answers[q.key];
   updateProgressBar();
 }
 
@@ -756,16 +758,6 @@ nextBtn.disabled = !hasAnswer;
 
   /* ---------- BACK / NEXT ---------- */
   backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
-nextBtn.onclick = () => {
-    saveData(); // save current answers
-
-    if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-        loadMorningChecklist(); // morning checklist
-    } else {
-        currentIndex++;
-        loadUI();
-    }
-};
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
@@ -788,7 +780,8 @@ function loadMorningChecklist() {
   contentArea.innerHTML = html;
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
-   nextBtn.textContent = 'Save'; // show "Save" only on morning checklist
+nextBtn.textContent = 'Save';
+nextBtn.disabled = false;
   updateProgressBar();
   checkMorningCompletion();
 }
