@@ -109,37 +109,38 @@ function yesNoToSymbol(v) {
 
 function buildTable() {
   const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
-    const days = Object.keys(raw).sort((a, b) => new Date(b) - new Date(a));
+  const days = Object.keys(raw).sort((a, b) => new Date(b) - new Date(a)); // newest first
 
   if (days.length === 0) {
     document.getElementById("tableContainer").innerHTML = "<p>No data saved.</p>";
     return;
   }
 
-  // Collect all possible keys across all days
+  // Collect all unique keys
   const allKeys = new Set();
   days.forEach(day => {
     const answers = raw[day]?.answers || {};
     Object.keys(answers).forEach(k => allKeys.add(k));
   });
 
-  const columns = Array.from(allKeys);
+  const rows = Array.from(allKeys);
 
-  // Build header
-  let html = `<table><thead><tr><th>Date</th>`;
-  columns.forEach(key => {
-    html += `<th>${LABELS[key] || key}</th>`;
+  // Start table
+  let html = `<table><thead><tr><th>Question</th>`;
+
+  // Header: each day becomes a column
+  days.forEach(day => {
+    html += `<th>${day}</th>`;
   });
+
   html += `</tr></thead><tbody>`;
 
-  // Build rows
-  days.forEach(day => {
-    const answers = raw[day]?.answers || {};
+  // Each question becomes a row
+  rows.forEach(key => {
+    html += `<tr><td><strong>${LABELS[key] || key}</strong></td>`;
 
-    html += `<tr><td><strong>${day}</strong></td>`;
-
-    columns.forEach(key => {
-      let value = answers[key] ?? "";
+    days.forEach(day => {
+      let value = raw[day]?.answers?.[key] ?? "";
 
       if (Array.isArray(value)) {
         value = value.map(v => yesNoToSymbol(v)).join(", ");
@@ -154,9 +155,9 @@ function buildTable() {
   });
 
   html += `</tbody></table>`;
-
   document.getElementById("tableContainer").innerHTML = html;
 }
+
 
 buildTable();
 </script>
