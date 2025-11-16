@@ -445,6 +445,15 @@ menuOverlay.onclick = () => {
   settingsMenu.classList.remove('show');
   menuOverlay.classList.remove('show');
 };
+const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
+  
+function switchMode(mode) {
+  saveData();
+  document.body.classList.toggle('morning', mode === 'morning');
+  document.body.classList.toggle('night', mode === 'night');
+  loadSavedData();
+  loadUI();
+}
 
 // Footer navigation
    document.getElementById('morningBtn').onclick = () => switchMode('morning');
