@@ -110,7 +110,6 @@ function yesNoToSymbol(v) {
 function buildTable() {
   const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
     const days = Object.keys(raw).sort((a, b) => new Date(b) - new Date(a));
-  const days = Object.keys(raw);
 
   if (days.length === 0) {
     document.getElementById("tableContainer").innerHTML = "<p>No data saved.</p>";
