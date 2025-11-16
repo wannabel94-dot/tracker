@@ -749,7 +749,15 @@ window.toggleMultiOption = (qKey, opt) => {
 
   /* ---------- BACK / NEXT ---------- */
   backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
-  nextBtn.onclick = () => { currentIndex++; loadUI(); };
+nextBtn.onclick = () => {
+    saveData();           // ensure current checklist answers saved
+    if (getMode() === 'morning' && currentIndex >= MORNING.length) {
+        switchMode('night'); // optional: go to night mode
+    } else {
+        currentIndex++;
+        loadUI();
+    }
+};
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
@@ -791,15 +799,21 @@ function loadMorningChecklist() {
     }
 };
 
-  function checkMorningCompletion() {
-    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
-    if(allDone){
-      contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-      backBtn.style.display='none'; nextBtn.style.display='none';
-      saveData();
-      switchTimeout = setTimeout(()=>switchMode('night'),3000);
+function checkMorningCompletion() {
+    // Save data and update progress, but don't block next button
+    saveData();
+    updateProgressBar();
+    // Optional: if all done, you could show a small note
+    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+    const note = document.querySelector('.done-note');
+    if (allDone && !note) {
+        const doneNote = document.createElement('div');
+        doneNote.className = 'done-note';
+        doneNote.textContent = 'Morning checklist fully completed!';
+        contentArea.appendChild(doneNote);
     }
-  }
+}
+
 
    function checkDayCompletion() {
     const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
