@@ -776,9 +776,8 @@ nextBtn.onclick = () => {
     loadUI();
 };
 
- /* ---------- MORNING CHECKLIST ---------- */
+/* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  // Build the checklist HTML
   let html = `
     <div class="checklist-title">Morning Routine</div>
     <div class="checklist-wrapper">
@@ -786,9 +785,7 @@ function loadMorningChecklist() {
         ${MORNING_CHECKLIST_ITEMS.map(item => {
           const selected = answers[item.key] === 'Yes' ? 'selected' : '';
           return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-            <div class="icon-circle">
-              <img src="icons/${item.icon}" alt="${item.label}" class="counter-icon">
-            </div>
+            <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
             <span class="check-text">${item.label}</span>
           </div>`;
         }).join('')}
@@ -797,7 +794,6 @@ function loadMorningChecklist() {
     </div>
   `;
 
-  // Render checklist
   contentArea.innerHTML = html;
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
@@ -806,12 +802,10 @@ function loadMorningChecklist() {
   checkMorningCompletion();
 }
 
-// Check if all morning checklist items are done
 function isMorningChecklistComplete() {
   return MORNING_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
 }
 
-// Toggle checklist item selection
 window.toggleChecklist = (key) => {
   answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
   document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`)
@@ -820,17 +814,14 @@ window.toggleChecklist = (key) => {
   updateProgressBar();
   checkMorningCompletion();
 
-  // Auto-scroll clicked item into view
   const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
   if (el && answers[key] === 'Yes') {
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 };
 
-// Check if morning checklist is complete
 function checkMorningCompletion() {
-  const allDone = isMorningChecklistComplete();
-  if (allDone) {
+  if (isMorningChecklistComplete()) {
     contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
     backBtn.style.display = 'none';
     nextBtn.style.display = 'none';
@@ -839,20 +830,41 @@ function checkMorningCompletion() {
   }
 }
 
-// Check if the full day (morning + night) is complete
 function checkDayCompletion() {
   const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
-  const allAnswered = allKeys.every(key => answers[key] === 'Yes');
-  if (allAnswered) showDailyReview();
+  if (allKeys.every(key => answers[key] === 'Yes')) showDailyReview();
 }
 
-// Show the daily review summary
 function showDailyReview() {
   let reviewHtml = `
     <div class="checklist-title">Daily Review</div>
     <div class="review-wrapper">
       <div class="review-list">
   `;
+
+  reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
+  MORNING_CHECKLIST_ITEMS.forEach(item => {
+    reviewHtml += `<div class="review-item"><span>${item.label}</span><span class="review-answer">${answers[item.key]}</span></div>`;
+  });
+
+  reviewHtml += `<div class="review-section-title">Night Checklist</div>`;
+  NIGHT_CHECKLIST_ITEMS.forEach(item => {
+    reviewHtml += `<div class="review-item"><span>${item.label}</span><span class="review-answer">${answers[item.key]}</span></div>`;
+  });
+
+  reviewHtml += `</div></div>`;
+  contentArea.innerHTML = reviewHtml;
+  backBtn.style.display = 'none';
+  nextBtn.style.display = 'none';
+}
+
+window.returnToMorningChecklist = () => {
+  clearTimeout(switchTimeout);
+  loadMorningChecklist();
+  backBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
+};
+
 
   // Morning section
   reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
