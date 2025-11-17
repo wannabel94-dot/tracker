@@ -106,7 +106,7 @@ function buildTable() {
 
     // Individual morning items
     INDIVIDUAL_MORNING_ITEMS.forEach(key => {
-        html += `<tr><td><strong>${key}</strong></td>`;
+        html += `<tr><td><strong>${LABELS[key] || key}</strong></td>`;
         days.forEach(day => {
             const val = raw[day]?.answers?.[key] ?? "";
             html += `<td>${val === "Yes" ? "✓" : val === "No" ? "✗" : val}</td>`;
@@ -116,7 +116,7 @@ function buildTable() {
 
     // Night items
     NIGHT_KEYS.forEach(key => {
-        html += `<tr><td><strong>${key}</strong></td>`;
+        html += `<tr><td><strong>${LABELS[key] || key}</strong></td>`;
         days.forEach(day => {
             let val = raw[day]?.answers?.[key] ?? "";
             if(Array.isArray(val)) val = val.map(v => v === "Yes" ? "✓" : v === "No" ? "✗" : v).join(", ");
