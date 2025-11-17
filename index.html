@@ -817,7 +817,16 @@ nextBtn.onclick = () => {
     saveData(); // save current answers
 
     if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-        loadMorningChecklist(); // morning checklist
+        // Show done note immediately
+        contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
+        backBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+
+        // Save data just to be sure
+        saveData();
+
+        // Then trigger night mode after a delay
+        switchTimeout = setTimeout(() => switchMode('night'), 3000);
     } else {
         currentIndex++;
         loadUI();
