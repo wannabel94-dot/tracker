@@ -846,21 +846,21 @@ function loadMorningChecklist() {
   backBtn.style.display = 'inline-block';
   nextBtn.style.display = 'inline-block';
    nextBtn.textContent = 'Save'; // show "Save" only on morning checklist
+   nextBtn.disabled = false;  // <-- ADDED
+
   updateProgressBar();
   checkMorningCompletion();
 }
 
 window.toggleChecklist = (key) => {
-    // Toggle Yes <-> null (unchecked)
-    answers[key] = answers[key] === 'Yes' ? null : 'Yes';
-
-    // Update selected class on all matching elements
-    document.querySelectorAll(`[onclick="toggleChecklist('${key}')"]`)
-        .forEach(el => el.classList.toggle('selected', answers[key] === 'Yes'));
-
+    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     saveData();
-    updateProgressBar();
-    checkMorningCompletion();
+    loadMorningChecklist();
+
+    // Ensure Next/Save is always enabled
+    nextBtn.disabled = false;
+};
+
 
     // Auto-scroll ONLY when switching to Yes
     const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
