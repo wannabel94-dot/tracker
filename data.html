@@ -71,11 +71,15 @@ const INDIVIDUAL_MORNING_ITEMS = [
     "brush_teeth_morn",
     "supplements_morn"
 ];
-
+    
 const NIGHT_KEYS = [
-  // ... your night keys
+  "psyllium","magnesium","pillowcase","shower_night","skincare_night",
+  "teeth_night","flossed","left_house","caffeine_alcohol","sickness",
+  "saw_dogs","feel_with_L","house_state","drove","body_feelings",
+  "food_desc","most_prominent","meds","sensory_triggers","appointments",
+  "movement","talked_to_anyone","wellness","creative","closed_eyes_time"
 ];
-
+    
 function buildTable() {
     const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
     const days = Object.keys(raw).sort((a,b)=>new Date(b)-new Date(a));
