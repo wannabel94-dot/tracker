@@ -669,11 +669,11 @@ document.getElementById("dataBtn").addEventListener("click", () => {
     return;
   }
 
-if (mode === 'night' && currentIndex === 0) {
-  loadNightChecklist();
-   
-  return;
+if (mode === 'night' && !answers._nightChecklistDone) {
+    loadNightChecklist();
+    return;
 }
+
 
   // Night completion
   if (mode === 'night' && currentIndex >= NIGHT.length) {
@@ -906,16 +906,16 @@ function checkMorningCompletion() {
     }
 }
    function checkNightCompletion() {
-    // Check if ALL checklist items are marked 'Yes'
     const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
 
     if (allDone) {
-        // If complete, advance to the first Night question (index 1 after currentIndex=0 for checklist)
-        currentIndex = 1; 
+        answers._nightChecklistDone = true;   // <-- ADD THIS LINE
+        currentIndex = 1;
         saveData();
         loadUI();
     }
 }
+
 function showDailyReview() {
     let reviewHtml = `
         <div class="checklist-title">Daily Review</div>
