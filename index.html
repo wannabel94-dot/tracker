@@ -868,7 +868,26 @@ function loadMorningChecklist() {
   updateProgressBar();
   checkMorningCompletion();
 }
-   
+
+window.toggleChecklist = (key) => {
+    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
+    saveData();
+    loadMorningChecklist();
+
+    // Ensure Next/Save is always enabled
+    nextBtn.disabled = false;
+
+    // Auto-scroll ONLY when switching to Yes
+    const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
+    if (el && answers[key] === 'Yes') {
+        el.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+    }
+};
+
+
 function checkMorningCompletion() {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
     if(allDone){
@@ -877,16 +896,6 @@ function checkMorningCompletion() {
       nextBtn.style.display='none';
       saveData();
       switchTimeout = setTimeout(()=>switchMode('night'),3000);
-    }
-}
-
-   function checkDayCompletion() {
-    const allKeys = [...MORNING_CHECKLIST_ITEMS, ...NIGHT_CHECKLIST_ITEMS].map(i => i.key);
-
-    const allAnswered = allKeys.every(key => answers[key] === 'Yes');
-
-    if (allAnswered) {
-        showDailyReview();
     }
 }
 
