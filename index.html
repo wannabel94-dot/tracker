@@ -872,7 +872,15 @@ function loadMorningChecklist() {
 window.toggleChecklist = (key) => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     saveData();
-    loadMorningChecklist();
+    
+    // --- FIX START ---
+    const mode = getMode();
+    if (mode === 'morning') {
+        loadMorningChecklist(); // Reload morning checklist if in morning mode
+    } else if (mode === 'night') {
+        loadNightChecklist(); // Reload night checklist if in night mode
+    }
+    // --- FIX END ---
 
     // Ensure Next/Save is always enabled
     nextBtn.disabled = false;
@@ -899,20 +907,6 @@ function checkMorningCompletion() {
     }
 }
    
-function checkNightCompletion() {
-    // Check if ALL items in the NIGHT_CHECKLIST_ITEMS array are answered 'Yes'
-    const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-    
-    // If all items are checked, transition to the next step (the first NIGHT question)
-    if (allDone) {
-        // Since the NIGHT questions start at currentIndex 0, we move to the first question (index 0)
-        // by setting currentIndex to 0 and calling loadUI.
-        currentIndex = 0; 
-        loadUI();
-        // The flow will now proceed to the first question in the NIGHT array.
-    }
-}
-
 function showDailyReview() {
     let reviewHtml = `
         <div class="checklist-title">Daily Review</div>
