@@ -869,26 +869,7 @@ function loadMorningChecklist() {
   updateProgressBar();
   checkMorningCompletion();
 }
-
-window.toggleChecklist = (key) => {
-    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
-    saveData();
-    loadMorningChecklist();
-
-    // Ensure Next/Save is always enabled
-    nextBtn.disabled = false;
-
-    // Auto-scroll ONLY when switching to Yes
-    const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
-    if (el && answers[key] === 'Yes') {
-        el.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-        });
-    }
-};
-
-
+   
 function checkMorningCompletion() {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
     if(allDone){
@@ -955,6 +936,34 @@ function showDailyReview() {
     loadMorningChecklist();
     backBtn.style.display='none'; nextBtn.style.display='none';
   };
+
+     /* ---------- NIGHT CHECKLIST ---------- */
+function loadNightChecklist() {
+  let html = `
+    <div class="checklist-title">Night Routine</div>
+    <div class="checklist-wrapper">
+      <div class="checklist">
+        ${NIGHT_CHECKLIST_ITEMS.map(item => {
+          const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+          return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+<div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+            <span class="check-text">${item.label}</span>
+          </div>`;
+        }).join('')}
+        <div style="height:80px;"></div> <!-- extra bottom padding -->
+      </div>
+    </div>
+  `;
+
+  contentArea.innerHTML = html;
+  backBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
+   nextBtn.textContent = 'Save'; // show "Save" only on checklist
+   nextBtn.disabled = false;  // <-- ADDED
+
+  updateProgressBar();
+  checkNightCompletion();
+}
 
   /* ---------- PROGRESS BAR ---------- */
   function updateProgressBar() {
