@@ -520,8 +520,7 @@ function getTodayDate() {
     { key: 'how_slept', type: 'single', label: 'How do you think you slept?', options: [
       'Went to bed late but slept in','Went to bed late but woke early',
       'Went to bed early but woke really early',"Couldn't fall asleep",
-      'Lightly disrupted','Frequently disrupted','Fine'
-    ], autoNext:true, icon: 'zzz.svg' }
+      'Lightly disrupted','Frequently disrupted','Fine'], autoNext:true, icon: 'zzz.svg' }
   ];
 
   const MORNING_CHECKLIST_ITEMS = [
@@ -541,14 +540,17 @@ function getTodayDate() {
     { key: 'brush_teeth_morn', label: 'Brush teeth', icon: 'toothbrush.svg' }
   ];
 
+   const NIGHT_CHECKLIST_ITEMS = [
+   { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
+   { key: 'psyillium', label: 'Did you take psyllium?',icon:'grain.svg' },
+    { key: 'magnesium', label: 'Did you take magnesium?', icon:'mg.svg' },
+    { key: 'pillowcase', label: 'Did you change pillowcase?', icon:'pillow.svg'},
+    { key: 'skincare_night', label:'Did you do skincare?', icon:'skincare2.svg' },
+    { key: 'teeth_night', label:'Did you brush teeth?', icon:'toothbrush.svg' },
+    { key: 'flossed', label:'Did you floss teeth?', icon:'floss.svg' },
+  ];
+
   const NIGHT = [
-    { key: 'psyillium', type: 'single', label: 'Did you take psyllium?', options: ['Yes','No'], autoNext:true, icon:'grain.svg' },
-    { key: 'magnesium', type: 'single', label: 'Did you take magnesium?', options:['Yes','No'], autoNext:true, icon:'mg.svg' },
-    { key: 'pillowcase', type: 'single', label: 'Did you change pillowcase?', options:['Yes','No'], autoNext:true, icon:'pillow.svg'},
-    { key: 'shower_night', type: 'single', label:'Did you shower?', options:['Yes','No'], autoNext:true, icon:'shower.svg' },
-    { key: 'skincare_night', type: 'single', label:'Did you do skincare?', options:['None','Bare minimum','Once','Twice'], autoNext:true, icon:'skincare2.svg' },
-    { key: 'teeth_night', type:'single', label:'Did you brush teeth?', options:['Once','Twice','None'], autoNext:true, icon:'toothbrush.svg' },
-    { key: 'flossed', type:'single', label:'Did you floss teeth?', options:['Once','Twice','None'], autoNext:true, icon:'floss.svg' },
     { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true, icon:'key.svg' },
     { key: 'day_description', type:'single', label:'How was today?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true, icon:'clock.svg' },
    {key:'saw_dogs', type:'single', label:'Did you see the dogs today?', options:['Little ones','Yes','No'], autoNext:true, icon:'dog.svg'},
@@ -667,6 +669,13 @@ document.getElementById("dataBtn").addEventListener("click", () => {
     loadMorningChecklist();
     return;
   }
+
+     // Night checklist
+  if (mode === 'night' && currentIndex >= NIGHT.length) {
+    loadNightChecklist();
+    return;
+  }
+
 
   // Night completion
   if (mode === 'night' && currentIndex >= NIGHT.length) {
