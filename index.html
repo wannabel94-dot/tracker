@@ -259,7 +259,7 @@ body.night .opt-btn.selected { background: rgba(255,255,255,0.25); border-color:
    DRINK COUNTERS
 ================================================= */
 .drink-pill { display:flex; align-items:center; gap:6px; margin-bottom:12px; background:none; border:none; padding:4px 0; }
-.drink-label { font-size:18px; font-weight:500; color:#fff; min-width:72px; }
+.drink-counter .drink-label { font-size:18px; font-weight:500; color:#fff; min-width:72px; }
 
 .drink-pill:hover .icon-circle { background: rgba(255,255,255,0.25); transform: scale(1.05); }
 .drink-pill:hover .counter-icon { transform: scale(1.06); opacity:0.95; }
@@ -273,7 +273,33 @@ body.night .opt-btn.selected { background: rgba(255,255,255,0.25); border-color:
 .counter-btn { background:transparent; border:none; color:#fff; font-size:20px; cursor:pointer; padding:0 6px; }
 .counter-btn:focus { outline:none; }
 
-  
+   /* ===============================================
+         secondary icons
+ ================================================= */
+/* Make the actual icon scale consistently inside the circle */
+.icon-circle img,
+.icon-circle img.counter-icon {
+  width: 22px;               /* fixed visual size inside the 40px circle */
+  height: 22px;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;       /* preserve aspect, center inside the circle */
+  display: block;
+filter:invert(1);
+}
+
+  .icon-circle {
+  width: 40px;
+  min-width: 40px;           /* prevents shrinking on narrow icons */
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255,255,255,0.15);
+  flex: 0 0 40px;            /* fixed flex-basis so text always starts the same */
+  transition: background 0.25s ease, transform 0.2s ease;
+}
 /* ===============================================
    MENU
 ================================================= */
