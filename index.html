@@ -675,17 +675,6 @@ if (mode === 'night' && currentIndex === 0) {
   return;
 }
 
-function checkNightCompletion() {
-    // Check if ALL checklist items are marked 'Yes'
-    const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
-
-    if (allDone) {
-        // If complete, advance to the first Night question (index 1 after currentIndex=0 for checklist)
-        currentIndex = 1; 
-        saveData();
-        loadUI();
-    }
-}
   // Night completion
   if (mode === 'night' && currentIndex >= NIGHT.length) {
     contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
@@ -916,7 +905,17 @@ function checkMorningCompletion() {
       switchTimeout = setTimeout(()=>switchMode('night'),3000);
     }
 }
-   
+   function checkNightCompletion() {
+    // Check if ALL checklist items are marked 'Yes'
+    const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
+
+    if (allDone) {
+        // If complete, advance to the first Night question (index 1 after currentIndex=0 for checklist)
+        currentIndex = 1; 
+        saveData();
+        loadUI();
+    }
+}
 function showDailyReview() {
     let reviewHtml = `
         <div class="checklist-title">Daily Review</div>
