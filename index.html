@@ -1002,14 +1002,17 @@ function loadNightChecklist() {
       <div class="checklist">
         ${NIGHT_CHECKLIST_ITEMS.map(item => {
           const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-          return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-<div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
-            <span class="check-text">${item.label}</span>
-          </div>`;
+          return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')"><div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div><span class="check-text">${item.label}</span></div>`;
         }).join('')}
         <div style="height:80px;"></div>       </div>
     </div>
   `;
+
+
+   <div class="check-item">
+    <div class="icon-circle"></div><!--
+    --><span class="check-text">Did you take psyllium?</span><!--
+--></div>
 
   contentArea.innerHTML = html;
  backBtn.style.display = 'inline-block';
