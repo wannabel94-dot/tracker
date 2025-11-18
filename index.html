@@ -678,11 +678,18 @@ document.getElementById("dataBtn").addEventListener("click", () => {
     return;
   }
 
-if (mode === 'night' && !answers._nightChecklistDone) {
-    loadNightChecklist();
-    return;
+// Night checklist logic
+if (mode === 'night') {
+    if (currentIndex === -1) {
+        loadNightChecklist();
+        return;
+    }
+    if (!answers._nightChecklistDone) {
+        currentIndex = -1;
+        loadNightChecklist();
+        return;
+    }
 }
-
 
   // Night completion
   if (mode === 'night' && currentIndex >= NIGHT.length) {
@@ -828,7 +835,21 @@ nextBtn.disabled = !hasAnswer;
   };
 
   /* ---------- BACK / NEXT ---------- */
-  backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
+backBtn.onclick = () => {
+    const mode = getMode();
+
+    // --- FIX: Return to NIGHT CHECKLIST ---
+    if (mode === 'night' && currentIndex === 0 && answers._nightChecklistDone) {
+        currentIndex = -1;             // special index for checklist
+        loadNightChecklist();
+        return;
+    }
+
+    if (currentIndex > 0) {
+        currentIndex--;
+        loadUI();
+    }
+};
 nextBtn.onclick = () => {
     saveData(); // save current answers
 
@@ -919,7 +940,7 @@ function checkMorningCompletion() {
 
     if (allDone) {
         answers._nightChecklistDone = true;   // <-- ADD THIS LINE
-        currentIndex = 1;
+        currentIndex = 0;
         saveData();
         loadUI();
     }
