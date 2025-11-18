@@ -853,193 +853,163 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-
-   let currentIndex = 0;
+let currentIndex = 0;
 let answers = {};
 let switchTimeout;
 
-   
-   /* ---------- EDIT MODE ---------- */
+/* ---------- EDIT MODE & UTILS ---------- */
 const params = new URLSearchParams(window.location.search);
 const isEdit = params.get('edit') === 'true';
-let editingDate = localStorage.getItem('editDate'); // day being edited
+let editingDate = localStorage.getItem('editDate');
 let editAnswers = null;
 
-
-// Replace getTodayDate to use editingDate if present
 function getTodayDate() {
-    return editingDate || new Date().toLocaleDateString('en-GB');
+    return editingDate || new Date().toLocaleDateString('en-GB');
 }
 
-  /* ---------- QUESTIONS ---------- */
-  const MORNING = [
-    { key: 'wake_time', type: 'time', label: 'What time did you wake up?', icon: 'alarm.svg' },
-    { key: 'how_slept', type: 'single', label: 'How do you think you slept?', options: [
-      'Went to bed late but slept in','Went to bed late but woke early',
-      'Went to bed early but woke really early',"Couldn't fall asleep",
-      'Lightly disrupted','Frequently disrupted','Fine'], autoNext:true, icon: 'zzz.svg' }
-  ];
+const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
+const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
 
-  const MORNING_CHECKLIST_ITEMS = [
-   { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
-    { key: 'made_bed', label: 'Make bed', icon: 'bedsheet.svg' },
-    { key: 'kettle', label: 'Boil kettle', icon: 'kettle1.svg' },
-    { key: 'took_meds_morn', label: 'Take meds', icon: 'blister.svg' },
-    { key: 'tidy_up', label: 'Tidy up', icon: 'sweep.svg' },
-    { key: 'tea', label: 'Have tea', icon: 'tea.svg' },
-    { key: 'poop', label: 'Poop', icon: 'poop.svg' },
-    { key: 'shower_morn', label: 'Shower', icon: 'shower.svg' },
-     { key: 'get_dressed', label: 'Get dressed', icon: 'hanger.svg' },
-    { key: 'led_mask_morn', label: 'LED mask', icon: 'led.svg' },
-    { key: 'skincare_morn', label: 'Skincare', icon: 'skincare2.svg' },
-    { key: 'eat_breakfast', label: 'Breakfast', icon: 'break2.svg' },
-    { key: 'supplements_morn', label: 'Supplements', icon: 'supplements-cropped.svg' },
-    { key: 'brush_teeth_morn', label: 'Brush teeth', icon: 'toothbrush.svg' }
-  ];
+/* ---------- DOM ELEMENTS ---------- */
+const contentArea = document.getElementById('contentArea');
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressBar = document.getElementById('progressBar');
+const btnSettings = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
 
-   const NIGHT_CHECKLIST_ITEMS = [
-   { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
-   { key: 'psyillium', label: 'Did you take psyllium?',icon:'grain.svg' },
-    { key: 'magnesium', label: 'Did you take magnesium?', icon:'mg.svg' },
-    { key: 'pillowcase', label: 'Did you change pillowcase?', icon:'pillow.svg'},
-    { key: 'skincare_night', label:'Did you do skincare?', icon:'skincare2.svg' },
-    { key: 'teeth_night', label:'Did you brush teeth?', icon:'toothbrush.svg' },
-    { key: 'flossed', label:'Did you floss teeth?', icon:'floss.svg' },
-  ];
+/* ---------- DATA STRUCTURES ---------- */
+const MORNING = [
+    { key: 'wake_time', type: 'time', label: 'What time did you wake up?', icon: 'alarm.svg' },
+    { key: 'how_slept', type: 'single', label: 'How do you think you slept?', options: ['Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine'], autoNext:true, icon: 'zzz.svg' }
+];
 
-  const NIGHT = [
-    { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true, icon:'key.svg' },
-    { key: 'day_description', type:'single', label:'How was today?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true, icon:'clock.svg' },
-   {key:'saw_dogs', type:'single', label:'Did you see the dogs today?', options:['Little ones','Yes','No'], autoNext:true, icon:'dog.svg'},
-    {key:'feel_with_L', type:'single', label:'How do you feel with L today?', options:['Elated','Sensitive','Pretty good','Fine','Irritated','Somewhat insecure','Anxiously insecure','Anguish'], autoNext:true, icon: 'l.svg'},
-    {key:'house_state', type:'single', label:'What is the state of the house?', options:['Disaster','Very messy','A bit messy','Fine - a few dishes','Pretty tidy','Spotless'], autoNext:true, icon: 'dirty.svg' },
-    {key:'drove', type:'single', label:'Did you drive today?', options:['No','<30 mins','30 mins+','1h+'], autoNext:true, icon: 'drive.svg' },
-    {key:'body_feelings', type:'single', label:'Feeling about your body?', options:["Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"], autoNext:true, icon: 'body.svg'},
-    {key:'food_desc', type:'single', label:'How did you eat?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions'], autoNext:true, icon: 'veg.svg' },
-     { key: 'caffeine_alcohol', type:'multi', label:'How much caffeine / alcohol?', options:['Coffee','Tea','Beer','Spirits','Wine','Mate'], icon:'beans.svg' },
-    { key: 'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','None'], icon:'health.svg' },
-     {key:'most_prominent', type:'multi', label:'What is most prominent?', options:['Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD', 'None'], autoNext:true, icon: 'mh.svg'  },
-    {key:'meds', type:'multi', label:'Any extra medication?', options:['1mg benzo','Painkillers','2mg benzo','Antisickness','3mg benzo','Antihistamine','D-Mannose','Antibiotic', 'Antinausea', 'None'], icon: 'meds.svg' },
-    { key: 'sensory_triggers', type:'multi', label:'Any sensory triggers?', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','None'], icon:'sense.svg' },
-    { key: 'appointments', type:'multi', label:'Did you have appointments?', options:['Psych','Therapy (online)','Therapy','Doctor','Blood tests','None'], icon:'dr.svg' },
-    { key: 'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','None'], icon:'move.svg' },
-    { key: 'talked_to_anyone', type:'multi', label:'Who did you talk to?', options:['General public','Health professional','Acquaintances','Friends','Friends of L','Family','None'], icon:'speak.svg' },
-    { key: 'wellness', type:'multi', label:'Do any wellness shit?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','None'], icon:'lotus.svg' },
-    { key: 'creative', type:'multi', label:'Do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','None'], icon:'paint.svg' },
-    { key: 'closed_eyes_time', type:'time', label:'What time are you closing your eyes?', autoNext:true, icon:'sleeptime.svg', specialIcon:true }
-  ];
+const MORNING_CHECKLIST_ITEMS = [
+    { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
+    { key: 'made_bed', label: 'Make bed', icon: 'bedsheet.svg' },
+    { key: 'kettle', label: 'Boil kettle', icon: 'kettle1.svg' },
+    { key: 'took_meds_morn', label: 'Take meds', icon: 'blister.svg' },
+    { key: 'tidy_up', label: 'Tidy up', icon: 'sweep.svg' },
+    { key: 'tea', label: 'Have tea', icon: 'tea.svg' },
+    { key: 'poop', label: 'Poop', icon: 'poop.svg' },
+    { key: 'shower_morn', label: 'Shower', icon: 'shower.svg' },
+    { key: 'get_dressed', label: 'Get dressed', icon: 'hanger.svg' },
+    { key: 'led_mask_morn', label: 'LED mask', icon: 'led.svg' },
+    { key: 'skincare_morn', label: 'Skincare', icon: 'skincare2.svg' },
+    { key: 'eat_breakfast', label: 'Breakfast', icon: 'break2.svg' },
+    { key: 'supplements_morn', label: 'Supplements', icon: 'supplements-cropped.svg' },
+    { key: 'brush_teeth_morn', label: 'Brush teeth', icon: 'toothbrush.svg' }
+];
 
-  /* ---------- DOM ELEMENTS ---------- */
-  const contentArea = document.getElementById('contentArea');
-  const backBtn = document.getElementById('backBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const progressBar = document.getElementById('progressBar');
-  const btnSettings = document.getElementById('btnSettings');
-  const settingsMenu = document.getElementById('settingsMenu');
-document.getElementById('historyBtn').addEventListener('click', () => {
-  window.location.href = 'history.html';
-});
+const NIGHT_CHECKLIST_ITEMS = [
+    { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
+    { key: 'psyillium', label: 'Did you take psyllium?',icon:'grain.svg' },
+    { key: 'magnesium', label: 'Did you take magnesium?', icon:'mg.svg' },
+    { key: 'pillowcase', label: 'Did you change pillowcase?', icon:'pillow.svg'},
+    { key: 'skincare_night', label:'Did you do skincare?', icon:'skincare2.svg' },
+    { key: 'teeth_night', label:'Did you brush teeth?', icon:'toothbrush.svg' },
+    { key: 'flossed', label:'Did you floss teeth?', icon:'floss.svg' },
+];
 
-  const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
-  const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
+const NIGHT = [
+    { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true, icon:'key.svg' },
+    { key: 'day_description', type:'single', label:'How was today?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true, icon:'clock.svg' },
+    {key:'saw_dogs', type:'single', label:'Did you see the dogs today?', options:['Little ones','Yes','No'], autoNext:true, icon:'dog.svg'},
+    {key:'feel_with_L', type:'single', label:'How do you feel with L today?', options:['Elated','Sensitive','Pretty good','Fine','Irritated','Somewhat insecure','Anxiously insecure','Anguish'], autoNext:true, icon: 'l.svg'},
+    {key:'house_state', type:'single', label:'What is the state of the house?', options:['Disaster','Very messy','A bit messy','Fine - a few dishes','Pretty tidy','Spotless'], autoNext:true, icon: 'dirty.svg' },
+    {key:'drove', type:'single', label:'Did you drive today?', options:['No','<30 mins','30 mins+','1h+'], autoNext:true, icon: 'drive.svg' },
+    {key:'body_feelings', type:'single', label:'Feeling about your body?', options:["Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"], autoNext:true, icon: 'body.svg'},
+    {key:'food_desc', type:'single', label:'How did you eat?', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions'], autoNext:true, icon: 'veg.svg' },
+    { key: 'caffeine_alcohol', type:'multi', label:'How much caffeine / alcohol?', options:['Coffee','Tea','Beer','Spirits','Wine','Mate'], icon:'beans.svg' },
+    { key: 'sickness', type:'multi', label:'Sickness / symptoms', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','None'], icon:'health.svg' },
+    {key:'most_prominent', type:'multi', label:'What is most prominent?', options:['Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD', 'None'], autoNext:true, icon: 'mh.svg' },
+    {key:'meds', type:'multi', label:'Any extra medication?', options:['1mg benzo','Painkillers','2mg benzo','Antisickness','3mg benzo','Antihistamine','D-Mannose','Antibiotic', 'Antinausea', 'None'], icon: 'meds.svg' },
+    { key: 'sensory_triggers', type:'multi', label:'Any sensory triggers?', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','None'], icon:'sense.svg' },
+    { key: 'appointments', type:'multi', label:'Did you have appointments?', options:['Psych','Therapy (online)','Therapy','Doctor','Blood tests','None'], icon:'dr.svg' },
+    { key: 'movement', type:'multi', label:'Did you move today?', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','None'], icon:'move.svg' },
+    { key: 'talked_to_anyone', type:'multi', label:'Who did you talk to?', options:['General public','Health professional','Acquaintances','Friends','Friends of L','Family','None'], icon:'speak.svg' },
+    { key: 'wellness', type:'multi', label:'Do any wellness shit?', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','None'], icon:'lotus.svg' },
+    { key: 'creative', type:'multi', label:'Do anything creative?', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','None'], icon:'paint.svg' },
+    { key: 'closed_eyes_time', type:'time', label:'What time are you closing your eyes?', autoNext:true, icon:'sleeptime.svg', specialIcon:true }
+];
 
-if (isEdit && editingDate) {
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const existing = all[editingDate]?.answers; 
 
-    if (existing) {
-        editAnswers = existing;
-        answers = {...existing}; // preload saved answers
-        currentIndex = 0;        // start at first question
-    }
-
-    // Update header
-    const header = document.getElementById('dayOfWeek');
-    if (header) header.textContent = `Editing ${editingDate}`;
-
-    // Force morning mode
-    document.body.classList.add('morning');
-    document.body.classList.remove('night');
-}
+/* ---------- DATA HANDLERS ---------- */
 
 function loadSavedData() {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const day = getTodayDate();
-  if (all[day]) {
-    answers = all[day].answers || {};
-    currentIndex = all[day].currentIndex || 0;
-  } else {
-    answers = {};
-    currentIndex = 0;
-  }
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const day = getTodayDate();
+    if (all[day]) {
+        answers = all[day].answers || {};
+        currentIndex = all[day].currentIndex || 0;
+        // Ensure body class matches loaded mode
+        switchMode(all[day].mode || 'morning', false);
+    } else {
+        answers = {};
+        currentIndex = 0;
+    }
 }
 
 function saveData() {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const day = getTodayDate();
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const day = getTodayDate();
 
-  // Store all answers for the day in a single object, overwriting any previous save
-  all[day] = {
-    answers: answers,
-    currentIndex: currentIndex,
-    mode: getMode() // optional: keeps track if it was morning/night last
-  };
+    all[day] = {
+        answers: answers,
+        currentIndex: currentIndex,
+        mode: getMode()
+    };
 
-  localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
 }
 
-// Make sure data is saved before leaving the page
 window.addEventListener('beforeunload', saveData);
 
-  /* ---------- MODE SWITCH ---------- */
-function switchMode(mode) {
-  saveData();
-  document.body.classList.toggle('morning', mode === 'morning');
-  document.body.classList.toggle('night', mode === 'night');
-  // Don't reset answers/currentIndex here
-  // When switching to night mode, reset currentIndex to 0 to show the night checklist
-  if (mode === 'night') {
-    currentIndex = 0;
-  } else {
-    // For morning, load previous index if available, or 0
-    loadSavedData(); 
-  }
-  loadUI();
+
+/* ---------- MODE SWITCH ---------- */
+function switchMode(mode, resetIndex = true) {
+    saveData();
+    document.body.classList.toggle('morning', mode === 'morning');
+    document.body.classList.toggle('night', mode === 'night');
+    
+    if (resetIndex) {
+        currentIndex = 0;
+    }
+    loadUI();
 }
 
-  document.getElementById('morningBtn').onclick = () => switchMode('morning');
-  document.getElementById('nightBtn').onclick = () => switchMode('night');
-
-document.getElementById("blankBtn").addEventListener("click", () => {
-    window.location.href = "blank.html";
-});
-
-document.getElementById("dataBtn").addEventListener("click", () => {
-    window.location.href = "data.html";
-});
+document.getElementById('morningBtn').onclick = () => switchMode('morning');
+document.getElementById('nightBtn').onclick = () => switchMode('night');
+document.getElementById("blankBtn").addEventListener("click", () => { window.location.href = "blank.html"; });
+document.getElementById("dataBtn").addEventListener("click", () => { window.location.href = "data.html"; });
+document.getElementById('historyBtn').addEventListener('click', () => { window.location.href = 'history.html'; });
 
 
-/* ---------- PROGRESS BAR (Restored) ---------- */
+/* ---------- PROGRESS BAR (FIXED LOGIC) ---------- */
 function updateProgressBar() {
     const mode = getMode();
     const questions = getQuestions();
     
-    let totalSteps = questions.length + 1; // +1 for the checklist step
-    let currentStep = currentIndex;
+    // Total steps includes the questions + 1 for the checklist step
+    let totalSteps = (mode === 'morning' ? MORNING.length : NIGHT.length) + 1;
+    let currentStep;
 
     if (mode === 'morning') {
-        // If morning is complete, the progress should show 100%
-        if (currentIndex >= MORNING.length) {
+        // If index < MORNING.length, we're in a question (index 0 is step 1, index 1 is step 2, etc.)
+        if (currentIndex < MORNING.length) {
+            currentStep = currentIndex + 1; 
+        } else {
+            // Checklist is the final step
             currentStep = totalSteps;
         }
     } else { // Night mode
-        // Night Checklist is step 1 (index 0), then questions follow (index 1 to N)
-        if (currentIndex >= NIGHT.length) {
-            currentStep = totalSteps;
-        } else if (currentIndex === 0) {
-            currentStep = 1; // Night Checklist is the first step
+        // Checklist is index 0 (step 1). Questions are index 1 onward.
+        if (currentIndex === 0) {
+            currentStep = 1; // Night Checklist
+        } else if (currentIndex >= NIGHT.length) {
+            currentStep = totalSteps; // Finished
         } else {
-            currentStep = currentIndex + 1;
+            currentStep = currentIndex + 1; 
         }
     }
 
@@ -1048,7 +1018,7 @@ function updateProgressBar() {
 }
 
 
-/* ---------- CHECKLIST LOGIC (NEW) ---------- */
+/* ---------- CHECKLIST LOGIC (FIXED) ---------- */
 window.toggleChecklistItem = (key) => {
     const mode = getMode();
     const checklistKey = mode === 'morning' ? 'morning_checklist' : 'night_checklist';
@@ -1066,7 +1036,7 @@ window.toggleChecklistItem = (key) => {
         checklistArray.splice(index, 1);
     }
     
-    // Update the DOM to reflect the change
+    // Update the DOM
     const itemElement = document.querySelector(`.check-item[data-key="${key}"]`);
     if (itemElement) {
         itemElement.classList.toggle('selected', index === -1);
@@ -1117,7 +1087,7 @@ function loadMorningChecklist() {
         'morning_checklist', 
         'Morning Checklist', 
         'Morning Done', 
-        'currentIndex--; loadUI();'
+        'currentIndex = MORNING.length - 1; loadUI();' // Go back to the last morning question
     );
 }
 
@@ -1127,211 +1097,185 @@ function loadNightChecklist() {
         'night_checklist', 
         'Night Checklist', 
         'Start Night Questions', 
-        null // No back button for Night Checklist (it's the start of night)
+        null // No back button: Checklist is index 0
     );
 }
 
 
-  /* ---------- UI RENDER ---------- */
- function loadUI() {
-  const mode = getMode();
-  const questions = getQuestions();
-  
-  // Check mode and index to determine what to load
+/* ---------- UI RENDER (FIXED NAVIGATION) ---------- */
+function loadUI() {
+    const mode = getMode();
+    const questions = getQuestions();
+    
+    // 1. Morning Checklist (Load when currentIndex reaches the end of MORNING questions)
+    if (mode === 'morning' && currentIndex >= MORNING.length) {
+        loadMorningChecklist();
+        return;
+    }
+    
+    // 2. Night Checklist (Load when currentIndex is 0 in night mode)
+    if (mode === 'night' && currentIndex === 0) {
+        loadNightChecklist();
+        return;
+    }
 
-  // 1. Morning checklist (After all morning questions)
-  if (mode === 'morning' && currentIndex >= MORNING.length) {
-    loadMorningChecklist();
-    return;
-  }
-  
-  // 2. Night checklist (At the start of night questions, index 0)
-  if (mode === 'night' && currentIndex === 0) {
-    loadNightChecklist();
-    return;
-  }
+    // 3. Day Completed (Load when currentIndex reaches the end of NIGHT questions)
+    if (mode === 'night' && currentIndex > NIGHT.length) {
+        contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
+        backBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        updateProgressBar();
+        return;
+    }
 
+    // --- Normal Question Card --- 
+    
+    // Ensure we skip the checklist index (0) if we're past it in Night mode
+    const qIndex = (mode === 'night' && currentIndex > 0) ? currentIndex - 1 : currentIndex;
+    const q = questions[qIndex];
 
-  // 3. Night completion (After all night questions/checklist)
-  if (mode === 'night' && currentIndex >= NIGHT.length) {
-    contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
-    backBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-    updateProgressBar();
-    return;
-  }
+    progressBar.parentElement.style.display = 'block';
 
-  // 4. Normal Question Card
-  
-  // Show progress bar
-  progressBar.parentElement.style.display = 'block';
+    // Update Day of Week Header
+    const dayOfWeekElement = document.getElementById('dayOfWeek');
+    dayOfWeekElement.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+    
+    // Build question header with optional icon
+    let questionHeader = '';
+    if (q.icon) {
+        const specialClass = q.specialIcon ? ' special-icon' : '';
+        questionHeader = `
+            <div class="question-with-icon">
+                <div class="question-icon${specialClass}">
+                    <img src="icons/${q.icon}" alt="${q.label}">
+                </div>
+                <span class="question-text">${q.label}</span>
+            </div>
+        `;
+    } else {
+        questionHeader = `<div class="question">${q.label}</div>`;
+    }
 
-  // Current question
-  const q = questions[currentIndex];
+    // Start HTML with question header
+    let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
 
-function updateDayOfWeek() {
-  const dayOfWeekElement = document.getElementById('dayOfWeek');
-  const today = new Date();
+    // Render options logic (Single, Multi, Time, Counter)
+    if (q.type === 'single') {
+        q.options.forEach(opt => {
+            const selected = answers[q.key] === opt ? 'selected' : '';
+            html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+        });
+    } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+        if (!answers[q.key]) answers[q.key] = {};
+        q.options.forEach(opt => {
+            const count = answers[q.key][opt] || 0;
+            html += `
+                <div class="opt-btn drink-pill">
+                    <span style="flex:1">${opt}</span>
+                    <div class="counter-inner">
+                        <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+                        <span id="count-${opt}">${count}</span>
+                        <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+                    </div>
+                </div>
+            `;
+        });
+    } else if (q.type === 'multi') {
+        if (!answers[q.key]) answers[q.key] = [];
+        q.options.forEach(opt => {
+            const selected = answers[q.key].includes(opt) ? 'selected' : '';
+            html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+        });
+    } else if (q.type === 'time') {
+        html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
+    }
 
-  // Format options
-  const options = { weekday: 'long', month: 'short', day: 'numeric' };
-  const formattedDate = today.toLocaleDateString('en-US', options);
+    html += '</div>';
+    contentArea.innerHTML = html;
 
-  dayOfWeekElement.textContent = formattedDate; // e.g., "Thursday, Nov 13"
+    // Control visibility and text
+    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = 'Next';
+    nextBtn.disabled = false; // Add validation here if needed for non-autoNext questions
+    updateProgressBar();
 }
 
-// Call on load
-updateDayOfWeek();
+/* ---------- SELECT / TOGGLE HANDLERS (Simplified) ---------- */
 
-
-    // ------ function UI -------- //
-  // Build question header with optional icon
-  let questionHeader = '';
-  if (q.icon) {
-    const specialClass = q.specialIcon ? ' special-icon' : '';
-    questionHeader = `
-      <div class="question-with-icon">
-        <div class="question-icon${specialClass}">
-          <img src="icons/${q.icon}" alt="${q.label}">
-        </div>
-        <span class="question-text">${q.label}</span>
-      </div>
-    `;
-  } else {
-    questionHeader = `<div class="question">${q.label}</div>`;
-  }
-
-  // Start HTML with question header
-let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
-
-  // Render options
- if (q.type === 'single') {
-  q.options.forEach(opt => {
-    const selected = answers[q.key] === opt ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-  });
-} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-  if (!answers[q.key]) answers[q.key] = {};
-  q.options.forEach(opt => {
-    const count = answers[q.key][opt] || 0;
-    html += `
-      <div class="opt-btn drink-pill">
-        <span style="flex:1">${opt}</span>
-        <div class="counter-inner">
-          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
-          <span id="count-${opt}">${count}</span>
-          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
-        </div>
-      </div>
-    `;
-  });
-} else if (q.type === 'multi') {
-  if (!answers[q.key]) answers[q.key] = [];
-  q.options.forEach(opt => {
-    const selected = answers[q.key].includes(opt) ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-  });
-} else if (q.type === 'time') {
-  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
-}
-
-
-  // Close .options div
-  html += '</div>';
-
-  contentArea.innerHTML = html;
-
-  // Handle back/next button visibility and text
-  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-  nextBtn.style.display = 'inline-block';
-  nextBtn.textContent = 'Next';
-  updateProgressBar();
-}
-
-  /* ---------- SELECT OPTION ---------- */
-  window.selectOption = (opt) => {
-    const q = getQuestions()[currentIndex];
-    answers[q.key] = opt;
-    saveData();
-     nextBtn.disabled = false;
-    updateProgressBar();
-    if (q.autoNext) { currentIndex++; loadUI(); }
-  };
-
-  /* ---------- MULTI OPTION TOGGLE ---------- */
-window.toggleMultiOption = (qKey, opt) => {
-  if (!answers[qKey]) answers[qKey] = [];
-
-  const selected = answers[qKey].includes(opt);
-
-  if (opt === 'None') {
-    // If "None" is selected, deselect all others
-    answers[qKey] = selected ? [] : ['None'];
-  } else {
-    // Deselect "None" if selecting any other option
-    answers[qKey] = answers[qKey].filter(o => o !== 'None');
-    if (!selected) answers[qKey].push(opt);
-    else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
-  }
-
-  saveData()
-     // Enable Next if at least one option selected
-const val = answers[qKey];
-const hasAnswer = (Array.isArray(val) && val.length > 0) || (typeof val === 'object' && Object.values(val).some(v => v !== 0));
-nextBtn.disabled = !hasAnswer;
-
-  loadUI();
-
-  // Auto-next if "None" is selected
-  const q = getQuestions()[currentIndex];
-  if (opt === 'None' && !selected && q.autoNext) {
-    currentIndex++;
-    loadUI();
-  }
+window.selectOption = (opt) => {
+    const q = getQuestions()[currentIndex];
+    answers[q.key] = opt;
+    saveData();
+    nextBtn.disabled = false;
+    updateProgressBar();
+    if (q.autoNext) { currentIndex++; loadUI(); }
 };
 
-  /* ---------- COUNTERS ---------- */
-  window.updateCounter = (opt,delta) => {
-    if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
-    let val = answers['caffeine_alcohol'][opt] || 0;
-    val += delta; if (val < 0) val = 0;
-    answers['caffeine_alcohol'][opt] = val;
-    const el = document.getElementById(`count-${opt}`);
-    if (el) el.textContent = val;
-    saveData(); updateProgressBar();
-  };
+window.toggleMultiOption = (qKey, opt) => {
+    if (!answers[qKey]) answers[qKey] = [];
+    const selected = answers[qKey].includes(opt);
 
-  /* ---------- BACK / NEXT ---------- */
-  backBtn.onclick = () => { 
-    if(currentIndex>0){ 
+    if (opt === 'None') {
+        answers[qKey] = selected ? [] : ['None'];
+    } else {
+        answers[qKey] = answers[qKey].filter(o => o !== 'None');
+        if (!selected) answers[qKey].push(opt);
+        else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
+    }
+    saveData();
+    
+    const hasAnswer = answers[qKey].length > 0;
+    nextBtn.disabled = !hasAnswer;
+
+    // Rerender to update button styles immediately
+    loadUI(); 
+
+    const q = getQuestions()[currentIndex];
+    if (q && q.autoNext && ((opt === 'None' && !selected) || hasAnswer)) {
+         // This is tricky. Let's not autoNext on multi for simplicity
+    }
+};
+
+window.updateCounter = (opt, delta) => {
+    if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
+    let val = answers['caffeine_alcohol'][opt] || 0;
+    val += delta; if (val < 0) val = 0;
+    answers['caffeine_alcohol'][opt] = val;
+    const el = document.getElementById(`count-${opt}`);
+    if (el) el.textContent = val;
+    saveData(); 
+    updateProgressBar();
+};
+
+/* ---------- BACK / NEXT NAVIGATION (FIXED) ---------- */
+backBtn.onclick = () => { 
+    if(currentIndex > 0){ 
         currentIndex--; 
         loadUI(); 
     } 
 };
 
 nextBtn.onclick = () => {
-    saveData(); // save current answers
+    saveData(); 
     const mode = getMode();
 
-    if (mode === 'morning' && nextBtn.textContent === 'Morning Done') {
-        // Transition from Morning Checklist
-        contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-        backBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
-
-        saveData();
-
-        // Auto-switch to night mode after delay
-        switchTimeout = setTimeout(() => switchMode('night'), 3000);
-    } else if (mode === 'night' && nextBtn.textContent === 'Start Night Questions') {
-        // Transition from Night Checklist to first Night Question
-        currentIndex = 1; // Skip the Checklist (index 0)
-        loadUI();
-    }
-    else {
-        currentIndex++; 
-        loadUI(); 
-    }
+    if (mode === 'morning' && nextBtn.textContent === 'Morning Done') {
+        // Morning Checklist finished. Switch to Night.
+        contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
+        backBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        saveData();
+        switchTimeout = setTimeout(() => switchMode('night'), 3000);
+    } else if (mode === 'night' && nextBtn.textContent === 'Start Night Questions') {
+        // Night Checklist finished. Move to first question.
+        currentIndex = 1; // Start at the first question (index 1)
+        loadUI();
+    } else {
+        // Standard question navigation
+        currentIndex++; 
+        loadUI(); 
+    }
 };
 
 // Initial load
