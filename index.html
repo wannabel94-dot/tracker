@@ -822,7 +822,7 @@ window.toggleMultiOption = (qKey, opt) => {
     else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
   }
 
-  saveData
+  saveData();
      // Enable Next if at least one option selected
 const val = answers[qKey];
 const hasAnswer = (Array.isArray(val) && val.length > 0) || (typeof val === 'object' && Object.values(val).some(v => v !== 0));
@@ -851,12 +851,11 @@ nextBtn.disabled = !hasAnswer;
 
 /* ---------- BACK / NEXT ---------- */
 backBtn.onclick = () => {
-    // Special case: if we are on the question immediately after the night checklist
-    if (currentIndex === nightChecklistIndex + 1) { 
-        // go back to night checklist
-        currentIndex = nightChecklistIndex;
-    } else {
+    if (currentIndex > 0) {
         currentIndex--;
+    } else if (getMode() === 'night' && !answers._nightChecklistDone) {
+        // optional: go back to night checklist
+        currentIndex = -1;
     }
     loadUI();
 };
