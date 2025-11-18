@@ -675,7 +675,17 @@ if (mode === 'night' && currentIndex === 0) {
   return;
 }
 
+function checkNightCompletion() {
+    // Check if ALL checklist items are marked 'Yes'
+    const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
 
+    if (allDone) {
+        // If complete, advance to the first Night question (index 1 after currentIndex=0 for checklist)
+        currentIndex = 1; 
+        saveData();
+        loadUI();
+    }
+}
   // Night completion
   if (mode === 'night' && currentIndex >= NIGHT.length) {
     contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
@@ -977,7 +987,7 @@ function loadNightChecklist() {
   nextBtn.disabled = false;
 
   updateProgressBar();
-  // Removed: checkNightCompletion();
+  checkNightCompletion();
 }
 
   /* ---------- PROGRESS BAR ---------- */
