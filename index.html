@@ -362,7 +362,27 @@ body.night .check-item .check-text {
     text-align: left;           /* ensure text is left-aligned */
 }
 
+body.night .icon-circle img.counter-icon {
+  width: 70%;
+  height: 70%;
+  max-width: 52px;
+  max-height: 52px;
+  filter: invert(1); /* ok if icons are black */
+  opacity: 0.9;
+}
 
+ body.night .icon-circle {
+  width: 40px; 
+  height: 40px; 
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 6px;
+  flex-shrink: 0; /* prevent parent from shrinking it */
+  transition: background 0.25s ease, transform 0.2s ease;
+}
 /* ===============================================
    BACK NEXT BUTTONS
 ================================================= */
