@@ -996,22 +996,55 @@ function loadNightChecklist() {
   checkNightCompletion();
 }
 
-  /* ---------- PROGRESS BAR ---------- */
-  function updateProgressBar() {
-    const isMorning = getMode() === 'morning';
-    const keys = isMorning ? ['wake_time','how_slept', ...MORNING_CHECKLIST_ITEMS.map(i=>i.key)] : NIGHT.map(q=>q.key);
-    let done = 0;
-    keys.forEach(key => {
-      if(MORNING_CHECKLIST_ITEMS.find(i=>i.key===key)) { if(answers[key]==='Yes') done++; }
-      else {
-        const q = NIGHT.find(q=>q.key===key);
-        const val = answers[key];
-        if(q?.type==='multi') { if(val && ((Array.isArray(val) && val.length>0) || (typeof val==='object' && Object.values(val).some(v=>v!==0)))) done++; }
-        else if(val) done++;
-      }
-    });
-    progressBar.style.width = keys.length>0 ? Math.round((done/keys.length)*100)+'%' : '0%';
-  }
+/* ---------- PROGRESS BAR ---------- */
+function updateProgressBar() {
+  const isMorning = getMode() === 'morning';
+
+  // ➤ FIX: Include night checklist items in night mode key list
+  const keys = isMorning
+    ? ['wake_time','how_slept', ...MORNING_CHECKLIST_ITEMS.map(i => i.key)]
+    : [
+        ...NIGHT_CHECKLIST_ITEMS.map(i => i.key),   // <-- ADD THIS
+        ...NIGHT.map(q => q.key)
+      ];
+
+  let done = 0;
+
+  keys.forEach(key => {
+    // Morning checklist items
+    if (MORNING_CHECKLIST_ITEMS.find(i => i.key === key)) {
+      if (answers[key] === 'Yes') done++;
+      return;
+    }
+
+    // Night checklist items
+    if (NIGHT_CHECKLIST_ITEMS.find(i => i.key === key)) {
+      if (answers[key] === 'Yes') done++;   // same rule as morning
+      return;
+    }
+
+    // Night questions (multi or normal)
+    const q = NIGHT.find(q => q.key === key);
+    const val = answers[key];
+
+    if (q?.type === 'multi') {
+      if (
+        val &&
+        (
+          (Array.isArray(val) && val.length > 0) ||
+          (typeof val === 'object' && Object.values(val).some(v => v !== 0))
+        )
+      ) done++;
+    } else {
+      if (val) done++;
+    }
+  });
+
+  progressBar.style.width =
+    keys.length > 0
+      ? Math.round((done / keys.length) * 100) + '%'
+      : '0%';
+}
 
   /* ---------- SETTINGS MENU ---------- */
  const menuOverlay = document.getElementById('menuOverlay');
