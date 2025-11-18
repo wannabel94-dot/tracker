@@ -339,6 +339,14 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .check-item.selected .check-text { text-decoration:line-through; opacity:0.6; }
 .checklist-wrapper { max-height:60vh; overflow-y:auto; -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
 
+/* Make night checklist left aligned like morning */
+#nightChecklist,
+#nightChecklist .checklist-item {
+    text-align: left !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+}
+
 /* ===============================================
    BACK NEXT BUTTONS
 ================================================= */
