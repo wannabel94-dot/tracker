@@ -670,11 +670,10 @@ document.getElementById("dataBtn").addEventListener("click", () => {
     return;
   }
 
-     // Night checklist
-  if (mode === 'night' && currentIndex >= NIGHT.length) {
-    loadNightChecklist();
-    return;
-  }
+if (mode === 'night' && currentIndex === 0) {
+  loadNightChecklist();
+  return;
+}
 
 
   // Night completion
