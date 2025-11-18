@@ -997,10 +997,7 @@ function showDailyReview() {
      /* ---------- NIGHT CHECKLIST ---------- */
 function loadNightChecklist() {
   let html = `
-    <div class="checklist-title">Night Routine</div>
-    <div class="checklist-wrapper">
-      <div class="checklist">
-        ${NIGHT_CHECKLIST_ITEMS.map(item => {
+    <div class="checklist-title">Night Routine</div><div class="checklist-wrapper"><div class="checklist">${NIGHT_CHECKLIST_ITEMS.map(item => {
           const selected = answers[item.key] === 'Yes' ? 'selected' : '';
           return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')"><div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div><span class="check-text">${item.label}</span></div>`;
         }).join('')}
