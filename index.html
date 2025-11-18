@@ -339,18 +339,29 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .check-item.selected .check-text { text-decoration:line-through; opacity:0.6; }
 .checklist-wrapper { max-height:60vh; overflow-y:auto; -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
 
-/* Make NIGHT checklist left-aligned like morning */
-/* FIX NIGHT CHECKLIST SPACING TO MATCH MORNING */
+/* NIGHT CHECKLIST FIX */
 body.night .check-item {
-    padding: 10px 14px !important;     /* match morning */
+    display: flex;              /* ensure flex layout */
+    flex-direction: row;        /* icons left, text right */
+    align-items: center;        /* vertical align */
+    justify-content: flex-start;/* keep items to the left */
+    gap: 10px;                  /* space between icon and text */
+    padding: 10px 14px !important;
     margin-bottom: 8px !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
 }
 
-body.night .icon-circle {
-    margin-right: 6px !important;      /* same as morning */
+body.night .check-item .icon-circle {
+    margin-right: 0;            /* remove extra margin, gap handles spacing */
+    flex-shrink: 0;             /* prevent icon from shrinking */
+    width: 40px;                /* same as morning */
+    height: 40px;               /* same as morning */
 }
+
+body.night .check-item .check-text {
+    flex: 1;                    /* make text take remaining space */
+    text-align: left;           /* ensure text is left-aligned */
+}
+
 
 /* ===============================================
    BACK NEXT BUTTONS
@@ -838,22 +849,18 @@ nextBtn.disabled = !hasAnswer;
     saveData(); updateProgressBar();
   };
 
-  /* ---------- BACK / NEXT ---------- */
+/* ---------- BACK / NEXT ---------- */
 backBtn.onclick = () => {
-    const mode = getMode();
-
-    // --- FIX: Return to NIGHT CHECKLIST ---
-    if (mode === 'night' && currentIndex === 0 && answers._nightChecklistDone) {
-        currentIndex = -1;             // special index for checklist
-        loadNightChecklist();
-        return;
-    }
-
-    if (currentIndex > 0) {
+    // Special case: if we are on the question immediately after the night checklist
+    if (currentIndex === nightChecklistIndex + 1) { 
+        // go back to night checklist
+        currentIndex = nightChecklistIndex;
+    } else {
         currentIndex--;
-        loadUI();
     }
+    loadUI();
 };
+
 nextBtn.onclick = () => {
     saveData(); // save current answers
 
@@ -1014,9 +1021,10 @@ function loadNightChecklist() {
   `;
 
   contentArea.innerHTML = html;
-  backBtn.style.display = 'none'; // Set to 'none' since this is the first step
-  nextBtn.style.display = 'inline-block';
+ backBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
   nextBtn.textContent = 'Next'; // Use 'Next' to move to the first NIGHT question
+   nextBtn.disabled = false;  // <-- ADDED
 
   updateProgressBar();
   checkNightCompletion();
