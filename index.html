@@ -340,12 +340,16 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 .checklist-wrapper { max-height:60vh; overflow-y:auto; -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
 
 /* Make NIGHT checklist left-aligned like morning */
-body.night .checklist,
-body.night .check-item,
-body.night .check-text {
-    text-align: left !important;
+/* FIX NIGHT CHECKLIST SPACING TO MATCH MORNING */
+body.night .check-item {
+    padding: 10px 14px !important;     /* match morning */
+    margin-bottom: 8px !important;
     justify-content: flex-start !important;
     align-items: center !important;
+}
+
+body.night .icon-circle {
+    margin-right: 6px !important;      /* same as morning */
 }
 
 /* ===============================================
