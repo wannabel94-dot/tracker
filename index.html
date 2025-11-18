@@ -541,7 +541,6 @@ function getTodayDate() {
   ];
 
    const NIGHT_CHECKLIST_ITEMS = [
-   { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
    { key: 'psyillium', label: 'Did you take psyllium?',icon:'grain.svg' },
     { key: 'magnesium', label: 'Did you take magnesium?', icon:'mg.svg' },
     { key: 'pillowcase', label: 'Did you change pillowcase?', icon:'pillow.svg'},
@@ -672,6 +671,7 @@ document.getElementById("dataBtn").addEventListener("click", () => {
 
 if (mode === 'night' && currentIndex === 0) {
   loadNightChecklist();
+   
   return;
 }
 
