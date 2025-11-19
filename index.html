@@ -571,18 +571,19 @@ function getTodayDate() {
   ];
 
    const NIGHT_CHECKLIST_ITEMS = [
-   { key: 'psyillium', label: 'Take psyllium',icon:'grain.svg' },
-   { key: 'tea_night', label:'Brew tea', icon:'herb.svg' },
    { key: 'magnesium', label: 'Take magnesium', icon:'mg.svg' },
    { key: 'prepare_breakfast', label:'Prepare meals', icon:'porridge.svg' },
+   { key: 'tea_night', label:'Brew tea', icon:'herb.svg' },
    { key: 'tidy up_night', label:'Tidy up', icon:'spray.svg' },
    { key: 'pillowcase', label: 'Change pillowcase', icon:'pillow.svg'},
    { key: 'skincare_night', label:'Skincare', icon:'dropper.svg' },
-   { key: 'shatki', label: 'Shatki mat', icon:'lotus.svg'},
    { key: 'teeth_night', label:'Brush teeth', icon:'toothbrush.svg' },
-   { key: 'flossed', label:'Floss teeth', icon:'floss.svg'}];
+   { key: 'flossed', label:'Floss teeth', icon:'floss.svg'},
+   { key: 'shatki', label: 'Shatki mat', icon:'lotus.svg'}
+];
 
   const NIGHT = [
+   { key: 'psyillium', type:'single', label: 'Take psyllium', options:['Yes','No'], autoNext:true, icon:'grain.svg' },
     { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true, icon:'key.svg' },
     { key: 'day_description', type:'single', label:'How was today?', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'], autoNext:true, icon:'clock.svg' },
    {key:'saw_dogs', type:'single', label:'Did you see the dogs today?', options:['Little ones','Yes','No'], autoNext:true, icon:'dog.svg'},
