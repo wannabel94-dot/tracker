@@ -440,6 +440,9 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   </footer>
 </body>
 <script>
+  if (typeof navigator.serviceWorker !== 'undefined') {
+    navigator.serviceWorker.register('sw.js')
+  }
 
    if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
