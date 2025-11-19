@@ -1016,9 +1016,7 @@ function loadNightChecklist() {
           const selected = answers[item.key] === 'Yes' ? 'selected' : '';
           return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')"><div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div><span class="check-text">${item.label}</span></div>`;
         }).join('')}
-        <div style="height:80px;"></div>       </div>
-    </div>
-  `;
+        <div style="height:80px;"></div></div></div>`;
 
   contentArea.innerHTML = html;
  backBtn.style.display = 'inline-block';
