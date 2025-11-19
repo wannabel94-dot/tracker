@@ -1,11 +1,21 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
+  "name": "Day",
+  "short_name": "Day",
+  "description": "Personal app to track habits.",
+  "start_url": "/tracker/",
   "display": "standalone",
-  "name": "wannabel94-dot.github",
-  "orientation": "any",
-  "scope": "/",
-  "short_name": "wannabel94-dot.github",
-  "start_url": "/",
-  "theme_color": "#374866"
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/images/stars.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/morning.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
