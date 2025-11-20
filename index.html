@@ -1088,22 +1088,27 @@ function showDailyReview() {
      /* ---------- NIGHT CHECKLIST ---------- */
 function loadNightChecklist() {
     const wrapper = document.querySelector('.checklist-wrapper');
-    let scrollPos = 0;
-    if(wrapper) scrollPos = wrapper.scrollTop;
+    const scrollPos = wrapper ? wrapper.scrollTop : 0;
 
-    let html = `<div class="checklist-title">Night Routine</div>
+    let html = `
+      <div class="checklist-title">Night Routine</div>
       <div class="checklist-wrapper">
         <div class="checklist">
-          ${NIGHT_CHECKLIST_ITEMS.map(item => {
+          ${NIGHT_CHECKLIST_ITEMS.map((item, index) => {
             const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-            return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-              <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
-              <span class="check-text">${item.label}</span>
-            </div>`;
+            return `
+              <div class="check-item ${selected}" onclick="toggleNightChecklist('${item.key}', ${index})">
+                <div class="icon-circle">
+                  <img src="icons/${item.icon}" alt="${item.label}" class="counter-icon">
+                </div>
+                <span class="check-text">${item.label}</span>
+              </div>
+            `;
           }).join('')}
           <div style="height:80px;"></div>
         </div>
-      </div>`;
+      </div>
+    `;
 
     contentArea.innerHTML = html;
 
@@ -1112,12 +1117,102 @@ function loadNightChecklist() {
 
     backBtn.style.display = 'inline-block';
     nextBtn.style.display = 'inline-block';
-    nextBtn.textContent = 'Next';
+    nextBtn.textContent = 'Save';
     nextBtn.disabled = false;
 
     updateProgressBar();
-    checkNightCompletion();
 }
+
+/* Toggle checklist item in night mode and optionally auto-advance */
+window.toggleNightChecklist = (key, index) => {
+    const wrapper = document.querySelector('.checklist-wrapper');
+    const scrollPos = wrapper ? wrapper.scrollTop : 0;
+
+    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
+    saveData();
+
+    // Reload checklist to update UI
+    loadNightChecklist();
+
+    if(wrapper) wrapper.scrollTop = scrollPos;
+    nextBtn.disabled = false;
+
+    // Auto-advance if answered "Yes" and not last item
+    if (answers[key] === 'Yes' && index + 1 < NIGHT_CHECKLIST_ITEMS.length) {
+        const nextKey = NIGHT_CHECKLIST_ITEMS[index + 1].key;
+        const nextEl = document.querySelector(`[onclick="toggleNightChecklist('${nextKey}', ${index + 1})"]`);
+        if(nextEl) nextEl.scrollIntoView({ behavior:'smooth', block:'center' });
+    }
+};
+
+/* Handle Save button in night mode */
+nextBtn.onclick = () => {
+    const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
+
+    if(allDone) {
+        checkNightCompletion();
+    } else {
+        showNightIncompletePopup();
+    }
+};
+
+/* Popup for incomplete night checklist */
+function showNightIncompletePopup() {
+    const overlay = document.createElement('div');
+    overlay.id = 'nightPopupOverlay';
+    overlay.style = `
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 5000;
+    `;
+
+    const popup = document.createElement('div');
+    popup.style = `
+        background: #1e1e35;
+        padding: 20px;
+        border-radius: 16px;
+        text-align: center;
+        min-width: 280px;
+    `;
+    popup.innerHTML = `
+        <div style="font-size:18px; font-weight:600; margin-bottom:16px;">Checklist incomplete</div>
+        <button id="backBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Back</button>
+        <button id="saveBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Save</button>
+    `;
+
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+
+    document.getElementById('backBtn').onclick = () => {
+        document.body.removeChild(overlay);
+    };
+
+    document.getElementById('saveBtn').onclick = () => {
+        saveData();
+        document.body.removeChild(overlay);
+
+        // Scroll to next unanswered item
+        const nextIndex = NIGHT_CHECKLIST_ITEMS.findIndex(item => answers[item.key] !== 'Yes');
+        if(nextIndex !== -1) {
+            const nextKey = NIGHT_CHECKLIST_ITEMS[nextIndex].key;
+            const nextEl = document.querySelector(`[onclick="toggleNightChecklist('${nextKey}', ${nextIndex})"]`);
+            if(nextEl) nextEl.scrollIntoView({ behavior:'smooth', block:'center' });
+        }
+    };
+}
+
+/* Check if night checklist is complete */
+function checkNightCompletion() {
+    answers._nightChecklistDone = true;
+    saveData();
+    currentIndex = 0;
+    loadUI();
+}
+
 
 /* ---------- PROGRESS BAR ---------- */
 function updateProgressBar() {
