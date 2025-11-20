@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
    let currentIndex = 0;
 let answers = {};
 let switchTimeout;
-
+let onMorningDoneNote = false; // tracks if we’re showing the morning done note
    
    /* ---------- EDIT MODE ---------- */
 const params = new URLSearchParams(window.location.search);
@@ -874,18 +874,20 @@ nextBtn.disabled = !hasAnswer;
 
 /* ---------- BACK / NEXT ---------- */
 backBtn.onclick = () => {
-    if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-        // If we are on the done note after morning checklist, go back to checklist
+    if (onMorningDoneNote) {
+        // Go back to morning checklist
+        onMorningDoneNote = false;
         loadMorningChecklist();
         return;
     }
-    
+
     if (currentIndex > 0) {
         currentIndex--;
+        loadUI();
     } else if (getMode() === 'night' && !answers._nightChecklistDone) {
-        currentIndex = -1;
+        currentIndex = -1; // go back to night checklist
+        loadNightChecklist();
     }
-    loadUI();
 };
 
 nextBtn.onclick = () => {
@@ -893,9 +895,12 @@ nextBtn.onclick = () => {
 
     if (getMode() === 'morning' && currentIndex >= MORNING.length) {
         // Show done note immediately
-        contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-        backBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
+      function showMorningDoneNote() {
+    onMorningDoneNote = true; // <-- set flag
+    contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
+    backBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'none'; // hide next
+}
 
         // Save data just to be sure
         saveData();
@@ -981,20 +986,14 @@ window.toggleChecklist = (key) => {
 
 
 function checkMorningCompletion() {
-    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key]==='Yes');
-if(allDone){
-  contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-  
-  // Show Back button so user can go back to checklist
-  backBtn.style.display = 'inline-block';
-  nextBtn.style.display = 'none'; // optional: hide Next
-  
-  saveData();
+    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+    if(allDone){
+        showMorningDoneNote();   // <-- use new function
+        saveData();
+        switchTimeout = setTimeout(() => switchMode('night'), 3000);
+    }
+}
 
-  // Keep the automatic switch to night, but allow going back
-  switchTimeout = setTimeout(() => switchMode('night'), 3000);
-}
-}
    function checkNightCompletion() {
     const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
 
