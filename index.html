@@ -1145,12 +1145,19 @@ window.toggleNightChecklist = (key, index) => {
 
 /* Handle Save button in night mode */
 nextBtn.onclick = () => {
-    const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
+    const mode = getMode(); // your function that returns 'morning' or 'night'
 
-    if(allDone) {
-        checkNightCompletion();
-    } else {
-        showNightIncompletePopup();
+    if(mode === 'morning') {
+        // Morning behavior (if any)
+        checkMorningCompletion();
+    } else if(mode === 'night') {
+        const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
+
+        if(allDone) {
+            checkNightCompletion();
+        } else {
+            showNightIncompletePopup();
+        }
     }
 };
 
