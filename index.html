@@ -985,84 +985,153 @@ function checkNightCompletion() {
     }
 }
 
+// ---------- COMMON ANIMATION STYLES ----------
+if (!document.getElementById('popupAnimationStyles')) {
+  const style = document.createElement('style');
+  style.id = 'popupAnimationStyles';
+  style.innerHTML = `
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes slideDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
+  `;
+  document.head.appendChild(style);
+}
+
+// ---------- MORNING CHECKLIST POPUP ----------
+function showMorningChecklistPopup() {
+  const overlay = document.createElement('div');
+  overlay.id = 'morningPopupOverlay';
+  overlay.style = `
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 5000;
+    animation: fadeIn 0.3s ease forwards;
+  `;
+
+  const popup = document.createElement('div');
+  popup.id = 'morningSlidePopup';
+  popup.style = `
+    background: #1e1e35;
+    padding: 22px;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px 16px 0 0;
+    text-align: center;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.4);
+    animation: slideUp 0.4s ease forwards;
+  `;
+
+  popup.innerHTML = `
+    <div style="font-size:18px; font-weight:600; margin-bottom:16px;">
+      Morning checklist saved!
+    </div>
+    <button id="morningEditBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">
+      Back / Edit
+    </button>
+    <button id="goNightBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">
+      Go to Night Mode
+    </button>
+  `;
+
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
+
+  // Vibration feedback
+  if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+
+  // Back/Edit → slide down
+  document.getElementById('morningEditBtn').onclick = () => {
+    closePopup('morningPopupOverlay', 'morningSlidePopup');
+  };
+
+  // Go to Night → save, slide down, switch mode
+  document.getElementById('goNightBtn').onclick = () => {
+    saveData();
+    if (navigator.vibrate) navigator.vibrate(100);
+    closePopup('morningPopupOverlay', 'morningSlidePopup', () => switchMode('night'));
+  };
+}
+
+// ---------- NIGHT CHECKLIST POPUP ----------
 function showNightChecklistPopup() {
-    const overlay = document.createElement('div');
-    overlay.id = 'nightPopupOverlay';
-    overlay.style.position = 'fixed';
-    overlay.style.inset = 0;
-    overlay.style.background = 'rgba(0,0,0,0.5)';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-    overlay.style.zIndex = 5000;
+  const overlay = document.createElement('div');
+  overlay.id = 'nightPopupOverlay';
+  overlay.style = `
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 5000;
+    animation: fadeIn 0.3s ease forwards;
+  `;
 
-    const popup = document.createElement('div');
-    popup.style.background = '#1e1e35';
-    popup.style.padding = '20px';
-    popup.style.borderRadius = '16px';
-    popup.style.textAlign = 'center';
-    popup.style.minWidth = '280px';
-    popup.innerHTML = `
-        <div style="font-size:18px; font-weight:600; margin-bottom:16px;">
-            Night checklist saved!
-        </div>
-        <button id="nightEditBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">
-            Back / Edit
-        </button>
-        <button id="nightNextBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">
-            Continue Night Routine
-        </button>
-    `;
+  const popup = document.createElement('div');
+  popup.id = 'nightSlidePopup';
+  popup.style = `
+    background: #1e1e35;
+    padding: 22px;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px 16px 0 0;
+    text-align: center;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.4);
+    animation: slideUp 0.4s ease forwards;
+  `;
 
-    overlay.appendChild(popup);
-    document.body.appendChild(overlay);
+  popup.innerHTML = `
+    <div style="font-size:18px; font-weight:600; margin-bottom:16px;">
+      Night checklist saved!
+    </div>
+    <button id="nightEditBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">
+      Back / Edit
+    </button>
+    <button id="nightNextBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">
+      Next Question
+    </button>
+  `;
 
-    // Stay on checklist
-    document.getElementById('nightEditBtn').onclick = () => {
-        document.body.removeChild(overlay);
-    };
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
 
-    // Continue night routine (advance to next night question)
-    document.getElementById('nightNextBtn').onclick = () => {
-        saveData();
-        document.body.removeChild(overlay);
-        goToNextNightStep(); // ⬅ Advance to next question
-    };
+  // Vibration feedback
+  if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+
+  // Back/Edit → slide down
+  document.getElementById('nightEditBtn').onclick = () => {
+    closePopup('nightPopupOverlay', 'nightSlidePopup');
+  };
+
+  // Next Question → save, slide down, advance in night checklist
+  document.getElementById('nightNextBtn').onclick = () => {
+    saveData();
+    if (navigator.vibrate) navigator.vibrate(100);
+    closePopup('nightPopupOverlay', 'nightSlidePopup', () => {
+      advanceNightChecklist(); // <-- your function to go to next night question
+    });
+  };
 }
 
-function goToNextNightStep() {
-    currentIndex++;
-    if (currentIndex < NIGHT.length) {
-        loadUI(); // ⬅ Continue to next night question
-    } else {
-        completeNightRoutine(); // ⬅ All night questions done
-    }
+// ---------- GENERIC POPUP CLOSE FUNCTION ----------
+function closePopup(overlayId, popupId, onFinish) {
+  const overlay = document.getElementById(overlayId);
+  const popup = document.getElementById(popupId);
+
+  popup.style.animation = 'slideDown 0.3s ease forwards';
+  overlay.style.animation = 'fadeOut 0.3s ease forwards';
+
+  setTimeout(() => {
+    if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    if (onFinish) onFinish();
+  }, 300);
 }
 
-function completeNightRoutine() {
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.inset = 0;
-    overlay.style.background = 'rgba(0,0,0,0.65)';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-    overlay.style.zIndex = 6000;
-
-    const popup = document.createElement('div');
-    popup.style.background = '#1e1e35';
-    popup.style.padding = '24px';
-    popup.style.borderRadius = '16px';
-    popup.style.textAlign = 'center';
-    popup.style.minWidth = '300px';
-    popup.innerHTML = `
-        <div style="font-size:18px; font-weight:600; margin-bottom:16px;">
-            Night routine complete!
-        </div>
-        <button id="finishBtn" style="padding:10px 16px; border-radius:12px;">
-            Close Day
-        </button>
-    `;
 
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
