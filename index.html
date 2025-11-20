@@ -88,6 +88,49 @@ body.morning {
   color: #ddd;
 }
 
+   /* pop up */-------------------------------
+   
+.popup-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center; /* vertically centers popup */
+    z-index: 5000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.popup-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.popup-box {
+    background: #1e1e35;
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    min-width: 280px;
+    max-width: 90%;        /* prevent overflow on small screens */
+    transform: translateY(100px);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+    box-sizing: border-box;
+}
+
+.popup-overlay.show .popup-box {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.popup-box.hide {
+    transform: translateY(100px);
+    opacity: 0;
+}
+
 /* ===============================================
    WRAP / MAIN CONTENT
 ================================================= */
@@ -1164,8 +1207,8 @@ function showNightIncompletePopup() {
     overlay.innerHTML = `
         <div class="popup-box">
             <div style="font-size:18px; font-weight:600; margin-bottom:16px;">Checklist incomplete</div>
-            <button id="backBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Back</button>
-            <button id="saveBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Save</button>
+            <button class="backBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Back</button>
+            <button class="saveBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Save</button>
         </div>
     `;
     document.body.appendChild(overlay);
@@ -1173,11 +1216,12 @@ function showNightIncompletePopup() {
     // Trigger slide-up animation
     requestAnimationFrame(() => overlay.classList.add('show'));
 
-    // Back button closes popup
-    document.getElementById('backBtn').onclick = () => closePopup(overlay);
+    // Use querySelector on overlay to attach listeners
+    const backBtn = overlay.querySelector('.backBtn');
+    const saveBtn = overlay.querySelector('.saveBtn');
 
-    // Save button closes popup and scrolls to next unanswered
-    document.getElementById('saveBtn').onclick = () => {
+    backBtn.addEventListener('click', () => closePopup(overlay));
+    saveBtn.addEventListener('click', () => {
         saveData();
         closePopup(overlay, () => {
             const nextIndex = NIGHT_CHECKLIST_ITEMS.findIndex(item => answers[item.key] !== 'Yes');
@@ -1187,8 +1231,9 @@ function showNightIncompletePopup() {
                 if(nextEl) nextEl.scrollIntoView({ behavior:'smooth', block:'center' });
             }
         });
-    };
+    });
 }
+
 
 /* Reusable popup close function with slide-down */
 function closePopup(overlay, callback) {
