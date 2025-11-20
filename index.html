@@ -910,30 +910,41 @@ nextBtn.onclick = () => {
 
   /* ---------- MORNING CHECKLIST ---------- */
 function loadMorningChecklist() {
-  let html = `
-    <div class="checklist-title">Morning Routine</div>
-    <div class="checklist-wrapper">
-      <div class="checklist">
-        ${MORNING_CHECKLIST_ITEMS.map(item => {
-          const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-          return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-<div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
-            <span class="check-text">${item.label}</span>
-          </div>`;
-        }).join('')}
-        <div style="height:80px;"></div> <!-- extra bottom padding -->
+    const wrapper = document.querySelector('.checklist-wrapper');
+    let scrollPos = 0;
+
+    // Save scroll position if wrapper already exists
+    if(wrapper) scrollPos = wrapper.scrollTop;
+
+    let html = `
+      <div class="checklist-title">Morning Routine</div>
+      <div class="checklist-wrapper">
+        <div class="checklist">
+          ${MORNING_CHECKLIST_ITEMS.map(item => {
+            const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+            return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+              <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+              <span class="check-text">${item.label}</span>
+            </div>`;
+          }).join('')}
+          <div style="height:80px;"></div>
+        </div>
       </div>
-    </div>
-  `;
+    `;
 
-  contentArea.innerHTML = html;
-  backBtn.style.display = 'inline-block';
-  nextBtn.style.display = 'inline-block';
-   nextBtn.textContent = 'Save'; // show "Save" only on morning checklist
-   nextBtn.disabled = false;  // <-- ADDED
+    contentArea.innerHTML = html;
 
-  updateProgressBar();
-  checkMorningCompletion();
+    // Restore scroll position
+    const newWrapper = document.querySelector('.checklist-wrapper');
+    if(newWrapper) newWrapper.scrollTop = scrollPos;
+
+    backBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = 'Save';
+    nextBtn.disabled = false;
+
+    updateProgressBar();
+    checkMorningCompletion();
 }
 
 window.toggleChecklist = (key) => {
@@ -1043,20 +1054,36 @@ function showDailyReview() {
 
      /* ---------- NIGHT CHECKLIST ---------- */
 function loadNightChecklist() {
-  let html = `<div class="checklist-title">Night Routine</div><div class="checklist-wrapper"><div class="checklist">${NIGHT_CHECKLIST_ITEMS.map(item => {
-          const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-          return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')"><div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div><span class="check-text">${item.label}</span></div>`;
-        }).join('')}
-        <div style="height:80px;"></div></div></div>`;
+    const wrapper = document.querySelector('.checklist-wrapper');
+    let scrollPos = 0;
+    if(wrapper) scrollPos = wrapper.scrollTop;
 
-  contentArea.innerHTML = html;
- backBtn.style.display = 'inline-block';
-  nextBtn.style.display = 'inline-block';
-  nextBtn.textContent = 'Next'; // Use 'Next' to move to the first NIGHT question
-   nextBtn.disabled = false;  // <-- ADDED
+    let html = `<div class="checklist-title">Night Routine</div>
+      <div class="checklist-wrapper">
+        <div class="checklist">
+          ${NIGHT_CHECKLIST_ITEMS.map(item => {
+            const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+            return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+              <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+              <span class="check-text">${item.label}</span>
+            </div>`;
+          }).join('')}
+          <div style="height:80px;"></div>
+        </div>
+      </div>`;
 
-  updateProgressBar();
-  checkNightCompletion();
+    contentArea.innerHTML = html;
+
+    const newWrapper = document.querySelector('.checklist-wrapper');
+    if(newWrapper) newWrapper.scrollTop = scrollPos;
+
+    backBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = 'Next';
+    nextBtn.disabled = false;
+
+    updateProgressBar();
+    checkNightCompletion();
 }
 
 /* ---------- PROGRESS BAR ---------- */
