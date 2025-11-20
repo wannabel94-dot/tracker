@@ -847,9 +847,7 @@ function loadMorningChecklist() {
 
     updateProgressBar();
 }
-
 window.toggleChecklist = (key) => {
-    // Save current scroll position
     const wrapper = document.querySelector('.checklist-wrapper');
     const scrollPos = wrapper ? wrapper.scrollTop : 0;
 
@@ -857,11 +855,11 @@ window.toggleChecklist = (key) => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     saveData();
     
-    // Only reload checklist if needed
+    // Reload checklist
     if (document.body.classList.contains('morning')) {
         loadMorningChecklist();
-           checkMorningCompletion();
-
+        // Only check completion after user interaction
+        checkMorningCompletion();
     } else if (document.body.classList.contains('night')) {
         loadNightChecklist();
     }
@@ -869,10 +867,9 @@ window.toggleChecklist = (key) => {
     // Restore scroll position
     if (wrapper) wrapper.scrollTop = scrollPos;
 
-    // Ensure Next/Save is enabled
     nextBtn.disabled = false;
 
-    // Optional: auto-scroll to item if switched to Yes
+    // Auto-scroll to the item just toggled
     const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
     if (el && answers[key] === 'Yes') {
         el.scrollIntoView({
