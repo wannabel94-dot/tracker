@@ -1125,25 +1125,23 @@ function loadNightChecklist() {
 
 /* Toggle checklist item in night mode and optionally auto-advance */
 window.toggleNightChecklist = (key, index) => {
-    const wrapper = document.querySelector('.checklist-wrapper');
-    const scrollPos = wrapper ? wrapper.scrollTop : 0;
-
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     saveData();
 
-    // Reload checklist to update UI
-    loadNightChecklist();
+    // Update selected class without re-rendering the whole checklist
+    const el = document.querySelector(`[onclick="toggleNightChecklist('${key}', ${index})"]`);
+    if(el) el.classList.toggle('selected', answers[key] === 'Yes');
 
-    if(wrapper) wrapper.scrollTop = scrollPos;
     nextBtn.disabled = false;
 
-    // Auto-advance if answered "Yes" and not last item
+    // Auto-advance if answered Yes and not last item
     if (answers[key] === 'Yes' && index + 1 < NIGHT_CHECKLIST_ITEMS.length) {
         const nextKey = NIGHT_CHECKLIST_ITEMS[index + 1].key;
         const nextEl = document.querySelector(`[onclick="toggleNightChecklist('${nextKey}', ${index + 1})"]`);
         if(nextEl) nextEl.scrollIntoView({ behavior:'smooth', block:'center' });
     }
 };
+
 
 /* Handle Save button in night mode */
 nextBtn.onclick = () => {
@@ -1187,9 +1185,10 @@ function showNightIncompletePopup() {
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
 
-    document.getElementById('backBtn').onclick = () => {
-        document.body.removeChild(overlay);
-    };
+  document.getElementById('backBtn').onclick = () => {
+    const overlay = document.getElementById('nightPopupOverlay');
+    if (overlay) document.body.removeChild(overlay);
+};
 
     document.getElementById('saveBtn').onclick = () => {
         saveData();
