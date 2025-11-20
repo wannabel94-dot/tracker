@@ -932,22 +932,28 @@ function loadMorningChecklist() {
 }
 
 window.toggleChecklist = (key) => {
+    // Save current scroll position
+    const wrapper = document.querySelector('.checklist-wrapper');
+    const scrollPos = wrapper ? wrapper.scrollTop : 0;
+
+    // Toggle the answer
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     saveData();
     
-    // --- FIX START ---
-    const mode = getMode();
-    if (mode === 'morning') {
-        loadMorningChecklist(); // Reload morning checklist if in morning mode
-    } else if (mode === 'night') {
-        loadNightChecklist(); // Reload night checklist if in night mode
+    // Only reload checklist if needed
+    if (document.body.classList.contains('morning')) {
+        loadMorningChecklist();
+    } else if (document.body.classList.contains('night')) {
+        loadNightChecklist();
     }
-    // --- FIX END ---
 
-    // Ensure Next/Save is always enabled
+    // Restore scroll position
+    if (wrapper) wrapper.scrollTop = scrollPos;
+
+    // Ensure Next/Save is enabled
     nextBtn.disabled = false;
 
-    // Auto-scroll ONLY when switching to Yes
+    // Optional: auto-scroll to item if switched to Yes
     const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
     if (el && answers[key] === 'Yes') {
         el.scrollIntoView({
