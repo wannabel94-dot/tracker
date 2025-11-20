@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="theme-color" content="#07081d" id="navColor">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+   <!-- Theme color for Android navigation bar -->
 <title>Daily Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
@@ -41,13 +42,13 @@ body.night {
   background:#07081d;
 }
 
-/* MORNING MODE */
+/* MORNING / DAY MODE */
 body.morning {
   background:#6C5E82;
 }
 
 /* ===============================================
-   STICKY HEADER (Date + Menu)
+   STICKY HEADER (Day + Menu)
 ================================================= */
 #topHeader {
   position: sticky;
@@ -182,7 +183,7 @@ input[type="time"]:focus {
 }
 
 /* ===============================================
-   DAY / NIGHT MODE BUTTONS
+   DAY NIGHT MODE BUTTONS
    ================================================= */
 .switch-btn {
   padding: 10px;
@@ -208,7 +209,7 @@ body.morning .switch-btn.morning img { opacity: 1; transform: scale(1.15); }
 body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
 
 /* ===============================================
-   OPTION BUTTONS
+   ANSWER BUTTONS
 ================================================= */
 .opt-btn {
   display: flex;
@@ -459,6 +460,89 @@ let answers = {};
 let switchTimeout;
 let onMorningDoneNote = false; // tracks if we’re showing the morning done note
    
+   /* ---------- EDIT MODE ---------- */
+const params = new URLSearchParams(window.location.search);
+const isEdit = params.get('edit') === 'true';
+let editingDate = localStorage.getItem('editDate'); // day being edited
+let editAnswers = null;
+ // disable next 
+
+   const nextButton = document.querySelector('button#nextBtn');
+
+// Look for common form elements that might represent "options"
+const radioButtons = document.querySelectorAll('input[type="radio"]');
+const selectElements = document.querySelectorAll('select');
+const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+// Assuming the drinks counter is an input field, let's try to find it.
+// This is a common selector, but you might need to adjust it if your counter has a different ID or class.
+const drinksCounterInput = document.querySelector('#drinksCounter, input[name="drinks"][type="number"], input[name="drinks"][type="text"]');
+
+let optionSelected = false;
+
+// Check radio buttons
+for (const radio of radioButtons) {
+  if (radio.checked) {
+    optionSelected = true;
+    break;
+  }
+}
+
+// If no radio button is selected, check select elements
+if (!optionSelected) {
+  for (const select of selectElements) {
+    if (select.value && select.value !== "") {
+      optionSelected = true;
+      break;
+    }
+  }
+}
+
+// If no radio or select option is selected, check checkboxes (assuming at least one needs to be checked)
+if (!optionSelected) {
+  for (const checkbox of checkboxes) {
+    if (checkbox.checked) {
+      optionSelected = true;
+      break;
+    }
+  }
+}
+
+// Special handling for the drinks counter: if it exists and its value is '0', it should be considered a valid selection.
+// Also, if it has any non-empty value, it's considered valid.
+if (!optionSelected && drinksCounterInput) {
+  const drinksValue = drinksCounterInput.value.trim();
+  if (drinksValue === '0' || (drinksValue !== '' && !isNaN(Number(drinksValue)))) {
+    optionSelected = true;
+  }
+}
+
+if (nextButton) {
+  nextButton.disabled = !optionSelected;
+}
+
+const data = { buttonDisabled: nextButton ? nextButton.disabled : "Button not found" };
+   
+// Force morning mode if editing
+if (isEdit && editingDate) {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const existing = all[editingDate]?.morning?.answers; // always start in morning mode
+    if (existing) {
+        editAnswers = existing;
+        answers = { ...existing }; // preload saved answers
+        currentIndex = 0;         // start at first question
+    }
+
+// Force morning mode
+    document.body.classList.add('morning');
+    document.body.classList.remove('night');
+}
+
+// Replace getTodayDate to use editingDate if present
+function getTodayDate() {
+    return editingDate || new Date().toLocaleDateString('en-GB');
+}
+
   /* ---------- QUESTIONS ---------- */
   const MORNING = [
     { key: 'wake_time', type: 'time', label: 'What time did you wake up?', icon: 'alarm.svg' },
@@ -846,8 +930,11 @@ function loadMorningChecklist() {
     nextBtn.disabled = false;
 
     updateProgressBar();
+    checkMorningCompletion();
 }
+
 window.toggleChecklist = (key) => {
+    // Save current scroll position
     const wrapper = document.querySelector('.checklist-wrapper');
     const scrollPos = wrapper ? wrapper.scrollTop : 0;
 
@@ -855,11 +942,9 @@ window.toggleChecklist = (key) => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     saveData();
     
-    // Reload checklist
+    // Only reload checklist if needed
     if (document.body.classList.contains('morning')) {
         loadMorningChecklist();
-        // Only check completion after user interaction
-        checkMorningCompletion();
     } else if (document.body.classList.contains('night')) {
         loadNightChecklist();
     }
@@ -867,9 +952,10 @@ window.toggleChecklist = (key) => {
     // Restore scroll position
     if (wrapper) wrapper.scrollTop = scrollPos;
 
+    // Ensure Next/Save is enabled
     nextBtn.disabled = false;
 
-    // Auto-scroll to the item just toggled
+    // Optional: auto-scroll to item if switched to Yes
     const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
     if (el && answers[key] === 'Yes') {
         el.scrollIntoView({
