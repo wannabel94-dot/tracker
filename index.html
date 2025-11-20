@@ -896,6 +896,7 @@ nextBtn.onclick = () => {
       showMorningChecklistPopup();
       return;
     }
+
     // Otherwise advance through morning questions
     currentIndex++;
     loadUI();
@@ -977,17 +978,19 @@ window.toggleChecklist = (key) => {
         });
     }
 };
-function checkNightCompletion() {
-    const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-    if (allDone) {
+
+function checkMorningCompletion() {
+    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+    if(allDone){
         saveData();
-        goToNextNightStep(); // ⬅ Auto-advance to next night question
+        showMorningChecklistPopup(); // show popup instead of done note
     }
 }
-
-function showNightChecklistPopup() {
+   
+function showMorningChecklistPopup() {
+    // overlay
     const overlay = document.createElement('div');
-    overlay.id = 'nightPopupOverlay';
+    overlay.id = 'morningPopupOverlay';
     overlay.style.position = 'fixed';
     overlay.style.inset = 0;
     overlay.style.background = 'rgba(0,0,0,0.5)';
@@ -996,6 +999,7 @@ function showNightChecklistPopup() {
     overlay.style.alignItems = 'center';
     overlay.style.zIndex = 5000;
 
+    // popup box
     const popup = document.createElement('div');
     popup.style.background = '#1e1e35';
     popup.style.padding = '20px';
@@ -1003,78 +1007,46 @@ function showNightChecklistPopup() {
     popup.style.textAlign = 'center';
     popup.style.minWidth = '280px';
     popup.innerHTML = `
-        <div style="font-size:18px; font-weight:600; margin-bottom:16px;">
-            Night checklist saved!
-        </div>
-        <button id="nightEditBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">
-            Back / Edit
-        </button>
-        <button id="nightNextBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">
-            Continue Night Routine
-        </button>
+        <div style="font-size:18px; font-weight:600; margin-bottom:16px;">Morning checklist saved!</div>
+        <button id="editChecklistBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Back / Edit</button>
+        <button id="goNightBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Go to Night Mode</button>
     `;
 
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
 
-    // Stay on checklist
-    document.getElementById('nightEditBtn').onclick = () => {
+    // Back button → close popup, stay in morning
+    document.getElementById('editChecklistBtn').onclick = () => {
         document.body.removeChild(overlay);
     };
 
-    // Continue night routine (advance to next night question)
-    document.getElementById('nightNextBtn').onclick = () => {
+    // Go to night button → save & switch
+    document.getElementById('goNightBtn').onclick = () => {
         saveData();
         document.body.removeChild(overlay);
-        goToNextNightStep(); // ⬅ Advance to next question
+        switchMode('night');
     };
 }
 
-function goToNextNightStep() {
-    currentIndex++;
-    if (currentIndex < NIGHT.length) {
-        loadUI(); // ⬅ Continue to next night question
-    } else {
-        completeNightRoutine(); // ⬅ All night questions done
+   function checkNightCompletion() {
+    const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
+
+    if (allDone) {
+        answers._nightChecklistDone = true;   // <-- ADD THIS LINE
+        currentIndex = 0;
+        saveData();
+        loadUI();
     }
 }
 
-function completeNightRoutine() {
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.inset = 0;
-    overlay.style.background = 'rgba(0,0,0,0.65)';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-    overlay.style.zIndex = 6000;
-
-    const popup = document.createElement('div');
-    popup.style.background = '#1e1e35';
-    popup.style.padding = '24px';
-    popup.style.borderRadius = '16px';
-    popup.style.textAlign = 'center';
-    popup.style.minWidth = '300px';
-    popup.innerHTML = `
-        <div style="font-size:18px; font-weight:600; margin-bottom:16px;">
-            Night routine complete!
-        </div>
-        <button id="finishBtn" style="padding:10px 16px; border-radius:12px;">
-            Close Day
-        </button>
+function showDailyReview() {
+    let reviewHtml = `
+        <div class="checklist-title">Daily Review</div>
+        <div class="review-wrapper">
+            <div class="review-list">
     `;
 
-    overlay.appendChild(popup);
-    document.body.appendChild(overlay);
-
-    document.getElementById('finishBtn').onclick = () => {
-        saveData();
-        location.reload(); // Or switchMode('morning') if starting a new day
-    };
-}
-
     // Morning section
-   let reviewHtml = '';
     reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
     MORNING_CHECKLIST_ITEMS.forEach(item => {
         reviewHtml += `
@@ -1133,7 +1105,13 @@ function loadNightChecklist() {
         </div>
       </div>`;
 
-    contentArea.innerHTML = html;  // ✅ Must be here
+     // 🔹 Force scroll to top after rendering
+  const checklistEl = document.getElementById('checklist');
+  if (checklistEl) {
+    checklistEl.scrollTo(0, 0);
+  }
+}
+    contentArea.innerHTML = html;
 
     const newWrapper = document.querySelector('.checklist-wrapper');
     if(newWrapper) newWrapper.scrollTop = scrollPos;
@@ -1146,7 +1124,6 @@ function loadNightChecklist() {
     updateProgressBar();
     checkNightCompletion();
 }
-
 
 /* ---------- PROGRESS BAR ---------- */
 function updateProgressBar() {
