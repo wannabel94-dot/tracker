@@ -1074,6 +1074,7 @@ function completeNightRoutine() {
 }
 
     // Morning section
+   let reviewHtml = '';
     reviewHtml += `<div class="review-section-title">Morning Checklist</div>`;
     MORNING_CHECKLIST_ITEMS.forEach(item => {
         reviewHtml += `
@@ -1132,13 +1133,7 @@ function loadNightChecklist() {
         </div>
       </div>`;
 
-     // 🔹 Force scroll to top after rendering
-  const checklistEl = document.getElementById('checklist');
-  if (checklistEl) {
-    checklistEl.scrollTo(0, 0);
-  }
-}
-    contentArea.innerHTML = html;
+    contentArea.innerHTML = html;  // ✅ Must be here
 
     const newWrapper = document.querySelector('.checklist-wrapper');
     if(newWrapper) newWrapper.scrollTop = scrollPos;
@@ -1151,6 +1146,7 @@ function loadNightChecklist() {
     updateProgressBar();
     checkNightCompletion();
 }
+
 
 /* ---------- PROGRESS BAR ---------- */
 function updateProgressBar() {
