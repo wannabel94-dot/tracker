@@ -945,7 +945,13 @@ nextBtn.onclick = () => {
     loadUI();
     return;
   }
-
+  if (getMode() === 'night') {
+    // If we're currently showing the checklist (i.e. index >= NIGHT.length), treat Next as "Save / Show popup"
+    if (currentIndex >= NIGHT.length) {
+      // Checklist Save → show popup
+      showNightChecklistPopup();
+      return;
+    }
   // Night-mode behavior unchanged
   currentIndex++;
   loadUI();
@@ -1071,17 +1077,6 @@ function showMorningChecklistPopup() {
     };
 }
 
-   function checkNightCompletion() {
-    const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
-
-    if (allDone) {
-        answers._nightChecklistDone = true;   // <-- ADD THIS LINE
-        currentIndex = 0;
-        saveData();
-        loadUI();
-    }
-}
-
 function showDailyReview() {
     let reviewHtml = `
         <div class="checklist-title">Daily Review</div>
@@ -1128,7 +1123,6 @@ function showDailyReview() {
     backBtn.style.display='none'; nextBtn.style.display='none';
   };
 
-     /* ---------- NIGHT CHECKLIST ---------- */
 /* ---------- NIGHT CHECKLIST ---------- */
 function loadNightChecklist() {
     const wrapper = document.querySelector('.checklist-wrapper');
@@ -1166,21 +1160,6 @@ function loadNightChecklist() {
 
     updateProgressBar();
 
-    // ✅ Attach night-specific next button handler
-    nextBtn.replaceWith(nextBtn.cloneNode(true)); // remove previous onclick
-    const newNextBtn = document.querySelector('#nextBtn');
-
-    newNextBtn.onclick = () => {
-        const allDone = NIGHT_CHECKLIST_ITEMS.every(item => answers[item.key] === 'Yes');
-
-        if(allDone) {
-            checkNightCompletion();
-        } else {
-            showNightIncompletePopup();
-        }
-    };
-}
-
 /* Toggle checklist item in night mode with auto-advance */
 window.toggleNightChecklist = (key, index) => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
@@ -1200,59 +1179,46 @@ window.toggleNightChecklist = (key, index) => {
     }
 };
 
-/* Show night incomplete popup with slide animation */
-function showNightIncompletePopup() {
+function checkNightCompletion() {
+    const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+    if(allDone){
+        saveData();
+        showNightChecklistPopup(); // show popup instead of done note
+    }
+}
+   
+function showNightChecklistPopup() {
+    // overlay
     const overlay = document.createElement('div');
-    overlay.className = 'popup-overlay';
-    overlay.innerHTML = `
-        <div class="popup-box">
-            <div style="font-size:18px; font-weight:600; margin-bottom:16px;">Checklist incomplete</div>
-            <button class="backBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Back</button>
-            <button class="saveBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Save</button>
-        </div>
+    overlay.id = 'nightPopupOverlay';
+    overlay.style.position = 'fixed';
+    overlay.style.inset = 0;
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.zIndex = 5000;
+
+    // popup box
+    const popup = document.createElement('div');
+    popup.style.background = '#1e1e35';
+    popup.style.padding = '20px';
+    popup.style.borderRadius = '16px';
+    popup.style.textAlign = 'center';
+    popup.style.minWidth = '280px';
+    popup.innerHTML = `
+        <div style="font-size:18px; font-weight:600; margin-bottom:16px;">Morning checklist saved!</div>
+        <button id="editChecklistBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Back / Edit</button>
+        <button id="goNightBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Go to Night Mode</button>
     `;
+
+    overlay.appendChild(popup);
     document.body.appendChild(overlay);
 
-    // Trigger slide-up animation
-    requestAnimationFrame(() => overlay.classList.add('show'));
-
-    // Use querySelector on overlay to attach listeners
-    const backBtn = overlay.querySelector('.backBtn');
-    const saveBtn = overlay.querySelector('.saveBtn');
-
-    backBtn.addEventListener('click', () => closePopup(overlay));
-    saveBtn.addEventListener('click', () => {
-        saveData();
-        closePopup(overlay, () => {
-            const nextIndex = NIGHT_CHECKLIST_ITEMS.findIndex(item => answers[item.key] !== 'Yes');
-            if(nextIndex !== -1) {
-                const nextKey = NIGHT_CHECKLIST_ITEMS[nextIndex].key;
-                const nextEl = document.querySelector(`[onclick="toggleNightChecklist('${nextKey}', ${nextIndex})"]`);
-                if(nextEl) nextEl.scrollIntoView({ behavior:'smooth', block:'center' });
-            }
-        });
-    });
-}
-
-
-/* Reusable popup close function with slide-down */
-function closePopup(overlay, callback) {
-    const box = overlay.querySelector('.popup-box');
-    box.classList.add('hide'); // slide down
-    overlay.classList.remove('show');
-
-    box.addEventListener('transitionend', () => {
-        if(overlay.parentNode) overlay.parentNode.removeChild(overlay);
-        if(callback) callback();
-    }, { once: true });
-}
-
-/* Check if night checklist is complete */
-function checkNightCompletion() {
-    answers._nightChecklistDone = true;
-    saveData();
-    currentIndex = 0;
-    loadUI();
+    // Back button → close popup, stay in night
+    document.getElementById('editChecklistBtn').onclick = () => {
+        document.body.removeChild(overlay);
+    };
 }
 
 /* ---------- PROGRESS BAR ---------- */
