@@ -920,38 +920,47 @@ nextBtn.disabled = !hasAnswer;
 
 /* ---------- BACK / NEXT ---------- */
 backBtn.onclick = () => {
+  const mode = getMode();
+
+  if (mode === 'morning') {
+    if (currentIndex > 0 && currentIndex <= MORNING.length) {
+      currentIndex--;
+      loadUI();
+    } 
+  } else if (mode === 'night') {
     if (currentIndex > 0) {
-        currentIndex--;
-        loadUI();
-    } else if (getMode() === 'night' && !answers._nightChecklistDone) {
-        currentIndex = -1; // go back to night checklist
-        loadNightChecklist();
+      currentIndex--;
+      loadUI();
+    } else if (currentIndex === -1) {
+      loadNightChecklist();
     }
+  }
 };
+
 
 nextBtn.onclick = () => {
   saveData(); // always save
 
-  if (getMode() === 'morning') {
-    // If we're currently showing the checklist (i.e. index >= MORNING.length), treat Next as "Save / Show popup"
-    if (currentIndex >= MORNING.length) {
-      // Checklist Save → show popup
-      showMorningChecklistPopup();
-      return;
-    }
+  const mode = getMode();
 
-    // Otherwise advance through morning questions
-    currentIndex++;
-    loadUI();
-    return;
-  }
-  if (getMode() === 'night') {
-    // If we're currently showing the checklist (i.e. index >= NIGHT.length), treat Next as "Save / Show popup"
-    if (currentIndex >= NIGHT.length) {
-      // Checklist Save → show popup
-      showNightChecklistPopup();
-      return;
+  if (mode === 'morning') {
+    if (currentIndex < MORNING.length) {
+      currentIndex++;
+      loadUI();
+    } else {
+      // We are now on the checklist
+      showMorningChecklistPopup();
     }
+  } else if (mode === 'night') {
+    if (currentIndex < NIGHT.length) {
+      currentIndex++;
+      loadUI();
+    } else if (!answers._nightChecklistDone) {
+      showNightChecklistPopup();
+    }
+  }
+};
+
   // Night-mode behavior unchanged
   currentIndex++;
   loadUI();
