@@ -708,10 +708,16 @@ document.getElementById("dataBtn").addEventListener("click", () => {
   progressBar.parentElement.style.display = 'block';
 
   // Morning checklist
-  if (mode === 'morning' && currentIndex >= MORNING.length) {
-    loadMorningChecklist();
+if (mode === 'morning' && currentIndex >= MORNING.length) {
+    // Only show checklist if user clicked Next after finishing questions
+    if (onMorningDoneNote) {
+        loadMorningChecklist();
+        return;
+    }
+    onMorningDoneNote = true;
+    nextBtn.textContent = 'Checklist';
     return;
-  }
+}
 
 // Night checklist logic
 if (mode === 'night') {
