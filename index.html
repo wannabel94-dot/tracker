@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+yes<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -1201,13 +1201,7 @@ function loadNightChecklist() {
         </div>
       </div>`;
 
-     // 🔹 Force scroll to top after rendering
-  const checklistEl = document.getElementById('checklist');
-  if (checklistEl) {
-    checklistEl.scrollTo(0, 0);
-  }
-}
-    contentArea.innerHTML = html;
+    contentArea.innerHTML = html;  // ⬅ Must be inside function
 
     const newWrapper = document.querySelector('.checklist-wrapper');
     if(newWrapper) newWrapper.scrollTop = scrollPos;
