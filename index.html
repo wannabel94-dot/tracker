@@ -886,15 +886,26 @@ backBtn.onclick = () => {
     }
 };
 
-
 nextBtn.onclick = () => {
-    saveData(); // always save
-    if (getMode() === 'morning') {
-        showMorningChecklistPopup(); // trigger popup
-    } else {
-        currentIndex++;
-        loadUI();
+  saveData(); // always save
+
+  if (getMode() === 'morning') {
+    // If we're currently showing the checklist (i.e. index >= MORNING.length), treat Next as "Save / Show popup"
+    if (currentIndex >= MORNING.length) {
+      // Checklist Save → show popup
+      showMorningChecklistPopup();
+      return;
     }
+
+    // Otherwise advance through morning questions
+    currentIndex++;
+    loadUI();
+    return;
+  }
+
+  // Night-mode behavior unchanged
+  currentIndex++;
+  loadUI();
 };
 
   /* ---------- MORNING CHECKLIST ---------- */
