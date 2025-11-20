@@ -639,41 +639,54 @@ if (isEdit && editingDate) {
 }
 
 function loadSavedData() {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
   const day = getTodayDate();
-  if (all[day]) {
-    answers = all[day].answers || {};
-    currentIndex = all[day].currentIndex || 0;
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  const isMorning = document.body.classList.contains('morning');
+  const modeData = isMorning ? all[day]?.morning : all[day]?.night;
+
+  if (modeData) {
+    currentIndex = modeData.currentIndex || 0;
+    answers = modeData.answers || {};
   } else {
-    answers = {};
     currentIndex = 0;
+    answers = {};
   }
 }
 
-function saveData() {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const day = getTodayDate();
 
-  // Store all answers for the day in a single object, overwriting any previous save
-  all[day] = {
-    answers: answers,
-    currentIndex: currentIndex,
-    mode: getMode() // optional: keeps track if it was morning/night last
-  };
+function saveData() {
+  const day = getTodayDate();
+  let all = JSON.parse(localStorage.getItem('dailyTrackerData')) || {};
+
+  if (!all[day]) all[day] = {};
+
+  if (document.body.classList.contains('morning')) {
+    all[day].morning = {
+      currentIndex,
+      answers
+    };
+  } else {
+    all[day].night = {
+      currentIndex,
+      answers
+    };
+  }
 
   localStorage.setItem('dailyTrackerData', JSON.stringify(all));
 }
+
 
 // Make sure data is saved before leaving the page
 window.addEventListener('beforeunload', saveData);
 
   /* ---------- MODE SWITCH ---------- */
 function switchMode(mode) {
-  saveData();
+  saveData(); // Save current mode before switching
+
   document.body.classList.toggle('morning', mode === 'morning');
   document.body.classList.toggle('night', mode === 'night');
-  // Don't reset answers/currentIndex here
-  loadSavedData();
+
+  loadSavedData(); // Load only the new mode's data
   loadUI();
 }
 
