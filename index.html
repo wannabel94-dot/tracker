@@ -1105,12 +1105,6 @@ function loadNightChecklist() {
         </div>
       </div>`;
 
-     // 🔹 Force scroll to top after rendering
-  const checklistEl = document.getElementById('checklist');
-  if (checklistEl) {
-    checklistEl.scrollTo(0, 0);
-  }
-}
     contentArea.innerHTML = html;
 
     const newWrapper = document.querySelector('.checklist-wrapper');
