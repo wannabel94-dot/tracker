@@ -874,13 +874,6 @@ nextBtn.disabled = !hasAnswer;
 
 /* ---------- BACK / NEXT ---------- */
 backBtn.onclick = () => {
-    if (onMorningDoneNote) {
-        // Go back to morning checklist
-        onMorningDoneNote = false;
-        loadMorningChecklist();
-        return;
-    }
-
     if (currentIndex > 0) {
         currentIndex--;
         loadUI();
@@ -890,23 +883,11 @@ backBtn.onclick = () => {
     }
 };
 
+
 nextBtn.onclick = () => {
-    saveData(); // save current answers
-
-    if (getMode() === 'morning' && currentIndex >= MORNING.length) {
-        // Show done note immediately
-      function showMorningDoneNote() {
-    onMorningDoneNote = true; // <-- set flag
-    contentArea.innerHTML = `<div class="done-note">Morning completed.</div>`;
-    backBtn.style.display = 'inline-block';
-    nextBtn.style.display = 'none'; // hide next
-}
-
-        // Save data just to be sure
-        saveData();
-
-        // Then trigger night mode after a delay
-        switchTimeout = setTimeout(() => switchMode('night'), 3000);
+    saveData(); // always save
+    if (getMode() === 'morning') {
+        showMorningChecklistPopup(); // trigger popup
     } else {
         currentIndex++;
         loadUI();
@@ -984,14 +965,53 @@ window.toggleChecklist = (key) => {
     }
 };
 
-
 function checkMorningCompletion() {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
     if(allDone){
-        showMorningDoneNote();   // <-- use new function
         saveData();
-        switchTimeout = setTimeout(() => switchMode('night'), 3000);
+        showMorningChecklistPopup(); // show popup instead of done note
     }
+}
+   
+function showMorningChecklistPopup() {
+    // overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'morningPopupOverlay';
+    overlay.style.position = 'fixed';
+    overlay.style.inset = 0;
+    overlay.style.background = 'rgba(0,0,0,0.5)';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.zIndex = 5000;
+
+    // popup box
+    const popup = document.createElement('div');
+    popup.style.background = '#1e1e35';
+    popup.style.padding = '20px';
+    popup.style.borderRadius = '16px';
+    popup.style.textAlign = 'center';
+    popup.style.minWidth = '280px';
+    popup.innerHTML = `
+        <div style="font-size:18px; font-weight:600; margin-bottom:16px;">Morning checklist saved!</div>
+        <button id="editChecklistBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Back / Edit</button>
+        <button id="goNightBtn" style="margin:6px; padding:10px 16px; border-radius:12px;">Go to Night Mode</button>
+    `;
+
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+
+    // Back button → close popup, stay in morning
+    document.getElementById('editChecklistBtn').onclick = () => {
+        document.body.removeChild(overlay);
+    };
+
+    // Go to night button → save & switch
+    document.getElementById('goNightBtn').onclick = () => {
+        saveData();
+        document.body.removeChild(overlay);
+        switchMode('night');
+    };
 }
 
    function checkNightCompletion() {
