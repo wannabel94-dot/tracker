@@ -860,6 +860,31 @@ nextBtn.onclick = () => {
     }
 };
 
+   document.addEventListener('DOMContentLoaded', () => {
+  const checkbox = document.getElementById('medicationCheckbox');
+
+  // Initialize checkbox from localStorage
+  const alreadyChecked = localStorage.getItem('medChecked') === 'true';
+  checkbox.checked = alreadyChecked;
+
+  checkbox.addEventListener('change', (e) => {
+    let medTotal = parseInt(localStorage.getItem('medTotal') || '28', 10);
+
+    if (e.target.checked && !alreadyChecked) {
+      // Subtract 1 when first checked
+      medTotal = Math.max(0, medTotal - 1);
+      localStorage.setItem('medChecked', 'true');
+    } else if (!e.target.checked && alreadyChecked) {
+      // Optional: restore if unchecked
+      medTotal += 1;
+      localStorage.setItem('medChecked', 'false');
+    }
+
+    localStorage.setItem('medTotal', medTotal);
+  });
+});
+
+
 /****************************************************
  * 🔟 MORNING CHECKLIST SECTION
  ****************************************************/
