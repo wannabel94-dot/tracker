@@ -62,6 +62,20 @@ body.morning {
   z-index: 100;
 }
 
+   /* Morning header fix: make it fixed instead of sticky */
+body.morning #topHeader {
+    position: fixed;  /* stays at top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+/* Adjust content wrapper so it doesn't go under the header */
+body.morning .wrap {
+    margin-top: 70px; /* match header height */
+}
+
 /* Day of Week text inside header */
 #dayOfWeek {
   flex: 1;
