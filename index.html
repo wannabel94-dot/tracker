@@ -1021,7 +1021,7 @@ function showNightIncompletePopup(allowAdvance = false) {
                 // Advance to next question even if checklist is incomplete
                 answers._nightChecklistDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
                 saveData();
-                currentIndex++;
+                currentIndex = 0;
                 loadUI();
             } else {
                 // Scroll to first incomplete item if not advancing
