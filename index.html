@@ -931,9 +931,9 @@ function showMorningChecklistPopup() {
     const popup = document.createElement('div');
     popup.style.cssText = 'background:#1e1e35;padding:20px;border-radius:16px;text-align:center;min-width:280px';
     popup.innerHTML = `
-        <div style="font-size:18px;font-weight:600;margin-bottom:16px;">Morning checklist saved!</div>
-        <button id="editChecklistBtn" style="margin:6px;padding:10px 16px;border-radius:12px;">Back / Edit</button>
-        <button id="goNightBtn" style="margin:6px;padding:10px 16px;border-radius:12px;">Go to Night Mode</button>
+        <div style="font-size:18px;font-weight:600;margin-bottom:16px;">Morning done</div>
+        <button id="editChecklistBtn" style="margin:6px;padding:10px 16px;border-radius:12px;">Go back</button>
+        <button id="goNightBtn" style="margin:6px;padding:10px 16px;border-radius:12px;">Go to night mode</button>
     `;
 
     overlay.appendChild(popup);
@@ -1032,7 +1032,7 @@ function showNightIncompletePopup(allowAdvance = false) {
 
     overlay.innerHTML = `
         <div class="popup-box" style="background:#1e1e35;padding:20px;border-radius:16px;text-align:center;min-width:280px;pointer-events:auto;">
-            <div style="font-size:18px;font-weight:600;margin-bottom:16px;">Routine note done</div>
+            <div style="font-size:18px;font-weight:600;margin-bottom:16px;">Checklist unfinished...</div>
             <button class="backBtn" style="margin:6px;padding:10px 16px;border-radius:12px;">Go back</button>
             <button class="saveBtn" style="margin:6px;padding:10px 16px;border-radius:12px;">Save anyway</button>
         </div>
