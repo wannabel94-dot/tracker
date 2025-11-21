@@ -649,20 +649,25 @@ document.getElementById('dataBtn').addEventListener('click', () => { window.loca
     dayOfWeekElement.textContent = today.toLocaleDateString('en-US', options);
 }
 
+// Load UI
 function loadUI() {
-    updateDayOfWeek();
-
     const mode = getMode();
     const questions = getQuestions();
 
+    updateDayOfWeek();
     progressBar.parentElement.style.display = 'block';
 
-    // Morning checklist logic
-    if (mode === 'morning' && currentIndex >= MORNING.length) {
-        if (onMorningDoneNote) {
-            loadMorningChecklist();
+    // --- Morning questions ---
+    if (mode === 'morning') {
+        if (currentIndex < questions.length) {
+            renderQuestion(questions[currentIndex]);
             return;
         }
+
+        // All morning questions done, now show checklist
+        loadMorningChecklist();
+        return;
+    }
         onMorningDoneNote = true;
         nextBtn.textContent = 'Next';
         return;
@@ -833,10 +838,11 @@ nextBtn.onclick = () => {
     saveData();
     const mode = getMode();
 
-    if (mode === 'morning') {
-        // If checklist not yet loaded, load it first
-        if (!document.querySelector('.checklist-wrapper')) {
-            loadMorningChecklist();
+   if (mode === 'morning') {
+        // If questions remain, advance
+        if (currentIndex < getQuestions().length - 1) {
+            currentIndex++;
+            loadUI();
             return;
         }
 
