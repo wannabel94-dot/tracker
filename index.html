@@ -1006,6 +1006,9 @@ window.toggleNightChecklist = (key, index) => {
         if (nextEl) nextEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
+       updateProgressBar(); // ✅ Add this line to dynamically update progress
+
+
     // Auto-complete if all items checked
     const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
     if (allDone) checkNightCompletion();
