@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>History</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -15,238 +15,81 @@
   --glass-border: rgba(255,255,255,0.12);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
-  
-/* ===============================================
-   GLOBAL SETTINGS
-================================================= */
 * { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
-body {
-  margin: 0;
-  padding: 0 18px 90px;
-  min-height: 100vh;
-  color: var(--night-text);
-}
-/* ===============================================
-   RESPONSIVE / MOBILE
-================================================= */
-@media (max-width:480px) { 
-  body{padding:12px;}
-  .opt-btn, .counter-btn{font-size:16px;padding:12px;}
-  .counter-icon{width:20px;height:20px;}
-  input[type=time]{font-size:16px;padding:12px;}
-}
-/* ===============================================
-   BACKGROUND
-================================================= */
-  
+html, body { height: 100%; margin: 0; padding: 0 18px 90px; min-height: 100vh; color: var(--night-text); }
+
+/* Background */
 body { color:#fff; }
 body::before {
   content:""; position:fixed; inset:0; z-index:-1;
-  background:url("https://i.pinimg.com/736x/69/44/51/694451017e620165ffc4408bcfa3fdf8.jpg") center/cover no-repeat;
+  background: #9966CB;
 }
 
-/* ===============================================
-   STICKY HEADER (Day + Menu)
-================================================= */
+/* Sticky header */
 #topHeader {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 18px;
-  z-index: 100;
+  position: sticky; top: 0; left: 0; width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 18px; z-index: 100;
 }
+#dayOfWeek { flex: 1; text-align: center; font-size: 1rem; font-weight: 600; color: #f0f4ff; margin: 0; pointer-events: none; }
+#btnSettings { background: transparent; border: none; font-size: 24px; color: #fff; cursor: pointer; padding: 0; }
 
-/* Day of Week text inside header */
-#dayOfWeek {
-  flex: 1;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #f0f4ff;
-  margin: 0;
-  pointer-events: none; /* text is not interactive */
-}
-
-/* Settings / Menu button */
-#btnSettings {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  color: #fff;
-  cursor: pointer;
-  padding: 0;
-  z-index: 101;
-}
-
-#btnSettings:hover {
-  color: #ddd;
-}
-
-/* ===============================================
-   WRAP / MAIN CONTENT
-================================================= */
-.wrap {
-  width: 100%;
-  max-width: 740px;
-  margin-top: 40px; /* keeps content below header */
-  display: block; /* important: prevents flex/stretch */
-}
-
-/* ===============================================
-   FIXED FOOTER NAV
-================================================= */
-.footer-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 70px;
-  background: #1a1a1a; /* change this to any solid color you want */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 28px;
-  border-top: none; /* remove the top border */
-  z-index: 100;
-  backdrop-filter: none; /* remove blur/saturation effects */
-}
-
-/* Footer buttons */
-.footer-nav .switch-btn {
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  padding: 10px;
-  transition: transform 0.25s, background 0.25s;
-}
-
-.footer-nav .switch-btn img {
-  width: 32px;
-  height: 32px;
-  opacity: 0.8; /* keeps icons visible */
-  transition: opacity 0.3s, transform 0.3s;
-}
-
-.footer-nav .switch-btn:hover {
-  background: rgba(255,255,255,0.1); /* optional hover effect */
-  transform: scale(1.1);
-}
-
-.footer-nav .switch-btn.active img {
-  opacity: 1;
-  transform: scale(1.2);
-}
-/* ===============================================
-   DAY NIGHT MODE BUTTONS
-   ================================================= */
-.switch-btn {
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background 0.25s;
-}
-.switch-btn img {
-  width: 28px;
-  height: 28px;
-  filter: invert(1);
-  opacity: 0.5;
-  transform: scale(1);
-  transition: opacity 0.25s, transform 0.25s, filter 0.25s;
-}
-.switch-btn:hover { background: rgba(255,255,255,0.08); border-radius:50%; }
-body.morning .switch-btn.morning img { opacity: 1; transform: scale(1.15); }
-body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
-
-/* HISTORY */
-.wrap { max-width: 740px; margin: 0 auto; padding-top: 10px; }
+/* Main content wrapper */
+.wrap { width: 100%; max-width: 740px; margin: 40px auto 0; display: block; }
 .day-entry {
-  background: rgba(255,255,255,0.05);
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 16px;
+  background: rgba(255,255,255,0.05); border-radius: 14px; padding: 16px; margin-bottom: 16px;
 }
-.day-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+.day-header { display: flex; justify-content: space-between; align-items: center; }
 .day-header h3 { margin: 0; font-size: 1.1rem; }
 .day-actions { display: flex; gap: 8px; }
-.mini-btn {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: background 0.2s ease;
-}
+.mini-btn { background: rgba(255,255,255,0.1); color: #fff; border: none; border-radius: 8px; padding: 4px 10px; cursor: pointer; font-size: 0.8rem; transition: background 0.2s ease; }
 .mini-btn:hover { background: rgba(255,255,255,0.25); }
 .mini-btn.delete { background: rgba(255,50,50,0.25); }
 .mini-btn.delete:hover { background: rgba(255,50,50,0.4); }
+#entryView { background: rgba(255,255,255,0.05); padding: 16px; border-radius: 14px; margin-bottom: 16px; }
+#entryView h4 { margin-top: 16px; margin-bottom: 8px; font-size: 1rem; font-weight: 600; }
 
-/* VIEW ENTRY */
-#entryView {
-  background: rgba(255,255,255,0.05);
-  padding: 16px;
-  border-radius: 14px;
-  margin-bottom: 16px;
+/* Footer navigation */
+.footer-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
+  background: #1a1a1a; display: flex; justify-content: center; align-items: center; gap: 28px;
+  border-top: none; z-index: 100;
 }
-#entryView h4 {
-  margin-top: 16px;
-  margin-bottom: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-}
-/* ===============================================
-   MENU
-================================================= */
+.footer-nav .switch-btn { background: transparent; border: none; border-radius: 50%; padding: 10px; cursor: pointer; }
+.footer-nav .switch-btn img { width: 32px; height: 32px; opacity: 0.8; transition: opacity 0.3s, transform 0.3s; }
+.footer-nav .switch-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
+.footer-nav .switch-btn.active img { opacity: 1; transform: scale(1.2); }
+
+/* Settings menu */
 .settings-menu {
   position: fixed; top:0; left:0; height:100vh; width:50%;
   background: rgba(0,0,0,0.7); backdrop-filter: blur(18px) saturate(180%);
-  display:flex; flex-direction:column; align-items:stretch;
-  padding:20px 0; transform:translateX(-100%); transition: transform 0.4s ease; z-index:200;
+  display:flex; flex-direction:column; padding:20px 0; transform:translateX(-100%); transition: transform 0.4s ease; z-index:200;
 }
 .settings-menu.show { transform:translateX(0); }
-.settings-menu button {
-  background:transparent; border:none; padding:16px 20px; width:100%; text-align:left;
-  font-weight:600; color:#fff; cursor:pointer; transition: background 0.25s ease, transform 0.2s ease;
-}
+.settings-menu button { background:transparent; border:none; padding:16px 20px; width:100%; text-align:left; font-weight:600; color:#fff; cursor:pointer; transition: background 0.25s ease, transform 0.2s ease; }
 .settings-menu button:hover { background: rgba(255,255,255,0.15); transform: translateX(6px); }
-
 .menu-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition: opacity 0.3s ease; z-index:150; }
 .menu-overlay.show { opacity:1; pointer-events:all; }
-
 </style>
 </head>
 <body class="morning">
   <!-- Sticky header -->
   <header id="topHeader">
-    <div id="dayOfWeek">Monday</div>
+    <div id="dayOfWeek">History</div>
     <button id="btnSettings">☰</button>
   </header>
 
-<!-- Menu overlay & settings -->
-<div id="menuOverlay" class="menu-overlay"></div>
-<div id="settingsMenu" class="settings-menu">
-  <button id="btnExport">Export data</button>
-  <button id="btnClearToday">Clear Today's Data</button>
-</div>
+  <!-- Menu overlay & settings -->
+  <div id="menuOverlay" class="menu-overlay"></div>
+  <div id="settingsMenu" class="settings-menu">
+    <button id="btnExport">Export data</button>
+    <button id="btnClearToday">Clear Today's Data</button>
+  </div>
 
-<div class="wrap" id="historyContainer"></div>
+  <div class="wrap" id="historyContainer"></div>
 
- <!-- Sticky footer nav -->
+  <!-- Footer nav -->
   <footer class="footer-nav">
     <button class="switch-btn morning" id="morningBtn">
       <img src="icons/sun.svg" alt="Morning">
@@ -254,78 +97,45 @@ body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
     <button class="switch-btn night" id="nightBtn">
       <img src="icons/night.svg" alt="Night">
     </button>
-    <button class="switch-btn history" id="historyBtn">
+    <button class="switch-btn history active" id="historyBtn">
       <img src="icons/history.svg" alt="History">
     </button>
     <button class="switch-btn data" id="dataBtn">
       <img src="icons/data.svg" alt="Data">
     </button>
-     <button class="switch-btn blank" id="blankBtn">
+    <button class="switch-btn blank" id="blankBtn">
       <img src="icons/balloon.svg" alt="Blank">
     </button>
   </footer>
-  
+
 <script>
-// --- CUSTOM LABELS FOR HISTORY REVIEW ---
-const HISTORY_LABELS = {
-  wake_time: "Wake up time",
-  how_slept: "Sleep quality",
-  temp: "Took temperature",
-  made_bed: "Bed made",
-  kettle: "Boiled kettle",
-  took_meds_morn: "Morning meds",
-  tidy_up: "Tidied up",
-  tea: "Had tea",
-  poop: "Bathroom visit",
-  shower_morn: "Morning shower",
-  get_dressed: "Got dressed",
-  led_mask_morn: "LED mask",
-  skincare_morn: "Morning skincare",
-  eat_breakfast: "Breakfast",
-  supplements_morn: "Supplements taken",
-  brush_teeth_morn: "Brushed teeth",
-  psyllium: "Took psyllium",
-  magnesium: "Took magnesium",
-  pillowcase: "Changed pillowcase",
-  shower_night: "Night shower",
-  skincare_night: "Night skincare",
-  teeth_night: "Brushed teeth (night)",
-  flossed: "Flossed",
-  left_house: "Left house",
-  day_description: "Day summary",
-  caffeine_alcohol: "Caffeine / alcohol",
-  sickness: "Symptoms",
-  saw_dogs: "Saw the dogs",
-  feel_with_L: "Feeling with L",
-  house_state: "House state",
-  drove: "Driving",
-  body_feelings: "Body feelings",
-  food_desc: "Eating",
-  most_prominent: "Most prominent mental state",
-  meds: "Extra meds",
-  sensory_triggers: "Sensory triggers",
-  appointments: "Appointments",
-  movement: "Movement",
-  talked_to_anyone: "People interacted with",
-  wellness: "Wellness activities",
-  creative: "Creative activities",
-  closed_eyes_time: "Closed eyes time"
+// Footer navigation handlers
+document.getElementById('morningBtn').onclick = () => { window.location.href = 'index.html'; };
+document.getElementById('nightBtn').onclick = () => { window.location.href = 'night.html'; };
+document.getElementById('historyBtn').onclick = () => { window.location.href = 'history.html'; };
+document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
+document.getElementById('blankBtn').onclick = () => { window.location.href = 'blank.html'; };
+
+// Settings menu
+const btnSettings = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+btnSettings.onclick = () => {
+  settingsMenu.classList.add('show');
+  menuOverlay.classList.add('show');
+};
+menuOverlay.onclick = () => {
+  settingsMenu.classList.remove('show');
+  menuOverlay.classList.remove('show');
 };
 
+// HISTORY LOGIC
 const container = document.getElementById('historyContainer');
-
 function loadHistory() {
   container.innerHTML = '';
   const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const days = Object.keys(all).sort(
-    (a, b) => new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-'))
-  );
-
-  if (days.length === 0) {
-    container.innerHTML = '<p>No history yet.</p>';
-    return;
-  }
-
+  const days = Object.keys(all).sort((a,b)=> new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-')));
+  if (!days.length) { container.innerHTML = '<p>No history yet.</p>'; return; }
   days.forEach(day => {
     const entry = document.createElement('div');
     entry.className = 'day-entry';
@@ -336,8 +146,7 @@ function loadHistory() {
           <button class="mini-btn" onclick="viewEntry('${day}')">View</button>
           <button class="mini-btn delete" onclick="deleteEntry('${day}')">Delete</button>
         </div>
-      </div>
-    `;
+      </div>`;
     container.appendChild(entry);
   });
 }
@@ -345,135 +154,34 @@ function viewEntry(day) {
   const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
   const entry = all[day];
   if (!entry) return alert("No data for this day.");
-
-  // Remove previous view
   const existingView = document.getElementById('entryView');
   if (existingView) existingView.remove();
-
-  const div = document.createElement('div');
-  div.id = 'entryView';
-
-  let html = `<h3>${day} — Review</h3>`;
-
-  // Custom labels lookup (optional, you can make your own)
-  const CUSTOM_LABELS = {
-    wake_time: "Wake Time",
-    how_slept: "Sleep Quality",
-    psyllium: "Took Psyllium",
-    magnesium: "Took Magnesium",
-    pillowcase: "Changed Pillowcase",
-    shower_night: "Night Shower",
-    // Add more as needed
-  };
-
-  if (entry.answers) {
-    html += `<h4>Answers</h4><ul style="padding-left:16px;">`;
-    for (const key in entry.answers) {
-      let val = entry.answers[key];
-
-      // Convert Yes/No to ticks/crosses
-      if (typeof val === 'string') {
-        if (val === "Yes") val = '✓';
-        else if (val === "No") val = '✗';
-      } else if (Array.isArray(val)) {
-        // For multiple choice, convert each Yes/No inside the array
-        val = val.map(v => v === "Yes" ? '✓' : v === "No" ? '✗' : v).join(', ');
-      }
-
-      const label = CUSTOM_LABELS[key] || key; // Use custom label if available
-      html += `<li><strong>${label}</strong>: ${val}</li>`;
-    }
-    html += '</ul>';
-  } else {
-    html += '<p>No answers recorded.</p>';
-  }
-
-  div.innerHTML = html;
-  container.insertBefore(div, container.firstChild);
-  div.scrollIntoView({ behavior: 'smooth' });
-}
-
-function deleteEntry(day) {
-  if (confirm(`Delete all data for ${day}?`)) {
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    delete all[day];
-    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
-    loadHistory();
-  }
-}
-
-function viewEntry(day) {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const entry = all[day];
-  if (!entry) return alert("No data for this day.");
-
-  const existingView = document.getElementById('entryView');
-  if (existingView) existingView.remove();
-
-  const div = document.createElement('div');
-  div.id = 'entryView';
-
+  const div = document.createElement('div'); div.id = 'entryView';
   let html = `<h3>${day} — Review</h3>`;
   if (entry.answers) {
     html += `<h4>Answers</h4><ul style="padding-left:16px;">`;
     for (const key in entry.answers) {
-      const label = HISTORY_LABELS[key] || key;
       let val = entry.answers[key];
       if (Array.isArray(val)) val = val.join(', ');
-      html += `<li><strong>${label}</strong>: ${val}</li>`;
+      html += `<li><strong>${key}</strong>: ${val}</li>`;
     }
     html += '</ul>';
-  } else {
-    html += '<p>No answers recorded.</p>';
-  }
-
+  } else html += '<p>No answers recorded.</p>';
   div.innerHTML = html;
   container.insertBefore(div, container.firstChild);
   div.scrollIntoView({ behavior: 'smooth' });
 }
-
-// SETTINGS MENU
-const btnSettings = document.getElementById('btnSettings');
-const settingsMenu = document.getElementById('settingsMenu');
-const menuOverlay = document.getElementById('menuOverlay');
-
-btnSettings.onclick = () => {
-  settingsMenu.classList.add('show');
-  menuOverlay.classList.add('show');
-};
-menuOverlay.onclick = () => {
-  settingsMenu.classList.remove('show');
-  menuOverlay.classList.remove('show');
-};
-const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
-  
-function switchMode(mode) {
-  saveData();
-  document.body.classList.toggle('morning', mode === 'morning');
-  document.body.classList.toggle('night', mode === 'night');
-  loadSavedData();
-  loadUI();
+function deleteEntry(day) {
+  if (!confirm(`Delete all data for ${day}?`)) return;
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  delete all[day];
+  localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+  loadHistory();
 }
 
-// Footer navigation
-  document.getElementById('morningBtn').onclick = () => {
-    window.location.href = "index.html";   // or morning.html if that's your file name
-};
-
-document.getElementById('nightBtn').onclick = () => {
-    window.location.href = "night.html";
-};
-
-
-document.getElementById("blankBtn").addEventListener("click", () => {
-    window.location.href = "blank.html";
-});
-
-document.getElementById("dataBtn").addEventListener("click", () => {
-    window.location.href = "data.html";
-});
-  
+// Initial load
 loadHistory();
 </script>
 </body>
 </html>
+
