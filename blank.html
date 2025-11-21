@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="theme-color" content="#07081d" id="navColor">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Morning Page</title>
+<title>Blank</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -87,6 +87,13 @@ main.card { padding: 18px; border-radius: var(--card-radius); min-height: 520px;
 
 /* icon inside button */
 .footer-nav .switch-btn img {
+  .footer-nav .switch-btn img {
+  filter: invert(1);
+  width: 32px;
+  height: 32px;
+  opacity: 0.8; /* keeps icons visible */
+  transition: opacity 0.3s, transform 0.3s;
+}
   width: 40px;               /* <— SAME SIZE as index */
   height: 40px;
   opacity: 0.8;
@@ -129,7 +136,7 @@ main.card { padding: 18px; border-radius: var(--card-radius); min-height: 520px;
   <div class="wrap">
     <main class="card">
       <div id="contentArea">
-        <div class="question">Welcome to your morning routine!</div>
+        <div class="question">Blank</div>
         <div class="options">
           <button class="opt-btn">Start</button>
         </div>
