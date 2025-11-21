@@ -708,36 +708,46 @@ function loadUI() {
 
     let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
 
-    // Render options
-    if (q.type === 'single') {
-        q.options.forEach(opt => {
-            const selected = answers[q.key] === opt ? 'selected' : '';
-            html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-        });
-    } else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-        if (!answers[q.key]) answers[q.key] = {};
-        q.options.forEach(opt => {
-            const count = answers[q.key][opt] || 0;
-            html += `
-              <div class="opt-btn drink-pill">
-                <span style="flex:1">${opt}</span>
-                <div class="counter-inner">
-                  <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
-                  <span id="count-${opt}">${count}</span>
-                  <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
-                </div>
-              </div>
-            `;
-        });
-    } else if (q.type === 'multi') {
-        if (!answers[q.key]) answers[q.key] = [];
-        q.options.forEach(opt => {
-            const selected = answers[q.key].includes(opt) ? 'selected' : '';
-            html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-        });
-    } else if (q.type === 'time') {
-        html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
-    }
+// Render options
+if (q.type === 'single') {
+    q.options.forEach(opt => {
+        const selected = answers[q.key] === opt ? 'selected' : '';
+        html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+    });
+
+} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+    if (!answers[q.key]) answers[q.key] = {};
+    q.options.forEach(opt => {
+        const count = answers[q.key][opt] || 0;
+        html += `
+          <div class="opt-btn drink-pill">
+            <span style="flex:1">${opt}</span>
+            <div class="counter-inner">
+              <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+              <span id="count-${opt}">${count}</span>
+              <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+            </div>
+          </div>
+        `;
+    });
+
+    // ✅ Enable next button only for caffeine/alcohol counter
+    nextBtn.disabled = false;
+    nextBtn.onclick = () => {
+        currentIndex++;
+        loadUI();
+    };
+
+} else if (q.type === 'multi') {
+    if (!answers[q.key]) answers[q.key] = [];
+    q.options.forEach(opt => {
+        const selected = answers[q.key].includes(opt) ? 'selected' : '';
+        html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+    });
+
+} else if (q.type === 'time') {
+    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
+}
 
     html += '</div>';
     contentArea.innerHTML = html;
