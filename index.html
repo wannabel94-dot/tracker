@@ -833,16 +833,14 @@ nextBtn.onclick = () => {
     saveData();
     const mode = getMode();
 
-    // --- MORNING LOGIC ---
     if (mode === 'morning') {
-
-        // If checklist not yet loaded, load it
-        if (!onMorningDoneNote) {
+        // If checklist not yet loaded, load it first
+        if (!document.querySelector('.checklist-wrapper')) {
             loadMorningChecklist();
             return;
         }
 
-        // Show the morning popup regardless of whether checklist is complete
+        // Trigger popup regardless of checklist completion
         showMorningChecklistPopup();
         return;
     }
