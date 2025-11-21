@@ -834,16 +834,18 @@ nextBtn.onclick = () => {
 
     const mode = getMode();
 
-    // --- MORNING LOGIC ---
-    if (mode === 'morning') {
-        if (currentIndex >= MORNING.length) {
+if (mode === 'morning') {
+        // If checklist not yet shown, load it first
+        if (!onMorningDoneNote) {
+            loadMorningChecklist();
+            return;
+        }
+
+        // If checklist done, show popup
+        if (onMorningDoneNote) {
             showMorningChecklistPopup();
             return;
         }
-        currentIndex++;
-        loadUI();
-        return;
-    }
 
     // --- NIGHT LOGIC ---
     if (mode === 'night') {
