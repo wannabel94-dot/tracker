@@ -4,14 +4,9 @@
 <meta charset="utf-8">
 <meta name="theme-color" content="#374866" id="navColor">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-   <!-- Theme color for Android navigation bar -->
-<title>blank</title>
+<title>Morning Page</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-
-/* ===============================================
-   ROOT VARIABLES
-================================================= */
 :root {
   --morning-text: #f0f4ff;
   --night-text: #f0f4ff;
@@ -21,216 +16,71 @@
   --glass-border: rgba(255,255,255,0.12);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
-
-/* ===============================================
-   GLOBAL SETTINGS
-================================================= */
 * { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
+html, body { height: 100%; margin: 0; padding: 0; }
 body {
   margin: 0;
   padding: 0 18px 90px;
   min-height: 100vh;
-  color: var(--night-text);
+  color: var(--morning-text);
+  background: linear-gradient(to bottom, #a8c0ff, #f0f4ff);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
 
-/* ===============================================
-   BACKGROUND
-================================================= */
-body { color:#fff; }
-body::before {
-  content:""; position:fixed; inset:0; z-index:-1;
-  background:#fff ;
-}
-
-/* ===============================================
-   STICKY HEADER (Day + Menu)
-================================================= */
+/* Sticky header */
 #topHeader {
   position: sticky;
   top: 0;
-  left: 0;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px;
   z-index: 100;
-}
-
-/* Day of Week text inside header */
-#dayOfWeek {
-  flex: 1;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #f0f4ff;
-  margin: 0;
-  pointer-events: none; /* text is not interactive */
-}
-
-/* Settings / Menu button */
-#btnSettings {
   background: transparent;
-  border: none;
-  font-size: 24px;
-  color: #fff;
-  cursor: pointer;
-  padding: 0;
-  z-index: 101;
 }
+#dayOfWeek { flex: 1; text-align: center; font-weight: 600; color: #f0f4ff; }
+#btnSettings { background: transparent; border: none; font-size: 24px; color: #fff; cursor: pointer; }
 
-#btnSettings:hover {
-  color: #ddd;
-}
+/* Main content */
+.wrap { width: 100%; max-width: 740px; margin-top: 40px; display: block; }
+main.card { padding: 18px; border-radius: var(--card-radius); min-height: 520px; background: rgba(255,255,255,0.08); backdrop-filter: blur(var(--bg-blur)px); }
+.question { font-size: 18px; margin-bottom: 12px; font-weight: 600; color: #f0f4ff; }
+.options { display: flex; flex-wrap: wrap; gap: 10px; }
+.options.column-options { flex-direction: column; }
+.opt-btn { flex: 1; padding: 12px; font-weight: 600; border-radius: 12px; border: 0; cursor: pointer; background: rgba(255,255,255,0.15); color: #f0f4ff; transition: 0.2s; }
+.opt-btn.selected { background: rgba(255,255,255,0.3); }
+.controls { display: flex; justify-content: space-between; margin-top: 16px; }
+.back-btn, .next-btn { padding: 12px 16px; border-radius: 12px; border: 0; font-weight: 700; cursor: pointer; background: rgba(255,255,255,0.15); color: #f0f4ff; }
+.back-btn:hover, .next-btn:hover { opacity: 0.85; }
 
-/* ===============================================
-   WRAP / MAIN CONTENT
-================================================= */
-.wrap {
-  width: 100%;
-  max-width: 740px;
-  margin-top: 40px; /* keeps content below header */
-  display: block; /* important: prevents flex/stretch */
-}
-
-/* ===============================================
-   FIXED FOOTER NAV
-================================================= */
+/* Footer navigation */
 .footer-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   height: 70px;
-  background: transparent; /* change this to any solid color you want */
+  background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 28px;
-  border-top: none; /* remove the top border */
   z-index: 100;
-  backdrop-filter: none; /* remove blur/saturation effects */
 }
+.footer-nav .switch-btn { background: transparent; border: none; border-radius: 50%; padding: 10px; cursor: pointer; }
+.footer-nav .switch-btn img { width: 32px; height: 32px; opacity: 0.8; }
+.footer-nav .switch-btn.active img { opacity: 1; transform: scale(1.2); }
 
-/* Footer buttons */
-.footer-nav .switch-btn {
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  padding: 10px;
-  transition: transform 0.25s, background 0.25s;
-}
-
-.footer-nav .switch-btn img {
-  width: 32px;
-  height: 32px;
-  opacity: 0.8; /* keeps icons visible */
-  transition: opacity 0.3s, transform 0.3s;
-}
-
-.footer-nav .switch-btn:hover {
-  background: rgba(255,255,255,0.1); /* optional hover effect */
-  transform: scale(1.1);
-}
-
-.footer-nav .switch-btn.active img {
-  opacity: 1;
-  transform: scale(1.2);
-}
-
-/* override night mode colors */
-body.night .footer-nav {
-  background: 374866;
-}
-
-
-/* ===============================================
-   DAY NIGHT MODE BUTTONS
-   ================================================= */
-.switch-btn {
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background 0.25s;
-}
-.switch-btn img {
-  width: 28px;
-  height: 28px;
-  filter: invert(1);
-  opacity: 0.5;
-  transform: scale(1);
-  transition: opacity 0.25s, transform 0.25s, filter 0.25s;
-}
-.switch-btn:hover { background: rgba(255,255,255,0.08); border-radius:50%; }
-body.morning .switch-btn.morning img { opacity: 1; transform: scale(1.15); }
-body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
-
-
-/* ===============================================
-   MENU
-================================================= */
+/* Settings menu */
 .settings-menu {
   position: fixed; top:0; left:0; height:100vh; width:50%;
   background: rgba(0,0,0,0.7); backdrop-filter: blur(18px) saturate(180%);
-  display:flex; flex-direction:column; align-items:stretch;
-  padding:20px 0; transform:translateX(-100%); transition: transform 0.4s ease; z-index:200;
+  display:flex; flex-direction:column; padding:20px 0; transform:translateX(-100%); transition: transform 0.4s ease; z-index:200;
 }
 .settings-menu.show { transform:translateX(0); }
-.settings-menu button {
-  background:transparent; border:none; padding:16px 20px; width:100%; text-align:left;
-  font-weight:600; color:#fff; cursor:pointer; transition: background 0.25s ease, transform 0.2s ease;
-}
-.settings-menu button:hover { background: rgba(255,255,255,0.15); transform: translateX(6px); }
-
 .menu-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition: opacity 0.3s ease; z-index:150; }
 .menu-overlay.show { opacity:1; pointer-events:all; }
-
-/* ===============================================
-   CARDS & QUESTIONS
-================================================= */
-main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
-.progress-wrap { display:flex; align-items:center; margin-bottom:12px; }
-.progress { flex:1.2; height:10px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.06); }
-.bar { height:100%; width:0%; background:linear-gradient(90deg,rgba(255,255,255,0.15),rgba(255,255,255,0.3)); border-radius:8px; transition:width 0.25s; }
-.question { font-size:18px; margin-bottom:12px; font-weight:600; color:#f0f4ff; }
-.options { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.options.column-options { display:flex; flex-direction:column; gap:8px; }
-
-/* ===============================================
-   BACK NEXT BUTTONS
-================================================= */
-.controls { display:flex; gap:10px; justify-content:space-between; margin-top:16px; }
-.back-btn, .next-btn {
-  background:rgba(255,255,255,0.15); color:#f0f4ff; font-weight:700;
-  border:0; padding:12px 16px; border-radius:12px; cursor:pointer; backdrop-filter:blur(6px);
-  transition:opacity 0.2s;
-}
-.back-btn:hover, .next-btn:hover { opacity:0.85; }
-.back-btn[disabled], .next-btn[disabled] { opacity:0.5; cursor:not-allowed; }
-.done-note { font-size:20px; text-align:center; font-weight:700; margin-top:80px; }
-
-   /* ===============================================
-   ANIMATIONS
-================================================= */
-@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-@keyframes slideUp { from{transform:translateY(40px); opacity:0;} to{transform:translateY(0); opacity:1;} }
-
-/* ===============================================
-   RESPONSIVE / MOBILE
-================================================= */
-@media (max-width:480px) { 
-  body{padding:12px;}
-  .opt-btn, .counter-btn{font-size:16px;padding:12px;}
-  .counter-icon{width:20px;height:20px;}
-  input[type=time]{font-size:16px;padding:12px;}
-}
-
 </style>
 </head>
 <body class="morning">
@@ -242,255 +92,57 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 
   <!-- Menu overlay & settings -->
   <div id="menuOverlay" class="menu-overlay"></div>
-  <div id="settingsMenu" class="settings-menu">
-  </div>
+  <div id="settingsMenu" class="settings-menu"></div>
 
   <!-- Main content wrapper -->
   <div class="wrap">
     <main class="card">
-      <div id="contentArea"></div>
+      <div id="contentArea">
+        <div class="question">Welcome to your morning routine!</div>
+        <div class="options">
+          <button class="opt-btn">Start</button>
+        </div>
+      </div>
       <div class="controls">
-        <button class="back-btn" id="backBtn">Back</button>
+        <button class="back-btn" id="backBtn" disabled>Back</button>
         <button class="next-btn" id="nextBtn">Next</button>
       </div>
     </main>
   </div>
 
-  <!-- Sticky footer nav -->
+  <!-- Footer nav -->
   <footer class="footer-nav">
-    <button class="switch-btn morning" id="morningBtn">
-      <img src="icons/sun.svg" alt="Morning">
-    </button>
-    <button class="switch-btn night" id="nightBtn">
-      <img src="icons/night.svg" alt="Night">
-    </button>
-    <button class="switch-btn history" id="historyBtn">
-      <img src="icons/history.svg" alt="History">
-    </button>
-    <button class="switch-btn data" id="dataBtn">
-      <img src="icons/data.svg" alt="Data">
-    </button>
+    <button class="switch-btn morning active" id="morningBtn"><img src="icons/sun.svg" alt="Morning"></button>
+    <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
+    <button class="switch-btn history" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
+    <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"></button>
   </footer>
-</body>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
-   
- 
-  /* ---------- DOM ELEMENTS ---------- */
   const contentArea = document.getElementById('contentArea');
   const backBtn = document.getElementById('backBtn');
   const nextBtn = document.getElementById('nextBtn');
   const btnSettings = document.getElementById('btnSettings');
   const settingsMenu = document.getElementById('settingsMenu');
-document.getElementById('historyBtn').addEventListener('click', () => {
-  window.location.href = 'history.html';
-});
+  const menuOverlay = document.getElementById('menuOverlay');
 
-  const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
-  const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
-
-if (isEdit && editingDate) {
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const existing = all[editingDate]?.morning?.answers; // always start in morning mode
-
-    if (existing) {
-        editAnswers = existing;
-        answers = {...existing}; // preload saved answers
-        currentIndex = 0;        // start at first question
-    }
-
-    // Update header
-    const header = document.getElementById('dayOfWeek');
-    if (header) header.textContent = `Editing ${editingDate}`;
-
-    // Force morning mode
-    document.body.classList.add('morning');
-    document.body.classList.remove('night');
-}
-
-function loadSavedData() {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const day = getTodayDate();
-  if (all[day]) {
-    answers = all[day].answers || {};
-    currentIndex = all[day].currentIndex || 0;
-  } else {
-    answers = {};
-    currentIndex = 0;
-  }
-}
-
-function saveData() {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const day = getTodayDate();
-
-  // Store all answers for the day in a single object, overwriting any previous save
-  all[day] = {
-    answers: answers,
-    currentIndex: currentIndex,
-    mode: getMode() // optional: keeps track if it was morning/night last
+  // Settings menu toggle
+  btnSettings.onclick = () => {
+    const isOpen = settingsMenu.classList.toggle('show');
+    menuOverlay.classList.toggle('show', isOpen);
   };
-
-  localStorage.setItem('dailyTrackerData', JSON.stringify(all));
-}
-
-// Make sure data is saved before leaving the page
-window.addEventListener('beforeunload', saveData);
-
-  /* ---------- MODE SWITCH ---------- */
-function switchMode(mode) {
-  saveData();
-  document.body.classList.toggle('morning', mode === 'morning');
-  document.body.classList.toggle('night', mode === 'night');
-  // Don't reset answers/currentIndex here
-  loadSavedData();
-  loadUI();
-}
-
-  document.getElementById('morningBtn').onclick = () => switchMode('morning');
-  document.getElementById('nightBtn').onclick = () => switchMode('night');
-
-document.getElementById("dataBtn").addEventListener("click", () => {
-    window.location.href = "data.html";
-});
-
-
-  /* ---------- UI RENDER ---------- */
-
-function updateDayOfWeek() {
-  const dayOfWeekElement = document.getElementById('dayOfWeek');
-  const today = new Date();
-
-  // Format options
-  const options = { weekday: 'long', month: 'short', day: 'numeric' };
-  const formattedDate = today.toLocaleDateString('en-US', options);
-
-  dayOfWeekElement.textContent = formattedDate; // e.g., "Thursday, Nov 13"
-}
-
-// Call on load
-updateDayOfWeek();
-
-
-    // ------ funcion UI -------- //
-  // Build question header with optional icon
-  let questionHeader = '';
-  if (q.icon) {
-    const specialClass = q.specialIcon ? ' special-icon' : '';
-    questionHeader = `
-      <div class="question-with-icon">
-        <div class="question-icon${specialClass}">
-          <img src="icons/${q.icon}" alt="${q.label}">
-        </div>
-        <span class="question-text">${q.label}</span>
-      </div>
-    `;
-  } else {
-    questionHeader = `<div class="question">${q.label}</div>`;
-  }
-
-  // Start HTML with question header
-let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
-
-  // Render options
- if (q.type === 'single') {
-  q.options.forEach(opt => {
-    const selected = answers[q.key] === opt ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-  });
-} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
-  if (!answers[q.key]) answers[q.key] = {};
-  q.options.forEach(opt => {
-    const count = answers[q.key][opt] || 0;
-    html += `
-      <div class="opt-btn drink-pill">
-        <span style="flex:1">${opt}</span>
-        <div class="counter-inner">
-          <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
-          <span id="count-${opt}">${count}</span>
-          <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
-        </div>
-      </div>
-    `;
-  });
-} else if (q.type === 'multi') {
-  if (!answers[q.key]) answers[q.key] = [];
-  q.options.forEach(opt => {
-    const selected = answers[q.key].includes(opt) ? 'selected' : '';
-    html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-  });
-} else if (q.type === 'time') {
-  html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
-}
-
-
-  // Close .options div
-  html += '</div>';
-
-  contentArea.innerHTML = html;
-
-  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-  nextBtn.style.display = 'inline-block';
-  updateProgressBar();
-}
-
-
-
-  /* ---------- BACK / NEXT ---------- */
-  backBtn.onclick = () => { if(currentIndex>0){ currentIndex--; loadUI(); } };
-  nextBtn.onclick = () => { currentIndex++; loadUI(); };
-  
-
-  /* ---------- SETTINGS MENU ---------- */
- const menuOverlay = document.getElementById('menuOverlay');
-
-btnSettings.onclick = () => {
-  const isOpen = settingsMenu.classList.toggle('show');
-  menuOverlay.classList.toggle('show', isOpen);
-};
-
-// Close menu when clicking outside or on any menu button
-menuOverlay.onclick = () => {
-  settingsMenu.classList.remove('show');
-  menuOverlay.classList.remove('show');
-};
-document.querySelectorAll('#settingsMenu button').forEach(btn => 
-  btn.addEventListener('click', () => {
+  menuOverlay.onclick = () => {
     settingsMenu.classList.remove('show');
     menuOverlay.classList.remove('show');
-  })
-);
+  };
 
-document.getElementById("dataBtn").addEventListener("click", () => {
-    window.location.href = "data.html";
+  // Footer buttons
+  document.getElementById('morningBtn').onclick = () => location.reload();
+  document.getElementById('nightBtn').onclick = () => alert("Switch to night mode");
+  document.getElementById('historyBtn').onclick = () => window.location.href='history.html';
+  document.getElementById('dataBtn').onclick = () => window.location.href='data.html';
 });
-   
-  /* ---------- INITIAL LOAD ---------- */
-  loadSavedData();
-  loadUI();
-});
-
-function updateNavBarColor() {
-  const footer = document.querySelector('.footer-nav');
-  const themeMeta = document.getElementById('themeColor');
-
-  if (!footer || !themeMeta) return;
-
-  // Get the REAL rendered color of the footer
-  const footerColor = getComputedStyle(footer).backgroundColor;
-
-  // Override Android nav bar
-  themeMeta.setAttribute("content", footerColor);
-}
-
-// Run after everything is painted
-window.addEventListener("load", () => {
-  setTimeout(updateNavBarColor, 150);
-});
-
-// Run again if your theme (morning/night) changes
-window.updateNavBarColor = updateNavBarColor; 
-  </script>
+</script>
 </body>
 </html>
