@@ -12,6 +12,7 @@
   --card-radius: 14px;
   --button-bg: rgba(255,255,255,0.3);
 }
+
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background: linear-gradient(to bottom, #a8c0ff, #f0f4ff); color: var(--text-color); }
 
@@ -21,7 +22,7 @@ body { display: flex; flex-direction: column; align-items: center; justify-conte
   position: sticky;
   top: 0;
   width: 100%;
-  padding: 10px 18px;
+  padding: 15px 18px;
   display: flex;
   justify-content: center;
   font-size: 24px;
@@ -34,6 +35,8 @@ body { display: flex; flex-direction: column; align-items: center; justify-conte
   width: 100%;
   max-width: 400px;
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 main.card {
@@ -46,13 +49,13 @@ main.card {
 }
 
 button.circle-btn {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   border: 0;
   background: var(--button-bg);
   color: #fff;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
@@ -63,9 +66,9 @@ button.circle-btn {
 }
 
 button.circle-btn img {
-  width: 40px;
-  height: 40px;
-  filter: invert(1); /* white icon */
+  width: 36px;
+  height: 36px;
+  filter: invert(1);
 }
 
 button.circle-btn:hover {
@@ -73,9 +76,9 @@ button.circle-btn:hover {
 }
 
 #totalDisplay {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
-  margin: 10px 0;
+  margin: 15px 0;
 }
 
 .reset-btn {
@@ -89,6 +92,7 @@ button.circle-btn:hover {
   cursor: pointer;
 }
 
+/* Popup */
 .popup-overlay {
   position: fixed;
   inset: 0;
@@ -127,30 +131,30 @@ button.circle-btn:hover {
   background: #2196f3;
   color: #fff;
 }
+
 /* Footer navigation */
 .footer-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 90px;
+  height: 60px;
   background: rgba(0,0,0,0.25);
   backdrop-filter: blur(12px) saturate(180%);
   border-top: 1px solid rgba(255,255,255,0.15);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 0 10px;
+  padding: 0 8px;
   z-index: 200;
 }
 
-/* Each button */
 .footer-nav .switch-btn {
   background: transparent;
   border: none;
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -158,19 +162,18 @@ button.circle-btn:hover {
   transition: background 0.25s ease, transform 0.25s ease;
 }
 
-/* Icon inside button, inverted white */
 .footer-nav .switch-btn img {
   filter: invert(1);
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   opacity: 0.85;
   transition: opacity 0.25s, transform 0.25s;
 }
 
-/* Hover effect */
 .footer-nav .switch-btn:hover {
-  background: rgba(255,255,25
-
+  background: rgba(255,255,255,0.12);
+  transform: scale(1.1);
+}
 </style>
 </head>
 <body>
@@ -179,7 +182,6 @@ button.circle-btn:hover {
 
 <div class="wrap">
   <main class="card">
-    <!-- Buttons row -->
     <div style="display:flex; gap:20px;">
       <button id="minusBtn" class="circle-btn">-</button>
       <button id="plusBtn" class="circle-btn">
@@ -266,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('nightBtn').onclick = () => window.location.href='index.html?mode=night';
   document.getElementById('historyBtn').onclick = () => window.location.href='history.html';
   document.getElementById('dataBtn').onclick = () => window.location.href='data.html';
-  
+
   updateDisplay();
 });
 </script>
