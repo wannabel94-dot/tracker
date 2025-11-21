@@ -49,54 +49,54 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#9966C
 #entryView{ background:rgba(255,255,255,0.05); padding:16px; border-radius:var(--card-radius); margin-bottom:16px; }
 #entryView h4{ margin-top:16px; margin-bottom:8px; font-size:1rem; font-weight:600; }
 
-/* ======= FOOTER NAV (MATCHES INDEX) ======= */
-/* Footer navigation — identical to index.html */
+/* ===============================================
+   FIXED FOOTER NAV
+================================================= */
 .footer-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 90px;              /* <— matches index.html */
-  background: rgba(0,0,0,0.25);
-  backdrop-filter: blur(12px) saturate(180%);
-  border-top: 1px solid rgba(255,255,255,0.15);
-  display: flex;
-  justify-content: space-around;   /* <— same spacing as index */
-  align-items: center;
-  padding: 0 10px;
-  z-index: 200;
-}
-
-/* each button */
-.footer-nav .switch-btn {
-  background: transparent;
-  border: none;
-  width: 60px;              /* <— same hitbox size */
-  height: 60px;
-  border-radius: 16px;
+  height: 70px;
+  background: #303f5c; /* change this to any solid color you want */
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
-  transition: background 0.25s ease, transform 0.25s ease;
+  gap: 28px;
+  border-top: none; /* remove the top border */
+  z-index: 100;
+  backdrop-filter: none; /* remove blur/saturation effects */
 }
 
-/* icon inside button */
+/* Footer buttons */
+.footer-nav .switch-btn {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  transition: transform 0.25s, background 0.25s;
+}
+
 .footer-nav .switch-btn img {
-  width: 40px;               /* <— SAME SIZE as index */
-  height: 40px;
-  opacity: 0.8;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  width: 32px;
+  height: 32px;
+  opacity: 0.8; /* keeps icons visible */
+  transition: opacity 0.3s, transform 0.3s;
 }
 
 .footer-nav .switch-btn:hover {
-  background: rgba(255,255,255,0.12);
-  transform: scale(1.07);
+  background: rgba(255,255,255,0.1); /* optional hover effect */
+  transform: scale(1.1);
 }
 
 .footer-nav .switch-btn.active img {
   opacity: 1;
-  transform: scale(1.18);
+  transform: scale(1.2);
+}
+
+/* override night mode colors */
+body.night .footer-nav {
+  background: 374866;
 }
 
 
