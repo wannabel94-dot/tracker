@@ -132,21 +132,23 @@ main.card { padding: 18px; border-radius: var(--card-radius); min-height: 520px;
   <div id="menuOverlay" class="menu-overlay"></div>
   <div id="settingsMenu" class="settings-menu"></div>
 
-  <!-- Main content wrapper -->
-  <div class="wrap">
-    <main class="card">
-      <div id="contentArea">
-        <div class="question">Blank</div>
-        <div class="options">
-          <button class="opt-btn">Start</button>
-        </div>
-      </div>
-      <div class="controls">
-        <button class="back-btn" id="backBtn" disabled>Back</button>
-        <button class="next-btn" id="nextBtn">Next</button>
-      </div>
-    </main>
+<div class="question">Counter</div>
+
+<div class="options column-options">
+  <label style="display:flex;align-items:center;gap:10px;font-size:18px;">
+    <input type="checkbox" id="countCheckbox" style="transform:scale(1.4);">
+    <span>Toggle Count</span>
+  </label>
+
+  <div id="totalDisplay" style="margin-top:12px;font-size:22px;font-weight:700;">
+    Total: 0
   </div>
+
+  <button id="clearTotalBtn" class="opt-btn" style="margin-top:12px;">
+    Clear Total
+  </button>
+</div>
+
 
   <!-- Footer nav -->
   <footer class="footer-nav">
@@ -181,6 +183,42 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('historyBtn').onclick = () => window.location.href='history.html';
   document.getElementById('dataBtn').onclick = () => window.location.href='data.html';
 });
+  /* ===========================
+   Counter Logic
+=========================== */
+
+let total = parseInt(localStorage.getItem("blankTotal") || "0", 10);
+const checkbox = document.getElementById("countCheckbox");
+const totalDisplay = document.getElementById("totalDisplay");
+const clearBtn = document.getElementById("clearTotalBtn");
+
+function updateDisplay() {
+  totalDisplay.textContent = "Total: " + total;
+}
+
+// Initial load
+updateDisplay();
+
+// When checkbox toggles
+checkbox.addEventListener("change", () => {
+  if (checkbox.checked) {
+    total += 1;
+  } else {
+    total -= 1;
+    if (total < 0) total = 0;
+  }
+  localStorage.setItem("blankTotal", total);
+  updateDisplay();
+});
+
+// Clear button
+clearBtn.addEventListener("click", () => {
+  total = 0;
+  checkbox.checked = false;
+  localStorage.setItem("blankTotal", total);
+  updateDisplay();
+});
+
 </script>
 </body>
 </html>
