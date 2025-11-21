@@ -2,138 +2,164 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Medication Counter</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  html, body {
-    margin: 0; padding: 0;
-    height: 100%; width: 100%;
-    overflow: hidden; 
-    display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
-    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-    background: linear-gradient(to bottom, #a8c0ff, #f0f4ff);
-    color: #fff;
-    padding-top: 30px;
-  }
+:root {
+  --text-color: #fff;
+  --card-bg: rgba(255,255,255,0.08);
+  --card-radius: 14px;
+  --button-bg: rgba(255,255,255,0.3);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background: linear-gradient(to bottom, #a8c0ff, #f0f4ff); color: var(--text-color); }
 
-  main.card {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: flex-start;
-    padding: 20px; border-radius: 14px;
-    background: rgba(0,0,0,0.15);
-    backdrop-filter: blur(6px);
-    text-align: center;
-  }
+body { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
 
-  #totalDisplay {
-    font-size: 36px;
-    font-weight: 700;
-    margin: 15px 0;
-  }
+#topHeader {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  padding: 10px 18px;
+  display: flex;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-color);
+}
 
-  .counter-btn {
-    width: 90px; height: 90px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.3);
-    display: flex; justify-content: center; align-items: center;
-    cursor: pointer;
-    margin: 10px;
-    transition: transform 0.2s;
-  }
+.wrap {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 20px;
+}
 
-  .counter-btn img {
-    width: 48px; height: 48px;
-    filter: invert(1);
-  }
+main.card {
+  padding: 20px;
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .opt-btn {
-    margin: 8px;
-    padding: 12px 18px;
-    font-size: 18px;
-    border-radius: 12px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-    transition: background 0.2s;
-  }
+button.circle-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--button-bg);
+  color: #fff;
+  font-size: 36px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  transition: transform 0.15s;
+}
 
-  .opt-btn:hover { background: rgba(255,255,255,0.25); }
+button.circle-btn img {
+  width: 40px;
+  height: 40px;
+  filter: invert(1); /* white icon */
+}
 
-  .footer-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    height: 90px; display: flex; justify-content: space-around; align-items: center;
-    background: rgba(0,0,0,0.25); backdrop-filter: blur(12px) saturate(180%);
-    border-top: 1px solid rgba(255,255,255,0.15);
-    z-index: 200;
-  }
+button.circle-btn:hover {
+  transform: scale(1.1);
+}
 
-  .footer-nav .switch-btn { background: transparent; border: none; width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-  .footer-nav .switch-btn img { filter: invert(1); width: 28px; height: 28px; opacity: 0.8; }
+#totalDisplay {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 10px 0;
+}
 
-  /* Popup modal */
-  #popupOverlay {
-    position: fixed; inset:0;
-    background: rgba(0,0,0,0.5);
-    display: none; justify-content: center; align-items: center;
-    z-index: 500;
-  }
-  #popupModal {
-    background: rgba(0,0,0,0.9);
-    padding: 30px; border-radius: 12px;
-    display: flex; flex-direction: column; align-items: center;
-    text-align: center;
-    max-width: 90%;
-  }
-  #popupModal h2 { margin-bottom: 20px; font-size: 24px; }
-  #popupModal button {
-    margin: 10px; padding: 12px 20px;
-    font-size: 18px; border-radius: 10px;
-    border: none; cursor: pointer;
-    background: rgba(255,255,255,0.2); color: #fff;
-    transition: 0.2s;
-  }
-  #popupModal button:hover { background: rgba(255,255,255,0.4); }
+.reset-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 0;
+  background: var(--button-bg);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.popup {
+  background: rgba(0,0,0,0.85);
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.popup button {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.popup .appointment {
+  background: #4caf50;
+  color: #fff;
+}
+
+.popup .remind {
+  background: #2196f3;
+  color: #fff;
+}
+
 </style>
 </head>
 <body>
 
-<main class="card">
-  <h1 style="font-size:28px; margin-bottom:15px;">Medication Counter</h1>
+<header id="topHeader">Medication Counter</header>
 
-  <!-- Main meds button -->
-  <button id="plusBtn" class="counter-btn">
-    <img src="icons/meds.svg" alt="Med">
-  </button>
+<div class="wrap">
+  <main class="card">
+    <!-- Buttons row -->
+    <div style="display:flex; gap:20px;">
+      <button id="minusBtn" class="circle-btn">-</button>
+      <button id="plusBtn" class="circle-btn">
+        <img src="icons/meds.svg" alt="Meds">
+      </button>
+    </div>
 
-  <!-- Total -->
-  <div id="totalDisplay">Total: 28</div>
+    <div id="totalDisplay">Total: 28</div>
 
-  <!-- Reset button -->
-  <button id="resetTotalBtn" class="opt-btn">Reset to 28</button>
+    <button id="resetBtn" class="reset-btn">Reset to 28</button>
+  </main>
+</div>
 
-  <!-- Secondary + / - buttons -->
-  <div style="display:flex; justify-content:center; margin-top:15px;">
-    <button id="minusBtn" class="opt-btn" style="font-size:28px; width:70px;">-</button>
-    <button id="plusExtraBtn" class="opt-btn" style="font-size:28px; width:70px; margin-left:15px;">+</button>
-  </div>
-
-  <!-- Appointment button -->
-  <button id="appointmentBtn" class="opt-btn" style="margin-top:15px;">Open Appointment</button>
-</main>
-
-<!-- Popup modal -->
-<div id="popupOverlay">
-  <div id="popupModal">
-    <h2>Medication Low!</h2>
-    <button id="makeAppointmentBtn">Make Appointment</button>
-    <button id="remindLaterBtn">Remind Me Later</button>
+<!-- Popup -->
+<div id="popupOverlay" class="popup-overlay">
+  <div class="popup">
+    <div>Medication is low! What would you like to do?</div>
+    <button id="makeAppointment" class="appointment">Make Appointment</button>
+    <button id="remindLater" class="remind">Remind Me Later</button>
   </div>
 </div>
 
+<!-- Footer nav -->
 <footer class="footer-nav">
   <button class="switch-btn morning active" id="morningBtn"><img src="icons/sun.svg" alt="Morning"></button>
   <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
@@ -143,74 +169,51 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  let total = parseInt(localStorage.getItem("medTotal") || "28", 10);
-  const totalDisplay = document.getElementById("totalDisplay");
   const plusBtn = document.getElementById("plusBtn");
-  const resetBtn = document.getElementById("resetTotalBtn");
   const minusBtn = document.getElementById("minusBtn");
-  const plusExtraBtn = document.getElementById("plusExtraBtn");
-  const appointmentBtn = document.getElementById("appointmentBtn");
-
+  const resetBtn = document.getElementById("resetBtn");
+  const totalDisplay = document.getElementById("totalDisplay");
   const popupOverlay = document.getElementById("popupOverlay");
-  const makeAppointmentBtn = document.getElementById("makeAppointmentBtn");
-  const remindLaterBtn = document.getElementById("remindLaterBtn");
-  let popupDismissed = false; // prevent repeat until counter interacted
+  const makeAppointment = document.getElementById("makeAppointment");
+  const remindLater = document.getElementById("remindLater");
 
   const sanitasURL = "https://www.sanitas.es/misanitas/online/clientes/#/appointmentsV2/selection";
 
+  let total = parseInt(localStorage.getItem("medTotal") || "28", 10);
+  let popupDismissed = false;
+
   function updateDisplay() {
     totalDisplay.textContent = "Total: " + total;
+    localStorage.setItem("medTotal", total);
 
-    // show popup if total <=5 and not dismissed
-    if(total <= 5 && !popupDismissed){
+    if(total <= 5 && !popupDismissed) {
       popupOverlay.style.display = "flex";
     }
   }
 
-  updateDisplay();
-
-  function decrementTotal() {
-    if(total > 0) total -= 1;
-    localStorage.setItem("medTotal", total);
-    updateDisplay();
-  }
-
   plusBtn.addEventListener("click", () => {
-    decrementTotal();
-    plusBtn.style.transform = "scale(1.15)";
-    setTimeout(() => plusBtn.style.transform = "scale(1)", 120);
-    popupDismissed = false; // reset dismiss flag
-  });
-
-  // Reset
-  resetBtn.addEventListener("click", () => {
-    total = 28;
-    localStorage.setItem("medTotal", total);
-    updateDisplay();
-  });
-
-  // Secondary buttons
-  plusExtraBtn.addEventListener("click", () => {
     total += 1;
-    localStorage.setItem("medTotal", total);
+    popupDismissed = false;
     updateDisplay();
   });
 
   minusBtn.addEventListener("click", () => {
-    decrementTotal();
+    if(total > 0) total -= 1;
+    popupDismissed = false;
+    updateDisplay();
   });
 
-  // Appointment button
-  appointmentBtn.addEventListener("click", () => {
+  resetBtn.addEventListener("click", () => {
+    total = 28;
+    popupDismissed = false;
+    updateDisplay();
+  });
+
+  makeAppointment.addEventListener("click", () => {
     window.location.href = sanitasURL;
   });
 
-  // Popup buttons
-  makeAppointmentBtn.addEventListener("click", () => {
-    window.location.href = sanitasURL;
-  });
-
-  remindLaterBtn.addEventListener("click", () => {
+  remindLater.addEventListener("click", () => {
     popupOverlay.style.display = "none";
     popupDismissed = true;
   });
@@ -220,7 +223,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('nightBtn').onclick = () => window.location.href='index.html?mode=night';
   document.getElementById('historyBtn').onclick = () => window.location.href='history.html';
   document.getElementById('dataBtn').onclick = () => window.location.href='data.html';
+  
+  updateDisplay();
 });
 </script>
+
 </body>
 </html>
