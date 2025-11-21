@@ -499,7 +499,9 @@ let currentIndex = 0;
 let answers = {};
 let switchTimeout;
 let onMorningDoneNote = false; // tracks if we’re showing the morning done note
-function getTodayDate() {return new Date().toLocaleDateString('en-GB');}
+function getTodayDate() {
+    return new Date().toLocaleDateString('en-GB');
+}
 
   /* ---------- QUESTIONS ---------- */
   const MORNING = [
@@ -576,25 +578,6 @@ document.getElementById('historyBtn').addEventListener('click', () => {
 
   const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
   const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
-
-if (isEdit && editingDate) {
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const existing = all[editingDate]?.morning?.answers; // always start in morning mode
-
-    if (existing) {
-        editAnswers = existing;
-        answers = {...existing}; // preload saved answers
-        currentIndex = 0;        // start at first question
-    }
-
-    // Update header
-    const header = document.getElementById('dayOfWeek');
-    if (header) header.textContent = `Editing ${editingDate}`;
-
-    // Force morning mode
-    document.body.classList.add('morning');
-    document.body.classList.remove('night');
-}
 
 function loadSavedData() {
   const day = getTodayDate();
@@ -1266,7 +1249,7 @@ document.getElementById("btnExport").addEventListener("click", () => {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
     delete all[getTodayDate()];
     localStorage.setItem('dailyTrackerData',JSON.stringify(all));
-    answers={}; currentIndex=0; editingDate=null; loadUI();
+    answers={}; currentIndex=0; loadUI();
     alert("Today's data cleared.");
   };
 
