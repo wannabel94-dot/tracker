@@ -761,13 +761,21 @@ if (q.type === 'single') {
 /****************************************************
  * 8️⃣ ANSWER HANDLING - SINGLE, MULTI, COUNTER
  ****************************************************/
-   window.selectOption = (opt) => {
+window.selectOption = (opt) => {
     const q = getQuestions()[currentIndex];
     answers[q.key] = opt;
     saveData();
     nextBtn.disabled = false;
     updateProgressBar();
-    if (q.autoNext) { currentIndex++; loadUI(); }
+
+    // Auto-next if the selected option is "None"
+    if (opt === 'None') {
+        currentIndex++;
+        loadUI();
+    } else if (q.autoNext) {
+        currentIndex++;
+        loadUI();
+    }
 };
 
 window.toggleMultiOption = (qKey, opt) => {
@@ -775,21 +783,28 @@ window.toggleMultiOption = (qKey, opt) => {
     const selected = answers[qKey].includes(opt);
 
     if (opt === 'None') {
+        // Selecting "None" clears everything else
         answers[qKey] = selected ? [] : ['None'];
     } else {
+        // Normal multi-option logic
         answers[qKey] = answers[qKey].filter(o => o !== 'None');
         if (!selected) answers[qKey].push(opt);
         else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
     }
 
     saveData();
+
     const val = answers[qKey];
     const hasAnswer = (Array.isArray(val) && val.length > 0) || (typeof val === 'object' && Object.values(val).some(v => v !== 0));
     nextBtn.disabled = !hasAnswer;
+
     loadUI();
 
-    const q = getQuestions()[currentIndex];
-    if (opt === 'None' && !selected && q.autoNext) { currentIndex++; loadUI(); }
+    // Auto-next if "None" was just selected
+    if (opt === 'None' && !selected) {
+        currentIndex++;
+        loadUI();
+    }
 };
 
 window.updateCounter = (opt, delta) => {
