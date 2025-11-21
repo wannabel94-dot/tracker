@@ -126,29 +126,16 @@ main.card {
   align-items: center;
 }
 
-/* Plus button with meds.svg */
 #plusBtn {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: none;
+  width: auto; /* inherit pill-btn width */
+  height: auto; 
+  border-radius: 24px;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: inherit;
   background: var(--button-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0;
+  border: 0;
   cursor: pointer;
-  transition: transform 0.15s;
-}
-
-#plusBtn img {
-  width: 50px;
-  height: 50px;
-  filter: invert(1);
-}
-
-#plusBtn:hover {
-  transform: scale(1.1);
 }
 
 /* Minus + Reset buttons */
@@ -276,10 +263,12 @@ button.pill-btn {
       <img src="icons/meds.svg" alt="Meds">
     </button>
 
-    <div style="display:flex; gap:10px;">
-      <button id="minusBtn" class="pill-btn">-1</button>
-      <button id="resetBtn" class="pill-btn">Reset to 28</button>
-    </div>
+  <div style="display:flex; gap:10px;">
+  <button id="minusBtn" class="pill-btn">-</button>
+  <button id="plusBtn" class="pill-btn">+</button>
+  <button id="resetBtn" class="pill-btn">Reset to 28</button>
+</div>
+
   </main>
 </div>
 
