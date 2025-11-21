@@ -576,8 +576,6 @@ const btnSettings = document.getElementById('btnSettings');
 const settingsMenu = document.getElementById('settingsMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 
-let answers = {};
-let currentIndex = 0;
 let onMorningDoneNote = false;
 let editingDate = null;
 let switchTimeout;
@@ -940,8 +938,8 @@ window.returnToMorningChecklist = () => {
     updateProgressBar();
 
     // Reattach night-specific next handler
-    nextBtn.replaceWith(nextBtn.cloneNode(true));
-    const newNextBtn = document.querySelector('#nextBtn');
+nextBtn.replaceWith(nextBtn.cloneNode(true));
+nextBtn = document.querySelector('#nextBtn');
     newNextBtn.onclick = () => {
         const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
         if(allDone) checkNightCompletion(); else showNightIncompletePopup();
@@ -1040,12 +1038,12 @@ function checkNightCompletion(){
     menuOverlay.classList.toggle('show', isOpen);
 };
 menuOverlay.onclick = () => { settingsMenu.classList.remove('show'); menuOverlay.classList.remove('show'); };
-document.querySelectorAll('#settingsMenu button').forEach
-btn.addEventListener('click', () => {
+document.querySelectorAll('#settingsMenu button').forEach(btn => {
+    btn.addEventListener('click', () => {
         settingsMenu.classList.remove('show');
         menuOverlay.classList.remove('show');
-    })
-);
+    });
+});
 
 /****************************************************
  * 1️⃣5️⃣ EXPORT & CLEAR DATA
