@@ -897,6 +897,9 @@ window.returnToMorningChecklist = () => {
 /****************************************************
  * 1️⃣1️⃣ NIGHT CHECKLIST SECTION
  ****************************************************/
+/****************************************************
+ * 1️⃣1️⃣ NIGHT CHECKLIST SECTION
+ ****************************************************/
 function loadNightChecklist() {
     const wrapper = document.querySelector('.checklist-wrapper');
     const scrollPos = wrapper ? wrapper.scrollTop : 0;
@@ -960,15 +963,30 @@ window.toggleNightChecklist = (key, index) => {
 };
 
 function showNightIncompletePopup() {
+    // Prevent multiple popups
+    if (document.querySelector('.popup-overlay')) return;
+
     const overlay = document.createElement('div');
     overlay.className = 'popup-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        pointer-events: all;
+    `;
+
     overlay.innerHTML = `
-        <div class="popup-box">
+        <div class="popup-box" style="background:#1e1e35;padding:20px;border-radius:16px;text-align:center;min-width:280px;pointer-events:auto;">
             <div style="font-size:18px;font-weight:600;margin-bottom:16px;">Checklist incomplete</div>
             <button class="backBtn" style="margin:6px;padding:10px 16px;border-radius:12px;">Back</button>
             <button class="saveBtn" style="margin:6px;padding:10px 16px;border-radius:12px;">Save</button>
         </div>
     `;
+
     document.body.appendChild(overlay);
     requestAnimationFrame(() => overlay.classList.add('show'));
 
@@ -976,10 +994,11 @@ function showNightIncompletePopup() {
     const saveBtn = overlay.querySelector('.saveBtn');
 
     backBtn.addEventListener('click', () => closePopup(overlay));
+
     saveBtn.addEventListener('click', () => {
         saveData();
+        const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
         closePopup(overlay, () => {
-            const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
             if (allDone) {
                 checkNightCompletion();
             } else {
@@ -996,6 +1015,7 @@ function showNightIncompletePopup() {
 }
 
 function closePopup(overlay, callback) {
+    if (!overlay) return;
     const box = overlay.querySelector('.popup-box');
     box.classList.add('hide');
     overlay.classList.remove('show');
@@ -1011,7 +1031,6 @@ function checkNightCompletion() {
     currentIndex = 0;
     loadUI();
 }
-
 
 /****************************************************
  * 1️⃣3️⃣ PROGRESS BAR
