@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="theme-color" content="#07081d" id="navColor">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Blank</title>
+<title>Blank Counter</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -43,39 +43,77 @@ body {
 #btnSettings { background: transparent; border: none; font-size: 24px; color: #fff; cursor: pointer; }
 
 /* Main content */
-.wrap { width: 100%; max-width: 740px; margin-top: 40px; display: block; }
-main.card { padding: 18px; border-radius: var(--card-radius); min-height: 520px; background: rgba(255,255,255,0.08); backdrop-filter: blur(var(--bg-blur)px); }
-.question { font-size: 18px; margin-bottom: 12px; font-weight: 600; color: #f0f4ff; }
-.options { display: flex; flex-wrap: wrap; gap: 10px; }
-.options.column-options { flex-direction: column; }
-.opt-btn { flex: 1; padding: 12px; font-weight: 600; border-radius: 12px; border: 0; cursor: pointer; background: rgba(255,255,255,0.15); color: #f0f4ff; transition: 0.2s; }
-.opt-btn.selected { background: rgba(255,255,255,0.3); }
-.controls { display: flex; justify-content: space-between; margin-top: 16px; }
-.back-btn, .next-btn { padding: 12px 16px; border-radius: 12px; border: 0; font-weight: 700; cursor: pointer; background: rgba(255,255,255,0.15); color: #f0f4ff; }
-.back-btn:hover, .next-btn:hover { opacity: 0.85; }
+.wrap { width: 100%; max-width: 740px; margin-top: 40px; display: flex; flex-direction: column; align-items: center; }
+main.card {
+  padding: 18px;
+  border-radius: var(--card-radius);
+  min-height: 520px;
+  width: 100%;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(var(--bg-blur)px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.question { font-size: 22px; margin-bottom: 24px; font-weight: 700; text-align: center; color: #fff; }
 
-/* Footer navigation — identical to index.html */
+/* Counter buttons */
+#plusBtn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  font-size: 42px;
+  font-weight: 700;
+  border: 0;
+  background: rgba(255,255,255,0.3);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.25s;
+  margin-bottom: 20px;
+}
+#totalDisplay {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #fff;
+}
+.opt-btn {
+  padding: 12px 20px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  margin-top: 12px;
+  transition: 0.2s;
+}
+.opt-btn:hover { background: rgba(255,255,255,0.25); }
+
+/* Footer navigation */
 .footer-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 90px;              /* <— matches index.html */
+  height: 90px;
   background: rgba(0,0,0,0.25);
   backdrop-filter: blur(12px) saturate(180%);
   border-top: 1px solid rgba(255,255,255,0.15);
   display: flex;
-  justify-content: space-around;   /* <— same spacing as index */
+  justify-content: space-around;
   align-items: center;
   padding: 0 10px;
   z-index: 200;
 }
-
-/* each button */
 .footer-nav .switch-btn {
   background: transparent;
   border: none;
-  width: 60px;              /* <— same hitbox size */
+  width: 60px;
   height: 60px;
   border-radius: 16px;
   display: flex;
@@ -84,90 +122,82 @@ main.card { padding: 18px; border-radius: var(--card-radius); min-height: 520px;
   cursor: pointer;
   transition: background 0.25s ease, transform 0.25s ease;
 }
-
-/* icon inside button */
 .footer-nav .switch-btn img {
-  .footer-nav .switch-btn img {
   filter: invert(1);
   width: 32px;
   height: 32px;
-  opacity: 0.8; /* keeps icons visible */
+  opacity: 0.8;
   transition: opacity 0.3s, transform 0.3s;
 }
-  width: 40px;               /* <— SAME SIZE as index */
-  height: 40px;
-  opacity: 0.8;
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-.footer-nav .switch-btn:hover {
-  background: rgba(255,255,255,0.12);
-  transform: scale(1.07);
-}
-
-.footer-nav .switch-btn.active img {
-  opacity: 1;
-  transform: scale(1.18);
-}
+.footer-nav .switch-btn:hover { background: rgba(255,255,255,0.12); transform: scale(1.07); }
+.footer-nav .switch-btn.active img { opacity: 1; transform: scale(1.18); }
 
 /* Settings menu */
 .settings-menu {
   position: fixed; top:0; left:0; height:100vh; width:50%;
-  background: rgba(0,0,0,0.7); backdrop-filter: blur(18px) saturate(180%);
-  display:flex; flex-direction:column; padding:20px 0; transform:translateX(-100%); transition: transform 0.4s ease; z-index:200;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(18px) saturate(180%);
+  display:flex; flex-direction:column; padding:20px 0;
+  transform:translateX(-100%);
+  transition: transform 0.4s ease;
+  z-index:200;
 }
 .settings-menu.show { transform:translateX(0); }
-.menu-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition: opacity 0.3s ease; z-index:150; }
+.menu-overlay {
+  position: fixed; inset:0; background: rgba(0,0,0,0.5);
+  opacity:0; pointer-events:none; transition: opacity 0.3s ease; z-index:150;
+}
 .menu-overlay.show { opacity:1; pointer-events:all; }
+
 </style>
 </head>
 <body class="morning">
-  <!-- Sticky header -->
-  <header id="topHeader">
-    <div id="dayOfWeek">Monday</div>
-    <button id="btnSettings">☰</button>
-  </header>
 
-  <!-- Menu overlay & settings -->
-  <div id="menuOverlay" class="menu-overlay"></div>
-  <div id="settingsMenu" class="settings-menu"></div>
+<!-- Sticky header -->
+<header id="topHeader">
+  <div id="dayOfWeek">Monday</div>
+  <button id="btnSettings">☰</button>
+</header>
 
-<div class="question">Counter</div>
+<!-- Menu overlay & settings -->
+<div id="menuOverlay" class="menu-overlay"></div>
+<div id="settingsMenu" class="settings-menu"></div>
 
-<div class="options column-options">
-  <label style="display:flex;align-items:center;gap:10px;font-size:18px;">
-    <input type="checkbox" id="countCheckbox" style="transform:scale(1.4);">
-    <span>Toggle Count</span>
-  </label>
+<!-- Main content -->
+<div class="wrap">
+  <main class="card">
+    <div class="question">Counter</div>
 
-  <div id="totalDisplay" style="margin-top:12px;font-size:22px;font-weight:700;">
-    Total: 0
-  </div>
+    <!-- + Button -->
+    <button id="plusBtn">+</button>
 
-  <button id="clearTotalBtn" class="opt-btn" style="margin-top:12px;">
-    Clear Total
-  </button>
+    <!-- Total -->
+    <div id="totalDisplay">Total: 0</div>
+
+    <!-- Clear Button -->
+    <button id="clearTotalBtn" class="opt-btn">Clear Total</button>
+
+    <!-- Extra Button -->
+    <button id="extraBtn" class="opt-btn">Extra Button</button>
+  </main>
 </div>
 
-
-  <!-- Footer nav -->
-  <footer class="footer-nav">
-    <button class="switch-btn morning active" id="morningBtn"><img src="icons/sun.svg" alt="Morning"></button>
-    <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
-    <button class="switch-btn history" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
-    <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"></button>
-  </footer>
+<!-- Footer nav -->
+<footer class="footer-nav">
+  <button class="switch-btn morning active" id="morningBtn"><img src="icons/sun.svg" alt="Morning"></button>
+  <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
+  <button class="switch-btn history" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
+  <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"></button>
+</footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const contentArea = document.getElementById('contentArea');
-  const backBtn = document.getElementById('backBtn');
-  const nextBtn = document.getElementById('nextBtn');
+
+  // Settings menu
   const btnSettings = document.getElementById('btnSettings');
   const settingsMenu = document.getElementById('settingsMenu');
   const menuOverlay = document.getElementById('menuOverlay');
 
-  // Settings menu toggle
   btnSettings.onclick = () => {
     const isOpen = settingsMenu.classList.toggle('show');
     menuOverlay.classList.toggle('show', isOpen);
@@ -179,46 +209,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Footer buttons
   document.getElementById('morningBtn').onclick = () => location.reload();
-  document.getElementById('nightBtn').onclick = () => alert("Switch to night mode");
+  document.getElementById('nightBtn').onclick = () => window.location.href='index.html?mode=night';
   document.getElementById('historyBtn').onclick = () => window.location.href='history.html';
   document.getElementById('dataBtn').onclick = () => window.location.href='data.html';
-});
-  /* ===========================
-   Counter Logic
-=========================== */
 
-let total = parseInt(localStorage.getItem("blankTotal") || "0", 10);
-const checkbox = document.getElementById("countCheckbox");
-const totalDisplay = document.getElementById("totalDisplay");
-const clearBtn = document.getElementById("clearTotalBtn");
+  // Counter logic
+  let total = parseInt(localStorage.getItem("blankTotal") || "0", 10);
+  const plusBtn = document.getElementById("plusBtn");
+  const totalDisplay = document.getElementById("totalDisplay");
+  const clearBtn = document.getElementById("clearTotalBtn");
+  const extraBtn = document.getElementById("extraBtn");
 
-function updateDisplay() {
-  totalDisplay.textContent = "Total: " + total;
-}
-
-// Initial load
-updateDisplay();
-
-// When checkbox toggles
-checkbox.addEventListener("change", () => {
-  if (checkbox.checked) {
-    total += 1;
-  } else {
-    total -= 1;
-    if (total < 0) total = 0;
+  function updateDisplay() {
+    totalDisplay.textContent = "Total: " + total;
   }
-  localStorage.setItem("blankTotal", total);
-  updateDisplay();
-});
 
-// Clear button
-clearBtn.addEventListener("click", () => {
-  total = 0;
-  checkbox.checked = false;
-  localStorage.setItem("blankTotal", total);
   updateDisplay();
-});
 
+  plusBtn.addEventListener("click", () => {
+    total += 1;
+    localStorage.setItem("blankTotal", total);
+    updateDisplay();
+    plusBtn.style.transform = "scale(1.15)";
+    setTimeout(() => plusBtn.style.transform = "scale(1)", 120);
+  });
+
+  clearBtn.addEventListener("click", () => {
+    total = 0;
+    localStorage.setItem("blankTotal", total);
+    updateDisplay();
+  });
+
+  extraBtn.addEventListener("click", () => {
+    window.location.href = ""; // fill in your URL
+  });
+
+});
 </script>
 </body>
 </html>
