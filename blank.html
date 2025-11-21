@@ -9,19 +9,19 @@
   html, body {
     margin: 0; padding: 0;
     height: 100%; width: 100%;
-    overflow: hidden; /* prevent scrolling */
+    overflow: hidden; 
     display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
     background: linear-gradient(to bottom, #a8c0ff, #f0f4ff);
     color: #fff;
-    padding-top: 30px; /* push content slightly down from top */
+    padding-top: 30px;
   }
 
   main.card {
     display: flex; flex-direction: column; align-items: center;
     justify-content: flex-start;
     padding: 20px; border-radius: 14px;
-    background: rgba(0,0,0,0.15); /* more transparent */
+    background: rgba(0,0,0,0.15);
     backdrop-filter: blur(6px);
     text-align: center;
   }
@@ -33,7 +33,7 @@
   }
 
   .counter-btn {
-    width: 90px; height: 90px; /* smaller circle */
+    width: 90px; height: 90px;
     border-radius: 50%;
     border: none;
     background: rgba(255,255,255,0.3);
@@ -44,8 +44,8 @@
   }
 
   .counter-btn img {
-    width: 48px; height: 48px; /* smaller icon */
-    filter: invert(1); /* make icon white */
+    width: 48px; height: 48px;
+    filter: invert(1);
   }
 
   .opt-btn {
@@ -61,9 +61,7 @@
     transition: background 0.2s;
   }
 
-  .opt-btn:hover {
-    background: rgba(255,255,255,0.25);
-  }
+  .opt-btn:hover { background: rgba(255,255,255,0.25); }
 
   .footer-nav {
     position: fixed; bottom: 0; left: 0; right: 0;
@@ -75,6 +73,30 @@
 
   .footer-nav .switch-btn { background: transparent; border: none; width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
   .footer-nav .switch-btn img { filter: invert(1); width: 28px; height: 28px; opacity: 0.8; }
+
+  /* Popup modal */
+  #popupOverlay {
+    position: fixed; inset:0;
+    background: rgba(0,0,0,0.5);
+    display: none; justify-content: center; align-items: center;
+    z-index: 500;
+  }
+  #popupModal {
+    background: rgba(0,0,0,0.9);
+    padding: 30px; border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    max-width: 90%;
+  }
+  #popupModal h2 { margin-bottom: 20px; font-size: 24px; }
+  #popupModal button {
+    margin: 10px; padding: 12px 20px;
+    font-size: 18px; border-radius: 10px;
+    border: none; cursor: pointer;
+    background: rgba(255,255,255,0.2); color: #fff;
+    transition: 0.2s;
+  }
+  #popupModal button:hover { background: rgba(255,255,255,0.4); }
 </style>
 </head>
 <body>
@@ -103,6 +125,15 @@
   <button id="appointmentBtn" class="opt-btn" style="margin-top:15px;">Open Appointment</button>
 </main>
 
+<!-- Popup modal -->
+<div id="popupOverlay">
+  <div id="popupModal">
+    <h2>Medication Low!</h2>
+    <button id="makeAppointmentBtn">Make Appointment</button>
+    <button id="remindLaterBtn">Remind Me Later</button>
+  </div>
+</div>
+
 <footer class="footer-nav">
   <button class="switch-btn morning active" id="morningBtn"><img src="icons/sun.svg" alt="Morning"></button>
   <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
@@ -120,19 +151,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const plusExtraBtn = document.getElementById("plusExtraBtn");
   const appointmentBtn = document.getElementById("appointmentBtn");
 
+  const popupOverlay = document.getElementById("popupOverlay");
+  const makeAppointmentBtn = document.getElementById("makeAppointmentBtn");
+  const remindLaterBtn = document.getElementById("remindLaterBtn");
+  let popupDismissed = false; // prevent repeat until counter interacted
+
+  const sanitasURL = "https://www.sanitas.es/misanitas/online/clientes/#/appointmentsV2/selection";
+
   function updateDisplay() {
     totalDisplay.textContent = "Total: " + total;
+
+    // show popup if total <=5 and not dismissed
+    if(total <= 5 && !popupDismissed){
+      popupOverlay.style.display = "flex";
+    }
   }
 
   updateDisplay();
 
-  // Main meds button decreases total
-  plusBtn.addEventListener("click", () => {
+  function decrementTotal() {
     if(total > 0) total -= 1;
     localStorage.setItem("medTotal", total);
     updateDisplay();
+  }
+
+  plusBtn.addEventListener("click", () => {
+    decrementTotal();
     plusBtn.style.transform = "scale(1.15)";
     setTimeout(() => plusBtn.style.transform = "scale(1)", 120);
+    popupDismissed = false; // reset dismiss flag
   });
 
   // Reset
@@ -150,15 +197,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   minusBtn.addEventListener("click", () => {
-    if(total > 0) total -= 1;
-    localStorage.setItem("medTotal", total);
-    updateDisplay();
+    decrementTotal();
   });
 
   // Appointment button
   appointmentBtn.addEventListener("click", () => {
-    const webUrl = "https://www.sanitas.es/misanitas/online/clientes/#/appointmentsV2/selection";
-    window.location.href = webUrl;
+    window.location.href = sanitasURL;
+  });
+
+  // Popup buttons
+  makeAppointmentBtn.addEventListener("click", () => {
+    window.location.href = sanitasURL;
+  });
+
+  remindLaterBtn.addEventListener("click", () => {
+    popupOverlay.style.display = "none";
+    popupDismissed = true;
   });
 
   // Footer buttons
