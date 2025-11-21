@@ -831,26 +831,24 @@ window.updateCounter = (opt, delta) => {
 
 nextBtn.onclick = () => {
     saveData();
-
     const mode = getMode();
 
-if (mode === 'morning') {
-        // If checklist not yet shown, load it first
+    // --- MORNING LOGIC ---
+    if (mode === 'morning') {
+
+        // If checklist not yet loaded, load it
         if (!onMorningDoneNote) {
             loadMorningChecklist();
             return;
         }
 
-        // If checklist done, show popup
-        if (onMorningDoneNote) {
-            showMorningChecklistPopup();
-            return;
-        }
+        // Show the morning popup regardless of whether checklist is complete
+        showMorningChecklistPopup();
+        return;
+    }
 
     // --- NIGHT LOGIC ---
     if (mode === 'night') {
-
-        // If we are on checklist (index = -1), SAVE and start questions
         if (currentIndex === -1) {
             answers._nightChecklistDone = true;
             currentIndex = 0;
@@ -859,7 +857,6 @@ if (mode === 'morning') {
             return;
         }
 
-        // Normal night questions
         currentIndex++;
         loadUI();
     }
@@ -920,8 +917,13 @@ window.toggleChecklist = (key) => {
 
 function checkMorningCompletion() {
     const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-    if (allDone) { saveData(); showMorningChecklistPopup(); }
+    if (allDone) { 
+        onMorningDoneNote = true; // mark checklist as completed
+        saveData(); 
+        showMorningChecklistPopup(); 
+    }
 }
+
 
 function showMorningChecklistPopup() {
     const overlay = document.createElement('div');
