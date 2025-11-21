@@ -50,48 +50,55 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#9966C
 #entryView h4{ margin-top:16px; margin-bottom:8px; font-size:1rem; font-weight:600; }
 
 /* ======= FOOTER NAV (MATCHES INDEX) ======= */
+/* Footer navigation — identical to index.html */
 .footer-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 70px;
-  background: #303f5c;              /* same color as index */
+  height: 90px;              /* <— matches index.html */
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(12px) saturate(180%);
+  border-top: 1px solid rgba(255,255,255,0.15);
   display: flex;
-  justify-content: center;
+  justify-content: space-around;   /* <— same spacing as index */
   align-items: center;
-  gap: 28px;
-  z-index: 100;
-  backdrop-filter: none;
+  padding: 0 10px;
+  z-index: 200;
 }
 
-/* Footer buttons (same behavior + visuals as index) */
+/* each button */
 .footer-nav .switch-btn {
   background: transparent;
   border: none;
-  border-radius: 50%;
-  padding: 10px;
-  transition: transform 0.25s, background 0.25s;
-  display:flex; align-items:center; justify-content:center;
+  width: 60px;              /* <— same hitbox size */
+  height: 60px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
 }
 
+/* icon inside button */
 .footer-nav .switch-btn img {
-  width: 32px;
-  height: 32px;
+  width: 40px;               /* <— SAME SIZE as index */
+  height: 40px;
   opacity: 0.8;
-  transition: opacity 0.3s, transform 0.3s;
-  filter: invert(1); /* ensure icons appear white like index */
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .footer-nav .switch-btn:hover {
-  background: rgba(255,255,255,0.08);
-  transform: scale(1.1);
+  background: rgba(255,255,255,0.12);
+  transform: scale(1.07);
 }
 
 .footer-nav .switch-btn.active img {
   opacity: 1;
-  transform: scale(1.2);
+  transform: scale(1.18);
 }
+
 
 /* keep same small switch-btn style support used in index */
 .switch-btn { padding:10px; border-radius:10px; background:transparent; cursor:pointer; }
