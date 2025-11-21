@@ -2,91 +2,104 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="theme-color" content="#07081d">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Medication Counter</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  body {
-    margin: 0; padding: 0 18px 90px;
-    min-height: 100vh;
+  html, body {
+    margin: 0; padding: 0;
+    height: 100%; width: 100%;
+    overflow: hidden; /* prevent scrolling */
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
     background: linear-gradient(to bottom, #a8c0ff, #f0f4ff);
-    color: #f0f4ff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    color: #fff;
   }
-  #topHeader {
-    position: sticky; top: 0; width: 100%;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 18px; z-index: 100;
-    background: transparent;
-  }
-  #dayOfWeek { flex: 1; text-align: center; font-weight: 600; }
-  #btnSettings { background: transparent; border: none; font-size: 24px; color: #fff; cursor: pointer; }
+
   main.card {
-    margin-top: 40px;
-    padding: 24px;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(6px);
-    width: 100%; max-width: 400px;
     display: flex; flex-direction: column; align-items: center;
+    justify-content: center;
+    padding: 30px; border-radius: 14px;
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(6px);
+    text-align: center;
   }
-  #plusBtn {
-    width: 80px; height: 80px;
+
+  #totalDisplay {
+    font-size: 40px;
+    font-weight: 700;
+    margin: 20px 0;
+  }
+
+  .counter-btn {
+    width: 120px; height: 120px;
     border-radius: 50%;
-    border: 0; background: rgba(255,255,255,0.3);
+    border: none;
+    background: rgba(255,255,255,0.3);
     display: flex; justify-content: center; align-items: center;
-    cursor: pointer; transition: transform 0.2s;
+    cursor: pointer;
+    margin: 10px;
+    transition: transform 0.2s;
   }
-  #plusBtn img { width: 48px; height: 48px; }
-  #totalDisplay { margin-top: 20px; font-size: 28px; font-weight: 700; text-align: center; }
+
+  .counter-btn img {
+    width: 64px; height: 64px;
+    filter: invert(1); /* make icon white */
+  }
+
   .opt-btn {
-    margin-top: 20px;
-    padding: 12px 16px;
-    border-radius: 12px;
+    margin: 10px;
+    padding: 16px 24px;
+    font-size: 20px;
+    border-radius: 14px;
     border: none;
     font-weight: 600;
     cursor: pointer;
     background: rgba(255,255,255,0.15);
     color: #fff;
+    transition: background 0.2s;
   }
+
+  .opt-btn:hover {
+    background: rgba(255,255,255,0.25);
+  }
+
   .footer-nav {
     position: fixed; bottom: 0; left: 0; right: 0;
     height: 90px; display: flex; justify-content: space-around; align-items: center;
-    background: rgba(0,0,0,0.25);
-    backdrop-filter: blur(12px) saturate(180%);
+    background: rgba(0,0,0,0.25); backdrop-filter: blur(12px) saturate(180%);
     border-top: 1px solid rgba(255,255,255,0.15);
     z-index: 200;
   }
+
   .footer-nav .switch-btn { background: transparent; border: none; width: 60px; height: 60px; border-radius: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
   .footer-nav .switch-btn img { filter: invert(1); width: 32px; height: 32px; opacity: 0.8; }
 </style>
 </head>
 <body>
 
-<header id="topHeader">
-  <div id="dayOfWeek">Medication</div>
-  <button id="btnSettings">☰</button>
-</header>
-
-<div id="menuOverlay" class="menu-overlay"></div>
-<div id="settingsMenu" class="settings-menu"></div>
-
 <main class="card">
-  <!-- Medication icon button -->
-  <button id="plusBtn"><img src="icons/meds.svg" alt="Med"></button>
-  
+  <h1 style="font-size:32px; margin-bottom:20px;">Medication Counter</h1>
+
+  <!-- Main meds button -->
+  <button id="plusBtn" class="counter-btn">
+    <img src="icons/meds.svg" alt="Med">
+  </button>
+
   <!-- Total -->
   <div id="totalDisplay">Total: 28</div>
-  
+
   <!-- Reset button -->
   <button id="resetTotalBtn" class="opt-btn">Reset to 28</button>
-  
+
+  <!-- Secondary + / - buttons -->
+  <div style="display:flex; justify-content:center; margin-top:20px;">
+    <button id="minusBtn" class="opt-btn" style="font-size:32px; width:80px;">-</button>
+    <button id="plusExtraBtn" class="opt-btn" style="font-size:32px; width:80px; margin-left:20px;">+</button>
+  </div>
+
   <!-- Appointment button -->
-  <button id="appointmentBtn" class="opt-btn">Open Appointment</button>
+  <button id="appointmentBtn" class="opt-btn" style="margin-top:20px;">Open Appointment</button>
 </main>
 
 <footer class="footer-nav">
@@ -98,36 +111,22 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Settings menu toggle
-  const btnSettings = document.getElementById('btnSettings');
-  const settingsMenu = document.getElementById('settingsMenu');
-  const menuOverlay = document.getElementById('menuOverlay');
-  btnSettings.onclick = () => {
-    const isOpen = settingsMenu.classList.toggle('show');
-    menuOverlay.classList.toggle('show', isOpen);
-  };
-  menuOverlay.onclick = () => {
-    settingsMenu.classList.remove('show');
-    menuOverlay.classList.remove('show');
-  };
-
-  // Footer buttons
-  document.getElementById('morningBtn').onclick = () => location.reload();
-  document.getElementById('nightBtn').onclick = () => window.location.href='index.html?mode=night';
-  document.getElementById('historyBtn').onclick = () => window.location.href='history.html';
-  document.getElementById('dataBtn').onclick = () => window.location.href='data.html';
-
   // Counter logic
   let total = parseInt(localStorage.getItem("medTotal") || "28", 10);
-  const plusBtn = document.getElementById("plusBtn");
   const totalDisplay = document.getElementById("totalDisplay");
+  const plusBtn = document.getElementById("plusBtn");
   const resetBtn = document.getElementById("resetTotalBtn");
+  const minusBtn = document.getElementById("minusBtn");
+  const plusExtraBtn = document.getElementById("plusExtraBtn");
   const appointmentBtn = document.getElementById("appointmentBtn");
 
-  function updateDisplay() { totalDisplay.textContent = "Total: " + total; }
+  function updateDisplay() {
+    totalDisplay.textContent = "Total: " + total;
+  }
+
   updateDisplay();
 
-  // Subtract 1 on click
+  // Main meds button decreases total
   plusBtn.addEventListener("click", () => {
     if(total > 0) total -= 1;
     localStorage.setItem("medTotal", total);
@@ -136,24 +135,38 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => plusBtn.style.transform = "scale(1)", 120);
   });
 
-  // Reset to 28
+  // Reset
   resetBtn.addEventListener("click", () => {
     total = 28;
     localStorage.setItem("medTotal", total);
     updateDisplay();
   });
 
-  // Attempt to open app, fallback to web URL
-  appointmentBtn.addEventListener("click", () => {
-    const appUrl = "sanitas://appointments"; // replace with actual scheme
-    const webUrl = "https://www.sanitas.es/misanitas/online/clientes/#/appointmentsV2/selection";
-    const now = Date.now();
-    const timeout = setTimeout(() => { window.location.href = webUrl; }, 500);
-    window.location = appUrl;
-    window.addEventListener('blur', () => clearTimeout(timeout));
+  // Secondary buttons
+  plusExtraBtn.addEventListener("click", () => {
+    total += 1;
+    localStorage.setItem("medTotal", total);
+    updateDisplay();
   });
+
+  minusBtn.addEventListener("click", () => {
+    if(total > 0) total -= 1;
+    localStorage.setItem("medTotal", total);
+    updateDisplay();
+  });
+
+  // Appointment button
+  appointmentBtn.addEventListener("click", () => {
+    const webUrl = "https://www.sanitas.es/misanitas/online/clientes/#/appointmentsV2/selection";
+    window.location.href = webUrl;
+  });
+
+  // Footer buttons
+  document.getElementById('morningBtn').onclick = () => location.reload();
+  document.getElementById('nightBtn').onclick = () => window.location.href='index.html?mode=night';
+  document.getElementById('historyBtn').onclick = () => window.location.href='history.html';
+  document.getElementById('dataBtn').onclick = () => window.location.href='data.html';
 });
 </script>
-
 </body>
 </html>
