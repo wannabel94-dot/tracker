@@ -789,9 +789,13 @@ window.updateCounter = (opt, delta) => {
     answers['caffeine_alcohol'][opt] = val;
     const el = document.getElementById(`count-${opt}`);
     if (el) el.textContent = val;
-    saveData(); updateProgressBar();
+    
+    // Always enable next button for counter questions (0 is valid)
+    nextBtn.disabled = false;
+    
+    saveData(); 
+    updateProgressBar();
 };
-
 /****************************************************
  * 9️⃣ BACK / NEXT BUTTON HANDLERS
  ****************************************************/
