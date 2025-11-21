@@ -2,135 +2,378 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Data Table</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medication Counter</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-    body {
-        font-family: Inter, sans-serif;
-        padding: 20px;
-        background: #0a0f2c;
-        color: #fff;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background: rgba(255,255,255,0.05);
-        border-radius: 10px;
-        overflow-x: scroll;
-        display: block;
-        white-space: nowrap;
-    }
-
-    thead {
-        background: rgba(255,255,255,0.15);
-    }
-
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        text-align: left;
-        font-size: 2rem;
-    }
-
-    th {
-        font-weight: 600;
-    }
-
-    tr:last-child td {
-        border-bottom: none;
-    }
-
-    /* Make first column sticky for easier reading */
-    td:first-child, th:first-child {
-        position: sticky;
-        left: 0;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(4px);
-        z-index: 2;
-    }
-</style>
-</head>
-<body>
-
-<h2>Data Table</h2>
-<div id="tableContainer"></div>
-
-<script>
-    const LABELS = { wake_time: "Wake up", how_slept: "Sleep", temp: "Take temp", made_bed: "Made Bed", took_meds_morn: "Took meds", tidy_up: "Tidied", shower_morn: "Showered", get_dressed: "Dressed", led_mask_morn: "LED Mask", skincare_morn: "Skincare AM", eat_breakfast: "Breakfast", supplements_morn: "Supplements", brush_teeth_morn: "Teeth AM", psyllium: "Psyllium", magnesium: "Magnesium", pillowcase: "Pillowcase", shower_night: "Showered", skincare_night: "Skincare PM", teeth_night: "Teeth PM", flossed: "Flossed", left_house: "Left House", caffeine_alcohol: "Caffeine/Alcohol", sickness: "Symptoms", saw_dogs: "Saw Dogs", feel_with_L: "Relationship", house_state: "House", drove: "Driving", body_feelings: "Body", food_desc: "Diet", most_prominent: "Mental", meds: "Extra Meds", sensory_triggers: "Sensory Triggers", appointments: "Appointments", movement: "Movement", talked_to_anyone: "People", wellness: "Wellness", creative: "Creative", closed_eyes_time: "Closed Eyes" }; function yesNoToSymbol(v) { if (v === "Yes") return "✓"; if (v === "No") return "✗"; return v; }
-const MORNING_CHECKLIST_KEYS = [
-  "temp", "made_bed", "kettle", "took_meds_morn", "tidy_up", 
-  "tea", "poop", "shower_morn", "get_dressed", "led_mask_morn",
-  "skincare_morn", "eat_breakfast", "supplements_morn", "brush_teeth_morn"
-];
-
-// Optional: some items you want to show individually
-const INDIVIDUAL_MORNING_ITEMS = [
-  "eat_breakfast", 
-    "took_meds_morn",
-    "brush_teeth_morn",
-    "supplements_morn"
-];
-    
-const NIGHT_KEYS = [
-  "psyllium","magnesium","pillowcase","shower_night","skincare_night",
-  "teeth_night","flossed","left_house","caffeine_alcohol","sickness",
-  "saw_dogs","feel_with_L","house_state","drove","body_feelings",
-  "food_desc","most_prominent","meds","sensory_triggers","appointments",
-  "movement","talked_to_anyone","wellness","creative","closed_eyes_time"
-];
-    
-function buildTable() {
-    const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
-    const days = Object.keys(raw).sort((a,b)=>new Date(b)-new Date(a));
-    
-    if(days.length===0){
-        document.getElementById("tableContainer").innerHTML = "<p>No data saved.</p>";
-        return;
-    }
-
-    let html = `<table><thead><tr><th>Item</th>`;
-    days.forEach(day => html += `<th>${day}</th>`);
-    html += `</tr></thead><tbody>`;
-
-    // Morning completion row
-    html += `<tr><td><strong>AM routine</strong></td>`;
-    days.forEach(day => {
-        const answers = raw[day]?.answers || {};
-        const total = MORNING_CHECKLIST_KEYS.length;
-        const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === "Yes").length;
-        const percent = Math.round((done / total) * 100);
-        html += `<td>${percent}%</td>`;
-    });
-    html += `</tr>`;
-
-    // Individual morning items
-    INDIVIDUAL_MORNING_ITEMS.forEach(key => {
-        html += `<tr><td><strong>${LABELS[key] || key}</strong></td>`;
-        days.forEach(day => {
-            const val = raw[day]?.answers?.[key] ?? "";
-            html += `<td>${val === "Yes" ? "✓" : val === "No" ? "✗" : val}</td>`;
-        });
-        html += `</tr>`;
-    });
-
-    // Night items
-    NIGHT_KEYS.forEach(key => {
-        html += `<tr><td><strong>${LABELS[key] || key}</strong></td>`;
-        days.forEach(day => {
-            let val = raw[day]?.answers?.[key] ?? "";
-            if(Array.isArray(val)) val = val.map(v => v === "Yes" ? "✓" : v === "No" ? "✗" : v).join(", ");
-            else val = val === "Yes" ? "✓" : val === "No" ? "✗" : val;
-            html += `<td>${val}</td>`;
-        });
-        html += `</tr>`;
-    });
-
-    html += `</tbody></table>`;
-    document.getElementById("tableContainer").innerHTML = html;
+:root {
+  --text-color: #fff;
+  --card-bg: rgba(255,255,255,0.08);
+  --card-radius: 14px;
+  --button-bg: rgba(255,255,255,0.3);
 }
 
-buildTable();
+/* Basic reset */
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0 18px 90px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  background: linear-gradient(to bottom, #a8c0ff, #f0f4ff);
+  color: var(--text-color);
+  overflow: hidden;
+}
+
+/* Header like History page */
+#topHeader {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  z-index: 100;
+}
+
+#dayOfWeek {
+  flex: 1;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f0f4ff;
+  margin: 0;
+  pointer-events: none;
+}
+
+#btnSettings {
+  background: transparent;
+  border: 0;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Settings menu */
+.settings-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 50%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(18px) saturate(180%);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  transform: translateX(-100%);
+  transition: transform .4s ease;
+  z-index: 200;
+}
+
+.settings-menu.show { transform: translateX(0); }
+
+.settings-menu button {
+  background: transparent;
+  border: 0;
+  padding: 16px 20px;
+  width: 100%;
+  text-align: left;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background .25s, transform .2s;
+}
+
+.settings-menu button:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateX(6px);
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+  z-index: 150;
+}
+
+.menu-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Card */
+.wrap {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+main.card {
+  padding: 20px;
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Plus button with meds.svg */
+#plusBtn {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: none;
+  background: var(--button-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+#plusBtn img {
+  width: 50px;
+  height: 50px;
+  filter: invert(1);
+}
+
+#plusBtn:hover {
+  transform: scale(1.1);
+}
+
+/* Minus + Reset buttons */
+button.pill-btn {
+  background: var(--button-bg);
+  border: 0;
+  border-radius: 24px;
+  color: #fff;
+  font-weight: 600;
+  padding: 12px 20px;
+  cursor: pointer;
+  margin: 5px;
+  min-width: 120px;
+}
+
+/* Total display */
+#totalDisplay {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 10px 0;
+  text-align: center;
+}
+
+/* Popup */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.popup {
+  background: rgba(0,0,0,0.85);
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.popup button {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.popup .appointment {
+  background: #4caf50;
+  color: #fff;
+}
+
+.popup .remind {
+  background: #2196f3;
+  color: #fff;
+}
+
+/* Footer like History page */
+.footer-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: #303f5c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  z-index: 100;
+}
+
+.footer-nav .switch-btn {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  transition: transform 0.25s, background 0.25s;
+}
+
+.footer-nav .switch-btn img {
+  filter: invert(1);
+  width: 32px;
+  height: 32px;
+  opacity: 0.8;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.footer-nav .switch-btn:hover { transform: scale(1.1); }
+.footer-nav .switch-btn.active img { opacity: 1; transform: scale(1.2); }
+
+@media(max-width:480px){
+  .footer-nav { gap: 14px; }
+  .footer-nav .switch-btn img { width:28px; height:28px; }
+}
+</style>
+</head>
+<body class="morning">
+
+<!-- Header -->
+<header id="topHeader">
+  <div id="dayOfWeek">Medication Counter</div>
+  <button id="btnSettings">☰</button>
+</header>
+
+<!-- Menu overlay & settings -->
+<div id="menuOverlay" class="menu-overlay"></div>
+<div id="settingsMenu" class="settings-menu">
+  <button id="btnExport">Export Data</button>
+  <button id="btnClearToday">Reset Total to 28</button>
+</div>
+
+<!-- Main content -->
+<div class="wrap">
+  <main class="card">
+    <div id="totalDisplay">Total: 28</div>
+
+    <button id="plusBtn">
+      <img src="icons/meds.svg" alt="Meds">
+    </button>
+
+    <div style="display:flex; gap:10px;">
+      <button id="minusBtn" class="pill-btn">-1</button>
+      <button id="resetBtn" class="pill-btn">Reset to 28</button>
+    </div>
+  </main>
+</div>
+
+<!-- Popup -->
+<div id="popupOverlay" class="popup-overlay">
+  <div class="popup">
+    <div>Medication low!</div>
+    <button id="makeAppointment" class="appointment">Make Appointment</button>
+    <button id="remindLater" class="remind">Remind Me Later</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer-nav">
+  <button class="switch-btn morning active" id="morningBtn"><img src="icons/sun.svg" alt="Morning"></button>
+  <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
+  <button class="switch-btn history" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
+  <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"></button>
+  <button class="switch-btn blank" id="blankBtn"><img src="icons/balloon.svg" alt="Blank"></button>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const plusBtn = document.getElementById("plusBtn");
+  const minusBtn = document.getElementById("minusBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const totalDisplay = document.getElementById("totalDisplay");
+  const popupOverlay = document.getElementById("popupOverlay");
+  const makeAppointment = document.getElementById("makeAppointment");
+  const remindLater = document.getElementById("remindLater");
+
+  const sanitasURL = "https://www.sanitas.es/misanitas/online/clientes/#/appointmentsV2/selection";
+
+  let total = parseInt(localStorage.getItem("medTotal") || "28", 10);
+  let popupDismissed = false;
+
+  function updateDisplay() {
+    totalDisplay.textContent = "Total: " + total;
+    localStorage.setItem("medTotal", total);
+    if(total <= 5 && !popupDismissed) {
+      popupOverlay.style.display = "flex";
+    }
+  }
+
+  plusBtn.addEventListener("click", () => {
+    total += 1;
+    popupDismissed = false;
+    updateDisplay();
+  });
+
+  minusBtn.addEventListener("click", () => {
+    if(total > 0) total -= 1;
+    popupDismissed = false;
+    updateDisplay();
+  });
+
+  resetBtn.addEventListener("click", () => {
+    total = 28;
+    popupDismissed = false;
+    updateDisplay();
+  });
+
+  makeAppointment.addEventListener("click", () => {
+    window.location.href = sanitasURL;
+  });
+
+  remindLater.addEventListener("click", () => {
+    popupOverlay.style.display = "none";
+    popupDismissed = true;
+  });
+
+  // Footer navigation
+  document.getElementById('morningBtn').onclick = () => location.reload();
+  document.getElementById('nightBtn').onclick = () => window.location.href='index.html?mode=night';
+  document.getElementById('historyBtn').onclick = () => window.location.href='history.html';
+  document.getElementById('dataBtn').onclick = () => window.location.href='data.html';
+  document.getElementById('blankBtn').onclick = () => window.location.href='blank.html';
+
+  // Settings menu
+  const btnSettings = document.getElementById('btnSettings');
+  const settingsMenu = document.getElementById('settingsMenu');
+  const menuOverlay = document.getElementById('menuOverlay');
+
+  btnSettings.onclick = () => {
+    const isOpen = settingsMenu.classList.toggle('show');
+    menuOverlay.classList.toggle('show', isOpen);
+  };
+  menuOverlay.onclick = () => {
+    settingsMenu.classList.remove('show');
+    menuOverlay.classList.remove('show');
+  };
+
+  updateDisplay();
+});
 </script>
 
 </body>
