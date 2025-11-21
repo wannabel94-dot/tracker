@@ -70,6 +70,30 @@ main.card {
   filter: invert(1);
 }
 
+/* plus button row */
+#plusBtn {
+  padding: 16px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--button-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  transition: transform 0.15s;
+}
+
+#plusBtn img {
+  width: 40px;
+  height: 40px;
+  filter: invert(1);
+}
+
+#plusBtn:hover {
+  transform: scale(1.1);
+}
+
 /* popup */
 .popup-overlay {
   position: fixed;
@@ -160,12 +184,15 @@ main.card {
 
 <div class="wrap">
   <main class="card">
+    <!-- Plus button on its own row -->
+    <button id="plusBtn"><img src="icons/meds.svg" alt="Meds"></button>
+
     <div id="totalDisplay">Total: 28</div>
 
+    <!-- Minus and reset in pill style -->
     <div style="display:flex; gap:10px;">
       <button id="minusBtn" class="pill-btn">-</button>
       <button id="resetBtn" class="pill-btn">Reset to 28</button>
-      <button id="plusBtn" class="pill-btn"><img src="icons/meds.svg" alt="Meds"></button>
     </div>
   </main>
 </div>
