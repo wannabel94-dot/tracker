@@ -802,11 +802,36 @@ window.updateCounter = (opt, delta) => {
 
 nextBtn.onclick = () => {
     saveData();
-    if (getMode() === 'morning') {
-        if (currentIndex >= MORNING.length) { showMorningChecklistPopup(); return; }
-        currentIndex++; loadUI(); return;
+
+    const mode = getMode();
+
+    // --- MORNING LOGIC ---
+    if (mode === 'morning') {
+        if (currentIndex >= MORNING.length) {
+            showMorningChecklistPopup();
+            return;
+        }
+        currentIndex++;
+        loadUI();
+        return;
     }
-    currentIndex++; loadUI();
+
+    // --- NIGHT LOGIC ---
+    if (mode === 'night') {
+
+        // If we are on checklist (index = -1), SAVE and start questions
+        if (currentIndex === -1) {
+            answers._nightChecklistDone = true;
+            currentIndex = 0;
+            saveData();
+            loadUI();
+            return;
+        }
+
+        // Normal night questions
+        currentIndex++;
+        loadUI();
+    }
 };
 
 /****************************************************
