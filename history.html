@@ -1,75 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>History</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#303f5c" id="navColor">
 <style>
-:root {
+:root{
+  --morning-text: #f0f4ff;
+  --night-text: #f0f4ff;
   --card-radius: 14px;
-  --bg-blur: 6px;
-  --glass-bg: rgba(255,255,255,0.08);
   --glass-border: rgba(255,255,255,0.12);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
-* { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; padding: 0 18px 90px; min-height: 100vh; color: #fff; }
-body::before {
-  content:""; position:fixed; inset:0; z-index:-1;
-  background: #9966CB;
-}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0 18px 90px;min-height:100vh;color:var(--night-text);}
 
-/* Sticky header */
-#topHeader {
-  position: sticky; top: 0; left: 0; width: 100%;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 18px; z-index: 100;
-}
-#dayOfWeek { flex: 1; text-align: center; font-size: 1rem; font-weight: 600; margin: 0; pointer-events: none; }
-#btnSettings { background: transparent; border: none; font-size: 24px; color: #fff; cursor: pointer; padding: 0; }
+/* Background / header */
+body{ color:#fff; }
+body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#9966CB; }
 
-/* Main content wrapper */
-.wrap { width: 100%; max-width: 740px; margin: 40px auto 0; display: block; }
-.day-entry {
-  background: rgba(255,255,255,0.05); border-radius: var(--card-radius); padding: 16px; margin-bottom: 16px;
+#topHeader{
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 18px;
+  z-index:100;
 }
-.day-header { display: flex; justify-content: space-between; align-items: center; }
-.day-header h3 { margin: 0; font-size: 1.1rem; }
-.day-actions { display: flex; gap: 8px; }
-.mini-btn { background: rgba(255,255,255,0.1); color: #fff; border: none; border-radius: 8px; padding: 4px 10px; cursor: pointer; font-size: 0.8rem; transition: background 0.2s ease; }
-.mini-btn:hover { background: rgba(255,255,255,0.25); }
-.mini-btn.delete { background: rgba(255,50,50,0.25); }
-.mini-btn.delete:hover { background: rgba(255,50,50,0.4); }
-#entryView { background: rgba(255,255,255,0.05); padding: 16px; border-radius: var(--card-radius); margin-bottom: 16px; }
-#entryView h4 { margin-top: 16px; margin-bottom: 8px; font-size: 1rem; font-weight: 600; }
+#dayOfWeek{ flex:1; text-align:center; font-size:1rem; font-weight:600; color:#f0f4ff; margin:0; pointer-events:none; }
+#btnSettings{ background:transparent; border:0; font-size:24px; color:#fff; cursor:pointer; padding:0; }
 
-/* Footer navigation */
+/* Main content */
+.wrap { width:100%; max-width:740px; margin:40px auto 0; display:block; }
+.day-entry{ background:rgba(255,255,255,0.05); border-radius:var(--card-radius); padding:16px; margin-bottom:16px; }
+.day-header{ display:flex; justify-content:space-between; align-items:center; }
+.day-header h3{ margin:0; font-size:1.1rem; }
+.day-actions{ display:flex; gap:8px; }
+.mini-btn{ background:rgba(255,255,255,0.1); color:#fff; border:0; border-radius:8px; padding:4px 10px; cursor:pointer; font-size:.8rem; transition:background .2s; }
+.mini-btn:hover{ background:rgba(255,255,255,0.25); }
+.mini-btn.delete{ background:rgba(255,50,50,0.25); }
+.mini-btn.delete:hover{ background:rgba(255,50,50,0.4); }
+
+#entryView{ background:rgba(255,255,255,0.05); padding:16px; border-radius:var(--card-radius); margin-bottom:16px; }
+#entryView h4{ margin-top:16px; margin-bottom:8px; font-size:1rem; font-weight:600; }
+
+/* ======= FOOTER NAV (MATCHES INDEX) ======= */
 .footer-nav {
-  position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
-  background: #1a1a1a; display: flex; justify-content: center; align-items: center; gap: 28px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: #303f5c;              /* same color as index */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
   z-index: 100;
+  backdrop-filter: none;
 }
-.footer-nav .switch-btn { background: transparent; border: none; border-radius: 50%; padding: 10px; cursor: pointer; }
-.footer-nav .switch-btn img { width: 32px; height: 32px; opacity: 0.8; transition: opacity 0.3s, transform 0.3s; }
-.footer-nav .switch-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
-.footer-nav .switch-btn.active img { opacity: 1; transform: scale(1.2); }
+
+/* Footer buttons (same behavior + visuals as index) */
+.footer-nav .switch-btn {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  transition: transform 0.25s, background 0.25s;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.footer-nav .switch-btn img {
+  width: 32px;
+  height: 32px;
+  opacity: 0.8;
+  transition: opacity 0.3s, transform 0.3s;
+  filter: invert(1); /* ensure icons appear white like index */
+}
+
+.footer-nav .switch-btn:hover {
+  background: rgba(255,255,255,0.08);
+  transform: scale(1.1);
+}
+
+.footer-nav .switch-btn.active img {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* keep same small switch-btn style support used in index */
+.switch-btn { padding:10px; border-radius:10px; background:transparent; cursor:pointer; }
+.switch-btn img { width:28px; height:28px; transition:opacity .25s, transform .25s; }
 
 /* Settings menu */
-.settings-menu {
+.settings-menu{
   position: fixed; top:0; left:0; height:100vh; width:50%;
   background: rgba(0,0,0,0.7); backdrop-filter: blur(18px) saturate(180%);
-  display:flex; flex-direction:column; padding:20px 0; transform:translateX(-100%); transition: transform 0.4s ease; z-index:200;
+  display:flex; flex-direction:column; padding:20px 0; transform:translateX(-100%); transition: transform .4s ease; z-index:200;
 }
-.settings-menu.show { transform:translateX(0); }
-.settings-menu button { background:transparent; border:none; padding:16px 20px; width:100%; text-align:left; font-weight:600; color:#fff; cursor:pointer; transition: background 0.25s ease, transform 0.2s ease; }
-.settings-menu button:hover { background: rgba(255,255,255,0.15); transform: translateX(6px); }
-.menu-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition: opacity 0.3s ease; z-index:150; }
-.menu-overlay.show { opacity:1; pointer-events:all; }
+.settings-menu.show{ transform:translateX(0); }
+.settings-menu button{ background:transparent; border:0; padding:16px 20px; width:100%; text-align:left; font-weight:600; color:#fff; cursor:pointer; transition: background .25s, transform .2s; }
+.settings-menu button:hover{ background: rgba(255,255,255,0.15); transform:translateX(6px); }
+.menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity .3s; z-index:150; }
+.menu-overlay.show{ opacity:1; pointer-events:all; }
+
+/* Responsive */
+@media (max-width:480px){
+  body{ padding:12px 12px 90px; }
+  .footer-nav { gap: 14px; }
+  .footer-nav .switch-btn img { width:28px; height:28px; }
+}
 </style>
 </head>
-<body>
-  <!-- Sticky header -->
+<body class="morning">
+  <!-- Header -->
   <header id="topHeader">
     <div id="dayOfWeek">History</div>
     <button id="btnSettings">☰</button>
@@ -82,63 +131,81 @@ body::before {
     <button id="btnClearToday">Clear Today's Data</button>
   </div>
 
+  <!-- Content -->
   <div class="wrap" id="historyContainer"></div>
 
-  <!-- Footer nav -->
-  <footer class="footer-nav">
-    <button class="switch-btn morning" id="morningBtn">
+  <!-- Footer -->
+  <footer class="footer-nav" role="navigation" aria-label="Main navigation">
+    <button class="switch-btn morning" id="morningBtn" title="Morning">
       <img src="icons/sun.svg" alt="Morning">
     </button>
-    <button class="switch-btn night" id="nightBtn">
+    <button class="switch-btn night" id="nightBtn" title="Night">
       <img src="icons/night.svg" alt="Night">
     </button>
-    <button class="switch-btn history active" id="historyBtn">
+    <button class="switch-btn history active" id="historyBtn" title="History">
       <img src="icons/history.svg" alt="History">
     </button>
-    <button class="switch-btn data" id="dataBtn">
+    <button class="switch-btn data" id="dataBtn" title="Data">
       <img src="icons/data.svg" alt="Data">
     </button>
-    <button class="switch-btn blank" id="blankBtn">
+    <button class="switch-btn blank" id="blankBtn" title="Blank">
       <img src="icons/balloon.svg" alt="Blank">
     </button>
   </footer>
 
 <script>
-// Footer navigation with last progress
+/* ========================
+   Footer navigation handlers
+   - morning/night send user to index.html preserving last progress stored in localStorage
+   ======================== */
 document.getElementById('morningBtn').onclick = () => {
-  const lastMorning = localStorage.getItem('lastMorningProgress') || '';
-  window.location.href = `index.html?mode=morning&last=${encodeURIComponent(lastMorning)}`;
+  const last = localStorage.getItem('lastMorningProgress') || '';
+  window.location.href = `index.html?mode=morning&last=${encodeURIComponent(last)}`;
 };
-
 document.getElementById('nightBtn').onclick = () => {
-  const lastNight = localStorage.getItem('lastNightProgress') || '';
-  window.location.href = `index.html?mode=night&last=${encodeURIComponent(lastNight)}`;
+  const last = localStorage.getItem('lastNightProgress') || '';
+  window.location.href = `index.html?mode=night&last=${encodeURIComponent(last)}`;
 };
-
 document.getElementById('historyBtn').onclick = () => { window.location.href = 'history.html'; };
 document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
 document.getElementById('blankBtn').onclick = () => { window.location.href = 'blank.html'; };
 
-// Settings menu
+/* Settings menu toggle */
 const btnSettings = document.getElementById('btnSettings');
 const settingsMenu = document.getElementById('settingsMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 btnSettings.onclick = () => {
-  settingsMenu.classList.add('show');
-  menuOverlay.classList.add('show');
+  const isOpen = settingsMenu.classList.toggle('show');
+  menuOverlay.classList.toggle('show', isOpen);
 };
 menuOverlay.onclick = () => {
   settingsMenu.classList.remove('show');
   menuOverlay.classList.remove('show');
 };
 
-// HISTORY LOGIC
+/* ========== History logic (view/delete) ========== */
 const container = document.getElementById('historyContainer');
-function loadHistory() {
+
+function safeSortDays(keys){
+  // keys are expected DD/MM/YYYY - convert robustly
+  return keys.sort((a,b) => {
+    const parse = s => {
+      // accept either DD/MM/YYYY or ISO-ish
+      if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(s)) {
+        const [d,m,y] = s.split('/');
+        return new Date(`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`);
+      }
+      return new Date(s);
+    };
+    return parse(b) - parse(a);
+  });
+}
+
+function loadHistory(){
   container.innerHTML = '';
   const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const days = Object.keys(all).sort((a,b)=> new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-')));
-  if (!days.length) { container.innerHTML = '<p>No history yet.</p>'; return; }
+  const days = safeSortDays(Object.keys(all));
+  if (!days.length) { container.innerHTML = '<p style="color:rgba(255,255,255,0.8)">No history yet.</p>'; return; }
   days.forEach(day => {
     const entry = document.createElement('div');
     entry.className = 'day-entry';
@@ -146,46 +213,91 @@ function loadHistory() {
       <div class="day-header">
         <h3>${day}</h3>
         <div class="day-actions">
-          <button class="mini-btn" onclick="viewEntry('${day}')">View</button>
-          <button class="mini-btn delete" onclick="deleteEntry('${day}')">Delete</button>
+          <button class="mini-btn" data-day="${day}" onclick="viewEntry('${day}')">View</button>
+          <button class="mini-btn delete" data-day="${day}" onclick="deleteEntry('${day}')">Delete</button>
         </div>
-      </div>`;
+      </div>
+    `;
     container.appendChild(entry);
   });
 }
 
-function viewEntry(day) {
+window.viewEntry = (day) => {
   const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
   const entry = all[day];
   if (!entry) return alert("No data for this day.");
   const existingView = document.getElementById('entryView');
   if (existingView) existingView.remove();
   const div = document.createElement('div'); div.id = 'entryView';
-  let html = `<h3>${day} — Review</h3>`;
-  if (entry.answers) {
-    html += `<h4>Answers</h4><ul style="padding-left:16px;">`;
+  let html = `<h3 style="margin:0 0 8px 0">${day} — Review</h3>`;
+  if (entry.morning || entry.night) {
+    html += `<div style="display:grid;gap:10px">`;
+    if (entry.morning && entry.morning.answers) {
+      html += `<h4 style="margin:0">Morning</h4><ul style="padding-left:16px;margin:0">`;
+      for (const k in entry.morning.answers) {
+        let v = entry.morning.answers[k];
+        if (Array.isArray(v)) v = v.join(', ');
+        html += `<li><strong>${k}</strong>: ${v}</li>`;
+      }
+      html += `</ul>`;
+    }
+    if (entry.night && entry.night.answers) {
+      html += `<h4 style="margin:0">Night</h4><ul style="padding-left:16px;margin:0">`;
+      for (const k in entry.night.answers) {
+        let v = entry.night.answers[k];
+        if (Array.isArray(v)) v = v.join(', ');
+        html += `<li><strong>${k}</strong>: ${v}</li>`;
+      }
+      html += `</ul>`;
+    }
+    html += `</div>`;
+  } else if (entry.answers) {
+    html += `<h4>Answers</h4><ul style="padding-left:16px">`;
     for (const key in entry.answers) {
       let val = entry.answers[key];
       if (Array.isArray(val)) val = val.join(', ');
       html += `<li><strong>${key}</strong>: ${val}</li>`;
     }
-    html += '</ul>';
-  } else html += '<p>No answers recorded.</p>';
+    html += `</ul>`;
+  } else {
+    html += '<p>No answers recorded.</p>';
+  }
   div.innerHTML = html;
   container.insertBefore(div, container.firstChild);
   div.scrollIntoView({ behavior: 'smooth' });
-}
+};
 
-function deleteEntry(day) {
+window.deleteEntry = (day) => {
   if (!confirm(`Delete all data for ${day}?`)) return;
   const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
   delete all[day];
   localStorage.setItem('dailyTrackerData', JSON.stringify(all));
   loadHistory();
-}
+};
 
-// Initial load
+/* initial load */
 loadHistory();
+
+/* export / clear buttons */
+document.getElementById('btnExport').addEventListener('click', () => {
+  const data = localStorage.getItem('dailyTrackerData');
+  if (!data) { alert("No data to export yet."); return; }
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "daily-tracker-data.json";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+document.getElementById('btnClearToday').addEventListener('click', () => {
+  const day = new Date().toLocaleDateString('en-GB');
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  delete all[day];
+  localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+  loadHistory();
+  alert("Today's data cleared.");
+});
 </script>
 </body>
 </html>
