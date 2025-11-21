@@ -3,36 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Medication</title>
+<title>Medication Counter</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   html, body {
     margin: 0; padding: 0;
     height: 100%; width: 100%;
     overflow: hidden; /* prevent scrolling */
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
     background: linear-gradient(to bottom, #a8c0ff, #f0f4ff);
     color: #fff;
+    padding-top: 30px; /* push content slightly down from top */
   }
 
   main.card {
     display: flex; flex-direction: column; align-items: center;
-    justify-content: center;
-    padding: 30px; border-radius: 14px;
-    background: rgba(0,0,0,0.25);
+    justify-content: flex-start;
+    padding: 20px; border-radius: 14px;
+    background: rgba(0,0,0,0.15); /* more transparent */
     backdrop-filter: blur(6px);
     text-align: center;
   }
 
   #totalDisplay {
-    font-size: 40px;
+    font-size: 36px;
     font-weight: 700;
-    margin: 20px 0;
+    margin: 15px 0;
   }
 
   .counter-btn {
-    width: 120px; height: 120px;
+    width: 90px; height: 90px; /* smaller circle */
     border-radius: 50%;
     border: none;
     background: rgba(255,255,255,0.3);
@@ -43,15 +44,15 @@
   }
 
   .counter-btn img {
-    width: 64px; height: 64px;
+    width: 48px; height: 48px; /* smaller icon */
     filter: invert(1); /* make icon white */
   }
 
   .opt-btn {
-    margin: 10px;
-    padding: 16px 24px;
-    font-size: 20px;
-    border-radius: 14px;
+    margin: 8px;
+    padding: 12px 18px;
+    font-size: 18px;
+    border-radius: 12px;
     border: none;
     font-weight: 600;
     cursor: pointer;
@@ -72,14 +73,14 @@
     z-index: 200;
   }
 
-  .footer-nav .switch-btn { background: transparent; border: none; width: 60px; height: 60px; border-radius: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-  .footer-nav .switch-btn img { filter: invert(1); width: 32px; height: 32px; opacity: 0.8; }
+  .footer-nav .switch-btn { background: transparent; border: none; width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+  .footer-nav .switch-btn img { filter: invert(1); width: 28px; height: 28px; opacity: 0.8; }
 </style>
 </head>
 <body>
 
 <main class="card">
-  <h1 style="font-size:32px; margin-bottom:20px;">Medication Counter</h1>
+  <h1 style="font-size:28px; margin-bottom:15px;">Medication Counter</h1>
 
   <!-- Main meds button -->
   <button id="plusBtn" class="counter-btn">
@@ -93,13 +94,13 @@
   <button id="resetTotalBtn" class="opt-btn">Reset to 28</button>
 
   <!-- Secondary + / - buttons -->
-  <div style="display:flex; justify-content:center; margin-top:20px;">
-    <button id="minusBtn" class="opt-btn" style="font-size:32px; width:80px;">-</button>
-    <button id="plusExtraBtn" class="opt-btn" style="font-size:32px; width:80px; margin-left:20px;">+</button>
+  <div style="display:flex; justify-content:center; margin-top:15px;">
+    <button id="minusBtn" class="opt-btn" style="font-size:28px; width:70px;">-</button>
+    <button id="plusExtraBtn" class="opt-btn" style="font-size:28px; width:70px; margin-left:15px;">+</button>
   </div>
 
   <!-- Appointment button -->
-  <button id="appointmentBtn" class="opt-btn" style="margin-top:20px;">Open Appointment</button>
+  <button id="appointmentBtn" class="opt-btn" style="margin-top:15px;">Open Appointment</button>
 </main>
 
 <footer class="footer-nav">
@@ -111,7 +112,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Counter logic
   let total = parseInt(localStorage.getItem("medTotal") || "28", 10);
   const totalDisplay = document.getElementById("totalDisplay");
   const plusBtn = document.getElementById("plusBtn");
