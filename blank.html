@@ -127,6 +127,49 @@ button.circle-btn:hover {
   background: #2196f3;
   color: #fff;
 }
+/* Footer navigation */
+.footer-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(12px) saturate(180%);
+  border-top: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 10px;
+  z-index: 200;
+}
+
+/* Each button */
+.footer-nav .switch-btn {
+  background: transparent;
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+/* Icon inside button, inverted white */
+.footer-nav .switch-btn img {
+  filter: invert(1);
+  width: 32px;
+  height: 32px;
+  opacity: 0.85;
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+/* Hover effect */
+.footer-nav .switch-btn:hover {
+  background: rgba(255,255,25
 
 </style>
 </head>
