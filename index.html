@@ -62,38 +62,6 @@ body.morning {
   z-index: 100;
 }
 
-/* Keep body locked in morning mode */
-body.morning {
-    overflow: hidden;
-    height: 100vh;
-}
-
-/* Make header fixed so it stays visible while the checklist scrolls */
-body.morning #topHeader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 200;
-}
-
-/* Prevent content from going underneath fixed header */
-body.morning .wrap {
-    padding-top: 70px; /* match header height */
-}
-
-/* The checklist continues to scroll normally */
-body.morning .checklist-wrapper {
-    max-height: calc(100vh - 70px); /* full height minus header */
-    overflow-y: auto;
-}
-
-body.morning .checklist-wrapper {
-    max-height: 400px;       /* ≈ height of 6 buttons */
-    overflow-y: auto;        /* keep scroll */
-    margin-bottom: 20px;     /* breathing room above footer */
-}
-
 /* Day of Week text inside header */
 #dayOfWeek {
   flex: 1;
