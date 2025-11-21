@@ -14,9 +14,31 @@
 }
 
 * { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background: linear-gradient(to bottom, #a8c0ff, #f0f4ff); color: var(--text-color); }
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  padding: 0; 
+  overflow: hidden; 
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; 
+  background: linear-gradient(to bottom, #a8c0ff, #f0f4ff); 
+  color: var(--text-color); 
+}
 
-body { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+/* Remove flex from body */
+body { 
+  /* no flex here */
+  margin: 0;
+  padding: 0;
+}
+
+/* Wrap centers the card */
+.wrap {
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto 0 auto;
+  display: flex;
+  justify-content: center;
+}
 
 #topHeader {
   position: sticky;
