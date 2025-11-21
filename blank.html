@@ -37,11 +37,11 @@
   #plusBtn {
     width: 80px; height: 80px;
     border-radius: 50%;
-    font-size: 42px; font-weight: 700;
-    border: 0; background: rgba(255,255,255,0.3); color: #fff;
+    border: 0; background: rgba(255,255,255,0.3);
     display: flex; justify-content: center; align-items: center;
     cursor: pointer; transition: transform 0.2s;
   }
+  #plusBtn img { width: 48px; height: 48px; }
   #totalDisplay { margin-top: 20px; font-size: 28px; font-weight: 700; text-align: center; }
   .opt-btn {
     margin-top: 20px;
@@ -76,9 +76,16 @@
 <div id="settingsMenu" class="settings-menu"></div>
 
 <main class="card">
-  <button id="plusBtn">+</button>
-  <div id="totalDisplay">Total: 0</div>
-  <button id="clearTotalBtn" class="opt-btn">Clear Total</button>
+  <!-- Medication icon button -->
+  <button id="plusBtn"><img src="icons/meds.svg" alt="Med"></button>
+  
+  <!-- Total -->
+  <div id="totalDisplay">Total: 28</div>
+  
+  <!-- Reset button -->
+  <button id="resetTotalBtn" class="opt-btn">Reset to 28</button>
+  
+  <!-- Appointment button -->
   <button id="appointmentBtn" class="opt-btn">Open Appointment</button>
 </main>
 
@@ -111,44 +118,40 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('dataBtn').onclick = () => window.location.href='data.html';
 
   // Counter logic
-  let total = parseInt(localStorage.getItem("blankTotal") || "0", 10);
+  let total = parseInt(localStorage.getItem("medTotal") || "28", 10);
   const plusBtn = document.getElementById("plusBtn");
   const totalDisplay = document.getElementById("totalDisplay");
-  const clearBtn = document.getElementById("clearTotalBtn");
+  const resetBtn = document.getElementById("resetTotalBtn");
   const appointmentBtn = document.getElementById("appointmentBtn");
 
   function updateDisplay() { totalDisplay.textContent = "Total: " + total; }
   updateDisplay();
 
+  // Subtract 1 on click
   plusBtn.addEventListener("click", () => {
-    total += 1;
-    localStorage.setItem("blankTotal", total);
+    if(total > 0) total -= 1;
+    localStorage.setItem("medTotal", total);
     updateDisplay();
     plusBtn.style.transform = "scale(1.15)";
     setTimeout(() => plusBtn.style.transform = "scale(1)", 120);
   });
 
-  clearBtn.addEventListener("click", () => {
-    total = 0;
-    localStorage.setItem("blankTotal", total);
+  // Reset to 28
+  resetBtn.addEventListener("click", () => {
+    total = 28;
+    localStorage.setItem("medTotal", total);
     updateDisplay();
   });
 
   // Attempt to open app, fallback to web URL
   appointmentBtn.addEventListener("click", () => {
-    const appUrl = "sanitas://appointments"; // Replace with actual scheme if available
+    const appUrl = "sanitas://appointments"; // replace with actual scheme
     const webUrl = "https://www.sanitas.es/misanitas/online/clientes/#/appointmentsV2/selection";
-    
     const now = Date.now();
     const timeout = setTimeout(() => { window.location.href = webUrl; }, 500);
-
-    // Try to open app
     window.location = appUrl;
-
-    // Clear timeout if app opens quickly (heuristic)
     window.addEventListener('blur', () => clearTimeout(timeout));
   });
-
 });
 </script>
 
