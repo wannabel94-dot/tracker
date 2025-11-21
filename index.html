@@ -576,10 +576,6 @@ const btnSettings = document.getElementById('btnSettings');
 const settingsMenu = document.getElementById('settingsMenu');
 const menuOverlay = document.getElementById('menuOverlay');
 
-let onMorningDoneNote = false;
-let editingDate = null;
-let switchTimeout;
-
 /****************************************************
  * 2️⃣ MODE & QUESTION HELPERS
  ****************************************************/
@@ -589,12 +585,6 @@ const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
 /****************************************************
  * 3️⃣ LOCAL STORAGE: LOAD & SAVE
  ****************************************************/
-
-   function getTodayDate() {
-    const today = new Date();
-    return today.toISOString().split('T')[0]; // YYYY-MM-DD
-}
-
 function loadSavedData() {
     const day = getTodayDate();
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
@@ -940,10 +930,10 @@ window.returnToMorningChecklist = () => {
     // Reattach night-specific next handler
 nextBtn.replaceWith(nextBtn.cloneNode(true));
 nextBtn = document.querySelector('#nextBtn');
-    newNextBtn.onclick = () => {
-        const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-        if(allDone) checkNightCompletion(); else showNightIncompletePopup();
-    };
+ nextBtn.onclick = () => {
+    const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+    if(allDone) checkNightCompletion(); else showNightIncompletePopup();
+};
 }
 
 window.toggleNightChecklist = (key,index) => {
