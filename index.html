@@ -922,9 +922,6 @@ window.returnToMorningChecklist = () => {
 /****************************************************
  * 1️⃣1️⃣ NIGHT CHECKLIST SECTION
  ****************************************************/
-/****************************************************
- * 1️⃣1️⃣ NIGHT CHECKLIST SECTION
- ****************************************************/
 function nextNightChecklistHandler() {
     showNightIncompletePopup(true);
 }
@@ -1015,16 +1012,18 @@ function showNightIncompletePopup(allowAdvance = false) {
 
     backBtn.addEventListener('click', () => closePopup(overlay));
 
-    saveBtn.addEventListener('click', () => {
+saveBtn.addEventListener('click', () => {
         // Always save current answers
         saveData();
 
         closePopup(overlay, () => {
             if (allowAdvance) {
                 // Advance to next question even if checklist is incomplete
-                answers._nightChecklistDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-                saveData();
+                answers._nightChecklistDone = true;
                 currentIndex = 0;
+                saveData();
+                // Reset the next button handler before loading UI
+                nextBtn.onclick = null;
                 loadUI();
             } else {
                 // Scroll to first incomplete item if not advancing
