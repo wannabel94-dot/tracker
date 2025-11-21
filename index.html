@@ -931,15 +931,8 @@ function loadNightChecklist() {
     updateProgressBar();
 
     // Next button handler
-    nextBtn.onclick = () => {
-        const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-        if (allDone) {
-            checkNightCompletion();
-        } else {
-            showNightIncompletePopup();
-        }
-    };
-}
+    nextBtn.onclick = () => showNightIncompletePopup(true); // pass true to allow advancing
+};
 
 window.toggleNightChecklist = (key, index) => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
@@ -962,8 +955,7 @@ window.toggleNightChecklist = (key, index) => {
     if (allDone) checkNightCompletion();
 };
 
-function showNightIncompletePopup() {
-    // Prevent multiple popups
+function showNightIncompletePopup(allowAdvance = false) {
     if (document.querySelector('.popup-overlay')) return;
 
     const overlay = document.createElement('div');
@@ -996,13 +988,18 @@ function showNightIncompletePopup() {
     backBtn.addEventListener('click', () => closePopup(overlay));
 
     saveBtn.addEventListener('click', () => {
+        // Always save current answers
         saveData();
-        const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+
         closePopup(overlay, () => {
-            if (allDone) {
-                checkNightCompletion();
+            if (allowAdvance) {
+                // Advance to next question even if checklist is incomplete
+                answers._nightChecklistDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+                saveData();
+                currentIndex++;
+                loadUI();
             } else {
-                // Scroll to first incomplete item
+                // Scroll to first incomplete item if not advancing
                 const nextIndex = NIGHT_CHECKLIST_ITEMS.findIndex(item => answers[item.key] !== 'Yes');
                 if (nextIndex !== -1) {
                     const nextKey = NIGHT_CHECKLIST_ITEMS[nextIndex].key;
@@ -1031,6 +1028,7 @@ function checkNightCompletion() {
     currentIndex = 0;
     loadUI();
 }
+
 
 /****************************************************
  * 1️⃣3️⃣ PROGRESS BAR
