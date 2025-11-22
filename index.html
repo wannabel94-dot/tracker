@@ -666,6 +666,12 @@ function loadUI() {
         backBtn.style.display = 'none';
         nextBtn.style.display = 'none';
         updateProgressBar();
+
+        // ✅ Auto-advance after 3 seconds
+    setTimeout(() => {
+        window.location.href = 'data.html';
+    }, 3000);
+       
         return;
     }
 
@@ -929,7 +935,7 @@ function checkMorningCompletion() {
         showMorningChecklistPopup(); 
     }
 }
-
+<
 
 function showMorningChecklistPopup() {
     const overlay = document.createElement('div');
@@ -986,7 +992,7 @@ function loadNightChecklist() {
 
     contentArea.innerHTML = html;
     const newWrapper = document.querySelector('.checklist-wrapper');
-    if(newWrapper) newWrapper.scrollTop = scrollPos;
+    if(newWrapper) newWrapper.scrollTop = 0;
 
     backBtn.style.display = 'inline-block';
     nextBtn.style.display = 'inline-block';
