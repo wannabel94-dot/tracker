@@ -105,6 +105,22 @@ thead th {
         backdrop-filter: blur(4px);
         z-index: 2;
     }
+/* Scrollable card wrapper */
+.table-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 12px;
+  margin-top: 15px;
+
+  /* Prevent going under header or footer */
+  max-height: calc(100vh - 150px);
+
+  overflow-y: auto;
+  overflow-x: auto;
+
+  backdrop-filter: blur(6px);
+}
 
 /* ===============================================
    FIXED FOOTER NAV
@@ -174,7 +190,9 @@ filter:invert(1);
     <button id="btnSettings">☰</button>
   </header>
 
-<div id="tableContainer"></div>
+<div class="table-card">
+    <div id="tableContainer"></div>
+</div>
 
  <!-- Sticky footer nav -->
 <footer class="footer-nav">
