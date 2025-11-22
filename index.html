@@ -1143,23 +1143,26 @@ footer
 /****************************************************
  * 1️⃣4️⃣ SETTINGS MENU
  ****************************************************/
-const settingsMenu = document.getElementById('settingsMenu');
-const menuOverlay = document.getElementById('menuOverlay');
+document.addEventListener('DOMContentLoaded', () => {
+    const btnSettings = document.getElementById('btnSettings');
+    const settingsMenu = document.getElementById('settingsMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
 
-btnSettings.onclick = () => {
-    const isOpen = settingsMenu.classList.toggle('show');
-    menuOverlay.classList.toggle('show', isOpen);
-};
+    btnSettings.addEventListener('click', () => {
+        const isOpen = settingsMenu.classList.toggle('show');
+        menuOverlay.classList.toggle('show', isOpen);
+    });
 
-menuOverlay.onclick = () => {
-    settingsMenu.classList.remove('show');
-    menuOverlay.classList.remove('show');
-};
-
-document.querySelectorAll('#settingsMenu button').forEach(btn => {
-    btn.addEventListener('click', () => {
+    menuOverlay.addEventListener('click', () => {
         settingsMenu.classList.remove('show');
         menuOverlay.classList.remove('show');
+    });
+
+    document.querySelectorAll('#settingsMenu button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            settingsMenu.classList.remove('show');
+            menuOverlay.classList.remove('show');
+        });
     });
 });
 
