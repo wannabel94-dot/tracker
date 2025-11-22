@@ -276,15 +276,16 @@ function buildTable() {
         ...NIGHT_KEYS.map(k => ({ key: k, label: LABELS[k] || k, type: "yesno" }))
     ];
 
-    let html = `<table><thead><tr><th>Item</th>`;
-
-    days.forEach(day => html += `<th>${day}</th>`); // dates are now columns
+    // Table header = items
+    let html = `<table><thead><tr><th>Date</th>`;
+    allItems.forEach(item => html += `<th>${item.label}</th>`);
     html += `</tr></thead><tbody>`;
 
-    allItems.forEach(item => {
-        html += `<tr><td><strong>${item.label}</strong></td>`; // first column = item
+    // Table rows = days
+    days.forEach(day => {
+        html += `<tr><td><strong>${day}</strong></td>`; // first column = date
 
-        days.forEach(day => {
+        allItems.forEach(item => {
             if (item.key === "AM_routine") {
                 const answers = raw[day]?.answers || {};
                 const total = MORNING_CHECKLIST_KEYS.length;
