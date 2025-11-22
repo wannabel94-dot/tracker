@@ -262,47 +262,45 @@ document.getElementById('dataBtn').addEventListener('click', () => { window.loca
    
 function buildTable() {
     const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
-    const days = Object.keys(raw).sort((a,b)=>new Date(b)-new Date(a));
+    const days = Object.keys(raw).sort((a,b)=>new Date(b)-new Date(a)); // most recent first
     
     if(days.length===0){
         document.getElementById("tableContainer").innerHTML = "<p>No data saved.</p>";
         return;
     }
 
-    let html = `<table><thead><tr><th>Item</th>`;
-    days.forEach(day => html += `<th>${day}</th>`);
+    // All items in order: morning completion + individual morning items + night items
+    const allItems = [
+        { key: "AM_routine", label: "AM routine", type: "percent" },
+        ...INDIVIDUAL_MORNING_ITEMS.map(k => ({ key: k, label: LABELS[k] || k, type: "yesno" })),
+        ...NIGHT_KEYS.map(k => ({ key: k, label: LABELS[k] || k, type: "yesno" }))
+    ];
+
+    let html = `<table><thead><tr><th>Day / Item</th>`;
+
+    allItems.forEach(item => html += `<th>${item.label}</th>`);
+
     html += `</tr></thead><tbody>`;
 
-    // Morning completion row
-    html += `<tr><td><strong>AM routine</strong></td>`;
     days.forEach(day => {
-        const answers = raw[day]?.answers || {};
-        const total = MORNING_CHECKLIST_KEYS.length;
-        const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === "Yes").length;
-        const percent = Math.round((done / total) * 100);
-        html += `<td>${percent}%</td>`;
-    });
-    html += `</tr>`;
+        html += `<tr><td><strong>${day}</strong></td>`; // leftmost = date
 
-    // Individual morning items
-    INDIVIDUAL_MORNING_ITEMS.forEach(key => {
-        html += `<tr><td><strong>${LABELS[key] || key}</strong></td>`;
-        days.forEach(day => {
-            const val = raw[day]?.answers?.[key] ?? "";
-            html += `<td>${val === "Yes" ? "✓" : val === "No" ? "✗" : val}</td>`;
+        allItems.forEach(item => {
+            if(item.key === "AM_routine") {
+                // Morning completion %
+                const answers = raw[day]?.answers || {};
+                const total = MORNING_CHECKLIST_KEYS.length;
+                const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === "Yes").length;
+                const percent = Math.round((done / total) * 100);
+                html += `<td>${percent}%</td>`;
+            } else {
+                let val = raw[day]?.answers?.[item.key] ?? "";
+                if(Array.isArray(val)) val = val.map(v => v === "Yes" ? "✓" : v === "No" ? "✗" : v).join(", ");
+                else val = val === "Yes" ? "✓" : val === "No" ? "✗" : val;
+                html += `<td>${val}</td>`;
+            }
         });
-        html += `</tr>`;
-    });
 
-    // Night items
-    NIGHT_KEYS.forEach(key => {
-        html += `<tr><td><strong>${LABELS[key] || key}</strong></td>`;
-        days.forEach(day => {
-            let val = raw[day]?.answers?.[key] ?? "";
-            if(Array.isArray(val)) val = val.map(v => v === "Yes" ? "✓" : v === "No" ? "✗" : v).join(", ");
-            else val = val === "Yes" ? "✓" : val === "No" ? "✗" : val;
-            html += `<td>${val}</td>`;
-        });
         html += `</tr>`;
     });
 
@@ -310,7 +308,6 @@ function buildTable() {
     document.getElementById("tableContainer").innerHTML = html;
 }
 
-buildTable();
 
    const footerButtons = document.querySelectorAll('.footer-nav .switch-btn');
 
