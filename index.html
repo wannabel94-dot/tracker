@@ -194,6 +194,21 @@ filter:invert(1);
    .footer-nav .switch-btn.active img {
   filter: invert(84%) sepia(52%) saturate(545%) hue-rotate(2deg) brightness(103%) contrast(101%);
 }
+.switch-btn {
+    position: relative;
+    overflow: hidden;
+}
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+}
+@keyframes ripple {
+    to { transform: scale(4); opacity: 0; }
+}
 
 
 /* ===============================================
@@ -656,6 +671,20 @@ document.getElementById('blankBtn').onclick = () => {
     window.location.href = 'blank.html';
 };
 
+function rippleEffect(button, e) {
+    const circle = document.createElement('span');
+    circle.classList.add('ripple');
+    circle.style.left = e.offsetX + 'px';
+    circle.style.top = e.offsetY + 'px';
+    button.appendChild(circle);
+    setTimeout(() => circle.remove(), 600);
+}
+
+document.getElementById('morningBtn').onclick = (e) => {
+    switchMode('morning');
+    setActiveNav('morningBtn');
+    rippleEffect(e.currentTarget, e);
+};
 
 /****************************************************
  * 6️⃣ MAIN UI RENDERING
