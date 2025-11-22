@@ -165,24 +165,33 @@ body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
   <!-- Content -->
   <div class="wrap" id="historyContainer"></div>
 
-  <!-- Footer -->
-  <footer class="footer-nav" role="navigation" aria-label="Main navigation">
-    <button class="switch-btn morning" id="morningBtn" title="Morning">
-      <img src="icons/sun.svg" alt="Morning">
-    </button>
-    <button class="switch-btn night" id="nightBtn" title="Night">
-      <img src="icons/night.svg" alt="Night">
-    </button>
-    <button class="switch-btn history active" id="historyBtn" title="History">
-      <img src="icons/history.svg" alt="History">
-    </button>
-    <button class="switch-btn data" id="dataBtn" title="Data">
-      <img src="icons/data.svg" alt="Data">
-    </button>
-    <button class="switch-btn blank" id="blankBtn" title="Blank">
-      <img src="icons/balloon.svg" alt="Blank">
-    </button>
-  </footer>
+ <!-- Sticky footer nav -->
+<footer class="footer-nav">
+  <button class="switch-btn morning" id="morningBtn">
+    <img src="icons/sun.svg" alt="Morning">
+    <span>Morning</span>
+  </button>
+
+  <button class="switch-btn night" id="nightBtn">
+    <img src="icons/night.svg" alt="Night">
+    <span>Night</span>
+  </button>
+
+  <button class="switch-btn history" id="historyBtn">
+    <img src="icons/history.svg" alt="History">
+    <span>History</span>
+  </button>
+
+  <button class="switch-btn data" id="dataBtn">
+    <img src="icons/data.svg" alt="Data">
+    <span>Data</span>
+  </button>
+
+  <button class="switch-btn blank" id="blankBtn">
+    <img src="icons/balloon.svg" alt="Blank">
+    <span>Blank</span>
+  </button>
+</footer>
 
 <script>
 /* ========================
