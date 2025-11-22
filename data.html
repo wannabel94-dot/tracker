@@ -111,6 +111,33 @@ filter:invert(1);
 <h2>Data Table</h2>
 <div id="tableContainer"></div>
 
+ <!-- Sticky footer nav -->
+<footer class="footer-nav">
+  <button class="switch-btn morning" id="morningBtn">
+    <img src="icons/sun.svg" alt="Morning">
+    <span>Morning</span>
+  </button>
+
+  <button class="switch-btn night" id="nightBtn">
+    <img src="icons/night.svg" alt="Night">
+    <span>Night</span>
+  </button>
+
+  <button class="switch-btn history" id="historyBtn">
+    <img src="icons/history.svg" alt="History">
+    <span>History</span>
+  </button>
+
+  <button class="switch-btn data" id="dataBtn">
+    <img src="icons/data.svg" alt="Data">
+    <span>Data</span>
+  </button>
+
+  <button class="switch-btn blank" id="blankBtn">
+    <img src="icons/balloon.svg" alt="Blank">
+    <span>Blank</span>
+  </button>
+</footer>
 <script>
     const LABELS = { wake_time: "Wake up", how_slept: "Sleep", temp: "Take temp", made_bed: "Made Bed", took_meds_morn: "Took meds", tidy_up: "Tidied", shower_morn: "Showered", get_dressed: "Dressed", led_mask_morn: "LED Mask", skincare_morn: "Skincare AM", eat_breakfast: "Breakfast", supplements_morn: "Supplements", brush_teeth_morn: "Teeth AM", psyllium: "Psyllium", magnesium: "Magnesium", pillowcase: "Pillowcase", shower_night: "Showered", skincare_night: "Skincare PM", teeth_night: "Teeth PM", flossed: "Flossed", left_house: "Left House", caffeine_alcohol: "Caffeine/Alcohol", sickness: "Symptoms", saw_dogs: "Saw Dogs", feel_with_L: "Relationship", house_state: "House", drove: "Driving", body_feelings: "Body", food_desc: "Diet", most_prominent: "Mental", meds: "Extra Meds", sensory_triggers: "Sensory Triggers", appointments: "Appointments", movement: "Movement", talked_to_anyone: "People", wellness: "Wellness", creative: "Creative", closed_eyes_time: "Closed Eyes" }; function yesNoToSymbol(v) { if (v === "Yes") return "✓"; if (v === "No") return "✗"; return v; }
 const MORNING_CHECKLIST_KEYS = [
@@ -186,6 +213,20 @@ function buildTable() {
 }
 
 buildTable();
+
+    footer 
+
+     const footerButtons = document.querySelectorAll('.footer-nav .switch-btn');
+
+  footerButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Remove active from all buttons
+      footerButtons.forEach(b => b.classList.remove('active'));
+
+      // Add active to the clicked one
+      btn.classList.add('active');
+    });
+  });
 </script>
 
 </body>
