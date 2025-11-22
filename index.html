@@ -557,8 +557,6 @@ const backBtn = document.getElementById('backBtn');
 const nextBtn = document.getElementById('nextBtn');
 const progressBar = document.getElementById('progressBar');
 const btnSettings = document.getElementById('btnSettings');
-const settingsMenu = document.getElementById('settingsMenu');
-const menuOverlay = document.getElementById('menuOverlay');
 
 /****************************************************
  * 2️⃣ MODE & QUESTION HELPERS
@@ -1138,6 +1136,9 @@ footer
 /****************************************************
  * 1️⃣4️⃣ SETTINGS MENU
  ****************************************************/
+const settingsMenu = document.getElementById('settingsMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+
 btnSettings.onclick = () => {
     const isOpen = settingsMenu.classList.toggle('show');
     menuOverlay.classList.toggle('show', isOpen);
@@ -1147,6 +1148,14 @@ menuOverlay.onclick = () => {
     settingsMenu.classList.remove('show');
     menuOverlay.classList.remove('show');
 };
+
+document.querySelectorAll('#settingsMenu button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        settingsMenu.classList.remove('show');
+        menuOverlay.classList.remove('show');
+    });
+});
+
 
 /****************************************************
  * 1️⃣5️⃣ EXPORT & CLEAR DATA
