@@ -328,6 +328,19 @@ function buildTable() {
 
 buildTable();
 
+const btnSettings = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+
+btnSettings.addEventListener('click', () => {
+  settingsMenu.classList.toggle('show');
+  menuOverlay.classList.toggle('show');
+});
+
+menuOverlay.addEventListener('click', () => {
+  settingsMenu.classList.remove('show');
+  menuOverlay.classList.remove('show');
+});
 
    const footerButtons = document.querySelectorAll('.footer-nav .switch-btn');
 
