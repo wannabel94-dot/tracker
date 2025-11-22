@@ -161,7 +161,16 @@ const NIGHT_KEYS = [
   "food_desc","most_prominent","meds","sensory_triggers","appointments",
   "movement","talked_to_anyone","wellness","creative","closed_eyes_time"
 ];
-    
+ /****************************************************
+ * 5️⃣ NAVIGATION BUTTONS
+ ****************************************************/
+document.getElementById('morningBtn').onclick = () => switchMode('morning');
+document.getElementById('nightBtn').onclick = () => switchMode('night');
+document.getElementById('historyBtn').addEventListener('click', () => { window.location.href = 'history.html'; });
+document.getElementById('blankBtn').addEventListener('click', () => { window.location.href = 'blank.html'; });
+document.getElementById('dataBtn').addEventListener('click', () => { window.location.href = 'data.html'; });
+
+   
 function buildTable() {
     const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
     const days = Object.keys(raw).sort((a,b)=>new Date(b)-new Date(a));
