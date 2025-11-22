@@ -72,12 +72,14 @@ color: #f0f4ff;
        -webkit-overflow-scrolling: touch; /* smooth scrolling */
 }
 
- table {
+table {
     width: max-content;
     min-width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate; /* changed */
+    border-spacing: 0; /* remove spacing */
     background: rgba(255,255,255,0.05);
-    border-radius: 10px;
+    border-radius: 14px; /* your rounded corners */
+    overflow: hidden; /* clip corners */
 }
 
 
