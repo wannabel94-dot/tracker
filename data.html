@@ -228,8 +228,14 @@ const NIGHT_KEYS = [
  /****************************************************
  * 5️⃣ NAVIGATION BUTTONS
  ****************************************************/
-document.getElementById('morningBtn').onclick = () => switchMode('morning');
-document.getElementById('nightBtn').onclick = () => switchMode('night');
+document.getElementById('morningBtn').onclick = () => {
+  const last = localStorage.getItem('lastMorningProgress') || '';
+  window.location.href = `index.html?mode=morning&last=${encodeURIComponent(last)}`;
+};
+document.getElementById('nightBtn').onclick = () => {
+  const last = localStorage.getItem('lastNightProgress') || '';
+  window.location.href = `index.html?mode=night&last=${encodeURIComponent(last)}`;
+};
 document.getElementById('historyBtn').addEventListener('click', () => { window.location.href = 'history.html'; });
 document.getElementById('blankBtn').addEventListener('click', () => { window.location.href = 'blank.html'; });
 document.getElementById('dataBtn').addEventListener('click', () => { window.location.href = 'data.html'; });
