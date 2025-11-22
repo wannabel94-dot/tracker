@@ -636,55 +636,51 @@ window.addEventListener('beforeunload', saveData);
 /****************************************************
  * 5️⃣ NAVIGATION BUTTONS
  ****************************************************/
-function setActiveNav(buttonId) {
-    // Remove 'active' from all
-    document.querySelectorAll('.footer-nav .switch-btn')
-        .forEach(btn => btn.classList.remove('active'));
+// List of buttons and their corresponding modes
+const buttonModes = {
+    morningBtn: 'morning',
+    nightBtn: 'night',
+    historyBtn: 'history',
+    blankBtn: 'blank',
+    dataBtn: 'data'
+};
 
-    // Add to the selected one
-    document.getElementById(buttonId).classList.add('active');
+// Helper: set active class
+function setActiveNav(activeId) {
+    document.querySelectorAll('.footer-nav .switch-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.getElementById(activeId).classList.add('active');
 }
 
-// Hook into your existing button logic
-document.getElementById('morningBtn').onclick = () => {
-    switchMode('morning');
-    setActiveNav('morningBtn');
-};
-
-document.getElementById('nightBtn').onclick = () => {
-    switchMode('night');
-    setActiveNav('nightBtn');
-};
-
-document.getElementById('historyBtn').onclick = () => {
-    setActiveNav('historyBtn');
-    window.location.href = 'history.html';
-};
-
-document.getElementById('dataBtn').onclick = () => {
-    setActiveNav('dataBtn');
-    window.location.href = 'data.html';
-};
-
-document.getElementById('blankBtn').onclick = () => {
-    setActiveNav('blankBtn');
-    window.location.href = 'blank.html';
-};
-
-function rippleEffect(button, e) {
+// Helper: add ripple effect
+function addRipple(e) {
+    const button = e.currentTarget;
     const circle = document.createElement('span');
     circle.classList.add('ripple');
-    circle.style.left = e.offsetX + 'px';
-    circle.style.top = e.offsetY + 'px';
+
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    circle.style.left = x + 'px';
+    circle.style.top = y + 'px';
+
     button.appendChild(circle);
+
     setTimeout(() => circle.remove(), 600);
 }
 
-document.getElementById('morningBtn').onclick = (e) => {
-    switchMode('morning');
-    setActiveNav('morningBtn');
-    rippleEffect(e.currentTarget, e);
-};
+// Attach listeners to all buttons
+Object.keys(buttonModes).forEach(btnId => {
+    const button = document.getElementById(btnId);
+    button.addEventListener('click', (e) => {
+        const mode = buttonModes[btnId];
+        switchMode(mode);           // your mode switching logic
+        setActiveNav(btnId);        // highlight active button
+        addRipple(e);               // ripple effect
+    });
+});
 
 /****************************************************
  * 6️⃣ MAIN UI RENDERING
