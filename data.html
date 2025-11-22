@@ -1,9 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Data Table</title>
+<meta charset="utf-8">
+<meta name="theme-color" content="#07081d" id="navColor">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+   <!-- Theme color for Android navigation bar -->
+<title>Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
 <style>
+
+    /* ===============================================
+   ROOT VARIABLES
+================================================= */
+:root {
+  --text: #f0f4ff;
+  --card-radius: 14px;
+  --bg-blur: 6px;
+  --glass-bg: rgba(255,255,255,0.08);
+  --glass-border: rgba(255,255,255,0.12);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+    /* ===============================================
+   GLOBAL SETTINGS
+================================================= */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+    background:#07081d;
+  margin: 0;
+  padding: 0 18px 90px;
+  min-height: 100vh;
+  color: var(--night-text);
+}
+
     #topHeader {
   position: sticky;
   top: 0;
@@ -26,12 +56,6 @@
   margin: 0;
   pointer-events: none; /* text is not interactive */
 }
-    body {
-        font-family: Inter, sans-serif;
-        padding: 20px;
-        background: #0a0f2c;
-        color: #fff;
-    }
 
     table {
         width: 100%;
