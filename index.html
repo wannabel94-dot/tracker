@@ -621,11 +621,41 @@ window.addEventListener('beforeunload', saveData);
 /****************************************************
  * 5️⃣ NAVIGATION BUTTONS
  ****************************************************/
-document.getElementById('morningBtn').onclick = () => switchMode('morning');
-document.getElementById('nightBtn').onclick = () => switchMode('night');
-document.getElementById('historyBtn').addEventListener('click', () => { window.location.href = 'history.html'; });
-document.getElementById('blankBtn').addEventListener('click', () => { window.location.href = 'blank.html'; });
-document.getElementById('dataBtn').addEventListener('click', () => { window.location.href = 'data.html'; });
+function setActiveNav(buttonId) {
+    // Remove 'active' from all
+    document.querySelectorAll('.footer-nav .switch-btn')
+        .forEach(btn => btn.classList.remove('active'));
+
+    // Add to the selected one
+    document.getElementById(buttonId).classList.add('active');
+}
+
+// Hook into your existing button logic
+document.getElementById('morningBtn').onclick = () => {
+    switchMode('morning');
+    setActiveNav('morningBtn');
+};
+
+document.getElementById('nightBtn').onclick = () => {
+    switchMode('night');
+    setActiveNav('nightBtn');
+};
+
+document.getElementById('historyBtn').onclick = () => {
+    setActiveNav('historyBtn');
+    window.location.href = 'history.html';
+};
+
+document.getElementById('dataBtn').onclick = () => {
+    setActiveNav('dataBtn');
+    window.location.href = 'data.html';
+};
+
+document.getElementById('blankBtn').onclick = () => {
+    setActiveNav('blankBtn');
+    window.location.href = 'blank.html';
+};
+
 
 /****************************************************
  * 6️⃣ MAIN UI RENDERING
