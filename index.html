@@ -162,19 +162,24 @@ body.morning {
 
 /* Footer buttons */
 .footer-nav .switch-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;               /* space between icon + text */
+  padding: 6px 8px;
   background: transparent;
   border: none;
-  border-radius: 50%;
-  padding: 10px;
-  transition: transform 0.25s, background 0.25s;
+  cursor: pointer;
+  border-radius: 12px;
 }
 
 .footer-nav .switch-btn img {
-  width: 32px;
-  height: 32px;
-  opacity: 0.8; /* keeps icons visible */
-  transition: opacity 0.3s, transform 0.3s;
+  width: 22px;
+  height: 22px;
+  opacity: 0.9;
 }
+
 
 .footer-nav .switch-btn:hover {
   background: rgba(255,255,255,0.1); /* optional hover effect */
@@ -182,8 +187,11 @@ body.morning {
 }
 
 .footer-nav .switch-btn.active img {
+  transform: scale(1.15);
+}
+
+.footer-nav .switch-btn.active span {
   opacity: 1;
-  transform: scale(1.2);
 }
 
 /* override night mode colors */
@@ -464,23 +472,33 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   </div>
 
   <!-- Sticky footer nav -->
-  <footer class="footer-nav">
-    <button class="switch-btn morning" id="morningBtn">
-      <img src="icons/sun.svg" alt="Morning">
-    </button>
-    <button class="switch-btn night" id="nightBtn">
-      <img src="icons/night.svg" alt="Night">
-    </button>
-    <button class="switch-btn history" id="historyBtn">
-      <img src="icons/history.svg" alt="History">
-    </button>
-    <button class="switch-btn data" id="dataBtn">
-      <img src="icons/data.svg" alt="Data">
-    </button>
-     <button class="switch-btn blank" id="blankBtn">
-      <img src="icons/balloon.svg" alt="Blank">
-    </button>
-  </footer>
+<footer class="footer-nav">
+  <button class="switch-btn morning" id="morningBtn">
+    <img src="icons/sun.svg" alt="Morning">
+    <span>Morning</span>
+  </button>
+
+  <button class="switch-btn night" id="nightBtn">
+    <img src="icons/night.svg" alt="Night">
+    <span>Night</span>
+  </button>
+
+  <button class="switch-btn history" id="historyBtn">
+    <img src="icons/history.svg" alt="History">
+    <span>History</span>
+  </button>
+
+  <button class="switch-btn data" id="dataBtn">
+    <img src="icons/data.svg" alt="Data">
+    <span>Data</span>
+  </button>
+
+  <button class="switch-btn blank" id="blankBtn">
+    <img src="icons/balloon.svg" alt="Blank">
+    <span>Blank</span>
+  </button>
+</footer>
+
 </body>
 <script>
 if ('serviceWorker' in navigator) {
