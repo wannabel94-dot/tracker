@@ -1103,7 +1103,19 @@ function checkNightCompletion() {
     loadUI();
 }
 
+footer 
 
+     const footerButtons = document.querySelectorAll('.footer-nav .switch-btn');
+
+  footerButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Remove active from all buttons
+      footerButtons.forEach(b => b.classList.remove('active'));
+
+      // Add active to the clicked one
+      btn.classList.add('active');
+    });
+  });
 /****************************************************
  * 1️⃣3️⃣ PROGRESS BAR
  ****************************************************/
