@@ -1,39 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="utf-8">
 <meta name="theme-color" content="#07081d" id="navColor">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+   <!-- Theme color for Android navigation bar -->
 <title>History</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
 <style>
-:root{
-  --morning-text: #f0f4ff;
-  --night-text: #f0f4ff;
+/* ===============================================
+   ROOT VARIABLES
+================================================= */
+:root {
+  --text: #f0f4ff;
   --card-radius: 14px;
+  --bg-blur: 6px;
+  --glass-bg: rgba(255,255,255,0.08);
   --glass-border: rgba(255,255,255,0.12);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;padding:0 18px 90px;min-height:100vh;color:var(--night-text);}
 
-/* Background / header */
-body{ color:#fff; }
-body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#9966CB; }
+/* ===============================================
+   GLOBAL SETTINGS
+================================================= */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  margin: 0;
+  padding: 0 18px 90px;
+  min-height: 100vh;
+  color: color: var(--text);
+  background:#07081d;
+}
 
-#topHeader{
+/* ===============================================
+   STICKY HEADER (Day + Menu)
+================================================= */
+#topHeader {
   position: sticky;
   top: 0;
   left: 0;
   width: 100%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 18px;
-  z-index:100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  z-index: 100;
 }
-#dayOfWeek{ flex:1; text-align:center; font-size:1rem; font-weight:600; color:#f0f4ff; margin:0; pointer-events:none; }
-#btnSettings{ background:transparent; border:0; font-size:24px; color:#fff; cursor:pointer; padding:0; }
+
+/* Day of Week text inside header */
+#dayOfWeek {
+  flex: 1;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f0f4ff;
+  margin: 0;
+  pointer-events: none; /* text is not interactive */
+}
+
+/* Settings / Menu button */
+  
+#btnSettings {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+  z-index: 101;
+}
+
+#btnSettings:hover {
+  color: #ddd;
+}
+  
+  
+  /* pop up */-------------------------------
+   
+.popup-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center; /* vertically centers popup */
+    z-index: 5000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.popup-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.popup-box {
+    background: #1e1e35;
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    min-width: 280px;
+    max-width: 90%;        /* prevent overflow on small screens */
+    transform: translateY(100px);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+    box-sizing: border-box;
+}
+
+.popup-overlay.show .popup-box {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.popup-box.hide {
+    transform: translateY(100px);
+    opacity: 0;
+}
+
+/* ===============================================
+   WRAP / MAIN CONTENT
+================================================= */
 
 /* Main content */
 .wrap { width:100%; max-width:740px; margin:40px auto 0; display:block; }
@@ -48,7 +137,6 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#9966C
 
 #entryView{ background:rgba(255,255,255,0.05); padding:16px; border-radius:var(--card-radius); margin-bottom:16px; }
 #entryView h4{ margin-top:16px; margin-bottom:8px; font-size:1rem; font-weight:600; }
-
 /* ===============================================
    FIXED FOOTER NAV
 ================================================= */
@@ -57,7 +145,7 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#9966C
   bottom: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  height: 60px;
   background: #303f5c; /* change this to any solid color you want */
   display: flex;
   justify-content: center;
@@ -70,84 +158,181 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#9966C
 
 /* Footer buttons */
 .footer-nav .switch-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;               /* space between icon + text */
+  padding: 6px 8px;
   background: transparent;
   border: none;
-  border-radius: 50%;
-  padding: 10px;
-  transition: transform 0.25s, background 0.25s;
+  cursor: pointer;
+  border-radius: 12px;
 }
 
 .footer-nav .switch-btn img {
-  filter: invert(1);
-  width: 32px;
-  height: 32px;
-  opacity: 0.8; /* keeps icons visible */
-  transition: opacity 0.3s, transform 0.3s;
+  width: 22px;
+  height: 22px;
+  opacity: 0.9;
+filter:invert(1);
+}
+   
+.footer-nav .switch-btn span {
+  color: #fff;
+  font-weight: 600;
 }
 
-.footer-nav .switch-btn:hover {
-  background: rgba(255,255,255,0.1); /* optional hover effect */
-  transform: scale(1.1);
-}
-
-.footer-nav .switch-btn.active img {
+.footer-nav .switch-btn.active span {
+  color: #ffd86b;   /* example gold for active */
   opacity: 1;
-  transform: scale(1.2);
+  font-weight: 700; /* optional */
+}
+   .footer-nav .switch-btn.active img {
+  filter: invert(84%) sepia(52%) saturate(545%) hue-rotate(2deg) brightness(103%) contrast(101%);
 }
 
-/* override night mode colors */
-body.night .footer-nav {
-  background: 374866;
+
+/* ===============================================
+   ANSWER BUTTONS
+================================================= */
+.opt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--glass-border);
+  font-size: 17px;
+  font-weight: 500;
+  color: #f0f4ff;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+  text-align: center;
+  user-select: none;
+}
+.opt-btn:hover { background: rgba(255,255,255,0.10); transform: scale(1.02); }
+.opt-btn.selected {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.5);
+  box-shadow: 0 0 10px rgba(255,255,255,0.22);
+  transform: scale(1.04);
 }
 
 /* ===============================================
-   DAY NIGHT MODE BUTTONS
-   ================================================= */
-.switch-btn {
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  cursor: pointer;
+   QUESTIONS + ICONS
+================================================= */
+.question-with-icon { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:12px; text-align:left; }
+.question-text { font-size:18px; font-weight:600; color:#f0f4ff; }
+.question-icon {
+  width:38px; height:38px; border-radius:50%;
+  background: rgba(255,255,255,0.12);
+  display:flex; justify-content:center; align-items:center;
+  flex-shrink:0;
+  transition: background 0.25s, transform 0.2s;
+}
+.question-icon img { width:60%; height:60%; filter:invert(1); }
+.question-icon.special-icon img { width:80%; height:80%; }
+.question-icon:hover { background: rgba(255,255,255,0.25); transform: scale(1.1); }
+
+  /* ===============================================
+         secondary icons
+ ================================================= */
+/* Make the actual icon scale consistently inside the circle */
+.icon-circle img,
+.icon-circle img.counter-icon {
+  width: 22px;               /* fixed visual size inside the 40px circle */
+  height: 22px;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;       /* preserve aspect, center inside the circle */
+  display: block;
+filter:invert(1);
+}
+
+  .icon-circle {
+  width: 40px;
+  min-width: 40px;           /* prevents shrinking on narrow icons */
+  height: 40px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: background 0.25s;
+  background: rgba(255,255,255,0.15);
+  flex: 0 0 40px;            /* fixed flex-basis so text always starts the same */
+  transition: background 0.25s ease, transform 0.2s ease;
 }
-.switch-btn img {
-  width: 28px;
-  height: 28px;
-  filter: invert(1);
-  opacity: 0.5;
-  transform: scale(1);
-  transition: opacity 0.25s, transform 0.25s, filter 0.25s;
-}
-.switch-btn:hover { background: rgba(255,255,255,0.08); border-radius:50%; }
-body.morning .switch-btn.morning img { opacity: 1; transform: scale(1.15); }
-body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
-
-/* Settings menu */
-.settings-menu{
+/* ===============================================
+   MENU
+================================================= */
+.settings-menu {
   position: fixed; top:0; left:0; height:100vh; width:50%;
   background: rgba(0,0,0,0.7); backdrop-filter: blur(18px) saturate(180%);
-  display:flex; flex-direction:column; padding:20px 0; transform:translateX(-100%); transition: transform .4s ease; z-index:200;
+  display:flex; flex-direction:column; align-items:stretch;
+  padding:20px 0; transform:translateX(-100%); transition: transform 0.4s ease; z-index:200;
 }
-.settings-menu.show{ transform:translateX(0); }
-.settings-menu button{ background:transparent; border:0; padding:16px 20px; width:100%; text-align:left; font-weight:600; color:#fff; cursor:pointer; transition: background .25s, transform .2s; }
-.settings-menu button:hover{ background: rgba(255,255,255,0.15); transform:translateX(6px); }
-.menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity .3s; z-index:150; }
-.menu-overlay.show{ opacity:1; pointer-events:all; }
+.settings-menu.show { transform:translateX(0); }
+.settings-menu button {
+  background:transparent; border:none; padding:16px 20px; width:100%; text-align:left;
+  font-weight:600; color:#fff; cursor:pointer; transition: background 0.25s ease, transform 0.2s ease;
+}
+.settings-menu button:hover { background: rgba(255,255,255,0.15); transform: translateX(6px); }
 
-/* Responsive */
-@media (max-width:480px){
-  body{ padding:12px 12px 90px; }
-  .footer-nav { gap: 14px; }
-  .footer-nav .switch-btn img { width:28px; height:28px; }
+.menu-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition: opacity 0.3s ease; z-index:150; }
+.menu-overlay.show { opacity:1; pointer-events:all; }
+
+/* ===============================================
+   CARDS & QUESTIONS
+================================================= */
+main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
+.progress-wrap { display:flex; align-items:center; margin-bottom:12px; }
+.progress { flex:1.2; height:10px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.06); }
+.bar { height:100%; width:0%; background:linear-gradient(90deg,rgba(255,255,255,0.15),rgba(255,255,255,0.3)); border-radius:8px; transition:width 0.25s; }
+.question { font-size:18px; margin-bottom:12px; font-weight:600; color:#f0f4ff; }
+.options { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.options.column-options { display:flex; flex-direction:column; gap:8px; }
+
+/* ===============================================
+   BACK NEXT BUTTONS
+================================================= */
+.controls { display:flex; gap:10px; justify-content:space-between; margin-top:16px; }
+.back-btn, .next-btn {
+  background:rgba(255,255,255,0.15); color:#f0f4ff; font-weight:700;
+  border:0; padding:12px 16px; border-radius:12px; cursor:pointer; backdrop-filter:blur(6px);
+  transition:opacity 0.2s;
 }
+.back-btn:hover, .next-btn:hover { opacity:0.85; }
+.back-btn[disabled], .next-btn[disabled] { opacity:0.5; cursor:not-allowed; }
+.done-note { font-size:20px; text-align:center; font-weight:700; margin-top:80px; }
+
+.back-to-checklist {
+  display:inline-block; margin-top:40px; padding:10px 18px; border:none; border-radius:20px;
+  background: rgba(255,255,255,0.15); color:#f0f4ff; font-size:16px; font-weight:500; cursor:pointer;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+.back-to-checklist:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+
+   /* ===============================================
+   ANIMATIONS
+================================================= */
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+@keyframes slideUp { from{transform:translateY(40px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+
+/* ===============================================
+   RESPONSIVE / MOBILE
+================================================= */
+@media (max-width:480px) { 
+  body{padding:12px;}
+  .opt-btn, .counter-btn{font-size:16px;padding:12px;}
+  .counter-icon{width:20px;height:20px;}
+  input[type=time]{font-size:16px;padding:12px;}
+}
+
 </style>
 </head>
-<body class="morning">
-  <!-- Header -->
+<body>
+  <!-- Sticky header -->
   <header id="topHeader">
     <div id="dayOfWeek">History</div>
     <button id="btnSettings">☰</button>
@@ -162,31 +347,131 @@ body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
 
   <!-- Content -->
   <div class="wrap" id="historyContainer"></div>
+  <!-- Main content wrapper -->
+  <div class="wrap">
+    <main class="card">
+      <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div></div>
+      <div id="contentArea"></div>
+      <div class="controls">
+        <button class="back-btn" id="backBtn">Back</button>
+        <button class="next-btn" id="nextBtn">Next</button>
+      </div>
+    </main>
+  </div>
 
-  <!-- Footer -->
-  <footer class="footer-nav" role="navigation" aria-label="Main navigation">
-    <button class="switch-btn morning" id="morningBtn" title="Morning">
-      <img src="icons/sun.svg" alt="Morning">
-    </button>
-    <button class="switch-btn night" id="nightBtn" title="Night">
-      <img src="icons/night.svg" alt="Night">
-    </button>
-    <button class="switch-btn history active" id="historyBtn" title="History">
-      <img src="icons/history.svg" alt="History">
-    </button>
-    <button class="switch-btn data" id="dataBtn" title="Data">
-      <img src="icons/data.svg" alt="Data">
-    </button>
-    <button class="switch-btn blank" id="blankBtn" title="Blank">
-      <img src="icons/balloon.svg" alt="Blank">
-    </button>
-  </footer>
+  <!-- Sticky footer nav -->
+<footer class="footer-nav">
+  <button class="switch-btn morning" id="morningBtn">
+    <img src="icons/sun.svg" alt="Morning">
+    <span>Morning</span>
+  </button>
 
+  <button class="switch-btn night" id="nightBtn">
+    <img src="icons/night.svg" alt="Night">
+    <span>Night</span>
+  </button>
+
+  <button class="switch-btn history" id="historyBtn">
+    <img src="icons/history.svg" alt="History">
+    <span>History</span>
+  </button>
+
+  <button class="switch-btn data" id="dataBtn">
+    <img src="icons/data.svg" alt="Data">
+    <span>Data</span>
+  </button>
+
+  <button class="switch-btn blank" id="blankBtn">
+    <img src="icons/balloon.svg" alt="Blank">
+    <span>Blank</span>
+  </button>
+</footer>
 <script>
-/* ========================
-   Footer navigation handlers
-   - morning/night send user to index.html preserving last progress stored in localStorage
-   ======================== */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/tracker/service-worker.js')
+      .then(reg => console.log('SW registered:', reg))
+      .catch(err => console.error('SW registration failed:', err));
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+
+let currentIndex = 0;
+let answers = {};
+let switchTimeout;
+let onMorningDoneNote = false; // tracks if we’re showing the morning done note
+function getTodayDate() {
+    return new Date().toLocaleDateString('en-GB');
+}
+
+
+/****************************************************
+ * 1️⃣ GLOBAL ELEMENTS & INITIAL REFERENCES
+ ****************************************************/
+const contentArea = document.getElementById('contentArea');
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressBar = document.getElementById('progressBar');
+const btnSettings = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+
+
+
+/****************************************************
+ * 3️⃣ LOCAL STORAGE: LOAD & SAVE
+ ****************************************************/
+function loadSavedData() {
+    const day = getTodayDate();
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    const isMorning = getMode() === 'morning';
+    const modeData = isMorning ? all[day]?.morning : all[day]?.night;
+
+    if (modeData) {
+        currentIndex = modeData.currentIndex || 0;
+        answers = modeData.answers || {};
+    } else {
+        currentIndex = 0;
+        answers = {};
+    }
+}
+
+function saveData() {
+    const day = getTodayDate();
+    let all = JSON.parse(localStorage.getItem('dailyTrackerData')) || {};
+
+    if (!all[day]) all[day] = {};
+
+    if (getMode() === 'morning') {
+        all[day].morning = { currentIndex, answers };
+    } else {
+        all[day].night = { currentIndex, answers };
+    }
+
+    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+}
+
+// Save before leaving page
+window.addEventListener('beforeunload', saveData);
+
+/****************************************************
+ * 4️⃣ MODE SWITCHING (UI + DATA)
+ ****************************************************/
+   
+   function switchMode(mode) {
+    saveData();
+    document.body.classList.toggle('morning', mode === 'morning');
+    document.body.classList.toggle('night', mode === 'night');
+    loadSavedData();
+    loadUI();
+}
+   
+/****************************************************
+ * 5️⃣ NAVIGATION BUTTONS
+ ****************************************************/
 document.getElementById('morningBtn').onclick = () => {
   const last = localStorage.getItem('lastMorningProgress') || '';
   window.location.href = `index.html?mode=morning&last=${encodeURIComponent(last)}`;
@@ -195,22 +480,302 @@ document.getElementById('nightBtn').onclick = () => {
   const last = localStorage.getItem('lastNightProgress') || '';
   window.location.href = `index.html?mode=night&last=${encodeURIComponent(last)}`;
 };
-document.getElementById('historyBtn').onclick = () => { window.location.href = 'history.html'; };
-document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
-document.getElementById('blankBtn').onclick = () => { window.location.href = 'blank.html'; };
+document.getElementById('historyBtn').addEventListener('click', () => { window.location.href = 'history.html'; });
+document.getElementById('blankBtn').addEventListener('click', () => { window.location.href = 'blank.html'; });
+document.getElementById('dataBtn').addEventListener('click', () => { window.location.href = 'data.html'; });
 
-/* Settings menu toggle */
-const btnSettings = document.getElementById('btnSettings');
-const settingsMenu = document.getElementById('settingsMenu');
-const menuOverlay = document.getElementById('menuOverlay');
-btnSettings.onclick = () => {
-  const isOpen = settingsMenu.classList.toggle('show');
-  menuOverlay.classList.toggle('show', isOpen);
+/****************************************************
+ * 6️⃣ MAIN UI RENDERING
+ ****************************************************/
+   function updateDayOfWeek() {
+    const dayOfWeekElement = document.getElementById('dayOfWeek');
+    const today = new Date();
+    const options = { weekday: 'long', month: 'short', day: 'numeric' };
+    dayOfWeekElement.textContent = today.toLocaleDateString('en-US', options);
+}
+
+function loadUI() {
+    updateDayOfWeek();
+
+    const mode = getMode();
+    const questions = getQuestions();
+
+    progressBar.parentElement.style.display = 'block';
+
+    // Morning checklist logic
+    if (mode === 'morning' && currentIndex >= MORNING.length) {
+        if (onMorningDoneNote) {
+            loadMorningChecklist();
+            return;
+        }
+        onMorningDoneNote = true;
+        nextBtn.textContent = 'Next';
+        return;
+    }
+
+    // Night checklist logic
+    if (mode === 'night') {
+        if (currentIndex === -1 || !answers._nightChecklistDone) {
+            currentIndex = -1;
+            loadNightChecklist();
+            return;
+        }
+    }
+
+    // Night completion
+    if (mode === 'night' && currentIndex >= NIGHT.length) {
+        contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
+        backBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        updateProgressBar();
+        return;
+    }
+
+/****************************************************
+ * 7️⃣ QUESTION RENDERING FUNCTIONS
+ ****************************************************/
+   const q = questions[currentIndex];
+
+    let questionHeader = '';
+    if (q.icon) {
+        const specialClass = q.specialIcon ? ' special-icon' : '';
+        questionHeader = `
+          <div class="question-with-icon">
+            <div class="question-icon${specialClass}">
+              <img src="icons/${q.icon}" alt="${q.label}">
+            </div>
+            <span class="question-text">${q.label}</span>
+          </div>
+        `;
+    } else {
+        questionHeader = `<div class="question">${q.label}</div>`;
+    }
+
+    let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
+
+// Render options
+if (q.type === 'single') {
+    q.options.forEach(opt => {
+        const selected = answers[q.key] === opt ? 'selected' : '';
+        html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+    });
+
+} else if (q.type === 'multi' && q.key === 'caffeine_alcohol') {
+    if (!answers[q.key]) answers[q.key] = {};
+    q.options.forEach(opt => {
+        const count = answers[q.key][opt] || 0;
+        html += `
+          <div class="opt-btn drink-pill">
+            <span style="flex:1">${opt}</span>
+            <div class="counter-inner">
+              <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+              <span id="count-${opt}">${count}</span>
+              <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+            </div>
+          </div>
+        `;
+    });
+
+    // ✅ Enable next button only for caffeine/alcohol counter
+    nextBtn.disabled = false;
+    nextBtn.onclick = () => {
+        currentIndex++;
+        loadUI();
+    };
+
+} else if (q.type === 'multi') {
+    if (!answers[q.key]) answers[q.key] = [];
+    q.options.forEach(opt => {
+        const selected = answers[q.key].includes(opt) ? 'selected' : '';
+        html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+    });
+
+} else if (q.type === 'time') {
+    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
+}
+
+    html += '</div>';
+    contentArea.innerHTML = html;
+
+    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = 'Next';
+    updateProgressBar();
+}
+
+/****************************************************
+ * 8️⃣ ANSWER HANDLING - SINGLE, MULTI, COUNTER
+ ****************************************************/
+window.selectOption = (opt) => {
+    const q = getQuestions()[currentIndex];
+    answers[q.key] = opt;
+    saveData();
+    nextBtn.disabled = false;
+    updateProgressBar();
+
+    // Auto-next if the selected option is "None"
+    if (opt === 'None') {
+        currentIndex++;
+        loadUI();
+    } else if (q.autoNext) {
+        currentIndex++;
+        loadUI();
+    }
 };
-menuOverlay.onclick = () => {
-  settingsMenu.classList.remove('show');
-  menuOverlay.classList.remove('show');
+
+window.toggleMultiOption = (qKey, opt) => {
+    if (!answers[qKey]) answers[qKey] = [];
+    const selected = answers[qKey].includes(opt);
+
+    if (opt === 'None') {
+        // Selecting "None" clears everything else
+        answers[qKey] = selected ? [] : ['None'];
+    } else {
+        // Normal multi-option logic
+        answers[qKey] = answers[qKey].filter(o => o !== 'None');
+        if (!selected) answers[qKey].push(opt);
+        else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
+    }
+
+    saveData();
+
+    const val = answers[qKey];
+    const hasAnswer = (Array.isArray(val) && val.length > 0) || (typeof val === 'object' && Object.values(val).some(v => v !== 0));
+    nextBtn.disabled = !hasAnswer;
+
+    loadUI();
+
+    // Auto-next if "None" was just selected
+    if (opt === 'None' && !selected) {
+        currentIndex++;
+        loadUI();
+    }
 };
+
+window.updateCounter = (opt, delta) => {
+    if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
+    let val = answers['caffeine_alcohol'][opt] || 0;
+    val += delta; if (val < 0) val = 0;
+    answers['caffeine_alcohol'][opt] = val;
+    const el = document.getElementById(`count-${opt}`);
+    if (el) el.textContent = val;
+    
+    // Always enable next button for counter questions (0 is valid)
+    nextBtn.disabled = false;
+    
+    saveData(); 
+    updateProgressBar();
+};
+/****************************************************
+ * 9️⃣ BACK / NEXT BUTTON HANDLERS
+ ****************************************************/
+   backBtn.onclick = () => {
+    if (currentIndex > 0) { currentIndex--; loadUI(); }
+    else if (getMode() === 'night' && !answers._nightChecklistDone) { currentIndex = -1; loadNightChecklist(); }
+};
+
+nextBtn.onclick = () => {
+    saveData();
+    const mode = getMode();
+
+    if (mode === 'morning') {
+        // If checklist not yet loaded, load it first
+        if (!document.querySelector('.checklist-wrapper')) {
+            loadMorningChecklist();
+            return;
+        }
+
+        // Trigger popup regardless of checklist completion
+        showMorningChecklistPopup();
+        return;
+    }
+
+    // --- NIGHT LOGIC ---
+    if (mode === 'night') {
+        if (currentIndex === -1) {
+            answers._nightChecklistDone = true;
+            currentIndex = 0;
+            saveData();
+            loadUI();
+            return;
+        }
+
+        currentIndex++;
+        loadUI();
+    }
+};
+
+   document.addEventListener('DOMContentLoaded', () => {
+  const checkbox = document.getElementById('medicationCheckbox');
+
+  // Initialize checkbox from localStorage
+  const alreadyChecked = localStorage.getItem('medChecked') === 'true';
+  checkbox.checked = alreadyChecked;
+
+  checkbox.addEventListener('change', (e) => {
+    let medTotal = parseInt(localStorage.getItem('medTotal') || '28', 10);
+
+    if (e.target.checked && !alreadyChecked) {
+      // Subtract 1 when first checked
+      medTotal = Math.max(0, medTotal - 1);
+      localStorage.setItem('medChecked', 'true');
+    } else if (!e.target.checked && alreadyChecked) {
+      // Optional: restore if unchecked
+      medTotal += 1;
+      localStorage.setItem('medChecked', 'false');
+    }
+
+    localStorage.setItem('medTotal', medTotal);
+  });
+});
+
+}
+footer 
+const footerButtons = document.querySelectorAll('.footer-nav .switch-btn');
+
+  footerButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Remove active from all buttons
+      footerButtons.forEach(b => b.classList.remove('active'));
+
+      // Add active to the clicked one
+      btn.classList.add('active');
+    });
+  });
+
+
+/****************************************************
+ * 1️⃣4️⃣ SETTINGS MENU
+ ****************************************************/
+   btnSettings.onclick = () => {
+    const isOpen = settingsMenu.classList.toggle('show');
+    menuOverlay.classList.toggle('show', isOpen);
+};
+menuOverlay.onclick = () => { settingsMenu.classList.remove('show'); menuOverlay.classList.remove('show'); };
+document.querySelectorAll('#settingsMenu button').forEach(btn => {
+    btn.addEventListener('click', () => {
+        settingsMenu.classList.remove('show');
+        menuOverlay.classList.remove('show');
+    });
+});
+
+/****************************************************
+ * 1️⃣5️⃣ EXPORT & CLEAR DATA
+ ****************************************************/
+   document.getElementById("btnExport").addEventListener("click", () => {
+    const data = localStorage.getItem("dailyTrackerData");
+    if (!data) { alert("No data to export yet."); return; }
+
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "daily-tracker-data.json";
+    a.click();
+    URL.revokeObjectURL(url);
+});
+
 
 /* ========== History logic (view/delete) ========== */
 const container = document.getElementById('historyContainer');
@@ -327,6 +892,6 @@ document.getElementById('btnClearToday').addEventListener('click', () => {
   loadHistory();
   alert("Today's data cleared.");
 });
-</script>
+  </script>
 </body>
 </html>
