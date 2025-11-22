@@ -236,32 +236,6 @@ input[type="time"]:focus {
 }
 
 /* ===============================================
-   DAY NIGHT MODE BUTTONS
-   ================================================= */
-.switch-btn {
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background 0.25s;
-}
-.switch-btn img {
-  width: 28px;
-  height: 28px;
-  filter: invert(1);
-  opacity: 0.5;
-  transform: scale(1);
-  transition: opacity 0.25s, transform 0.25s, filter 0.25s;
-}
-.switch-btn:hover { background: rgba(255,255,255,0.08); border-radius:50%; }
-body.morning .switch-btn.morning img { opacity: 1; transform: scale(1.15); }
-body.night .switch-btn.night img { opacity: 1; transform: scale(1.15); }
-
-/* ===============================================
    ANSWER BUTTONS
 ================================================= */
 .opt-btn {
