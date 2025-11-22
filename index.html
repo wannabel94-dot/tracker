@@ -1142,11 +1142,16 @@ footer
 /****************************************************
  * 1️⃣4️⃣ SETTINGS MENU
  ****************************************************/
-   btnSettings.onclick = () => {
+btnSettings.onclick = () => {
     const isOpen = settingsMenu.classList.toggle('show');
     menuOverlay.classList.toggle('show', isOpen);
 };
-menuOverlay.onclick = () => { settingsMenu.classList.remove('show'); menuOverlay.classList.remove('show'); };
+
+menuOverlay.onclick = () => {
+    settingsMenu.classList.remove('show');
+    menuOverlay.classList.remove('show');
+};
+
 document.querySelectorAll('#settingsMenu button').forEach(btn => {
     btn.addEventListener('click', () => {
         settingsMenu.classList.remove('show');
