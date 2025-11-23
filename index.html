@@ -562,10 +562,27 @@ function getTodayDate() {
  * 1️⃣ GLOBAL ELEMENTS & INITIAL REFERENCES
  ****************************************************/
 const contentArea = document.getElementById('contentArea');
+document.getElementById('morningBtn').onclick = () => switchMode('morning');
+document.getElementById('nightBtn').onclick = () => switchMode('night');
 const backBtn = document.getElementById('backBtn');
 const nextBtn = document.getElementById('nextBtn');
 const progressBar = document.getElementById('progressBar');
+document.getElementById('historyBtn').onclick = () => { window.location.href = 'history.html'; };
+document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
+document.getElementById('blankBtn').onclick = () => { window.location.href = 'blank.html'; };
 
+/* Settings menu toggle */
+const btnSettings = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+btnSettings.onclick = () => {
+  const isOpen = settingsMenu.classList.toggle('show');
+  menuOverlay.classList.toggle('show', isOpen);
+};
+menuOverlay.onclick = () => {
+  settingsMenu.classList.remove('show');
+  menuOverlay.classList.remove('show');
+};
 /****************************************************
  * 2️⃣ MODE & QUESTION HELPERS
  ****************************************************/
@@ -619,15 +636,6 @@ window.addEventListener('beforeunload', saveData);
     loadSavedData();
     loadUI();
 }
-   
-/****************************************************
- * 5️⃣ NAVIGATION BUTTONS
- ****************************************************/
-document.getElementById('morningBtn').onclick = () => switchMode('morning');
-document.getElementById('nightBtn').onclick = () => switchMode('night');
-document.getElementById('historyBtn').addEventListener('click', () => { window.location.href = 'history.html'; });
-document.getElementById('blankBtn').addEventListener('click', () => { window.location.href = 'blank.html'; });
-document.getElementById('dataBtn').addEventListener('click', () => { window.location.href = 'data.html'; });
 
 /****************************************************
  * 6️⃣ MAIN UI RENDERING
@@ -1146,22 +1154,7 @@ footer
     progressBar.style.width = keys.length>0 ? Math.round((done/keys.length)*100)+'%' : '0%';
 }
 
-// SETTINGS MENU TOGGLE -------------------------------
-const menuOverlay = document.getElementById("menuOverlay");
-const btnSettings = document.getElementById("btnSettings");
-const settingsMenu = document.getElementById("settingsMenu");
 
-// Open menu
-btnSettings.addEventListener("click", () => {
-    settingsMenu.classList.add("show");
-    menuOverlay.classList.add("show");
-});
-
-// Close menu when clicking overlay
-menuOverlay.addEventListener("click", () => {
-    settingsMenu.classList.remove("show");
-    menuOverlay.classList.remove("show");
-});
 
 
 /****************************************************
