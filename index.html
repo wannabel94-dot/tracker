@@ -1145,27 +1145,22 @@ footer
     progressBar.style.width = keys.length>0 ? Math.round((done/keys.length)*100)+'%' : '0%';
 }
 
-/****************************************************
- * 1️⃣4️⃣ SETTINGS MENU
- ------ */
- const menuOverlay = document.getElementById('menuOverlay');
+// SETTINGS MENU TOGGLE -------------------------------
+const menuOverlay = document.getElementById("menuOverlay");
+const btnSettings = document.getElementById("btnSettings");
+const settingsMenu = document.getElementById("settingsMenu");
 
-btnSettings.onclick = () => {
-  const isOpen = settingsMenu.classList.toggle('show');
-  menuOverlay.classList.toggle('show', isOpen);
-};
+// Open menu
+btnSettings.addEventListener("click", () => {
+    settingsMenu.classList.add("show");
+    menuOverlay.classList.add("show");
+});
 
-// Close menu when clicking outside or on any menu button
-menuOverlay.onclick = () => {
-  settingsMenu.classList.remove('show');
-  menuOverlay.classList.remove('show');
-};
-document.querySelectorAll('#settingsMenu button').forEach(btn => 
-  btn.addEventListener('click', () => {
-    settingsMenu.classList.remove('show');
-    menuOverlay.classList.remove('show');
-  })
-);
+// Close menu when clicking overlay
+menuOverlay.addEventListener("click", () => {
+    settingsMenu.classList.remove("show");
+    menuOverlay.classList.remove("show");
+});
 
 
 /****************************************************
