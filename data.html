@@ -317,8 +317,12 @@ function buildTable() {
         html += `<tr><td><strong>${day}</strong></td>`; // first column = date
 
         allItems.forEach(item => {
-           const answers = raw[day]?.answers || raw[day] || {};
-            if (item.key === "AM_routine") {
+const dayData = raw[day] || {};
+const answers = {
+    ...(dayData.morning?.answers || {}),
+    ...(dayData.night?.answers || {})
+};           
+           if (item.key === "AM_routine") {
 const total = MORNING_CHECKLIST_KEYS.length;
 const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === "Yes").length;
                 const percent = Math.round((done / total) * 100);
