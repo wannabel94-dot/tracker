@@ -143,16 +143,16 @@ table th, table td {
 .table-card {
   border-radius: 14px;
   padding: 12px;
-  margin-top: 15px;/* Remove previous margin/padding that blocked scroll */
-   
-body.data-page .wrap {
-  margin-top: 0 !important; /* overrides anything else */
-}
-
-
+  margin-top: 15px;
   overflow-y: auto;
   overflow-x: auto;
 }
+
+/* This must be OUTSIDE .table-card */
+body.data-page .wrap {
+  margin-top: 0 !important;
+}
+
 /* ===============================================
    MENU
 ================================================= */
