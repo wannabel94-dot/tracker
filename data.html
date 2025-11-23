@@ -320,7 +320,13 @@ document.getElementById('dataBtn').addEventListener('click', () => { window.loca
    
 function buildTable() {
     const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
-    const days = Object.keys(raw).sort((a, b) => new Date(b) - new Date(a)); // most recent first
+const days = Object.keys(raw).sort((a, b) => {
+    const parse = d => {
+        const [day, month, year] = d.split('/').map(Number);
+        return new Date(year, month - 1, day);
+    };
+    return parse(b) - parse(a); // newest → oldest
+});
 
     if (days.length === 0) {
         document.getElementById("tableContainer").innerHTML = "<p>No data saved.</p>";
