@@ -201,6 +201,14 @@ filter:invert(1);
 </footer>
 
 <script>
+
+  const HIDE_HISTORY_KEYS = [
+  "_nightChecklistDone",
+  "_nightchecklistdone",
+  "_morningChecklistDone",
+  "_morningchecklistdone"
+];
+
 /* ========================
    Footer navigation handlers
    - morning/night send user to index.html preserving last progress stored in localStorage
@@ -281,7 +289,8 @@ window.viewEntry = (day) => {
     html += `<div style="display:grid;gap:10px">`;
     if (entry.morning && entry.morning.answers) {
       html += `<h4 style="margin:0">Morning</h4><ul style="padding-left:16px;margin:0">`;
-      for (const k in entry.morning.answers) {
+for (const k in entry.morning.answers) {
+  if (HIDE_HISTORY_KEYS.includes(k)) continue;
         let v = entry.morning.answers[k];
         if (Array.isArray(v)) v = v.join(', ');
         html += `<li><strong>${HISTORY_LABELS[k] || k}</strong>: ${v}</li>`;
@@ -290,7 +299,8 @@ window.viewEntry = (day) => {
     }
     if (entry.night && entry.night.answers) {
       html += `<h4 style="margin:0">Night</h4><ul style="padding-left:16px;margin:0">`;
-      for (const k in entry.night.answers) {
+for (const k in entry.night.answers) {
+  if (HIDE_HISTORY_KEYS.includes(k)) continue;
         let v = entry.night.answers[k];
         if (Array.isArray(v)) v = v.join(', ');
         html += `<li><strong>${HISTORY_LABELS[k] || k}</strong>: ${v}</li>`;
