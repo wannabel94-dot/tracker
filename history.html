@@ -284,7 +284,7 @@ window.viewEntry = (day) => {
       for (const k in entry.morning.answers) {
         let v = entry.morning.answers[k];
         if (Array.isArray(v)) v = v.join(', ');
-        html += `<li><strong>${k}</strong>: ${v}</li>`;
+        html += `<li><strong>${HISTORY_LABELS[k] || k}</strong>: ${v}</li>`;
       }
       html += `</ul>`;
     }
@@ -293,7 +293,7 @@ window.viewEntry = (day) => {
       for (const k in entry.night.answers) {
         let v = entry.night.answers[k];
         if (Array.isArray(v)) v = v.join(', ');
-        html += `<li><strong>${k}</strong>: ${v}</li>`;
+        html += `<li><strong>${HISTORY_LABELS[k] || k}</strong>: ${v}</li>`;
       }
       html += `</ul>`;
     }
