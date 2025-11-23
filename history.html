@@ -34,11 +34,10 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
   width: 100%;
   display:flex;
   align-items:center;
-           background: #07081d; /* must be solid */
+  background: #07081d; /* must be solid */
   justify-content:space-between;
   padding:10px 0px;
   z-index:100;
-  
 }
 #dayOfWeek{ flex:1; text-align:center; font-size:1rem; font-weight:600; color:#f0f4ff; margin:0; pointer-events:none; }
 #btnSettings {
@@ -54,9 +53,8 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
   min-height: 40px;
 }
   
-#btnSettings:hover {
-  color: #ddd;
-}
+#btnSettings:hover { color: #ddd; }
+
 /* Main content */
 .wrap {
   width: 100%;
@@ -81,18 +79,9 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
 .mini-btn.delete:hover{ background:rgba(255,50,50,0.4); }
 
 #entryView{ background:rgba(255,255,255,0.05); padding:16px; border-radius:var(--card-radius); margin-bottom:16px; }
-#entryView h4 {
-  margin-top:16px; 
-  margin-bottom:8px; 
-  font-size:1rem; 
-  font-weight:400;  /* lighter font */
-}
-#entryView h3 {
-  font-weight:400;  /* also make the main day title lighter */
-}
-#entryView li strong {
-  font-weight:500;  /* medium bold for labels */
-}
+#entryView h4 { margin-top:16px; margin-bottom:8px; font-size:1rem; font-weight:400; }
+#entryView h3 { font-weight:400; }
+#entryView li strong { font-weight:500; }
 
 /* ===============================================
    FIXED FOOTER NAV
@@ -103,14 +92,14 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
   left: 0;
   right: 0;
   height: 60px;
-  background: #303f5c; /* change this to any solid color you want */
+  background: #303f5c;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 28px;
-  border-top: none; /* remove the top border */
+  border-top: none;
   z-index: 100;
-  backdrop-filter: none; /* remove blur/saturation effects */
+  backdrop-filter: none;
 }
 
 /* Footer buttons */
@@ -119,7 +108,7 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;               /* space between icon + text */
+  gap: 4px;
   padding: 6px 8px;
   background: transparent;
   border: none;
@@ -131,7 +120,7 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
   width: 22px;
   height: 22px;
   opacity: 0.9;
-filter:invert(1);
+  filter:invert(1);
 }
    
 .footer-nav .switch-btn span {
@@ -140,11 +129,11 @@ filter:invert(1);
 }
 
 .footer-nav .switch-btn.active span {
-  color: #ffd86b;   /* example gold for active */
+  color: #ffd86b;
   opacity: 1;
-  font-weight: 700; /* optional */
+  font-weight: 700;
 }
-   .footer-nav .switch-btn.active img {
+.footer-nav .switch-btn.active img {
   filter: invert(84%) sepia(52%) saturate(545%) hue-rotate(2deg) brightness(103%) contrast(101%);
 }
 
@@ -160,51 +149,40 @@ filter:invert(1);
 .menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity .3s; z-index:150; }
 .menu-overlay.show{ opacity:1; pointer-events:all; }
 
-/* Responsive */
-@media (max-width:480px){
-  body{ padding:12px;}
-}
+@media (max-width:480px){ body{ padding:12px;} }
 </style>
 </head>
 <body class="morning">
-  <!-- Header -->
   <header id="topHeader">
     <div id="dayOfWeek">History</div>
     <button id="btnSettings">☰</button>
   </header>
 
-  <!-- Menu overlay & settings -->
   <div id="menuOverlay" class="menu-overlay"></div>
   <div id="settingsMenu" class="settings-menu">
     <button id="btnExport">Export data</button>
     <button id="btnClearToday">Clear Today's Data</button>
   </div>
 
-  <!-- Content -->
   <div class="wrap" id="historyContainer"></div>
 
- <!-- Sticky footer nav -->
 <footer class="footer-nav">
   <button class="switch-btn morning" id="morningBtn">
     <img src="icons/sun.svg" alt="Morning">
     <span>Morning</span>
   </button>
-
   <button class="switch-btn night" id="nightBtn">
     <img src="icons/night.svg" alt="Night">
     <span>Night</span>
   </button>
-
   <button class="switch-btn history" id="historyBtn">
     <img src="icons/history.svg" alt="History">
     <span>History</span>
   </button>
-
   <button class="switch-btn data" id="dataBtn">
     <img src="icons/data.svg" alt="Data">
     <span>Data</span>
   </button>
-
   <button class="switch-btn blank" id="blankBtn">
     <img src="icons/balloon.svg" alt="Blank">
     <span>Blank</span>
@@ -212,18 +190,14 @@ filter:invert(1);
 </footer>
 
 <script>
-
-  const HIDE_HISTORY_KEYS = [
+const HIDE_HISTORY_KEYS = [
   "_nightChecklistDone",
   "_nightchecklistdone",
   "_morningChecklistDone",
   "_morningchecklistdone"
 ];
 
-/* ========================
-   Footer navigation handlers
-   - morning/night send user to index.html preserving last progress stored in localStorage
-   ======================== */
+/* Footer navigation handlers */
 document.getElementById('morningBtn').onclick = () => {
   const last = localStorage.getItem('lastMorningProgress') || '';
   window.location.href = `index.html?mode=morning&last=${encodeURIComponent(last)}`;
@@ -249,113 +223,7 @@ menuOverlay.onclick = () => {
   menuOverlay.classList.remove('show');
 };
 
-/* ========== History logic (view/delete) ========== */
-const container = document.getElementById('historyContainer');
-
-function safeSortDays(keys){
-  // keys are expected DD/MM/YYYY - convert robustly
-  return keys.sort((a,b) => {
-    const parse = s => {
-      // accept either DD/MM/YYYY or ISO-ish
-      if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(s)) {
-        const [d,m,y] = s.split('/');
-        return new Date(`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`);
-      }
-      return new Date(s);
-    };
-    return parse(b) - parse(a);
-  });
-}
-
-function loadHistory(){
-  container.innerHTML = '';
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const days = safeSortDays(Object.keys(all));
-  if (!days.length) { container.innerHTML = '<p style="color:rgba(255,255,255,0.8)">No history yet.</p>'; return; }
-  days.forEach(day => {
-    const entry = document.createElement('div');
-    entry.className = 'day-entry';
-    entry.innerHTML = `
-      <div class="day-header">
-        <h3>${day}</h3>
-        <div class="day-actions">
-          <button class="mini-btn" data-day="${day}" onclick="viewEntry('${day}')">View</button>
-          <button class="mini-btn delete" data-day="${day}" onclick="deleteEntry('${day}')">Delete</button>
-        </div>
-      </div>
-    `;
-    container.appendChild(entry);
-  });
-}
-
-window.viewEntry = (day) => {
-  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-  const entry = all[day];
-  if (!entry) return alert("No data for this day.");
-
-  // Remove existing view under this day, if any
-  const existingView = document.querySelector(`#entryView[data-day='${day}']`);
-  if (existingView) return existingView.remove(); // toggle off if clicked again
-
-  // Remove any other open reviews
-  document.querySelectorAll('#entryView').forEach(d => d.remove());
-
-  const div = document.createElement('div'); 
-  div.id = 'entryView';
-  div.dataset.day = day; // mark which day it belongs to
-  div.style.background = "rgba(255,255,255,0.05)";
-  div.style.padding = "16px";
-  div.style.borderRadius = "14px";
-  div.style.marginBottom = "16px";
-
-  let html = `<h3 style="margin:0 0 8px 0">${day} — Review</h3>`;
-
-  if (entry.morning || entry.night) {
-    html += `<div style="display:grid;gap:10px">`;
-    if (entry.morning && entry.morning.answers) {
-      html += `<h4 style="margin:0">Morning</h4><ul style="padding-left:16px;margin:0">`;
-      for (const k in entry.morning.answers) {
-        if (HIDE_HISTORY_KEYS.includes(k)) continue;
-        let v = entry.morning.answers[k];
-        if (Array.isArray(v)) v = v.join(', ');
-        html += `<li><strong>${HISTORY_LABELS[k] || k}</strong>: ${v}</li>`;
-      }
-      html += `</ul>`;
-    }
-    if (entry.night && entry.night.answers) {
-      html += `<h4 style="margin:0">Night</h4><ul style="padding-left:16px;margin:0">`;
-      for (const k in entry.night.answers) {
-        if (HIDE_HISTORY_KEYS.includes(k)) continue;
-        let v = entry.night.answers[k];
-        if (Array.isArray(v)) v = v.join(', ');
-        html += `<li><strong>${HISTORY_LABELS[k] || k}</strong>: ${v}</li>`;
-      }
-      html += `</ul>`;
-    }
-    html += `</div>`;
-  } else if (entry.answers) {
-    html += `<h4>Answers</h4><ul style="padding-left:16px">`;
-    for (const key in entry.answers) {
-      let val = entry.answers[key];
-      if (Array.isArray(val)) val = val.join(', ');
-      html += `<li><strong>${key}</strong>: ${val}</li>`;
-    }
-    html += `</ul>`;
-  } else {
-    html += '<p>No answers recorded.</p>';
-  }
-
-  div.innerHTML = html;
-
-  // Insert review **right after the clicked day entry**
-  const dayEntry = document.querySelector(`.day-entry .mini-btn[data-day='${day}']`).closest('.day-entry');
-  dayEntry.insertAdjacentElement('afterend', div);
-
-  div.scrollIntoView({ behavior: 'smooth' });
-};
-
-
-// Label mappings for history view
+/* Label mappings for history view */
 const HISTORY_LABELS = {
   temp: "Took temp",
   wake_time: "Woke up",
@@ -395,7 +263,7 @@ const HISTORY_LABELS = {
   most_prominent: "Mental",
   pjs: "PJs",
   prepare_breakfast: "Prepared meals",
-  tidy up_night: "Tidied PM",
+  tidy_up_night: "Tidied PM",
   meds: "Extra Meds",
   sensory_triggers: "Sensory",
   appointments: "Appointments",
@@ -406,7 +274,108 @@ const HISTORY_LABELS = {
   closed_eyes_time: "Closed Eyes"
 };
 
-  
+/* ========== History logic (view/delete) ========== */
+const container = document.getElementById('historyContainer');
+
+function safeSortDays(keys){
+  return keys.sort((a,b) => {
+    const parse = s => {
+      if (/\d{1,2}\/\d{1,2}\/\d{4}/.test(s)) {
+        const [d,m,y] = s.split('/');
+        return new Date(`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`);
+      }
+      return new Date(s);
+    };
+    return parse(b) - parse(a);
+  });
+}
+
+function loadHistory(){
+  container.innerHTML = '';
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  const days = safeSortDays(Object.keys(all));
+  if (!days.length) { container.innerHTML = '<p style="color:rgba(255,255,255,0.8)">No history yet.</p>'; return; }
+  days.forEach(day => {
+    const entry = document.createElement('div');
+    entry.className = 'day-entry';
+    entry.innerHTML = `
+      <div class="day-header">
+        <h3>${day}</h3>
+        <div class="day-actions">
+          <button class="mini-btn" data-day="${day}" onclick="viewEntry('${day}')">View</button>
+          <button class="mini-btn delete" data-day="${day}" onclick="deleteEntry('${day}')">Delete</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(entry);
+  });
+}
+
+window.viewEntry = (day) => {
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  const entry = all[day];
+  if (!entry) return alert("No data for this day.");
+
+  const existingView = document.querySelector(`#entryView[data-day='${day}']`);
+  if (existingView) return existingView.remove(); // toggle off
+
+  document.querySelectorAll('#entryView').forEach(d => d.remove());
+
+  const div = document.createElement('div'); 
+  div.id = 'entryView';
+  div.dataset.day = day; 
+  div.style.background = "rgba(255,255,255,0.05)";
+  div.style.padding = "16px";
+  div.style.borderRadius = "14px";
+  div.style.marginBottom = "16px";
+
+  let html = `<h3 style="margin:0 0 8px 0">${day} — Review</h3>`;
+
+  if (entry.morning || entry.night) {
+    html += `<div style="display:grid;gap:10px">`;
+    if (entry.morning && entry.morning.answers) {
+      html += `<h4 style="margin:0">Morning</h4><ul style="padding-left:16px;margin:0">`;
+      for (const k in entry.morning.answers) {
+        if (HIDE_HISTORY_KEYS.includes(k)) continue;
+        let v = entry.morning.answers[k];
+        if (Array.isArray(v)) v = v.join(', ');
+        html += `<li><strong>${HISTORY_LABELS[k] || k}</strong>: ${v}</li>`;
+      }
+      html += `</ul>`;
+    }
+    if (entry.night && entry.night.answers) {
+      html += `<h4 style="margin:0">Night</h4><ul style="padding-left:16px;margin:0">`;
+      for (const k in entry.night.answers) {
+        if (HIDE_HISTORY_KEYS.includes(k)) continue;
+        let v = entry.night.answers[k];
+        if (Array.isArray(v)) v = v.join(', ');
+        html += `<li><strong>${HISTORY_LABELS[k] || k}</strong>: ${v}</li>`;
+      }
+      html += `</ul>`;
+    }
+    html += `</div>`;
+  } else if (entry.answers) {
+    html += `<h4>Answers</h4><ul style="padding-left:16px">`;
+    for (const key in entry.answers) {
+      let val = entry.answers[key];
+      if (Array.isArray(val)) val = val.join(', ');
+      html += `<li><strong>${HISTORY_LABELS[key] || key}</strong>: ${val}</li>`;
+    }
+    html += `</ul>`;
+  } else {
+    html += '<p>No answers recorded.</p>';
+  }
+
+  div.innerHTML = html;
+
+  const dayEntryBtn = document.querySelector(`.mini-btn[data-day='${day}']`);
+  if (dayEntryBtn) {
+    const dayEntryDiv = dayEntryBtn.closest('.day-entry');
+    dayEntryDiv.insertAdjacentElement('afterend', div);
+    div.scrollIntoView({ behavior: 'smooth' });
+  }
+};
+
 window.deleteEntry = (day) => {
   if (!confirm(`Delete all data for ${day}?`)) return;
   const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
@@ -418,7 +387,6 @@ window.deleteEntry = (day) => {
 /* initial load */
 loadHistory();
 
-/* export / clear buttons */
 document.getElementById('btnExport').addEventListener('click', () => {
   const data = localStorage.getItem('dailyTrackerData');
   if (!data) { alert("No data to export yet."); return; }
