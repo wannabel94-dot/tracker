@@ -318,13 +318,13 @@ function buildTable() {
 
         allItems.forEach(item => {
             if (item.key === "AM_routine") {
-                const answers = raw[day]?.answers || {};
-                const total = MORNING_CHECKLIST_KEYS.length;
-                const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === "Yes").length;
+const answers = raw[day]?.answers || raw[day] || {};
+const total = MORNING_CHECKLIST_KEYS.length;
+const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === "Yes").length;
                 const percent = Math.round((done / total) * 100);
                 html += `<td>${percent}%</td>`;
             } else {
-                let val = raw[day]?.answers?.[item.key] ?? "";
+                let val = (answers[item.key]) ?? "";
                 if (Array.isArray(val)) val = val.map(v => v === "Yes" ? "✓" : v === "No" ? "✗" : v).join(", ");
                 else val = val === "Yes" ? "✓" : val === "No" ? "✗" : val;
                 html += `<td>${val}</td>`;
