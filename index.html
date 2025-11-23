@@ -140,10 +140,16 @@ body.morning {
 .wrap {
   width: 100%;
   max-width: 740px;
-  margin-top: 40px; /* keeps content below header */
-  display: block; /* important: prevents flex/stretch */
+  margin: 0 auto;
+  position: absolute;
+  top: 60px;      /* header height */
+  bottom: 60px;   /* footer height */
+  left: 0;
+  right: 0;
+  padding: 18px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
-
 /* ===============================================
    FIXED FOOTER NAV
 ================================================= */
