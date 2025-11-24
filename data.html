@@ -184,12 +184,20 @@ body.data-page .wrap {
   right: 0;
   height: 60px;
   background: #303f5c;
-  display: flex;
-  justify-content: space-between;  /* pushes groups apart */
-  align-items: center;
-  padding: 0 25px;                 /* spacing from screen edges */
   z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+
+  /* circle cut-out */
+  clip-path: path("M0,0 H100% V100% H0 Z 
+                    M50% 0 
+                    m -40 0 
+                    a 40,40 0 1,0 80,0 
+                    a 40,40 0 1,0 -80,0");
 }
+
 
 .left-group,
 .right-group {
