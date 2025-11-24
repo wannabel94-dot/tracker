@@ -160,27 +160,6 @@ table th, table td {
 body.data-page .wrap {
   margin-top: 0 !important;
 }
-.floating-center-btn {
-  position: absolute;
-  top: -28px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 65px;
-  height: 65px;
-  border-radius: 50%;
-  background: #ffd86b;
-  border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-  z-index: 150;
-  cursor: pointer;
-  font-size: 36px;     /* make plus big */
-  font-weight: 700;
-  color: #000;         /* dark plus color */
-  line-height: 0;
-}
 
 /* ===============================================
    MENU
@@ -204,15 +183,20 @@ body.data-page .wrap {
   left: 0;
   right: 0;
   height: 60px;
-  background: #303f5c; /* change this to any solid color you want */
+  background: #303f5c;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;  /* pushes groups apart */
   align-items: center;
-  gap: 28px;
-  border-top: none; /* remove the top border */
+  padding: 0 25px;                 /* spacing from screen edges */
   z-index: 100;
-  backdrop-filter: none; /* remove blur/saturation effects */
 }
+
+.left-group,
+.right-group {
+  display: flex;
+  gap: 28px;  /* spacing between buttons */
+}
+
 
 /* Footer buttons */
 .footer-nav .switch-btn {
@@ -248,6 +232,27 @@ filter:invert(1);
    .footer-nav .switch-btn.active img {
   filter: invert(84%) sepia(52%) saturate(545%) hue-rotate(2deg) brightness(103%) contrast(101%);
 }
+   .floating-center-btn {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: #8d4585;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  z-index: 150;
+  cursor: pointer;
+  font-size: 36px;     /* make plus big */
+  font-weight: 700;
+  color: #000;         /* dark plus color */
+  line-height: 0;
+}
 /* ===============================================
    RESPONSIVE / MOBILE
 ================================================= */
@@ -275,28 +280,35 @@ filter:invert(1);
 
  <!-- Sticky footer nav -->
 <footer class="footer-nav">
- <button class="floating-center-btn" id="centralBtn">+</button>
 
-  <button class="switch-btn morning" id="morningBtn">
-    <img src="icons/sun.svg" alt="Morning">
-    <span>Morning</span>
-  </button>
+  <div class="left-group">
+    <button class="switch-btn morning" id="morningBtn">
+      <img src="icons/sun.svg" alt="Morning">
+      <span>Morning</span>
+    </button>
 
-  <button class="switch-btn night" id="nightBtn">
-    <img src="icons/night.svg" alt="Night">
-    <span>Night</span>
-  </button>
+    <button class="switch-btn night" id="nightBtn">
+      <img src="icons/night.svg" alt="Night">
+      <span>Night</span>
+    </button>
+  </div>
 
-  <button class="switch-btn history" id="historyBtn">
-    <img src="icons/history.svg" alt="History">
-    <span>History</span>
-  </button>
+  <button class="floating-center-btn" id="centralBtn">+</button>
 
-  <button class="switch-btn data" id="dataBtn">
-    <img src="icons/data.svg" alt="Data">
-    <span>Data</span>
-  </button>
+  <div class="right-group">
+    <button class="switch-btn history" id="historyBtn">
+      <img src="icons/history.svg" alt="History">
+      <span>History</span>
+    </button>
+
+    <button class="switch-btn data" id="dataBtn">
+      <img src="icons/data.svg" alt="Data">
+      <span>Data</span>
+    </button>
+  </div>
+
 </footer>
+
 <script>
     const LABELS = { wake_time: "Wake up", how_slept: "Sleep", temp: "Take temp", made_bed: "Made Bed", took_meds_morn: "Took meds", tidy_up: "Tidied", shower_morn: "Showered", get_dressed: "Dressed", led_mask_morn: "LED Mask", skincare_morn: "Skincare AM", eat_breakfast: "Breakfast", supplements_morn: "Supplements", brush_teeth_morn: "Teeth AM", psyllium: "Psyllium", magnesium: "Magnesium", pillowcase: "Pillowcase", shower_night: "Showered", skincare_night: "Skincare PM", teeth_night: "Teeth PM", flossed: "Flossed", left_house: "Left House", caffeine_alcohol: "Caffeine/Alcohol", sickness: "Symptoms", saw_dogs: "Saw Dogs", feel_with_L: "Relationship", house_state: "House", drove: "Driving", body_feelings: "Body", food_desc: "Diet", most_prominent: "Mental", meds: "Extra Meds", sensory_triggers: "Sensory Triggers", appointments: "Appointments", movement: "Movement", talked_to_anyone: "People", wellness: "Wellness", creative: "Creative", closed_eyes_time: "Closed Eyes" }; function yesNoToSymbol(v) { if (v === "Yes") return "✓"; if (v === "No") return "✗"; return v; }
 const MORNING_CHECKLIST_KEYS = [
