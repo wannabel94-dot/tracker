@@ -273,11 +273,6 @@ filter:invert(1);
     <img src="icons/data.svg" alt="Data">
     <span>Data</span>
   </button>
-
-  <button class="switch-btn blank" id="blankBtn">
-    <img src="icons/balloon.svg" alt="Blank">
-    <span>Blank</span>
-  </button>
 </footer>
 <script>
     const LABELS = { wake_time: "Wake up", how_slept: "Sleep", temp: "Take temp", made_bed: "Made Bed", took_meds_morn: "Took meds", tidy_up: "Tidied", shower_morn: "Showered", get_dressed: "Dressed", led_mask_morn: "LED Mask", skincare_morn: "Skincare AM", eat_breakfast: "Breakfast", supplements_morn: "Supplements", brush_teeth_morn: "Teeth AM", psyllium: "Psyllium", magnesium: "Magnesium", pillowcase: "Pillowcase", shower_night: "Showered", skincare_night: "Skincare PM", teeth_night: "Teeth PM", flossed: "Flossed", left_house: "Left House", caffeine_alcohol: "Caffeine/Alcohol", sickness: "Symptoms", saw_dogs: "Saw Dogs", feel_with_L: "Relationship", house_state: "House", drove: "Driving", body_feelings: "Body", food_desc: "Diet", most_prominent: "Mental", meds: "Extra Meds", sensory_triggers: "Sensory Triggers", appointments: "Appointments", movement: "Movement", talked_to_anyone: "People", wellness: "Wellness", creative: "Creative", closed_eyes_time: "Closed Eyes" }; function yesNoToSymbol(v) { if (v === "Yes") return "✓"; if (v === "No") return "✗"; return v; }
@@ -314,7 +309,6 @@ document.getElementById('nightBtn').onclick = () => {
   window.location.href = `index.html?mode=night&last=${encodeURIComponent(last)}`;
 };
 document.getElementById('historyBtn').addEventListener('click', () => { window.location.href = 'history.html'; });
-document.getElementById('blankBtn').addEventListener('click', () => { window.location.href = 'blank.html'; });
 document.getElementById('dataBtn').addEventListener('click', () => { window.location.href = 'data.html'; });
 
    
