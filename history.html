@@ -183,6 +183,10 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
     <img src="icons/data.svg" alt="Data">
     <span>Data</span>
   </button>
+  <button class="switch-btn blank" id="blankBtn">
+    <img src="icons/balloon.svg" alt="Blank">
+    <span>Blank</span>
+  </button>
 </footer>
 
 <script>
@@ -204,6 +208,7 @@ document.getElementById('nightBtn').onclick = () => {
 };
 document.getElementById('historyBtn').onclick = () => { window.location.href = 'history.html'; };
 document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
+document.getElementById('blankBtn').onclick = () => { window.location.href = 'blank.html'; };
 
 /* Settings menu toggle */
 const btnSettings = document.getElementById('btnSettings');
@@ -238,7 +243,7 @@ const HISTORY_LABELS = {
   supplements_morn: "Supplements",
   brush_teeth_morn: "Teeth AM",
 
-  psyllium: "Psyllium",
+  psyillium: "Psyllium",
   magnesium: "Magnesium",
   pillowcase: "Pillowcase change",
   tea_night: "Had tea PM",
@@ -324,7 +329,7 @@ window.viewEntry = (day) => {
   div.style.borderRadius = "14px";
   div.style.marginBottom = "16px";
 
-  let html = `<h3 style="margin:0 0 8px 0">Review</h3>`;
+  let html = `<h3 style="margin:0 0 8px 0">${day} — Review</h3>`;
 
   if (entry.morning || entry.night) {
     html += `<div style="display:grid;gap:10px">`;
