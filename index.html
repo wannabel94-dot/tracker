@@ -493,6 +493,9 @@ let onMorningDoneNote = false; // tracks if we’re showing the morning done not
 function getTodayDate() {
     return new Date().toLocaleDateString('en-GB');
 }
+// Get mode from URL (morning/night)
+const urlParams = new URLSearchParams(window.location.search);
+let mode = urlParams.get('mode') || 'morning'; // default to morning
 
   /* ---------- QUESTIONS ---------- */
   const MORNING = [
@@ -601,6 +604,15 @@ menuOverlay.onclick = () => {
 
     alert("Today's data has been cleared.");
 };
+
+   /****************************************************
+ * 2️⃣ INITIALIZE MODE FROM URL
+ ****************************************************/
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode') || 'morning';
+    switchMode(mode); // <-- loads first page of the correct mode
+});
 
 /****************************************************
  * 2️⃣ MODE & QUESTION HELPERS
