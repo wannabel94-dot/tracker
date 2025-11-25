@@ -90,7 +90,22 @@ body.morning {
 #btnSettings:hover {
   color: #ddd;
 }
+#btnData {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 101;
+  position: relative;
+  min-width: 40px;
+  min-height: 40px;
+}
 
+#btnData:hover {
+  color: #ddd;
+}
    /* pop up */-------------------------------
    
 .popup-overlay {
@@ -433,6 +448,7 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 <body class="morning">
   <!-- Sticky header -->
   <header id="topHeader">
+    <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"><span>Data</span></button>
     <div id="dayOfWeek">Monday</div>
     <button id="btnSettings">☰</button>
   </header>
@@ -464,7 +480,6 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   </div>
   <div class="right-group">
     <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
-    <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"><span>Data</span></button>
   </div>
 </footer>
 <button class="floating-center-btn" id="centralBtn">+</button>
