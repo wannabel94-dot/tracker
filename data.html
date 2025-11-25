@@ -85,6 +85,27 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
     </div>
   </div>
 </div>
+<!-- Delete Popup -->
+<div id="deletePopup" class="edit-popup hidden">
+  <div class="popup-box">
+    <h3>Delete this day?</h3>
+    <div class="popup-btns">
+      <button id="deleteConfirmBtn">Delete</button>
+      <button id="deleteCancelBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete Popup -->
+<div id="confirmDeletePopup" class="edit-popup hidden">
+  <div class="popup-box">
+    <h3>Are you sure?</h3>
+    <div class="popup-btns">
+      <button id="confirmDeleteBtn">Delete</button>
+      <button id="confirmCancelBtn">Go Back</button>
+    </div>
+  </div>
+</div>
 
 <script>
   // Footer navigation handlers
@@ -345,6 +366,54 @@ document.getElementById('popupSave').onclick = () => {
   exitEditModeOnOutside({ target: document.body });
   buildTable();
 };
+const deletePopup = document.getElementById('deletePopup');
+const confirmDeletePopup = document.getElementById('confirmDeletePopup');
+
+let deleteTargetDay = null;
+
+// --- Click outside to close edit popup ---
+popup.addEventListener('click', e => {
+  if (e.target === popup) popup.classList.add('hidden');
+});
+
+// --- Attach click event to date cells for delete ---
+function attachDateDeleteHandler() {
+  document.querySelectorAll('td.date-cell').forEach(cell => {
+    cell.addEventListener('click', e => {
+      deleteTargetDay = cell.closest('tr').dataset.day;
+      deletePopup.classList.remove('hidden');
+    });
+  });
+}
+
+// Delete Popup buttons
+document.getElementById('deleteCancelBtn').onclick = () => {
+  deletePopup.classList.add('hidden');
+};
+
+document.getElementById('deleteConfirmBtn').onclick = () => {
+  deletePopup.classList.add('hidden');
+  confirmDeletePopup.classList.remove('hidden');
+};
+
+// Confirm Delete buttons
+document.getElementById('confirmCancelBtn').onclick = () => {
+  confirmDeletePopup.classList.add('hidden');
+};
+
+document.getElementById('confirmDeleteBtn').onclick = () => {
+  if (!deleteTargetDay) return;
+  const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  delete all[deleteTargetDay];
+  localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+  confirmDeletePopup.classList.add('hidden');
+  deleteTargetDay = null;
+  buildTable();
+  attachDateDeleteHandler(); // reattach handlers after rebuild
+};
+
+// Call after table build
+attachDateDeleteHandler();
 
 // Cancel popup
 document.getElementById('popupCancel').onclick = () => { popup.classList.add('hidden'); };
