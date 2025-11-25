@@ -698,12 +698,19 @@ function loadUI() {
 
     progressBar.parentElement.style.display = 'block';
 
-    // Morning checklist logic
-// Morning checklist logic
-if (mode === 'morning' && currentIndex >= MORNING.length) {
-    loadMorningChecklist();
-    return;
-}
+    // Morning completion check - show done note if finished
+    if (mode === 'morning' && currentIndex >= MORNING.length) {
+        const allChecklistDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+        if (allChecklistDone) {
+            contentArea.innerHTML = '<div class="done-note">Morning completed.</div>';
+            backBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            updateProgressBar();
+            return;
+        }
+        loadMorningChecklist();
+        return;
+    }
 
     // Night checklist logic
     if (mode === 'night') {
@@ -714,12 +721,14 @@ if (mode === 'morning' && currentIndex >= MORNING.length) {
         }
     }
 
-    // Night completion
+    // Night completion - show done note if finished
     if (mode === 'night' && currentIndex >= NIGHT.length) {
         contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
         backBtn.style.display = 'none';
         nextBtn.style.display = 'none';
         updateProgressBar();
+        return;
+    }
 
         // ✅ Auto-advance after 3 seconds
     setTimeout(() => {
