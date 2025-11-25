@@ -158,11 +158,6 @@ const MORNING_CHECKLIST_KEYS = ["temp","made_bed","kettle","took_meds_morn","tid
 const INDIVIDUAL_MORNING_ITEMS = ["eat_breakfast","took_meds_morn","brush_teeth_morn","supplements_morn"];
 const NIGHT_KEYS = Object.keys(ITEM_KEY_MAP).filter(k=>!MORNING_CHECKLIST_KEYS.includes(k) && !["wake_time","how_slept"].includes(k));
 
-// Map all items to their type & options
-const ITEM_KEY_MAP = {};
-MORNING_CHECKLIST_KEYS.concat(INDIVIDUAL_MORNING_ITEMS).forEach(k=>ITEM_KEY_MAP[k]={type:'single',options:OPTIONS.yesno});
-NIGHT_KEYS.forEach(k=>ITEM_KEY_MAP[k]={type:'single',options:OPTIONS[KEY_OPTION_MAP[k]||'default']});
-
 let currentDay=null, currentKey=null;
 const popup = document.getElementById("editPopup");
 const popupTitle = document.getElementById("popupTitle");
