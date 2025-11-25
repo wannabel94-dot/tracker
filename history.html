@@ -18,21 +18,10 @@
 html, body {
   height: 100%;
   margin: 0;
-  padding: 0;
-  overflow: hidden;
+  padding: 0 18px 90px;
+  overflow: hidden; /* prevent whole-page scrolling */
+  color: var(--night-text);
 }
-
-.wrap {
-  position: fixed;
-  top: 60px;      /* header height */
-  bottom: 60px;   /* footer height */
-  left: 0;
-  right: 0;
-  overflow-y: auto;
-  padding: 18px;
-  -webkit-overflow-scrolling: touch;
-}
-
 
 /* Background / header */
 body{ color:#fff; }
@@ -66,6 +55,20 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
   
 #btnSettings:hover { color: #ddd; }
 
+/* Main content */
+.wrap {
+  width: 100%;
+  max-width: 740px;
+  margin: 0 auto;
+  position: absolute;
+  top: 60px;      /* header height */
+  bottom: 60px;   /* footer height */
+  left: 0;
+  right: 0;
+  padding: 18px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .day-entry{ background:rgba(255,255,255,0.05); border-radius:var(--card-radius); padding:16px; margin-bottom:16px; }
 .day-header{ display:flex; justify-content:space-between; align-items:center; }
 .day-header h3{ margin:0; font-size:1.1rem; }
@@ -180,10 +183,6 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
     <img src="icons/data.svg" alt="Data">
     <span>Data</span>
   </button>
-  <button class="switch-btn blank" id="blankBtn">
-    <img src="icons/balloon.svg" alt="Blank">
-    <span>Blank</span>
-  </button>
 </footer>
 
 <script>
@@ -205,7 +204,6 @@ document.getElementById('nightBtn').onclick = () => {
 };
 document.getElementById('historyBtn').onclick = () => { window.location.href = 'history.html'; };
 document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
-document.getElementById('blankBtn').onclick = () => { window.location.href = 'blank.html'; };
 
 /* Settings menu toggle */
 const btnSettings = document.getElementById('btnSettings');
@@ -326,7 +324,7 @@ window.viewEntry = (day) => {
   div.style.borderRadius = "14px";
   div.style.marginBottom = "16px";
 
-  let html = `<h3 style="margin:0 0 8px 0">${day} — Review</h3>`;
+  let html = `<h3 style="margin:0 0 8px 0">Review</h3>`;
 
   if (entry.morning || entry.night) {
     html += `<div style="display:grid;gap:10px">`;
