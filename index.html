@@ -938,7 +938,7 @@ nextBtn.onclick = () => {
 /****************************************************
  * 🔟 MORNING CHECKLIST SECTION
  ****************************************************/
-   function loadMorningChecklist() {
+function loadMorningChecklist() {
     const wrapper = document.querySelector('.checklist-wrapper');
     const scrollPos = wrapper ? wrapper.scrollTop : 0;
 
@@ -964,13 +964,17 @@ nextBtn.onclick = () => {
 
     backBtn.style.display = 'inline-block';
     nextBtn.style.display = 'inline-block';
-    nextBtn.textContent = 'Save';
+    nextBtn.textContent = 'Next';
     nextBtn.disabled = false;
 
-    updateProgressBar();
-    checkMorningCompletion();
-}
+    // Next button goes to done page
+    nextBtn.onclick = () => {
+        saveData();
+        showMorningDonePage();
+    };
 
+    updateProgressBar();
+}
 window.toggleChecklist = (key) => {
     const wrapper = document.querySelector('.checklist-wrapper');
     const scrollPos = wrapper ? wrapper.scrollTop : 0;
@@ -978,45 +982,39 @@ window.toggleChecklist = (key) => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     saveData();
 
-    if (getMode() === 'morning') loadMorningChecklist();
-    else loadNightChecklist();
+    if (getMode() === 'morning') {
+        loadMorningChecklist();
+        
+        // Check if all items are done for auto-next
+        const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+        if (allDone) {
+            setTimeout(() => {
+                showMorningDonePage();
+            }, 300); // Small delay for visual feedback
+        }
+    } else {
+        loadNightChecklist();
+    }
 
     if (wrapper) wrapper.scrollTop = scrollPos;
-    nextBtn.disabled = false;
 
     const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
     if (el && answers[key] === 'Yes') el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
-
-function checkMorningCompletion() {
-    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-    if (allDone) { 
-        onMorningDoneNote = true; // mark checklist as completed
-        saveData(); 
-        showMorningChecklistPopup(); 
-    }
-}
-
-function showMorningChecklistPopup() {
-    const overlay = document.createElement('div');
-    overlay.id = 'morningPopupOverlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:5000';
-
-    const popup = document.createElement('div');
-    popup.style.cssText = 'background:#1e1e35;padding:20px;border-radius:16px;text-align:center;min-width:280px';
-    popup.innerHTML = `
-        <div style="font-size:18px;font-weight:600;margin-bottom:16px;">Morning done</div>
-        <button id="editChecklistBtn" style="margin:6px;padding:10px 16px;border-radius:12px;">Go back</button>
-        <button id="goNightBtn" style="margin:6px;padding:10px 16px;border-radius:12px;">Go to night mode</button>
+function showMorningDonePage() {
+    contentArea.innerHTML = `
+        <div class="done-note">Morning done</div>
+        <div style="display:flex; gap:12px; justify-content:center; margin-top:40px;">
+            <button onclick="loadMorningChecklist()" style="padding:12px 24px; border-radius:12px; background:rgba(255,255,255,0.15); color:#f0f4ff; border:none; font-weight:600; cursor:pointer;">Go back</button>
+            <button onclick="switchMode('night')" style="padding:12px 24px; border-radius:12px; background:rgba(255,255,255,0.15); color:#f0f4ff; border:none; font-weight:600; cursor:pointer;">Go to night mode</button>
+        </div>
     `;
-
-    overlay.appendChild(popup);
-    document.body.appendChild(overlay);
-
-    document.getElementById('editChecklistBtn').onclick = () => document.body.removeChild(overlay);
-    document.getElementById('goNightBtn').onclick = () => { saveData(); document.body.removeChild(overlay); switchMode('night'); };
+    
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+    updateProgressBar();
 }
-   
+
 /* ---------- RETURN TO MORNING CHECKLIST ---------- */
 window.returnToMorningChecklist = () => {
     clearTimeout(switchTimeout);
