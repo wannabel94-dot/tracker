@@ -248,21 +248,16 @@ function buildTable() {
   html += '</tbody></table>';
   document.getElementById("tableContainer").innerHTML = html;
 
-  // Add long press for editing
-  document.querySelectorAll("tbody tr").forEach(row => {
-    let pressTimer = null;
-    const dateCell = row.querySelector(".date-cell");
-
-    const startPress = () => pressTimer = setTimeout(() => enableEditMode(row), 500);
-    const cancelPress = () => clearTimeout(pressTimer);
-
-    dateCell.addEventListener("touchstart", startPress);
-    dateCell.addEventListener("mousedown", startPress); // Desktop support
-    dateCell.addEventListener("touchend", cancelPress);
-    dateCell.addEventListener("mouseup", cancelPress); // Desktop support
-    dateCell.addEventListener("touchmove", cancelPress);
-    dateCell.addEventListener("mousemove", cancelPress); // Desktop support
+// Tap-to-edit: enable editing when any editable cell is clicked
+document.querySelectorAll("td.editable").forEach(td => {
+  td.addEventListener("click", (e) => {
+    const row = e.target.closest("tr");
+    if (!row) return;
+    enableEditMode(row);
+    openPopup(row.dataset.day, td.dataset.key, LABELS[td.dataset.key], td.textContent.trim());
   });
+});
+
 }
 
 // Enable editing for a single row
