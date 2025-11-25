@@ -178,7 +178,6 @@ function buildTable(){
     html+=`<tr data-day="${day}"><td class="date-cell"><strong>${day}</strong></td>`;
     const answers = {...(raw[day]?.morning?.answers||{}), ...(raw[day]?.night?.answers||{})};
 
-    allItems.forEach(item=>{
   allItems.forEach(item => {
 
     if (item.key === "AM_routine") {
