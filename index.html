@@ -581,6 +581,26 @@ menuOverlay.onclick = () => {
   settingsMenu.classList.remove('show');
   menuOverlay.classList.remove('show');
 };
+
+   document.getElementById('btnClearToday').onclick = () => {
+    const day = getTodayDate();
+    let all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+
+    if (all[day]) {
+        delete all[day];
+        localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+    }
+
+    // Reset UI state
+    currentIndex = 0;
+    answers = {};
+    onMorningDoneNote = false;
+
+    loadUI();
+
+    alert("Today's data has been cleared.");
+};
+
 /****************************************************
  * 2️⃣ MODE & QUESTION HELPERS
  ****************************************************/
