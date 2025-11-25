@@ -699,15 +699,11 @@ function loadUI() {
     progressBar.parentElement.style.display = 'block';
 
     // Morning checklist logic
-    if (mode === 'morning' && currentIndex >= MORNING.length) {
-        if (onMorningDoneNote) {
-            loadMorningChecklist();
-            return;
-        }
-        onMorningDoneNote = true;
-        nextBtn.textContent = 'Next';
-        return;
-    }
+// Morning checklist logic
+if (mode === 'morning' && currentIndex >= MORNING.length) {
+    loadMorningChecklist();
+    return;
+}
 
     // Night checklist logic
     if (mode === 'night') {
