@@ -38,24 +38,29 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
   align-items: center;
   padding: 0 25px;
   z-index: 100;
+  overflow: visible; /* allow the cutout behind the button */
+}
 
-  /* Circular cutout */
-  -webkit-mask-image: radial-gradient(circle 37.5px at center -15px, transparent 100%, black 100%);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-composite: destination-out;
-  mask-image: radial-gradient(circle 37.5px at center -15px, transparent 100%, black 100%);
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-composite: exclude;
+/* Circular cutout behind the button */
+.footer-nav::before {
+  content: '';
+  position: absolute;
+  top: -37.5px; /* half the cutout height */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 75px;
+  height: 75px;
+  background: #07081d; /* match page background */
+  border-radius: 50%;
+  z-index: 110; /* below the button */
 }
 
 .floating-center-btn {
-  position: absolute;
-  top: -12.5px; /* lifts the button to sit in the middle of the cutout */
+  position: fixed; /* outside the footer */
+  bottom: 30px; /* vertically center it in the cutout */
   left: 50%;
   transform: translateX(-50%);
-  width: 75px;  /* same as cutout diameter */
+  width: 75px;  /* same as cutout */
   height: 75px;
   border-radius: 50%;
   background: #8694af;
@@ -68,8 +73,9 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
   font-weight: 700;
   color: #000;
   cursor: pointer;
-  z-index: 150; /* above footer */
+  z-index: 150; /* above footer and cutout */
 }
+
 .left-group, .right-group { display:flex; gap:28px; }
 .footer-nav .switch-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px 8px; background:transparent; border:none; cursor:pointer; border-radius:12px; }
 .footer-nav .switch-btn img { width:22px; height:22px; opacity:0.9; filter:invert(1); }
@@ -108,12 +114,13 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
     <button class="switch-btn morning" id="morningBtn"><img src="icons/sun.svg" alt="Morning"><span>Morning</span></button>
     <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"><span>Night</span></button>
   </div>
-  <button class="floating-center-btn" id="centralBtn">+</button>
   <div class="right-group">
     <button class="switch-btn history" id="historyBtn"><img src="icons/history.svg" alt="History"><span>History</span></button>
     <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"><span>Data</span></button>
   </div>
 </footer>
+  
+<button class="floating-center-btn" id="centralBtn">+</button>
 
 <!-- Edit Popup -->
 <div id="editPopup" class="edit-popup hidden">
