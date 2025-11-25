@@ -87,6 +87,27 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
 </div>
 
 <script>
+  // Footer navigation handlers
+document.getElementById('historyBtn').onclick = () => { window.location.href = 'history.html'; };
+document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
+document.getElementById('morningBtn').onclick = () => { window.location.href = 'index.html?mode=morning'; };
+document.getElementById('nightBtn').onclick = () => { window.location.href = 'index.html?mode=night'; };
+
+// Settings menu toggle
+const btnSettings = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+
+btnSettings.onclick = () => {
+  const isOpen = settingsMenu.classList.toggle('show');
+  menuOverlay.classList.toggle('show', isOpen);
+};
+
+menuOverlay.onclick = () => {
+  settingsMenu.classList.remove('show');
+  menuOverlay.classList.remove('show');
+};
+
 // Label mapping
 const LABELS = {
   wake_time:"Wake up", how_slept:"Sleep", temp:"Take temp", made_bed:"Made Bed", kettle:"Kettle", took_meds_morn:"Took meds",
