@@ -796,12 +796,18 @@ if (q.type === 'single') {
     html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
 }
 
-    html += '</div>';
+html += '</div>';
     contentArea.innerHTML = html;
 
     backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
     nextBtn.style.display = 'inline-block';
     nextBtn.textContent = 'Next';
+    
+    // Disable next button for all question types except caffeine/alcohol counter
+    if (q.type !== 'multi' || q.key !== 'caffeine_alcohol') {
+        nextBtn.disabled = !answers[q.key] || (Array.isArray(answers[q.key]) && answers[q.key].length === 0);
+    }
+    
     updateProgressBar();
 }
 
