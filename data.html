@@ -26,7 +26,15 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
 .settings-menu button:hover{ background: rgba(255,255,255,0.15); transform:translateX(6px); }
 .menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity .3s; z-index:150; }
 .menu-overlay.show{ opacity:1; pointer-events:all; }
-.footer-nav { position: fixed; bottom: 0; left:0; right:0; height:60px; background:#303f5c; display:flex; justify-content:space-between; align-items:center; padding:0 25px; z-index:100; }
+.footer-nav { position: fixed; bottom: 0; left:0; right:0; height:60px; background:#303f5c; display:flex; justify-content:space-between; align-items:center; padding:0 25px; z-index:100;   /* Circular cutout */
+  -webkit-mask-image: radial-gradient(circle 37.5px at center, transparent 100%, black 100%);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-composite: destination-out;
+  mask-image: radial-gradient(circle 37.5px at center, transparent 100%, black 100%);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-composite: exclude;}
 .left-group, .right-group { display:flex; gap:28px; }
 .footer-nav .switch-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px 8px; background:transparent; border:none; cursor:pointer; border-radius:12px; }
 .footer-nav .switch-btn img { width:22px; height:22px; opacity:0.9; filter:invert(1); }
