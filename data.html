@@ -213,19 +213,21 @@ const popup = document.getElementById("editPopup");
 const popupTitle = document.getElementById("popupTitle");
 const popupSelect = document.getElementById("popupSelect");
 
-// Build the table
+// === Build and render the table ===
 function buildTable() {
   const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
   const days = Object.keys(raw).sort((a, b) => {
     const parseDate = d => {
-      let [x, y, z] = d.split('/').map(Number);
-      return new Date(z, y - 1, x);
+      const [day, month, year] = d.split('/').map(Number);
+      return new Date(year, month - 1, day);
     };
     return parseDate(b) - parseDate(a);
   });
 
+  const container = document.getElementById("tableContainer");
+
   if (!days.length) {
-    document.getElementById("tableContainer").innerHTML = "<p>No data saved.</p>";
+    container.innerHTML = "<p>No data saved.</p>";
     return;
   }
 
@@ -236,7 +238,7 @@ function buildTable() {
   ];
 
   let html = '<table><thead><tr><th>Date</th>';
-  allItems.forEach(i => html += `<th>${i.label}</th>`);
+  allItems.forEach(item => html += `<th>${item.label}</th>`);
   html += '</tr></thead><tbody>';
 
   days.forEach(day => {
@@ -252,7 +254,6 @@ function buildTable() {
 
       const val = answers[item.key];
 
-      // MULTI-SELECT ITEMS
       if (ITEM_KEY_MAP[item.key]?.type === "multi") {
         if (Array.isArray(val)) {
           const counts = {};
@@ -267,7 +268,6 @@ function buildTable() {
         return;
       }
 
-      // SINGLE, TIME, TEXT FIELDS
       html += `<td class="editable" data-key="${item.key}">${val || ""}</td>`;
     });
 
@@ -275,21 +275,24 @@ function buildTable() {
   });
 
   html += '</tbody></table>';
-  document.getElementById("tableContainer").innerHTML = html;
+  container.innerHTML = html;
 
-// Tap-to-edit: enable editing when any editable cell is clicked
-document.querySelectorAll("td.editable").forEach(td => {
-  td.addEventListener("click", (e) => {
-    const row = e.target.closest("tr");
-    if (!row) return;
-    enableEditMode(row);
-    openPopup(row.dataset.day, td.dataset.key, LABELS[td.dataset.key], td.textContent.trim());
-  });
-});
-
+  attachEditableCellHandlers();
+  attachDateDeleteHandler();
 }
 
-// Enable editing for a single row
+// === Tap-to-edit cells ===
+function attachEditableCellHandlers() {
+  document.querySelectorAll("td.editable").forEach(td => {
+    td.addEventListener("click", (e) => {
+      const row = td.closest("tr");
+      if (!row) return;
+      enableEditMode(row);
+      openPopup(row.dataset.day, td.dataset.key, LABELS[td.dataset.key], td.textContent.trim());
+    });
+  });
+}
+
 function enableEditMode(row) {
   document.querySelectorAll("tbody tr").forEach(r => {
     if (r !== row) r.classList.add("dimmed");
@@ -304,11 +307,9 @@ function enableEditMode(row) {
   document.addEventListener("touchstart", exitEditModeOnOutside, { passive: true });
 }
 
-// Close editing when clicking outside (but ignore footer/header/menu)
 function exitEditModeOnOutside(e) {
   const row = document.querySelector("tbody tr.editing");
   if (!row) return;
-
   if (e.target.closest("footer, #topHeader, .settings-menu, #menuOverlay")) return;
 
   if (!row.contains(e.target)) {
@@ -320,7 +321,7 @@ function exitEditModeOnOutside(e) {
   }
 }
 
-// Open the popup with proper options
+// === Open edit popup ===
 function openPopup(day, key, label, value) {
   currentDay = day;
   currentKey = key;
@@ -331,6 +332,7 @@ function openPopup(day, key, label, value) {
 
   popupSelect.innerHTML = '';
   popupSelect.multiple = item.type === 'multi';
+
   item.options.forEach(opt => {
     const optEl = document.createElement('option');
     optEl.value = opt;
@@ -344,20 +346,16 @@ function openPopup(day, key, label, value) {
   popup.classList.remove('hidden');
 }
 
-// Save selection
+// === Save popup selection ===
 document.getElementById('popupSave').onclick = () => {
   const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
   const dayData = raw[currentDay] || {};
   raw[currentDay] = dayData;
 
   const item = ITEM_KEY_MAP[currentKey];
-  let newValue;
-
-  if (item.type === "multi") {
-    newValue = Array.from(popupSelect.selectedOptions).map(o => o.value);
-  } else {
-    newValue = popupSelect.value;
-  }
+  let newValue = item.type === "multi" 
+    ? Array.from(popupSelect.selectedOptions).map(o => o.value)
+    : popupSelect.value;
 
   if (MORNING_CHECKLIST_KEYS.includes(currentKey) || INDIVIDUAL_MORNING_ITEMS.includes(currentKey)) {
     dayData.morning = dayData.morning || {};
@@ -374,40 +372,30 @@ document.getElementById('popupSave').onclick = () => {
   exitEditModeOnOutside({ target: document.body });
   buildTable();
 };
-const deletePopup = document.getElementById('deletePopup');
-const confirmDeletePopup = document.getElementById('confirmDeletePopup');
 
+document.getElementById('popupCancel').onclick = () => popup.classList.add('hidden');
+popup.addEventListener('click', e => { if (e.target === popup) popup.classList.add('hidden'); });
+
+// === Delete date functionality ===
 let deleteTargetDay = null;
 
-// --- Click outside to close edit popup ---
-popup.addEventListener('click', e => {
-  if (e.target === popup) popup.classList.add('hidden');
-});
-
-// --- Attach click event to date cells for delete ---
 function attachDateDeleteHandler() {
   document.querySelectorAll('td.date-cell').forEach(cell => {
-    cell.addEventListener('click', e => {
+    cell.onclick = () => {
       deleteTargetDay = cell.closest('tr').dataset.day;
       deletePopup.classList.remove('hidden');
-    });
+    };
   });
 }
 
-// Delete Popup buttons
-document.getElementById('deleteCancelBtn').onclick = () => {
-  deletePopup.classList.add('hidden');
-};
+document.getElementById('deleteCancelBtn').onclick = () => deletePopup.classList.add('hidden');
 
 document.getElementById('deleteConfirmBtn').onclick = () => {
   deletePopup.classList.add('hidden');
   confirmDeletePopup.classList.remove('hidden');
 };
 
-// Confirm Delete buttons
-document.getElementById('confirmCancelBtn').onclick = () => {
-  confirmDeletePopup.classList.add('hidden');
-};
+document.getElementById('confirmCancelBtn').onclick = () => confirmDeletePopup.classList.add('hidden');
 
 document.getElementById('confirmDeleteBtn').onclick = () => {
   if (!deleteTargetDay) return;
@@ -416,17 +404,10 @@ document.getElementById('confirmDeleteBtn').onclick = () => {
   localStorage.setItem('dailyTrackerData', JSON.stringify(all));
   confirmDeletePopup.classList.add('hidden');
   deleteTargetDay = null;
-  buildTable();
-  attachDateDeleteHandler(); // reattach handlers after rebuild
+  buildTable(); // automatically reattaches handlers
 };
 
-// Call after table build
-attachDateDeleteHandler();
-
-// Cancel popup
-document.getElementById('popupCancel').onclick = () => { popup.classList.add('hidden'); };
-
-// Initial table render
+// === Initial table render ===
 buildTable();
 
 </script>
