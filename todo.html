@@ -170,9 +170,9 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
     <img src="icons/night.svg" alt="Night">
     <span>Night</span>
   </button>
-  <button class="switch-btn history" id="historyBtn">
-    <img src="icons/history.svg" alt="History">
-    <span>History</span>
+  <button class="switch-btn todo" id="todoBtn">
+    <img src="icons/todo.svg" alt="todo">
+    <span>To-do</span>
   </button>
   <button class="switch-btn data" id="dataBtn">
     <img src="icons/data.svg" alt="Data">
@@ -190,7 +190,7 @@ document.getElementById('nightBtn').onclick = () => {
   const last = localStorage.getItem('lastNightProgress') || '';
   window.location.href = `index.html?mode=night&last=${encodeURIComponent(last)}`;
 };
-document.getElementById('historyBtn').onclick = () => { window.location.href = 'history.html'; };
+document.getElementById('todoBtn').onclick = () => { window.location.href = 'todo.html'; };
 document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
 
 /* Settings menu toggle */
