@@ -87,37 +87,76 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
 </div>
 
 <script>
-const LABELS = { wake_time:"Wake up", how_slept:"Sleep", temp:"Take temp", made_bed:"Made Bed", took_meds_morn:"Took meds", tidy_up:"Tidied", shower_morn:"Showered", get_dressed:"Dressed", led_mask_morn:"LED Mask", skincare_morn:"Skincare AM", eat_breakfast:"Breakfast", supplements_morn:"Supplements", brush_teeth_morn:"Teeth AM", psyllium:"Psyllium", magnesium:"Magnesium", pillowcase:"Pillowcase", shower_night:"Showered", skincare_night:"Skincare PM", teeth_night:"Teeth PM", flossed:"Flossed", left_house:"Left House", caffeine_alcohol:"Caffeine/Alcohol", sickness:"Symptoms", saw_dogs:"Saw Dogs", feel_with_L:"Relationship", house_state:"House", drove:"Driving", body_feelings:"Body", food_desc:"Diet", most_prominent:"Mental", meds:"Extra Meds", sensory_triggers:"Sensory Triggers", appointments:"Appointments", movement:"Movement", talked_to_anyone:"People", wellness:"Wellness", creative:"Creative", closed_eyes_time:"Closed Eyes" };
-
-// Option sets
-const OPTIONS = {
-  yesno:["Yes","No"],
-  symptoms:["None","Headache","Nausea","Fatigue","Pain"],
-  mental:["OK","Low","Anxious","Irritable","Calm"],
-  movement:["None","Walk","Gym","Yoga","Stretching"],
-  diet:["Normal","Healthy","Overate","Undereat","Takeout"],
-  house:["Clean","Messy","Average"],
-  alcohol:["None","Caffeine","Alcohol","Both"],
-  relationship:["Good","Neutral","Bad"],
-  body:["Fine","Sore","Stiff","Bloated"],
-  default:["Yes","No"]
+// Label mapping
+const LABELS = {
+  wake_time:"Wake up", how_slept:"Sleep", temp:"Take temp", made_bed:"Made Bed", kettle:"Kettle", took_meds_morn:"Took meds",
+  tidy_up:"Tidied", tea:"Tea", poop:"Poop", shower_morn:"Showered", change_towel:"Change towel", led_mask_morn:"LED Mask",
+  get_dressed:"Dressed", skincare_morn:"Skincare AM", eat_breakfast:"Breakfast", supplements_morn:"Supplements", brush_teeth_morn:"Teeth AM",
+  prepare_breakfast:"Prep Breakfast", tidy_up_night:"Tidied", magnesium:"Magnesium", tea_night:"Tea", pjs:"PJs", pillowcase:"Pillowcase",
+  skincare_night:"Skincare PM", havetea:"Have tea", shatki:"Shatki", teeth_night:"Teeth PM", flossed:"Flossed", psyllium:"Psyllium",
+  left_house:"Left House", day_description:"Day description", saw_dogs:"Saw Dogs", feel_with_L:"Relationship", house_state:"House",
+  drove:"Driving", body_feelings:"Body", food_desc:"Diet", caffeine_alcohol:"Caffeine/Alcohol", sickness:"Symptoms",
+  most_prominent:"Mental", meds:"Extra Meds", sensory_triggers:"Sensory Triggers", appointments:"Appointments",
+  movement:"Movement", talked_to_anyone:"People", wellness:"Wellness", creative:"Creative", closed_eyes_time:"Closed Eyes"
 };
 
-// Map keys to option type
-const KEY_OPTION_MAP={
-  sickness:"symptoms",
-  most_prominent:"mental",
-  food_desc:"diet",
-  movement:"movement",
-  house_state:"house",
-  caffeine_alcohol:"alcohol",
-  feel_with_L:"relationship",
-  body_feelings:"body"
+// Full item map with type and options
+const ITEM_KEY_MAP = {
+  "wake_time": { type: "time", options: [] },
+  "how_slept": { type: "single", options: ["Went to bed late but slept in","Went to bed late but woke early","Went to bed early but woke really early","Couldn't fall asleep","Lightly disrupted","Frequently disrupted","Fine"] },
+  "temp": { type: "single", options: ["Yes","No"] },
+  "made_bed": { type: "single", options: ["Yes","No"] },
+  "kettle": { type: "single", options: ["Yes","No"] },
+  "took_meds_morn": { type: "single", options: ["Yes","No"] },
+  "tidy_up": { type: "single", options: ["Yes","No"] },
+  "tea": { type: "single", options: ["Yes","No"] },
+  "poop": { type: "single", options: ["Yes","No"] },
+  "shower_morn": { type: "single", options: ["Yes","No"] },
+  "change_towel": { type: "single", options: ["Yes","No"] },
+  "led_mask_morn": { type: "single", options: ["Yes","No"] },
+  "get_dressed": { type: "single", options: ["Yes","No"] },
+  "skincare_morn": { type: "single", options: ["Yes","No"] },
+  "eat_breakfast": { type: "single", options: ["Yes","No"] },
+  "supplements_morn": { type: "single", options: ["Yes","No"] },
+  "brush_teeth_morn": { type: "single", options: ["Yes","No"] },
+
+  "prepare_breakfast": { type: "single", options: ["Yes","No"] },
+  "tidy_up_night": { type: "single", options: ["Yes","No"] },
+  "magnesium": { type: "single", options: ["Yes","No"] },
+  "tea_night": { type: "single", options: ["Yes","No"] },
+  "pjs": { type: "single", options: ["Yes","No"] },
+  "pillowcase": { type: "single", options: ["Yes","No"] },
+  "skincare_night": { type: "single", options: ["Yes","No"] },
+  "havetea": { type: "single", options: ["Yes","No"] },
+  "shatki": { type: "single", options: ["Yes","No"] },
+  "teeth_night": { type: "single", options: ["Yes","No"] },
+  "flossed": { type: "single", options: ["Yes","No"] },
+  "psyllium": { type: "single", options: ["Yes","No"] },
+  "left_house": { type: "single", options: ["Nope","Seconds","Briefly","1h+","2h+","Fair amount","All day"] },
+  "day_description": { type: "single", options: ["Bedrot","Mostly wasted","Chilled","Somewhat productive","Hyperproductive","Busy","Good"] },
+  "saw_dogs": { type: "single", options: ["Little ones","Yes","No"] },
+  "feel_with_L": { type: "single", options: ["Elated","Sensitive","Pretty good","Fine","Irritated","Somewhat insecure","Anxiously insecure","Anguish"] },
+  "house_state": { type: "single", options: ["Disaster","Very messy","A bit messy","Fine - a few dishes","Pretty tidy","Spotless"] },
+  "drove": { type: "single", options: ["No","<30 mins","30 mins+","1h+"] },
+  "body_feelings": { type: "single", options: ["Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"] },
+  "food_desc": { type: "single", options: ["Binged","Grazed random crap","Indulgent but satisfying","Big portions of good food","Balanced food + portions","Restricted food + portions"] },
+  "caffeine_alcohol": { type: "multi", options: ["Coffee","Tea","Beer","Spirits","Wine","Mate"] },
+  "sickness": { type: "multi", options: ["UTI feeling","UTI","Headache","Migraine","Ulcer","Nausea","Gassy","Trapped gas","Cold/flu","Allergies","Vomiting","None"] },
+  "most_prominent": { type: "multi", options: ["Somatic anxiety","Mental anxiety","OCD","Depression","BPD","ADHD","BDD","None"] },
+  "meds": { type: "multi", options: ["1mg benzo","Painkillers","2mg benzo","Antisickness","3mg benzo","Antihistamine","D-Mannose","Antibiotic","Antinausea","None"] },
+  "sensory_triggers": { type: "multi", options: ["Body fat","Body size","Dirty / messy flat","Skin","Hair","Clothes","Outside environment","None"] },
+  "appointments": { type: "multi", options: ["Psych","Therapy (online)","Therapy","Doctor","Blood tests","None"] },
+  "movement": { type: "multi", options: ["Tidying / cleaning","City walking","Stroll","Quick dog walk","Long dog walk","Hike","Jog","None"] },
+  "talked_to_anyone": { type: "multi", options: ["General public","Health professional","Acquaintances","Friends","Friends of L","Family","None"] },
+  "wellness": { type: "multi", options: ["Shakti mat","Stretching","Moments of mindfulness","Meditation","Therapy notes","Deep breathing","None"] },
+  "creative": { type: "multi", options: ["Painting","DIY","Guitar","Sewing","Van stuff","Reading","None"] },
+  "closed_eyes_time": { type: "time", options: [] }
 };
 
+// Morning checklist keys
 const MORNING_CHECKLIST_KEYS = ["temp","made_bed","kettle","took_meds_morn","tidy_up","tea","poop","shower_morn","change_towel","led_mask_morn","get_dressed","skincare_morn","eat_breakfast","supplements_morn","brush_teeth_morn"];
 const INDIVIDUAL_MORNING_ITEMS = ["eat_breakfast","took_meds_morn","brush_teeth_morn","supplements_morn"];
-const NIGHT_KEYS = ["psyllium","left_house","day_description","saw_dogs","feel_with_L","house_state","drove","body_feelings","food_desc","caffeine_alcohol","sickness","most_prominent","meds","sensory_triggers","appointments","movement","talked_to_anyone","wellness","creative","closed_eyes_time"];
+const NIGHT_KEYS = Object.keys(ITEM_KEY_MAP).filter(k=>!MORNING_CHECKLIST_KEYS.includes(k) && !["wake_time","how_slept"].includes(k));
 
 // Map all items to their type & options
 const ITEM_KEY_MAP = {};
