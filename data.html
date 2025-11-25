@@ -280,7 +280,14 @@ document.getElementById('popupSave').onclick = ()=>{
   const dayData = raw[currentDay] || {}; raw[currentDay]=dayData;
 
   const item = ITEM_KEY_MAP[currentKey];
-  const newValue = popupSelect.value;
+let newValue;
+
+if (item.type === "multi") {
+    // Collect ALL selected options
+    newValue = Array.from(popupSelect.selectedOptions).map(o => o.value);
+} else {
+    newValue = popupSelect.value;
+}
 
   if(MORNING_CHECKLIST_KEYS.includes(currentKey) || INDIVIDUAL_MORNING_ITEMS.includes(currentKey)){
     dayData.morning = dayData.morning || {};
