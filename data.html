@@ -164,108 +164,133 @@ const popupTitle = document.getElementById("popupTitle");
 const popupSelect = document.getElementById("popupSelect");
 
 // Build the table
-function buildTable(){
-  const raw = JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
-  const days = Object.keys(raw).sort((a,b)=>{const p=d=>{let[x,y,z]=d.split('/').map(Number);return new Date(z,y-1,x)}; return p(b)-p(a); });
-  if(!days.length){ document.getElementById("tableContainer").innerHTML="<p>No data saved.</p>"; return; }
+function buildTable() {
+  const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
+  const days = Object.keys(raw).sort((a, b) => {
+    const parseDate = d => {
+      let [x, y, z] = d.split('/').map(Number);
+      return new Date(z, y - 1, x);
+    };
+    return parseDate(b) - parseDate(a);
+  });
 
-  const allItems = [{key:"AM_routine",label:"AM %"}, ...INDIVIDUAL_MORNING_ITEMS.map(k=>({key:k,label:LABELS[k]})), ...NIGHT_KEYS.map(k=>({key:k,label:LABELS[k]}))];
+  if (!days.length) {
+    document.getElementById("tableContainer").innerHTML = "<p>No data saved.</p>";
+    return;
+  }
 
-  let html='<table><thead><tr><th>Date</th>';
-  allItems.forEach(i=>html+=`<th>${i.label}</th>`); html+='</tr></thead><tbody>';
+  const allItems = [
+    { key: "AM_routine", label: "AM %" },
+    ...INDIVIDUAL_MORNING_ITEMS.map(k => ({ key: k, label: LABELS[k] })),
+    ...NIGHT_KEYS.map(k => ({ key: k, label: LABELS[k] }))
+  ];
 
-  days.forEach(day=>{
-    html+=`<tr data-day="${day}"><td class="date-cell"><strong>${day}</strong></td>`;
-    const answers = {...(raw[day]?.morning?.answers||{}), ...(raw[day]?.night?.answers||{})};
+  let html = '<table><thead><tr><th>Date</th>';
+  allItems.forEach(i => html += `<th>${i.label}</th>`);
+  html += '</tr></thead><tbody>';
 
-  allItems.forEach(item => {
+  days.forEach(day => {
+    html += `<tr data-day="${day}"><td class="date-cell"><strong>${day}</strong></td>`;
+    const answers = { ...(raw[day]?.morning?.answers || {}), ...(raw[day]?.night?.answers || {}) };
 
-    if (item.key === "AM_routine") {
+    allItems.forEach(item => {
+      if (item.key === "AM_routine") {
         const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === "Yes").length;
         html += `<td>${Math.round(done / MORNING_CHECKLIST_KEYS.length * 100)}%</td>`;
         return;
-    }
+      }
 
-    const val = answers[item.key];
+      const val = answers[item.key];
 
-    // MULTI-SELECT ITEMS (including caffeine/alcohol drink counter)
-    if (ITEM_KEY_MAP[item.key]?.type === "multi") {
+      // MULTI-SELECT ITEMS
+      if (ITEM_KEY_MAP[item.key]?.type === "multi") {
         if (Array.isArray(val)) {
-            const counts = {};
-            val.forEach(v => counts[v] = (counts[v] || 0) + 1);
-
-            const formatted = Object.entries(counts)
-                .map(([name, qty]) => qty > 1 ? `${name} ${qty}` : name)
-                .join(", ");
-
-            html += `<td class="editable" data-key="${item.key}">${formatted}</td>`;
+          const counts = {};
+          val.forEach(v => counts[v] = (counts[v] || 0) + 1);
+          const formatted = Object.entries(counts)
+            .map(([name, qty]) => qty > 1 ? `${name} ${qty}` : name)
+            .join(", ");
+          html += `<td class="editable" data-key="${item.key}">${formatted}</td>`;
         } else {
-            html += `<td class="editable" data-key="${item.key}"></td>`;
+          html += `<td class="editable" data-key="${item.key}"></td>`;
         }
         return;
-    }
+      }
 
-    // SINGLE, TIME, TEXT FIELDS
-    html += `<td class="editable" data-key="${item.key}">${val || ""}</td>`;
-});
+      // SINGLE, TIME, TEXT FIELDS
+      html += `<td class="editable" data-key="${item.key}">${val || ""}</td>`;
+    });
 
-    html+='</tr>';
+    html += '</tr>';
   });
 
-  html+='</tbody></table>';
-  document.getElementById("tableContainer").innerHTML=html;
+  html += '</tbody></table>';
+  document.getElementById("tableContainer").innerHTML = html;
 
   // Add long press for editing
-  document.querySelectorAll("tbody tr").forEach(row=>{
+  document.querySelectorAll("tbody tr").forEach(row => {
     let pressTimer = null;
     const dateCell = row.querySelector(".date-cell");
 
-    dateCell.addEventListener("touchstart",()=>{
-      pressTimer = setTimeout(()=>enableEditMode(row),500);
-    });
-    dateCell.addEventListener("touchend",()=>clearTimeout(pressTimer));
-    dateCell.addEventListener("touchmove",()=>clearTimeout(pressTimer));
+    const startPress = () => pressTimer = setTimeout(() => enableEditMode(row), 500);
+    const cancelPress = () => clearTimeout(pressTimer);
+
+    dateCell.addEventListener("touchstart", startPress);
+    dateCell.addEventListener("mousedown", startPress); // Desktop support
+    dateCell.addEventListener("touchend", cancelPress);
+    dateCell.addEventListener("mouseup", cancelPress); // Desktop support
+    dateCell.addEventListener("touchmove", cancelPress);
+    dateCell.addEventListener("mousemove", cancelPress); // Desktop support
   });
 }
 
 // Enable editing for a single row
-function enableEditMode(row){
-  document.querySelectorAll("tbody tr").forEach(r=>{
-    if(r!==row) r.classList.add("dimmed");
+function enableEditMode(row) {
+  document.querySelectorAll("tbody tr").forEach(r => {
+    if (r !== row) r.classList.add("dimmed");
     else r.classList.add("editing");
   });
 
-  // Only allow click on editable cells of the selected row
-  row.querySelectorAll("td.editable").forEach(td=>{
-    td.onclick = ()=>openPopup(row.dataset.day, td.dataset.key, LABELS[td.dataset.key], td.textContent.trim());
+  row.querySelectorAll("td.editable").forEach(td => {
+    td.onclick = () => openPopup(row.dataset.day, td.dataset.key, LABELS[td.dataset.key], td.textContent.trim());
   });
 
-  // Close edit mode if user touches outside
-  document.addEventListener("touchstart", exitEditModeOnOutside, {passive:true});
+  document.addEventListener("mousedown", exitEditModeOnOutside, { passive: true });
+  document.addEventListener("touchstart", exitEditModeOnOutside, { passive: true });
 }
 
-function exitEditModeOnOutside(e){
+// Close editing when clicking outside (but ignore footer/header/menu)
+function exitEditModeOnOutside(e) {
   const row = document.querySelector("tbody tr.editing");
-  if(!row) return;
-  if(!row.contains(e.target)){
+  if (!row) return;
+
+  if (e.target.closest("footer, #topHeader, .settings-menu, #menuOverlay")) return;
+
+  if (!row.contains(e.target)) {
     row.classList.remove("editing");
-    document.querySelectorAll("tbody tr.dimmed").forEach(r=>r.classList.remove("dimmed"));
-    row.querySelectorAll("td.editable").forEach(td=>td.onclick=null);
+    document.querySelectorAll("tbody tr.dimmed").forEach(r => r.classList.remove("dimmed"));
+    row.querySelectorAll("td.editable").forEach(td => td.onclick = null);
+    document.removeEventListener("mousedown", exitEditModeOnOutside);
     document.removeEventListener("touchstart", exitEditModeOnOutside);
   }
 }
 
 // Open the popup with proper options
-function openPopup(day, key, label, value){
-  currentDay = day; currentKey = key; popupTitle.textContent = label;
-  const item = ITEM_KEY_MAP[key]; if(!item) return;
+function openPopup(day, key, label, value) {
+  currentDay = day;
+  currentKey = key;
+  popupTitle.textContent = label;
+
+  const item = ITEM_KEY_MAP[key];
+  if (!item) return;
 
   popupSelect.innerHTML = '';
-  popupSelect.multiple = item.type==='multi';
-  item.options.forEach(opt=>{
+  popupSelect.multiple = item.type === 'multi';
+  item.options.forEach(opt => {
     const optEl = document.createElement('option');
-    optEl.value = opt; optEl.textContent = opt;
-    if(value===opt) optEl.selected = true;
+    optEl.value = opt;
+    optEl.textContent = opt;
+    if (item.type === 'multi' && Array.isArray(value) ? value.includes(opt) : value === opt) optEl.selected = true;
     popupSelect.appendChild(optEl);
   });
 
@@ -275,21 +300,21 @@ function openPopup(day, key, label, value){
 }
 
 // Save selection
-document.getElementById('popupSave').onclick = ()=>{
-  const raw = JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
-  const dayData = raw[currentDay] || {}; raw[currentDay]=dayData;
+document.getElementById('popupSave').onclick = () => {
+  const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
+  const dayData = raw[currentDay] || {};
+  raw[currentDay] = dayData;
 
   const item = ITEM_KEY_MAP[currentKey];
-let newValue;
+  let newValue;
 
-if (item.type === "multi") {
-    // Collect ALL selected options
+  if (item.type === "multi") {
     newValue = Array.from(popupSelect.selectedOptions).map(o => o.value);
-} else {
+  } else {
     newValue = popupSelect.value;
-}
+  }
 
-  if(MORNING_CHECKLIST_KEYS.includes(currentKey) || INDIVIDUAL_MORNING_ITEMS.includes(currentKey)){
+  if (MORNING_CHECKLIST_KEYS.includes(currentKey) || INDIVIDUAL_MORNING_ITEMS.includes(currentKey)) {
     dayData.morning = dayData.morning || {};
     dayData.morning.answers = dayData.morning.answers || {};
     dayData.morning.answers[currentKey] = newValue;
@@ -301,13 +326,16 @@ if (item.type === "multi") {
 
   localStorage.setItem("dailyTrackerData", JSON.stringify(raw));
   popup.classList.add('hidden');
-  exitEditModeOnOutside({target:document.body}); // reset editing state
+  exitEditModeOnOutside({ target: document.body });
   buildTable();
 };
 
-document.getElementById('popupCancel').onclick = ()=>{popup.classList.add('hidden');};
+// Cancel popup
+document.getElementById('popupCancel').onclick = () => { popup.classList.add('hidden'); };
 
+// Initial table render
 buildTable();
+
 </script>
 
 </body>
