@@ -593,6 +593,11 @@ document.getElementById('dataBtn').onclick = () => { window.location.href = 'dat
 const btnSettings = document.getElementById('btnSettings');
 const settingsMenu = document.getElementById('settingsMenu');
 const menuOverlay = document.getElementById('menuOverlay');
+   settingsMenu.addEventListener("click", () => {
+  settingsMenu.classList.remove('show');
+  menuOverlay.classList.remove('show');
+});
+
 btnSettings.onclick = () => {
   const isOpen = settingsMenu.classList.toggle('show');
   menuOverlay.classList.toggle('show', isOpen);
