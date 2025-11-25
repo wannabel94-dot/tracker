@@ -164,16 +164,12 @@ body.morning {
   padding: 0 25px;
 }
 
-.left-group {
+.left-group, .right-group {
   display: flex;
-  gap: 28px;
-  margin-right: 50px; /* space for central button */
-}
-
-.right-group {
-  display: flex;
-  gap: 28px;
-  margin-left: 0px; /* space for central button */
+  justify-content: space-between; /* even spacing between buttons */
+  width: 120px; /* adjust width to fit 2 buttons evenly */
+  margin: 0;
+  gap: 0; /* spacing is controlled by flex */
 }
 
 
