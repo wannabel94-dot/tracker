@@ -94,6 +94,16 @@ const KEY_OPTION_MAP={sickness:"symptoms",most_prominent:"mental",food_desc:"die
 const MORNING_CHECKLIST_KEYS=["temp","made_bed","kettle","took_meds_morn","tidy_up","tea","poop","shower_morn","get_dressed","led_mask_morn","skincare_morn","eat_breakfast","supplements_morn","brush_teeth_morn"];
 const INDIVIDUAL_MORNING_ITEMS=["eat_breakfast","took_meds_morn","brush_teeth_morn","supplements_morn"];
 const NIGHT_KEYS=["psyllium","magnesium","pillowcase","shower_night","skincare_night","teeth_night","flossed","left_house","caffeine_alcohol","sickness","saw_dogs","feel_with_L","house_state","drove","body_feelings","food_desc","most_prominent","meds","sensory_triggers","appointments","movement","talked_to_anyone","wellness","creative","closed_eyes_time"];
+// Map all items to their type & options
+const ITEM_KEY_MAP = {};
+
+// Morning items
+MORNING.forEach(i => ITEM_KEY_MAP[i.key] = { type: i.type || 'single', options: i.options || [] });
+MORNING_CHECKLIST_ITEMS.forEach(i => ITEM_KEY_MAP[i.key] = { type: 'single', options: ['Yes','No'] });
+
+// Night items
+NIGHT.forEach(i => ITEM_KEY_MAP[i.key] = { type: i.type || 'single', options: i.options || [] });
+NIGHT_CHECKLIST_ITEMS.forEach(i => ITEM_KEY_MAP[i.key] = { type: 'single', options: ['Yes','No'] });
 
 function buildTable(){
   const raw=JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
@@ -129,7 +139,7 @@ function buildTable(){
 }
 
 let currentDay=null, currentKey=null;
-const popup=document.getElementById("editPopup"), popupTitle=document.getElementById("popupTitle"), popupSelect=document.getElementById("popupSelect"), popupText=document.getElementById("popupText");
+const popup=document.getElementById("editPopup"), popupTitle=document.getElementById("popupTitle"), popupSelect=document.getElementById("popupSelect");
 
 function enableEditMode(row){
   document.querySelectorAll("tbody tr").forEach(r=>{ if(r!==row) r.classList.add("dimmed"); else r.classList.add("editing"); });
@@ -150,27 +160,63 @@ function exitEditModeOnOutside(e){
   }
 }
 
-function openPopup(day,key,label,value){
-  currentDay=day; currentKey=key; popupTitle.textContent=label;
-  const optionGroup=KEY_OPTION_MAP[key]||"yesno";
-  const opts=OPTIONS[optionGroup]||[];
-  popupSelect.innerHTML=opts.map(o=>`<option value="${o}">${o}</option>`)+`<option value="__TEXT__">Enter text…</option><option value="">Clear</option>`;
-  popupSelect.classList.remove("hidden"); popupText.classList.add("hidden");
-  popupSelect.value=opts.includes(value)?value:"__TEXT__";
-  if(popupSelect.value==="__TEXT__"){ popupText.classList.remove("hidden"); popupText.value=value||""; }
-  popup.classList.remove("hidden");
+function openPopup(day, key, label, value){
+    currentDay = day;
+    currentKey = key;
+    popupTitle.textContent = label;
+
+    // Get the predefined options
+    const item = ITEM_KEY_MAP[key];
+    if(!item) return;
+
+    popupSelect.innerHTML = '';
+    popupSelect.multiple = item.type === 'multi';
+    item.options.forEach(opt => {
+        const optEl = document.createElement('option');
+        optEl.value = opt;
+        optEl.textContent = opt;
+        if(item.type === 'multi' && Array.isArray(value) && value.includes(opt)) optEl.selected = true;
+        else if(item.type !== 'multi' && value === opt) optEl.selected = true;
+        popupSelect.appendChild(optEl);
+    });
+
+    popupSelect.classList.remove('hidden');
+    popupText.classList.add('hidden'); // disable custom text
+    popup.classList.remove('hidden');
 }
-popupSelect.onchange=()=>{ popupSelect.value==="__TEXT__"?popupText.classList.remove("hidden"):popupText.classList.add("hidden"); };
-document.getElementById("popupSave").onclick=()=>{
-  const raw=JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
-  raw[currentDay]=raw[currentDay]||{}; 
-  const v=popupSelect.value==="__TEXT__"?popupText.value.trim():popupSelect.value;
-  if(MORNING_CHECKLIST_KEYS.includes(currentKey)){ raw[currentDay].morning=raw[currentDay].morning||{}; raw[currentDay].morning.answers=raw[currentDay].morning.answers||{}; raw[currentDay].morning.answers[currentKey]=v; }
-  else{ raw[currentDay].night=raw[currentDay].night||{}; raw[currentDay].night.answers=raw[currentDay].night.answers||{}; raw[currentDay].night.answers[currentKey]=v; }
-  localStorage.setItem("dailyTrackerData",JSON.stringify(raw));
-  popup.classList.add("hidden"); buildTable();
+
+// Save selection
+document.getElementById('popupSave').onclick = () => {
+    const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
+    const dayData = raw[currentDay] || {};
+    raw[currentDay] = dayData;
+
+    const item = ITEM_KEY_MAP[currentKey];
+    let newValue;
+    if(item.type === 'multi') {
+        newValue = Array.from(popupSelect.selectedOptions).map(o => o.value);
+    } else {
+        newValue = popupSelect.value;
+    }
+
+    if(MORNING_CHECKLIST_ITEMS.find(i=>i.key===currentKey) || MORNING.find(i=>i.key===currentKey)){
+        dayData.morning = dayData.morning || {};
+        dayData.morning.answers = dayData.morning.answers || {};
+        dayData.morning.answers[currentKey] = newValue;
+    } else {
+        dayData.night = dayData.night || {};
+        dayData.night.answers = dayData.night.answers || {};
+        dayData.night.answers[currentKey] = newValue;
+    }
+
+    localStorage.setItem("dailyTrackerData", JSON.stringify(raw));
+    popup.classList.add('hidden');
+    buildTable();
 };
-document.getElementById("popupCancel").onclick=()=>popup.classList.add("hidden");
+
+document.getElementById('popupCancel').onclick = () => {
+    popup.classList.add('hidden');
+};
 
 buildTable();
 
