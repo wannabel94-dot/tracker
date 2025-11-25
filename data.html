@@ -179,32 +179,37 @@ function buildTable(){
     const answers = {...(raw[day]?.morning?.answers||{}), ...(raw[day]?.night?.answers||{})};
 
     allItems.forEach(item=>{
-      if(item.key==="AM_routine"){
-        const done = MORNING_CHECKLIST_KEYS.filter(k=>answers[k]==="Yes").length;
-        html+=`<td>${Math.round(done/MORNING_CHECKLIST_KEYS.length*100)}%</td>`;
-const val = answers[item.key];
+  allItems.forEach(item => {
 
-if (ITEM_KEY_MAP[item.key]?.type === "multi") {
-    if (Array.isArray(val)) {
-
-        // Count each drink
-        const counts = {};
-        val.forEach(v => counts[v] = (counts[v] || 0) + 1);
-
-        // Convert to: "Tea 2, Coffee 1"
-        const formatted = Object.entries(counts)
-            .map(([name, qty]) => qty > 1 ? `${name} ${qty}` : name)
-            .join(", ");
-
-        html += `<td class="editable" data-key="${item.key}">${formatted}</td>`;
-    } else {
-        html += `<td class="editable" data-key="${item.key}"></td>`;
+    if (item.key === "AM_routine") {
+        const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === "Yes").length;
+        html += `<td>${Math.round(done / MORNING_CHECKLIST_KEYS.length * 100)}%</td>`;
+        return;
     }
-}
-else {
+
+    const val = answers[item.key];
+
+    // MULTI-SELECT ITEMS (including caffeine/alcohol drink counter)
+    if (ITEM_KEY_MAP[item.key]?.type === "multi") {
+        if (Array.isArray(val)) {
+            const counts = {};
+            val.forEach(v => counts[v] = (counts[v] || 0) + 1);
+
+            const formatted = Object.entries(counts)
+                .map(([name, qty]) => qty > 1 ? `${name} ${qty}` : name)
+                .join(", ");
+
+            html += `<td class="editable" data-key="${item.key}">${formatted}</td>`;
+        } else {
+            html += `<td class="editable" data-key="${item.key}"></td>`;
+        }
+        return;
+    }
+
+    // SINGLE, TIME, TEXT FIELDS
     html += `<td class="editable" data-key="${item.key}">${val || ""}</td>`;
-}
-    });
+});
+
     html+='</tr>';
   });
 
