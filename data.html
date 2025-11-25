@@ -2,29 +2,95 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="theme-color" content="#07081d">
+<meta name="theme-color" content="#07081d" id="navColor">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Data</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
 <style>
-/* ---- Full CSS + popup + editable table ---- */
-body { margin:0; background:#07081d; color:#f0f4ff; font-family:Inter, sans-serif; }
-#topHeader { position:sticky; top:0; display:flex; justify-content:space-between; padding:10px 18px; background:#07081d; }
-#tableContainer { overflow:auto; padding:12px; }
-table { width:max-content; min-width:100%; border-collapse:collapse; }
-th, td { padding:6px 10px; border-bottom:1px solid rgba(255,255,255,0.1); white-space:nowrap; }
-thead th { background:rgba(255,255,255,0.15); position:sticky; top:0; }
-td:first-child, th:first-child { position:sticky; left:0; background:#0009; backdrop-filter:blur(4px); }
-.edit-btn { cursor:pointer; color:#8d4585; font-weight:700; }
-/* popup */
-.edit-popup { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); }
-.popup-box { background:#1a1b2f; padding:20px; border-radius:14px; width:280px; }
-.popup-box h3 { margin-top:0; }
-.popup-box select, .popup-box input { width:100%; padding:8px; margin:8px 0; border-radius:8px; border:none; }
-.popup-btns { display:flex; gap:10px; margin-top:10px; }
-.popup-btns button { flex:1; padding:8px; border:none; border-radius:10px; cursor:pointer; }
-.hidden { display:none; }
+:root {
+  --text: #f0f4ff;
+  --card-radius: 14px;
+  --bg-blur: 6px;
+  --glass-bg: rgba(255,255,255,0.08);
+  --glass-border: rgba(255,255,255,0.12);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background:#07081d;
+  color: #f0f4ff;
+}
+.wrap {
+  width: 100%;
+  max-width: 740px;
+  margin: 0 auto;
+  position: absolute;
+  top: 60px;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  padding: 18px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#topHeader {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background: #07081d;
+  justify-content: space-between;
+  padding: 10px 18px;
+  z-index: 100;
+}
+#btnSettings { background: transparent; border: none; font-size: 24px; color: #fff; cursor: pointer; padding: 8px; z-index: 101; position: relative; min-width: 40px; min-height: 40px; }
+#dayOfWeek { flex: 1; text-align: center; font-size: 1rem; font-weight: 600; color: #f0f4ff; margin: 0; pointer-events: none; }
+#tableContainer { overflow-x: auto; width: 100%; margin-top: 15px; -webkit-overflow-scrolling: touch; }
+table { width: max-content; min-width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.05); border-radius: 10px; }
+table, th, td { color: #f0f4ff; }
+thead { background: rgba(255,255,255,0.15); }
+thead th { position: sticky; top: 0; background: rgba(255,255,255,0.15); z-index: 3; }
+th, td { padding: 6px 10px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left; font-size: 0.8rem; }
+th { font-weight: 600; }
+tr:last-child td { border-bottom: none; }
+td:first-child, th:first-child {
+  position: sticky;
+  left: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(4px);
+  z-index: 4;
+}
+table th, table td { white-space: nowrap; }
+.table-card { border-radius: 14px; padding: 12px; margin-top: 15px; overflow-y: auto; overflow-x: auto; }
+body.data-page .wrap { margin-top: 0 !important; }
+/* MENU */
+.settings-menu { position: fixed; top:0; left:0; height:100vh; width:50%; background: rgba(0,0,0,0.7); backdrop-filter: blur(18px) saturate(180%); display:flex; flex-direction:column; padding:20px 0; transform:translateX(-100%); transition: transform .4s ease; z-index:200; }
+.settings-menu.show{ transform:translateX(0); }
+.settings-menu button{ background:transparent; border:0; padding:16px 20px; width:100%; text-align:left; font-weight:600; color:#fff; cursor:pointer; transition: background .25s, transform .2s; }
+.settings-menu button:hover{ background: rgba(255,255,255,0.15); transform:translateX(6px); }
+.menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity .3s; z-index:150; }
+.menu-overlay.show{ opacity:1; pointer-events:all; }
+/* FOOTER */
+.footer-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #303f5c; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; z-index: 100; }
+.left-group, .right-group { display: flex; gap: 28px; }
+.footer-nav .switch-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 6px 8px; background: transparent; border: none; cursor: pointer; border-radius: 12px; }
+.footer-nav .switch-btn img { width: 22px; height: 22px; opacity: 0.9; filter:invert(1); }
+.footer-nav .switch-btn span { color: #fff; font-weight: 600; }
+.footer-nav .switch-btn.active span { color: #8d4585; opacity: 1; font-weight: 700; }
+.footer-nav .switch-btn.active img { filter: invert(84%) sepia(52%) saturate(545%) hue-rotate(2deg) brightness(103%) contrast(101%); }
+.floating-center-btn { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); width: 65px; height: 65px; border-radius: 50%; background: #8d4585; border: none; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.35); z-index: 150; cursor: pointer; font-size: 36px; font-weight: 700; color: #000; line-height: 0; }
+/* RESPONSIVE */
+@media (max-width:480px) { body{padding:12px;} }
+/* EDIT MODE STYLING */
+.editing { background: rgba(141,69,133,0.25); }
+.dimmed { opacity: 0.4; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -32,156 +98,140 @@ td:first-child, th:first-child { position:sticky; left:0; background:#0009; back
   <div id="dayOfWeek">Data</div>
   <button id="btnSettings">☰</button>
 </header>
-<div id="tableContainer"></div>
 
-<!-- Edit Popup -->
-<div id="editPopup" class="edit-popup hidden">
-  <div class="popup-box">
-    <h3 id="popupTitle"></h3>
-    <select id="popupSelect"></select>
-    <input id="popupText" class="hidden" placeholder="Enter text..." />
-    <div class="popup-btns">
-      <button id="popupSave">Save</button>
-      <button id="popupCancel">Cancel</button>
-    </div>
-  </div>
+<div class="table-card">
+  <div id="tableContainer"></div>
 </div>
 
+<div id="menuOverlay" class="menu-overlay"></div>
+<div id="settingsMenu" class="settings-menu">
+  <button id="btnExport">Export data</button>
+  <button id="btnClearToday">Clear Today's Data</button>
+</div>
+
+<footer class="footer-nav">
+  <div class="left-group">
+    <button class="switch-btn morning" id="morningBtn">
+      <img src="icons/sun.svg" alt="Morning"><span>Morning</span>
+    </button>
+    <button class="switch-btn night" id="nightBtn">
+      <img src="icons/night.svg" alt="Night"><span>Night</span>
+    </button>
+  </div>
+  <button class="floating-center-btn" id="centralBtn">+</button>
+  <div class="right-group">
+    <button class="switch-btn history" id="historyBtn">
+      <img src="icons/history.svg" alt="History"><span>History</span>
+    </button>
+    <button class="switch-btn data" id="dataBtn">
+      <img src="icons/data.svg" alt="Data"><span>Data</span>
+    </button>
+  </div>
+</footer>
+
 <script>
-/* ------------ OPTION B: CUSTOM OPTIONS PER CATEGORY -------------- */
-const OPTIONS = {
-  yesno: ["Yes", "No"],
-  symptoms: ["None", "Headache", "Nausea", "Fatigue", "Pain"],
-  mental: ["OK", "Low", "Anxious", "Irritable", "Calm"],
-  movement: ["None", "Walk", "Gym", "Yoga", "Stretching"],
-  diet: ["Normal", "Healthy", "Overate", "Undereat", "Takeout"],
-  house: ["Clean", "Messy", "Average"],
-  alcohol: ["None", "Caffeine", "Alcohol", "Both"],
-  relationship: ["Good", "Neutral", "Bad"],
-  body: ["Fine", "Sore", "Stiff", "Bloated"],
-  default: []
-};
+const LABELS = { wake_time: "Wake up", how_slept: "Sleep", temp: "Take temp", made_bed: "Made Bed", took_meds_morn: "Took meds", tidy_up: "Tidied", shower_morn: "Showered", get_dressed: "Dressed", led_mask_morn: "LED Mask", skincare_morn: "Skincare AM", eat_breakfast: "Breakfast", supplements_morn: "Supplements", brush_teeth_morn: "Teeth AM", psyllium: "Psyllium", magnesium: "Magnesium", pillowcase: "Pillowcase", shower_night: "Showered", skincare_night: "Skincare PM", teeth_night: "Teeth PM", flossed: "Flossed", left_house: "Left House", caffeine_alcohol: "Caffeine/Alcohol", sickness: "Symptoms", saw_dogs: "Saw Dogs", feel_with_L: "Relationship", house_state: "House", drove: "Driving", body_feelings: "Body", food_desc: "Diet", most_prominent: "Mental", meds: "Extra Meds", sensory_triggers: "Sensory Triggers", appointments: "Appointments", movement: "Movement", talked_to_anyone: "People", wellness: "Wellness", creative: "Creative", closed_eyes_time: "Closed Eyes" };
 
-/* Map keys → option groups */
-const KEY_OPTION_MAP = {
-  sickness:"symptoms",
-  most_prominent:"mental",
-  food_desc:"diet",
-  movement:"movement",
-  house_state:"house",
-  caffeine_alcohol:"alcohol",
-  feel_with_L:"relationship",
-  body_feelings:"body"
-};
+function yesNoToSymbol(v){ return v==="Yes"?"✓":v==="No"?"✗":v; }
 
-const LABELS = { wake_time:"Wake up", how_slept:"Sleep", temp:"Take temp", made_bed:"Made Bed", took_meds_morn:"Took meds", tidy_up:"Tidied", shower_morn:"Showered", get_dressed:"Dressed", led_mask_morn:"LED Mask", skincare_morn:"Skincare AM", eat_breakfast:"Breakfast", supplements_morn:"Supplements", brush_teeth_morn:"Teeth AM", psyllium:"Psyllium", magnesium:"Magnesium", pillowcase:"Pillowcase", shower_night:"Showered PM", skincare_night:"Skincare PM", teeth_night:"Teeth PM", flossed:"Flossed", left_house:"Left House", caffeine_alcohol:"Caffeine/Alcohol", sickness:"Symptoms", saw_dogs:"Saw Dogs", feel_with_L:"Relationship", house_state:"House", drove:"Driving", body_feelings:"Body", food_desc:"Diet", most_prominent:"Mental", meds:"Extra Meds", sensory_triggers:"Sensory Triggers", appointments:"Appointments", movement:"Movement", talked_to_anyone:"People", wellness:"Wellness", creative:"Creative", closed_eyes_time:"Closed Eyes" };
+const MORNING_CHECKLIST_KEYS = ["temp","made_bed","kettle","took_meds_morn","tidy_up","tea","poop","shower_morn","get_dressed","led_mask_morn","skincare_morn","eat_breakfast","supplements_morn","brush_teeth_morn"];
+const INDIVIDUAL_MORNING_ITEMS = ["eat_breakfast","took_meds_morn","brush_teeth_morn","supplements_morn"];
+const NIGHT_KEYS = ["psyllium","magnesium","pillowcase","shower_night","skincare_night","teeth_night","flossed","left_house","caffeine_alcohol","sickness","saw_dogs","feel_with_L","house_state","drove","body_feelings","food_desc","most_prominent","meds","sensory_triggers","appointments","movement","talked_to_anyone","wellness","creative","closed_eyes_time"];
 
-const MORNING_CHECKLIST_KEYS = ["temp","made_bed","took_meds_morn","tidy_up","shower_morn","get_dressed","led_mask_morn","skincare_morn","eat_breakfast","supplements_morn","brush_teeth_morn"];
-const INDIVIDUAL_MORNING_ITEMS=["eat_breakfast","took_meds_morn","brush_teeth_morn","supplements_morn"];
-const NIGHT_KEYS=["psyllium","magnesium","pillowcase","shower_night","skincare_night","teeth_night","flossed","left_house","caffeine_alcohol","sickness","saw_dogs","feel_with_L","house_state","drove","body_feelings","food_desc","most_prominent","meds","sensory_triggers","appointments","movement","talked_to_anyone","wellness","creative","closed_eyes_time"];
+document.getElementById('morningBtn').onclick = ()=>{ const last = localStorage.getItem('lastMorningProgress')||''; window.location.href=`index.html?mode=morning&last=${encodeURIComponent(last)}`; };
+document.getElementById('nightBtn').onclick = ()=>{ const last = localStorage.getItem('lastNightProgress')||''; window.location.href=`index.html?mode=night&last=${encodeURIComponent(last)}`; };
+document.getElementById('historyBtn').onclick = ()=>{ window.location.href='history.html'; };
+document.getElementById('dataBtn').onclick = ()=>{ window.location.href='data.html'; };
 
 function buildTable(){
-  const raw = JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
-  const days = Object.keys(raw).sort((a,b)=>{const p=d=>{let[x,y,z]=d.split('/').map(Number);return new Date(z,y-1,x)};return p(b)-p(a)});
-  if(!days.length){ document.querySelector('#tableContainer').innerHTML='<p>No data.</p>'; return; }
-
-  let items=[{key:"AM_routine",label:"AM %"},...INDIVIDUAL_MORNING_ITEMS.map(k=>({key:k,label:LABELS[k]})),...NIGHT_KEYS.map(k=>({key:k,label:LABELS[k]}))];
-
-  let html='<table><thead><tr><th>Edit</th><th>Date</th>';
-  items.forEach(i=>html+=`<th>${i.label}</th>`);
-  html+='</tr></thead><tbody>';
-
-  days.forEach(day=>{
-    const dayData=raw[day]||{};
-    const answers={...(dayData.morning?.answers||{}),...(dayData.night?.answers||{})};
-
-    html+=`<tr data-day="${day}">
-      <td><span class="edit-btn">✎</span></td>
-      <td><strong>${day}</strong></td>`;
-
-    items.forEach(it=>{
-      if(it.key==="AM_routine"){
-        const total=MORNING_CHECKLIST_KEYS.length;
-        const done=MORNING_CHECKLIST_KEYS.filter(k=>answers[k]==="Yes").length;
-        html+=`<td class="cell-readonly">${Math.round(done/total*100)}%</td>`;
-      } else {
-        let v=answers[it.key]||"";
-        html+=`<td class="editable" data-key="${it.key}">${v}</td>`;
-      }
+    const raw = JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
+    const days = Object.keys(raw).sort((a,b)=>{
+        const parse=d=>{const [day,month,year]=d.split('/').map(Number); return new Date(year,month-1,day);}
+        return parse(b)-parse(a);
     });
+    if(days.length===0){ document.getElementById("tableContainer").innerHTML="<p>No data saved.</p>"; return; }
+    const allItems = [{key:"AM_routine",label:"AM routine",type:"percent"}, ...INDIVIDUAL_MORNING_ITEMS.map(k=>({key:k,label:LABELS[k]||k,type:"yesno"})), ...NIGHT_KEYS.map(k=>({key:k,label:LABELS[k]||k,type:"yesno"}))];
+    let html=`<table><thead><tr><th>Date</th>`;
+    allItems.forEach(item=>html+=`<th>${item.label}</th>`);
+    html+=`</tr></thead><tbody>`;
+    days.forEach(day=>{
+        html+=`<tr><td class="date-cell"><strong>${day}</strong></td>`;
+        allItems.forEach(item=>{
+            const dayData=raw[day]||{};
+            const answers={...(dayData.morning?.answers||{}), ...(dayData.night?.answers||{})};
+            if(item.key==="AM_routine"){
+                const total=MORNING_CHECKLIST_KEYS.length;
+                const done=MORNING_CHECKLIST_KEYS.filter(k=>answers[k]==="Yes").length;
+                const percent=Math.round((done/total)*100);
+                html+=`<td>${percent}%</td>`;
+            }else{
+                let val=answers[item.key]??"";
+                if(Array.isArray(val)) val=val.map(v=>v==="Yes"?"✓":v==="No"?"✗":v).join(", ");
+                else val=val==="Yes"?"✓":val==="No"?"✗":val;
+                html+=`<td>${val}</td>`;
+            }
+        });
+        html+=`</tr>`;
+    });
+    html+=`</tbody></table>`;
+    document.getElementById("tableContainer").innerHTML=html;
 
-    html+='</tr>';
-  });
-
-  html+='</tbody></table>';
-  document.querySelector('#tableContainer').innerHTML=html;
+    // Add long-press edit functionality
+    const rows=document.querySelectorAll("tbody tr");
+    rows.forEach(row=>{
+        let pressTimer=null;
+        const dateCell=row.querySelector(".date-cell");
+        dateCell.addEventListener("touchstart",e=>{
+            pressTimer=setTimeout(()=>enableEditMode(row),500);
+        });
+        dateCell.addEventListener("touchend",e=>{ clearTimeout(pressTimer); });
+        dateCell.addEventListener("touchmove",e=>{ clearTimeout(pressTimer); });
+    });
 }
+
+function enableEditMode(row){
+    // Dim all others
+    document.querySelectorAll("tbody tr").forEach(r=>{
+        if(r!==row) r.classList.add("dimmed");
+        else r.classList.add("editing");
+    });
+    // Add click for popups
+    row.querySelectorAll("td:not(.date-cell)").forEach(td=>{
+        td.onclick=()=>{ 
+            const newVal=prompt("Enter new value:",td.innerText);
+            if(newVal!==null) td.innerText=newVal; 
+        };
+    });
+    // Exit edit mode when tapping outside
+    document.addEventListener("touchstart",exitEditModeOnOutside,{passive:true});
+}
+
+function exitEditModeOnOutside(e){
+    const editingRow=document.querySelector("tbody tr.editing");
+    if(!editingRow) return;
+    if(!editingRow.contains(e.target)){
+        editingRow.classList.remove("editing");
+        document.querySelectorAll("tbody tr.dimmed").forEach(r=>r.classList.remove("dimmed"));
+        // Remove per-cell click events
+        editingRow.querySelectorAll("td:not(.date-cell)").forEach(td=>td.onclick=null);
+        document.removeEventListener("touchstart",exitEditModeOnOutside);
+    }
+}
+
 buildTable();
 
-/* ---------------- POPUP HANDLING ---------------- */
-const popup=document.querySelector('#editPopup');
-const popupTitle=document.querySelector('#popupTitle');
-const popupSelect=document.querySelector('#popupSelect');
-const popupText=document.querySelector('#popupText');
-let currentDay=null, currentKey=null;
+const btnSettings=document.getElementById('btnSettings');
+const settingsMenu=document.getElementById('settingsMenu');
+const menuOverlay=document.getElementById('menuOverlay');
 
-function openPopup(day,key,label,value){
-  currentDay=day; currentKey=key;
-  popupTitle.textContent=label;
+btnSettings.addEventListener('click',()=>{ settingsMenu.classList.toggle('show'); menuOverlay.classList.toggle('show'); });
+menuOverlay.addEventListener('click',()=>{ settingsMenu.classList.remove('show'); menuOverlay.classList.remove('show'); });
 
-  let optionGroup = KEY_OPTION_MAP[key] || "yesno";
-  let opts = OPTIONS[optionGroup] || [];
-
-  popupSelect.innerHTML = opts.map(o=>`<option value="${o}">${o}</option>`).join('') + '<option value="__TEXT__">Enter text…</option><option value="">Clear</option>';
-
-  popupSelect.classList.remove('hidden');
-  popupText.classList.add('hidden');
-
-  popupSelect.value = opts.includes(value)?value : "__TEXT__";
-  if(popupSelect.value==="__TEXT__"){ popupText.classList.remove('hidden'); popupText.value=value||""; }
-
-  popup.classList.remove('hidden');
-}
-
-popupSelect.onchange=()=>{
-  if(popupSelect.value==="__TEXT__"){
-    popupText.classList.remove('hidden');
-  } else popupText.classList.add('hidden');
-};
-
-/* Save */
-document.querySelector('#popupSave').onclick=()=>{
-  const raw=JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
-  const day=raw[currentDay];
-  if(!day) return;
-
-  const v = popupSelect.value==="__TEXT__" ? popupText.value.trim() : popupSelect.value;
-
-  if(MORNING_CHECKLIST_KEYS.includes(currentKey)){
-    day.morning = day.morning||{};
-    day.morning.answers = day.morning.answers||{};
-    day.morning.answers[currentKey]=v;
-  } else {
-    day.night = day.night||{};
-    day.night.answers = day.night.answers||{};
-    day.night.answers[currentKey]=v;
-  }
-
-  localStorage.setItem('dailyTrackerData', JSON.stringify(raw));
-  popup.classList.add('hidden');
-  buildTable();
-};
-
-document.querySelector('#popupCancel').onclick=()=>popup.classList.add('hidden');
-
-/* Click handlers */
-document.addEventListener('click',e=>{
-  if(e.target.classList.contains('editable')){
-    const td=e.target;
-    const tr=td.closest('tr');
-    openPopup(tr.dataset.day, td.dataset.key, LABELS[td.dataset.key], td.textContent.trim());
-  }
-});
+const footerButtons=document.querySelectorAll('.footer-nav .switch-btn');
+footerButtons.forEach(btn=>btn.addEventListener('click',()=>{
+    footerButtons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}));
 </script>
 </body>
 </html>
