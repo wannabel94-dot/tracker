@@ -5,13 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Checklist</title>
 <style>
-  body { font-family: sans-serif; padding: 20px; }
-  table { width: 100%; border-collapse: collapse; }
+  body { font-family: sans-serif; padding: 20px; margin: 0; }
+  header, footer { background: #333; color: white; padding: 10px; text-align: center; }
+  main { padding: 20px; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
   th, td { padding: 8px 12px; border: 1px solid #ccc; text-align: center; }
 
   /* Highlight edited row */
   .checklist-item-editing {
-    background: rgba(255,255,255,0.35);
+    background: rgba(255,255,0,0.3);
     pointer-events: auto;
     transform: scale(1.03);
     transition: 0.3s;
@@ -30,46 +33,55 @@
 </head>
 <body>
 
-<h2>Checklist</h2>
-<table id="checklist">
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Morning</th>
-      <th>Night</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr class="check-item">
-      <td class="date-cell" data-key="2025-11-25" data-night="false">2025-11-25</td>
-      <td class="yes-no-cell" data-key="2025-11-25" data-time="morning">No</td>
-      <td class="yes-no-cell" data-key="2025-11-25" data-time="night">Yes</td>
-    </tr>
-    <tr class="check-item">
-      <td class="date-cell" data-key="2025-11-26" data-night="false">2025-11-26</td>
-      <td class="yes-no-cell" data-key="2025-11-26" data-time="morning">No</td>
-      <td class="yes-no-cell" data-key="2025-11-26" data-time="night">No</td>
-    </tr>
-  </tbody>
-</table>
+<header>
+  <h1>My Checklist App</h1>
+</header>
+
+<main>
+  <h2>Checklist</h2>
+  <table id="checklist">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Morning</th>
+        <th>Night</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="check-item">
+        <td class="date-cell" data-key="2025-11-25">2025-11-25</td>
+        <td class="yes-no-cell" data-key="2025-11-25" data-time="morning">No</td>
+        <td class="yes-no-cell" data-key="2025-11-25" data-time="night">Yes</td>
+      </tr>
+      <tr class="check-item">
+        <td class="date-cell" data-key="2025-11-26">2025-11-26</td>
+        <td class="yes-no-cell" data-key="2025-11-26" data-time="morning">No</td>
+        <td class="yes-no-cell" data-key="2025-11-26" data-time="night">No</td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+
+<footer>
+  <p>© 2025 Checklist Inc.</p>
+</footer>
 
 <script>
 let longPressTimer;
 let editingRow = null;
 
+// Enable edit mode
 function enableEditMode(rowElement) {
-    // Dim all rows first
     document.querySelectorAll('.check-item').forEach(item => {
         item.classList.add('checklist-item-dimmed');
         item.classList.remove('checklist-item-editing');
     });
-
-    // Highlight the selected row
     rowElement.classList.remove('checklist-item-dimmed');
     rowElement.classList.add('checklist-item-editing');
     editingRow = rowElement;
 }
 
+// Attach long press to date cells
 function attachLongPress(dateCell) {
     dateCell.addEventListener('mousedown', startPress);
     dateCell.addEventListener('touchstart', startPress);
@@ -77,10 +89,10 @@ function attachLongPress(dateCell) {
     dateCell.addEventListener('mouseleave', cancelPress);
     dateCell.addEventListener('touchend', cancelPress);
 
-    function startPress(e) {
+    function startPress() {
         longPressTimer = setTimeout(() => {
             enableEditMode(dateCell.parentElement);
-        }, 600); // long press threshold 600ms
+        }, 600); // long press threshold
     }
 
     function cancelPress() {
@@ -88,8 +100,9 @@ function attachLongPress(dateCell) {
     }
 }
 
+// Toggle Yes/No cell
 function toggleYesNo(cell) {
-    if (!editingRow || !editingRow.contains(cell)) return; // Only editable if this row is active
+    if (!editingRow || !editingRow.contains(cell)) return; // only active row
     cell.textContent = cell.textContent === 'Yes' ? 'No' : 'Yes';
 }
 
