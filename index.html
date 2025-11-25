@@ -1203,6 +1203,13 @@ document.getElementById('btnClearToday').onclick = () => {
     alert("Today's data cleared.");
 };
 
+// Automatically close the settings menu whenever a menu button is clicked
+settingsMenu.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    closeMenu();
+  });
+});
+
 /****************************************************
  * 1️⃣2️⃣ DAILY REVIEW (OPTIONAL)
  ****************************************************/
