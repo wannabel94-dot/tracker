@@ -65,6 +65,24 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
 }
   
 #btnSettings:hover { color: #ddd; }
+#dataBtn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 101;
+  position: relative;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+   #dataBtn img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+   filter:invert(1);
+}
 
 .day-entry{ background:rgba(255,255,255,0.05); border-radius:var(--card-radius); padding:16px; margin-bottom:16px; }
 .day-header{ display:flex; justify-content:space-between; align-items:center; }
@@ -166,6 +184,7 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
 </head>
 <body class="morning">
   <header id="topHeader">
+    <button class="switch-btn data" id="dataBtn"><img src="icons/chart.svg" alt="Data"></button>
     <div id="dayOfWeek">To-do</div>
     <button id="btnSettings">☰</button>
   </header>
@@ -183,7 +202,6 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
   </div>
   <div class="right-group">
     <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
-    <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"><span>Data</span></button>
   </div>
 </footer>
   <button class="floating-center-btn" id="centralBtn">+</button>
