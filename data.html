@@ -37,9 +37,20 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
   justify-content: space-between;
   align-items: center;
   padding: 0 25px;
-  z-index: 100;
-  overflow: visible; /* allow the cutout behind the button */
 }
+
+.left-group {
+  display: flex;
+  gap: 28px;
+  margin-right: 60px; /* space for central button */
+}
+
+.right-group {
+  display: flex;
+  gap: 28px;
+  margin-left: 60px; /* space for central button */
+}
+
 
 /* Circular cutout behind the button */
 .footer-nav::before {
@@ -75,7 +86,6 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
   z-index: 130; /* above footer and cutout */
 }
 
-.left-group, .right-group { display:flex; gap:28px; }
 .footer-nav .switch-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px 8px; background:transparent; border:none; cursor:pointer; border-radius:12px; }
 .footer-nav .switch-btn img { width:22px; height:22px; opacity:0.9; filter:invert(1); }
 .footer-nav .switch-btn span { color:#fff; font-weight:600; }
