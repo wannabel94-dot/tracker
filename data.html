@@ -87,157 +87,78 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
 </div>
 
 <script>
-// ---------------- LABELS & OPTIONS ----------------
-const LABELS = { wake_time:"Wake up", how_slept:"Sleep", temp:"Temp", made_bed:"Bed", took_meds_morn:"Meds", tidy_up:"Tidy", shower_morn:"Shower", get_dressed:"Dress", led_mask_morn:"LED", skincare_morn:"Skin", eat_breakfast:"Breakfast", supplements_morn:"Supplements", brush_teeth_morn:"Teeth", psyllium:"Psy", magnesium:"Mg", pillowcase:"Pillow", shower_night:"Shower", skincare_night:"Skin", teeth_night:"Teeth", flossed:"Floss", left_house:"Outside", caffeine_alcohol:"Drinks", sickness:"Symptoms", saw_dogs:"Dogs", feel_with_L:"Relation", house_state:"Flat", drove:"Drive", body_feelings:"Body", food_desc:"Diet", most_prominent:"Mental", meds:"Extra Meds", sensory_triggers:"Sensory", appointments:"Appointments", movement:"Movement", talked_to_anyone:"People", wellness:"Wellness", creative:"Creative", closed_eyes_time:"Bedtime" };
+const LABELS = { wake_time:"Wake up", how_slept:"Sleep", temp:"Take temp", made_bed:"Made Bed", took_meds_morn:"Took meds", tidy_up:"Tidied", shower_morn:"Showered", get_dressed:"Dressed", led_mask_morn:"LED Mask", skincare_morn:"Skincare AM", eat_breakfast:"Breakfast", supplements_morn:"Supplements", brush_teeth_morn:"Teeth AM", psyllium:"Psyllium", magnesium:"Magnesium", pillowcase:"Pillowcase", shower_night:"Showered", skincare_night:"Skincare PM", teeth_night:"Teeth PM", flossed:"Flossed", left_house:"Left House", caffeine_alcohol:"Caffeine/Alcohol", sickness:"Symptoms", saw_dogs:"Saw Dogs", feel_with_L:"Relationship", house_state:"House", drove:"Driving", body_feelings:"Body", food_desc:"Diet", most_prominent:"Mental", meds:"Extra Meds", sensory_triggers:"Sensory Triggers", appointments:"Appointments", movement:"Movement", talked_to_anyone:"People", wellness:"Wellness", creative:"Creative", closed_eyes_time:"Closed Eyes" };
 
-const OPTIONS = { yesno:["Yes","No"], symptoms:["None","Headache","Nausea","Fatigue","Pain"], mental:["OK","Low","Anxious","Irritable","Calm"], movement:["None","Walk","Gym","Yoga","Stretching"], diet:["Normal","Healthy","Overate","Undereat","Takeout"], house:["Clean","Messy","Average"], alcohol:["None","Caffeine","Alcohol","Both"], relationship:["Good","Neutral","Bad"], body:["Fine","Sore","Stiff","Bloated"], default:[] };
-
-const KEY_OPTION_MAP={sickness:"symptoms",most_prominent:"mental",food_desc:"diet",movement:"movement",house_state:"house",caffeine_alcohol:"alcohol",feel_with_L:"relationship",body_feelings:"body"};
-
-// ---------------- MORNING & NIGHT DATA ----------------
-const MORNING = [
-  { key: 'wake_time', type: 'time' },
-  { key: 'how_slept', type: 'single', options:['Went to bed late but slept in','Went to bed late but woke early','Went to bed early but woke really early',"Couldn't fall asleep",'Lightly disrupted','Frequently disrupted','Fine'] }
-];
-
-const MORNING_CHECKLIST_ITEMS = [
- { key: 'temp' }, { key: 'made_bed' }, { key: 'kettle' }, { key: 'took_meds_morn' }, { key: 'tidy_up' }, { key: 'tea' },
- { key: 'poop' }, { key: 'shower_morn' }, { key: 'change_towel' }, { key: 'led_mask_morn' }, { key: 'get_dressed' },
- { key: 'skincare_morn' }, { key: 'eat_breakfast' }, { key: 'supplements_morn' }, { key: 'brush_teeth_morn' }
-];
-
-const NIGHT = [
- { key:'psyllium', type:'single', options:['Yes','No'] },
- { key:'left_house', type:'single', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'] },
- { key:'day_description', type:'single', options:['Bedrot','Mostly wasted','Chilled','Somewhat productive','Hyperproductive','Busy','Good'] },
- { key:'saw_dogs', type:'single', options:['Little ones','Yes','No'] },
- { key:'feel_with_L', type:'single', options:['Elated','Sensitive','Pretty good','Fine','Irritated','Somewhat insecure','Anxiously insecure','Anguish'] },
- { key:'house_state', type:'single', options:['Disaster','Very messy','A bit messy','Fine - a few dishes','Pretty tidy','Spotless'] },
- { key:'drove', type:'single', options:['No','<30 mins','30 mins+','1h+'] },
- { key:'body_feelings', type:'single', options:["Hadn't thought about it","Passing thoughts","Momentarily down","Depressed or gross","Fixated","Disgusting / really preoccupied","All-consuming"] },
- { key:'food_desc', type:'single', options:['Binged','Grazed random crap','Indulgent but satisfying','Big portions of good food','Balanced food + portions','Restricted food + portions'] },
- { key: 'caffeine_alcohol', type:'multi', options:['Coffee','Tea','Beer','Spirits','Wine','Mate'] },
- { key: 'sickness', type:'multi', options:['UTI feeling','UTI','Headache','Migraine','Ulcer','Nausea','Gassy','Trapped gas','Cold/flu','Allergies','Vomiting','None'] },
- { key:'most_prominent', type:'multi', options:['Somatic anxiety','Mental anxiety','OCD','Depression','BPD','ADHD','BDD','None'] },
- { key:'meds', type:'multi', options:['1mg benzo','Painkillers','2mg benzo','Antisickness','3mg benzo','Antihistamine','D-Mannose','Antibiotic','Antinausea','None'] },
- { key:'sensory_triggers', type:'multi', options:['Body fat','Body size','Dirty / messy flat','Skin','Hair','Clothes','Outside environment','None'] },
- { key:'appointments', type:'multi', options:['Psych','Therapy (online)','Therapy','Doctor','Blood tests','None'] },
- { key:'movement', type:'multi', options:['Tidying / cleaning','City walking','Stroll','Quick dog walk','Long dog walk','Hike','Jog','None'] },
- { key:'talked_to_anyone', type:'multi', options:['General public','Health professional','Acquaintances','Friends','Friends of L','Family','None'] },
- { key:'wellness', type:'multi', options:['Shakti mat','Stretching','Moments of mindfulness','Meditation','Therapy notes','Deep breathing','None'] },
- { key:'creative', type:'multi', options:['Painting','DIY','Guitar','Sewing','Van stuff','Reading','None'] },
- { key:'closed_eyes_time', type:'time' }
-];
-
-const NIGHT_CHECKLIST_ITEMS = [
-  { key:'prepare_breakfast' }, { key:'tidy_up_night' }, { key:'magnesium' }, { key:'tea_night' }, { key:'pjs' }, { key:'pillowcase' }, { key:'skincare_night' },
-  { key:'havetea' }, { key:'shatki' }, { key:'teeth_night' }, { key:'flossed' }
-];
-
-// ---------------- ITEM MAP ----------------
-const ITEM_KEY_MAP = {};
-MORNING.forEach(i => ITEM_KEY_MAP[i.key] = { type: i.type || 'single', options: i.options || [] });
-MORNING_CHECKLIST_ITEMS.forEach(i => ITEM_KEY_MAP[i.key] = { type:'single', options:['Yes','No'] });
-NIGHT.forEach(i => ITEM_KEY_MAP[i.key] = { type: i.type || 'single', options: i.options || [] });
-NIGHT_CHECKLIST_ITEMS.forEach(i => ITEM_KEY_MAP[i.key] = { type:'single', options:['Yes','No'] });
-
-// ---------------- TABLE & POPUP LOGIC ----------------
+const MORNING_CHECKLIST_KEYS = ["temp","made_bed","kettle","took_meds_morn","tidy_up","tea","poop","shower_morn","change_towel","led_mask_morn","get_dressed","skincare_morn","eat_breakfast","supplements_morn","brush_teeth_morn"];
 const INDIVIDUAL_MORNING_ITEMS = ["eat_breakfast","took_meds_morn","brush_teeth_morn","supplements_morn"];
-const MORNING_CHECKLIST_KEYS = MORNING_CHECKLIST_ITEMS.map(i=>i.key);
-const NIGHT_KEYS = NIGHT.map(i=>i.key);
+const NIGHT_KEYS = ["psyllium","left_house","day_description","saw_dogs","feel_with_L","house_state","drove","body_feelings","food_desc","caffeine_alcohol","sickness","most_prominent","meds","sensory_triggers","appointments","movement","talked_to_anyone","wellness","creative","closed_eyes_time"];
 
-let currentDay=null, currentKey=null;
-const popup=document.getElementById("editPopup"), popupTitle=document.getElementById("popupTitle"), popupSelect=document.getElementById("popupSelect"), popupText=document.getElementById("popupText");
+// Map all items to their options
+const ITEM_KEY_MAP = {};
+MORNING_CHECKLIST_KEYS.concat(INDIVIDUAL_MORNING_ITEMS).forEach(k=>ITEM_KEY_MAP[k]={type:'single',options:['Yes','No']});
+NIGHT_KEYS.forEach(k=>ITEM_KEY_MAP[k]={type:'single',options:['Yes','No']}); // Simplified for demo
+
+let currentDay=null,currentKey=null;
+const popup=document.getElementById("editPopup"),popupTitle=document.getElementById("popupTitle"),popupSelect=document.getElementById("popupSelect");
 
 function buildTable(){
-    const raw=JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
-    const days=Object.keys(raw).sort((a,b)=>{const p=d=>{let[x,y,z]=d.split('/').map(Number);return new Date(z,y-1,x)};return p(b)-p(a)});
-    if(!days.length){ document.getElementById("tableContainer").innerHTML="<p>No data saved.</p>"; return; }
-    const allItems=[{key:"AM_routine",label:"AM %"}, ...INDIVIDUAL_MORNING_ITEMS.map(k=>({key:k,label:LABELS[k]})), ...NIGHT_KEYS.map(k=>({key:k,label:LABELS[k]}))];
-    let html='<table><thead><tr><th>Date</th>';
-    allItems.forEach(i=>html+=`<th>${i.label}</th>`); html+='</tr></thead><tbody>';
-    days.forEach(day=>{
-        html+=`<tr data-day="${day}"><td class="date-cell"><strong>${day}</strong></td>`;
-        const answers={...(raw[day]?.morning?.answers||{}),...(raw[day]?.night?.answers||{})};
-        allItems.forEach(item=>{
-            if(item.key==="AM_routine"){
-                const done=MORNING_CHECKLIST_KEYS.filter(k=>answers[k]==="Yes").length;
-                html+=`<td>${Math.round(done/MORNING_CHECKLIST_KEYS.length*100)}%</td>`;
-            }else{
-                html+=`<td class="editable" data-key="${item.key}">${answers[item.key]||""}</td>`;
-            }
-        });
-        html+='</tr>';
+  const raw=JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
+  const days=Object.keys(raw).sort((a,b)=>{const p=d=>{let[x,y,z]=d.split('/').map(Number);return new Date(z,y-1,x)};return p(b)-p(a)});
+  if(!days.length){ document.getElementById("tableContainer").innerHTML="<p>No data saved.</p>"; return; }
+  const allItems=[{key:"AM_routine",label:"AM %"}, ...INDIVIDUAL_MORNING_ITEMS.map(k=>({key:k,label:LABELS[k]})), ...NIGHT_KEYS.map(k=>({key:k,label:LABELS[k]}))];
+  let html='<table><thead><tr><th>Date</th>';
+  allItems.forEach(i=>html+=`<th>${i.label}</th>`); html+='</tr></thead><tbody>';
+  days.forEach(day=>{
+    html+=`<tr data-day="${day}"><td class="date-cell"><strong>${day}</strong></td>`;
+    const answers={...(raw[day]?.morning?.answers||{}),...(raw[day]?.night?.answers||{})};
+    allItems.forEach(item=>{
+      if(item.key==="AM_routine"){
+        const done=MORNING_CHECKLIST_KEYS.filter(k=>answers[k]==="Yes").length;
+        html+=`<td>${Math.round(done/MORNING_CHECKLIST_KEYS.length*100)}%</td>`;
+      } else html+=`<td class="editable" data-key="${item.key}">${answers[item.key]||""}</td>`;
     });
-    html+='</tbody></table>';
-    document.getElementById("tableContainer").innerHTML=html;
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  document.getElementById("tableContainer").innerHTML=html;
 
-    // Long press edit row
-    document.querySelectorAll("tbody tr").forEach(row=>{
-        let pressTimer=null;
-        const dateCell=row.querySelector(".date-cell");
-        dateCell.addEventListener("touchstart",()=>{ pressTimer=setTimeout(()=>enableEditMode(row),500); });
-        dateCell.addEventListener("touchend",()=>clearTimeout(pressTimer));
-        dateCell.addEventListener("touchmove",()=>clearTimeout(pressTimer));
-    });
-}
-
-function enableEditMode(row){
-    document.querySelectorAll("tbody tr").forEach(r=>{ if(r!==row) r.classList.add("dimmed"); else r.classList.add("editing"); });
+  // Add click events for editable cells
+  document.querySelectorAll("tbody tr").forEach(row=>{
     row.querySelectorAll("td.editable").forEach(td=>{
-        td.addEventListener("click",()=>openPopup(row.dataset.day, td.dataset.key, LABELS[td.dataset.key], td.textContent.trim()));
+      td.addEventListener("click",()=>openPopup(row.dataset.day, td.dataset.key, LABELS[td.dataset.key], td.textContent.trim()));
     });
-    document.addEventListener("touchstart",exitEditModeOnOutside,{passive:true});
-}
-
-function exitEditModeOnOutside(e){
-    const row=document.querySelector("tbody tr.editing");
-    if(!row) return;
-    if(!row.contains(e.target)){
-        row.classList.remove("editing");
-        document.querySelectorAll("tbody tr.dimmed").forEach(r=>r.classList.remove("dimmed"));
-        row.querySelectorAll("td.editable").forEach(td=>td.replaceWith(td.cloneNode(true)));
-        document.removeEventListener("touchstart",exitEditModeOnOutside);
-    }
+  });
 }
 
 function openPopup(day,key,label,value){
-    currentDay=day; currentKey=key; popupTitle.textContent=label;
-    const item = ITEM_KEY_MAP[key]; if(!item) return;
-    popupSelect.innerHTML='';
-    popupSelect.multiple = item.type==='multi';
-    item.options.forEach(opt=>{
-        const optEl=document.createElement('option');
-        optEl.value=opt; optEl.textContent=opt;
-        if(item.type==='multi' && Array.isArray(value) && value.includes(opt)) optEl.selected=true;
-        else if(item.type!=='multi' && value===opt) optEl.selected=true;
-        popupSelect.appendChild(optEl);
-    });
-    popupSelect.classList.remove('hidden'); popupText.classList.add('hidden');
-    popup.classList.remove('hidden');
+  currentDay=day; currentKey=key; popupTitle.textContent=label;
+  const item=ITEM_KEY_MAP[key]; if(!item) return;
+  popupSelect.innerHTML=''; popupSelect.multiple=item.type==='multi';
+  item.options.forEach(opt=>{
+    const optEl=document.createElement('option');
+    optEl.value=opt; optEl.textContent=opt;
+    if(value===opt) optEl.selected=true;
+    popupSelect.appendChild(optEl);
+  });
+  popup.classList.remove('hidden');
 }
 
 document.getElementById('popupSave').onclick=()=>{
-    const raw=JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
-    const dayData=raw[currentDay]||{}; raw[currentDay]=dayData;
-    const item=ITEM_KEY_MAP[currentKey];
-    let newValue = item.type==='multi'?Array.from(popupSelect.selectedOptions).map(o=>o.value):popupSelect.value;
-
-    if(MORNING_CHECKLIST_KEYS.includes(currentKey) || MORNING.find(i=>i.key===currentKey)){
-        dayData.morning=dayData.morning||{}; dayData.morning.answers=dayData.morning.answers||{}; dayData.morning.answers[currentKey]=newValue;
-    } else {
-        dayData.night=dayData.night||{}; dayData.night.answers=dayData.night.answers||{}; dayData.night.answers[currentKey]=newValue;
-    }
-    localStorage.setItem("dailyTrackerData", JSON.stringify(raw));
-    popup.classList.add('hidden'); buildTable();
+  const raw=JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
+  const dayData=raw[currentDay]||{}; raw[currentDay]=dayData;
+  let newValue=popupSelect.value;
+  if(MORNING_CHECKLIST_KEYS.includes(currentKey) || INDIVIDUAL_MORNING_ITEMS.includes(currentKey)){
+    dayData.morning=dayData.morning||{}; dayData.morning.answers=dayData.morning.answers||{}; dayData.morning.answers[currentKey]=newValue;
+  } else {
+    dayData.night=dayData.night||{}; dayData.night.answers=dayData.night.answers||{}; dayData.night.answers[currentKey]=newValue;
+  }
+  localStorage.setItem("dailyTrackerData",JSON.stringify(raw));
+  popup.classList.add('hidden'); buildTable();
 };
 
 document.getElementById('popupCancel').onclick=()=>{popup.classList.add('hidden');};
-document.getElementById('btnSettings').onclick=()=>{ document.getElementById('settingsMenu').classList.toggle('show'); document.getElementById('menuOverlay').classList.toggle('show'); };
-document.getElementById('menuOverlay').onclick=()=>{ document.getElementById('settingsMenu').classList.remove('show'); document.getElementById('menuOverlay').classList.remove('show'); };
-document.querySelectorAll('.footer-nav .switch-btn').forEach(btn=>btn.addEventListener('click',()=>{ document.querySelectorAll('.footer-nav .switch-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }));
-
 buildTable();
 </script>
+
 </body>
 </html>
