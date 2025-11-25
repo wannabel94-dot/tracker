@@ -39,12 +39,12 @@ body {
 ================================================= */
 /* NIGHT MODE */
 body.night {
-  background:#07081d;
+  --bg-color: #07081d;
 }
 
 /* MORNING / DAY MODE */
 body.morning {
-  background:#6C5E82;
+  --bg-color: #6C5E82;
 }
 
 /* ===============================================
@@ -199,7 +199,7 @@ body.morning {
   width: 50px;  /* same as cutout */
   height: 50px;
   border-radius: 50%;
-  background: #8694af;
+  background: var(--bg-color);
   border: none;
   display: flex;
   justify-content: center;
@@ -462,25 +462,14 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 
   <!-- Sticky footer nav -->
 <footer class="footer-nav">
-  <button class="switch-btn morning" id="morningBtn">
-    <img src="icons/sun.svg" alt="Morning">
-    <span>Morning</span>
-  </button>
-
-  <button class="switch-btn night" id="nightBtn">
-    <img src="icons/night.svg" alt="Night">
-    <span>Night</span>
-  </button>
-
-  <button class="switch-btn todo" id="todoBtn">
-    <img src="icons/todo.svg" alt="todo">
-    <span>To-do</span>
-  </button>
-
-  <button class="switch-btn data" id="dataBtn">
-    <img src="icons/data.svg" alt="Data">
-    <span>Data</span>
-  </button>
+  <div class="left-group">
+    <button class="switch-btn morning" id="morningBtn"><img src="icons/sun.svg" alt="Morning"><span>Morning</span></button>
+    <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"><span>Night</span></button>
+  </div>
+  <div class="right-group">
+    <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
+    <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"><span>Data</span></button>
+  </div>
 </footer>
 <button class="floating-center-btn" id="centralBtn">+</button>
 
