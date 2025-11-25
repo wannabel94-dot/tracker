@@ -26,21 +26,55 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
 .settings-menu button:hover{ background: rgba(255,255,255,0.15); transform:translateX(6px); }
 .menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity .3s; z-index:150; }
 .menu-overlay.show{ opacity:1; pointer-events:all; }
-.footer-nav { position: fixed; bottom: 0; left:0; right:0; height:60px; background:#303f5c; display:flex; justify-content:space-between; align-items:center; padding:0 25px; z-index:100;   /* Circular cutout */
-  -webkit-mask-image: radial-gradient(circle 37.5px at center, transparent 100%, black 100%);
+.footer-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #303f5c;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+  z-index: 100;
+
+  /* Circular cutout */
+  -webkit-mask-image: radial-gradient(circle 37.5px at center -15px, transparent 100%, black 100%);
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   -webkit-mask-composite: destination-out;
-  mask-image: radial-gradient(circle 37.5px at center, transparent 100%, black 100%);
+  mask-image: radial-gradient(circle 37.5px at center -15px, transparent 100%, black 100%);
   mask-repeat: no-repeat;
   mask-position: center;
-  mask-composite: exclude;}
+  mask-composite: exclude;
+}
+
+.floating-center-btn {
+  position: absolute;
+  top: -12.5px; /* lifts the button to sit in the middle of the cutout */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 75px;  /* same as cutout diameter */
+  height: 75px;
+  border-radius: 50%;
+  background: #8694af;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  font-size: 36px;
+  font-weight: 700;
+  color: #000;
+  cursor: pointer;
+  z-index: 150; /* above footer */
+}
 .left-group, .right-group { display:flex; gap:28px; }
 .footer-nav .switch-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px 8px; background:transparent; border:none; cursor:pointer; border-radius:12px; }
 .footer-nav .switch-btn img { width:22px; height:22px; opacity:0.9; filter:invert(1); }
 .footer-nav .switch-btn span { color:#fff; font-weight:600; }
 .footer-nav .switch-btn.active span { color:#8d4585; font-weight:700; }
-.floating-center-btn { position:absolute; top:-28px; left:50%; transform:translateX(-50%); width:65px; height:65px; border-radius:50%; background:#8694af; border:none; display:flex; justify-content:center; align-items:center; box-shadow:0 4px 12px rgba(0,0,0,0.35); font-size:36px; font-weight:700; color:#000; cursor:pointer; z-index:150; }
 .editing { background: rgba(141,69,133,0.25); }
 .dimmed { opacity:0.4; pointer-events:none; }
 /* Popup */
