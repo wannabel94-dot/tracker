@@ -2,436 +2,186 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="theme-color" content="#07081d" id="navColor">
+<meta name="theme-color" content="#07081d">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-   <!-- Theme color for Android navigation bar -->
 <title>Data</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
 <style>
-
-    /* ===============================================
-   ROOT VARIABLES
-================================================= */
-:root {
-  --text: #f0f4ff;
-  --card-radius: 14px;
-  --bg-blur: 6px;
-  --glass-bg: rgba(255,255,255,0.08);
-  --glass-border: rgba(255,255,255,0.12);
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-}
-    /* ===============================================
-   GLOBAL SETTINGS
-================================================= */
-* { box-sizing: border-box; }
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* prevent whole-page scrolling */
-background:#07081d;
-   text: #f0f4ff;
-
-}
-
-   .wrap {
-  width: 100%;
-  max-width: 740px;
-  margin: 0 auto;
-  position: absolute;
-  top: 60px;      /* header height */
-  bottom: 60px;   /* footer height */
-  left: 0;
-  right: 0;
-  padding: 18px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-    #topHeader {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-background: #07081d; /* must be solid */
-  justify-content: space-between;
-  padding: 10px 18px;
-  z-index: 100;
-}
-/* Settings / Menu button */
-#btnSettings {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  color: #fff;
-  cursor: pointer;
-  padding: 8px;
-  z-index: 101;
-  position: relative;
-  min-width: 40px;
-  min-height: 40px;
-}
-
-/* Day of Week text inside header */
-#dayOfWeek {
-  flex: 1;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #f0f4ff;
-  margin: 0;
-  pointer-events: none; /* text is not interactive */
-}
-#tableContainer {
-    overflow-x: auto;
-    width: 100%;
-    margin-top: 15px;
-       -webkit-overflow-scrolling: touch; /* smooth scrolling */
-}
-
-table {
-    width: max-content;
-    min-width: 100%;
-    border-collapse: collapse;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-}
-   table, th, td {
-    color: #f0f4ff;
-}
-
-    thead {
-        background: rgba(255,255,255,0.15);
-    }
-thead th {
-    position: sticky;
-    top: 0;
-    background: rgba(255,255,255,0.15);
-    z-index: 3;
-}
-
-    th, td {
-    padding: 6px 10px;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        text-align: left;
-        font-size: 0.8rem;
-    }
-
-    th {
-        font-weight: 600;
-    }
-
-    tr:last-child td {
-        border-bottom: none;
-    }
-
- /* Make first column sticky and more solid */
-td:first-child, th:first-child {
-    position: sticky;
-    left: 0;
-    background: rgba(0, 0, 0, 0.9); /* more solid than before */
-    backdrop-filter: blur(4px);
-    z-index: 4; /* higher than the other columns */
-}
-
-/* Ensure text of other columns doesn’t show under the sticky column */
-table th, table td {
-    white-space: nowrap; /* prevents text from wrapping behind first column */
-}
-
-/* Scrollable card wrapper */
-.table-card {
-  border-radius: 14px;
-  padding: 12px;
-  margin-top: 15px;
-  overflow-y: auto;
-  overflow-x: auto;
-}
-
-   table, th, td {
-    color: #f0f4ff;
-}
-
-
-/* This must be OUTSIDE .table-card */
-body.data-page .wrap {
-  margin-top: 0 !important;
-}
-
-/* ===============================================
-   MENU
-================================================= */
-.settings-menu{
-  position: fixed; top:0; left:0; height:100vh; width:50%;
-  background: rgba(0,0,0,0.7); backdrop-filter: blur(18px) saturate(180%);
-  display:flex; flex-direction:column; padding:20px 0; transform:translateX(-100%); transition: transform .4s ease; z-index:200;
-}
-.settings-menu.show{ transform:translateX(0); }
-.settings-menu button{ background:transparent; border:0; padding:16px 20px; width:100%; text-align:left; font-weight:600; color:#fff; cursor:pointer; transition: background .25s, transform .2s; }
-.settings-menu button:hover{ background: rgba(255,255,255,0.15); transform:translateX(6px); }
-.menu-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); opacity:0; pointer-events:none; transition:opacity .3s; z-index:150; }
-.menu-overlay.show{ opacity:1; pointer-events:all; }
-/* ===============================================
-   FIXED FOOTER NAV
-================================================= */
-.footer-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: #303f5c;
-  display: flex;
-  justify-content: space-between;  /* pushes groups apart */
-  align-items: center;
-  padding: 0 25px;                 /* spacing from screen edges */
-  z-index: 100;
-}
-
-.left-group,
-.right-group {
-  display: flex;
-  gap: 28px;  /* spacing between buttons */
-}
-
-
-/* Footer buttons */
-.footer-nav .switch-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;               /* space between icon + text */
-  padding: 6px 8px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  border-radius: 12px;
-}
-
-.footer-nav .switch-btn img {
-  width: 22px;
-  height: 22px;
-  opacity: 0.9;
-filter:invert(1);
-}
-
-.footer-nav .switch-btn span {
-  color: #fff;
-  font-weight: 600;
-}
-
-.footer-nav .switch-btn.active span {
-  color: #8d4585;   /* example gold for active */
-  opacity: 1;
-  font-weight: 700; /* optional */
-}
-   .footer-nav .switch-btn.active img {
-  filter: invert(84%) sepia(52%) saturate(545%) hue-rotate(2deg) brightness(103%) contrast(101%);
-}
-   .floating-center-btn {
-  position: absolute;
-  top: -28px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 65px;
-  height: 65px;
-  border-radius: 50%;
-  background: #8d4585;
-  border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-  z-index: 150;
-  cursor: pointer;
-  font-size: 36px;     /* make plus big */
-  font-weight: 700;
-  color: #000;         /* dark plus color */
-  line-height: 0;
-}
-/* ===============================================
-   RESPONSIVE / MOBILE
-================================================= */
-@media (max-width:480px) { 
-  body{padding:12px;}
-}
+/* ---- Full CSS + popup + editable table ---- */
+body { margin:0; background:#07081d; color:#f0f4ff; font-family:Inter, sans-serif; }
+#topHeader { position:sticky; top:0; display:flex; justify-content:space-between; padding:10px 18px; background:#07081d; }
+#tableContainer { overflow:auto; padding:12px; }
+table { width:max-content; min-width:100%; border-collapse:collapse; }
+th, td { padding:6px 10px; border-bottom:1px solid rgba(255,255,255,0.1); white-space:nowrap; }
+thead th { background:rgba(255,255,255,0.15); position:sticky; top:0; }
+td:first-child, th:first-child { position:sticky; left:0; background:#0009; backdrop-filter:blur(4px); }
+.edit-btn { cursor:pointer; color:#8d4585; font-weight:700; }
+/* popup */
+.edit-popup { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); }
+.popup-box { background:#1a1b2f; padding:20px; border-radius:14px; width:280px; }
+.popup-box h3 { margin-top:0; }
+.popup-box select, .popup-box input { width:100%; padding:8px; margin:8px 0; border-radius:8px; border:none; }
+.popup-btns { display:flex; gap:10px; margin-top:10px; }
+.popup-btns button { flex:1; padding:8px; border:none; border-radius:10px; cursor:pointer; }
+.hidden { display:none; }
 </style>
 </head>
 <body>
-  <!-- Sticky header -->
-  <header id="topHeader">
-    <div id="dayOfWeek">Data</div>
-    <button id="btnSettings">☰</button>
-  </header>
+<header id="topHeader">
+  <div id="dayOfWeek">Data</div>
+  <button id="btnSettings">☰</button>
+</header>
+<div id="tableContainer"></div>
 
-<div class="table-card">
-    <div id="tableContainer"></div>
-</div>
-<!-- Menu overlay & settings -->
-<div id="menuOverlay" class="menu-overlay"></div>
-<div id="settingsMenu" class="settings-menu">
-  <button id="btnExport">Export data</button>
-  <button id="btnClearToday">Clear Today's Data</button>
-</div>
-
- <!-- Sticky footer nav -->
-<footer class="footer-nav">
-
-  <div class="left-group">
-    <button class="switch-btn morning" id="morningBtn">
-      <img src="icons/sun.svg" alt="Morning">
-      <span>Morning</span>
-    </button>
-
-    <button class="switch-btn night" id="nightBtn">
-      <img src="icons/night.svg" alt="Night">
-      <span>Night</span>
-    </button>
+<!-- Edit Popup -->
+<div id="editPopup" class="edit-popup hidden">
+  <div class="popup-box">
+    <h3 id="popupTitle"></h3>
+    <select id="popupSelect"></select>
+    <input id="popupText" class="hidden" placeholder="Enter text..." />
+    <div class="popup-btns">
+      <button id="popupSave">Save</button>
+      <button id="popupCancel">Cancel</button>
+    </div>
   </div>
-
-  <button class="floating-center-btn" id="centralBtn">+</button>
-
-  <div class="right-group">
-    <button class="switch-btn history" id="historyBtn">
-      <img src="icons/history.svg" alt="History">
-      <span>History</span>
-    </button>
-
-    <button class="switch-btn data" id="dataBtn">
-      <img src="icons/data.svg" alt="Data">
-      <span>Data</span>
-    </button>
-  </div>
-
-</footer>
+</div>
 
 <script>
-    const LABELS = { wake_time: "Wake up", how_slept: "Sleep", temp: "Take temp", made_bed: "Made Bed", took_meds_morn: "Took meds", tidy_up: "Tidied", shower_morn: "Showered", get_dressed: "Dressed", led_mask_morn: "LED Mask", skincare_morn: "Skincare AM", eat_breakfast: "Breakfast", supplements_morn: "Supplements", brush_teeth_morn: "Teeth AM", psyllium: "Psyllium", magnesium: "Magnesium", pillowcase: "Pillowcase", shower_night: "Showered", skincare_night: "Skincare PM", teeth_night: "Teeth PM", flossed: "Flossed", left_house: "Left House", caffeine_alcohol: "Caffeine/Alcohol", sickness: "Symptoms", saw_dogs: "Saw Dogs", feel_with_L: "Relationship", house_state: "House", drove: "Driving", body_feelings: "Body", food_desc: "Diet", most_prominent: "Mental", meds: "Extra Meds", sensory_triggers: "Sensory Triggers", appointments: "Appointments", movement: "Movement", talked_to_anyone: "People", wellness: "Wellness", creative: "Creative", closed_eyes_time: "Closed Eyes" }; function yesNoToSymbol(v) { if (v === "Yes") return "✓"; if (v === "No") return "✗"; return v; }
-const MORNING_CHECKLIST_KEYS = [
-  "temp", "made_bed", "kettle", "took_meds_morn", "tidy_up", 
-  "tea", "poop", "shower_morn", "get_dressed", "led_mask_morn",
-  "skincare_morn", "eat_breakfast", "supplements_morn", "brush_teeth_morn"
-];
-
-// Optional: some items you want to show individually
-const INDIVIDUAL_MORNING_ITEMS = [
-  "eat_breakfast", 
-    "took_meds_morn",
-    "brush_teeth_morn",
-    "supplements_morn"
-];
-    
-const NIGHT_KEYS = [
-  "psyllium","magnesium","pillowcase","shower_night","skincare_night",
-  "teeth_night","flossed","left_house","caffeine_alcohol","sickness",
-  "saw_dogs","feel_with_L","house_state","drove","body_feelings",
-  "food_desc","most_prominent","meds","sensory_triggers","appointments",
-  "movement","talked_to_anyone","wellness","creative","closed_eyes_time"
-];
- /****************************************************
- * 5️⃣ NAVIGATION BUTTONS
- ****************************************************/
-document.getElementById('morningBtn').onclick = () => {
-  const last = localStorage.getItem('lastMorningProgress') || '';
-  window.location.href = `index.html?mode=morning&last=${encodeURIComponent(last)}`;
+/* ------------ OPTION B: CUSTOM OPTIONS PER CATEGORY -------------- */
+const OPTIONS = {
+  yesno: ["Yes", "No"],
+  symptoms: ["None", "Headache", "Nausea", "Fatigue", "Pain"],
+  mental: ["OK", "Low", "Anxious", "Irritable", "Calm"],
+  movement: ["None", "Walk", "Gym", "Yoga", "Stretching"],
+  diet: ["Normal", "Healthy", "Overate", "Undereat", "Takeout"],
+  house: ["Clean", "Messy", "Average"],
+  alcohol: ["None", "Caffeine", "Alcohol", "Both"],
+  relationship: ["Good", "Neutral", "Bad"],
+  body: ["Fine", "Sore", "Stiff", "Bloated"],
+  default: []
 };
-document.getElementById('nightBtn').onclick = () => {
-  const last = localStorage.getItem('lastNightProgress') || '';
-  window.location.href = `index.html?mode=night&last=${encodeURIComponent(last)}`;
+
+/* Map keys → option groups */
+const KEY_OPTION_MAP = {
+  sickness:"symptoms",
+  most_prominent:"mental",
+  food_desc:"diet",
+  movement:"movement",
+  house_state:"house",
+  caffeine_alcohol:"alcohol",
+  feel_with_L:"relationship",
+  body_feelings:"body"
 };
-document.getElementById('historyBtn').addEventListener('click', () => { window.location.href = 'history.html'; });
-document.getElementById('dataBtn').addEventListener('click', () => { window.location.href = 'data.html'; });
 
-   
-function buildTable() {
-    const raw = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
-const days = Object.keys(raw).sort((a, b) => {
-    const parse = d => {
-        const [day, month, year] = d.split('/').map(Number);
-        return new Date(year, month - 1, day);
-    };
-    return parse(b) - parse(a); // newest → oldest
-});
+const LABELS = { wake_time:"Wake up", how_slept:"Sleep", temp:"Take temp", made_bed:"Made Bed", took_meds_morn:"Took meds", tidy_up:"Tidied", shower_morn:"Showered", get_dressed:"Dressed", led_mask_morn:"LED Mask", skincare_morn:"Skincare AM", eat_breakfast:"Breakfast", supplements_morn:"Supplements", brush_teeth_morn:"Teeth AM", psyllium:"Psyllium", magnesium:"Magnesium", pillowcase:"Pillowcase", shower_night:"Showered PM", skincare_night:"Skincare PM", teeth_night:"Teeth PM", flossed:"Flossed", left_house:"Left House", caffeine_alcohol:"Caffeine/Alcohol", sickness:"Symptoms", saw_dogs:"Saw Dogs", feel_with_L:"Relationship", house_state:"House", drove:"Driving", body_feelings:"Body", food_desc:"Diet", most_prominent:"Mental", meds:"Extra Meds", sensory_triggers:"Sensory Triggers", appointments:"Appointments", movement:"Movement", talked_to_anyone:"People", wellness:"Wellness", creative:"Creative", closed_eyes_time:"Closed Eyes" };
 
-    if (days.length === 0) {
-        document.getElementById("tableContainer").innerHTML = "<p>No data saved.</p>";
-        return;
-    }
+const MORNING_CHECKLIST_KEYS = ["temp","made_bed","took_meds_morn","tidy_up","shower_morn","get_dressed","led_mask_morn","skincare_morn","eat_breakfast","supplements_morn","brush_teeth_morn"];
+const INDIVIDUAL_MORNING_ITEMS=["eat_breakfast","took_meds_morn","brush_teeth_morn","supplements_morn"];
+const NIGHT_KEYS=["psyllium","magnesium","pillowcase","shower_night","skincare_night","teeth_night","flossed","left_house","caffeine_alcohol","sickness","saw_dogs","feel_with_L","house_state","drove","body_feelings","food_desc","most_prominent","meds","sensory_triggers","appointments","movement","talked_to_anyone","wellness","creative","closed_eyes_time"];
 
-    // All items: AM completion, individual morning, night
-    const allItems = [
-        { key: "AM_routine", label: "AM routine", type: "percent" },
-        ...INDIVIDUAL_MORNING_ITEMS.map(k => ({ key: k, label: LABELS[k] || k, type: "yesno" })),
-        ...NIGHT_KEYS.map(k => ({ key: k, label: LABELS[k] || k, type: "yesno" }))
-    ];
+function buildTable(){
+  const raw = JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
+  const days = Object.keys(raw).sort((a,b)=>{const p=d=>{let[x,y,z]=d.split('/').map(Number);return new Date(z,y-1,x)};return p(b)-p(a)});
+  if(!days.length){ document.querySelector('#tableContainer').innerHTML='<p>No data.</p>'; return; }
 
-    // Table header = items
-    let html = `<table><thead><tr><th>Date</th>`;
-    allItems.forEach(item => html += `<th>${item.label}</th>`);
-    html += `</tr></thead><tbody>`;
+  let items=[{key:"AM_routine",label:"AM %"},...INDIVIDUAL_MORNING_ITEMS.map(k=>({key:k,label:LABELS[k]})),...NIGHT_KEYS.map(k=>({key:k,label:LABELS[k]}))];
 
-    // Table rows = days
-    days.forEach(day => {
-        html += `<tr><td><strong>${day}</strong></td>`; // first column = date
+  let html='<table><thead><tr><th>Edit</th><th>Date</th>';
+  items.forEach(i=>html+=`<th>${i.label}</th>`);
+  html+='</tr></thead><tbody>';
 
-        allItems.forEach(item => {
-const dayData = raw[day] || {};
-const answers = {
-    ...(dayData.morning?.answers || {}),
-    ...(dayData.night?.answers || {})
-};           
-           if (item.key === "AM_routine") {
-const total = MORNING_CHECKLIST_KEYS.length;
-const done = MORNING_CHECKLIST_KEYS.filter(k => answers[k] === "Yes").length;
-                const percent = Math.round((done / total) * 100);
-                html += `<td>${percent}%</td>`;
-            } else {
-                let val = (answers[item.key]) ?? "";
-                if (Array.isArray(val)) val = val.map(v => v === "Yes" ? "✓" : v === "No" ? "✗" : v).join(", ");
-                else val = val === "Yes" ? "✓" : val === "No" ? "✗" : val;
-                html += `<td>${val}</td>`;
-            }
-        });
+  days.forEach(day=>{
+    const dayData=raw[day]||{};
+    const answers={...(dayData.morning?.answers||{}),...(dayData.night?.answers||{})};
 
-        html += `</tr>`;
+    html+=`<tr data-day="${day}">
+      <td><span class="edit-btn">✎</span></td>
+      <td><strong>${day}</strong></td>`;
+
+    items.forEach(it=>{
+      if(it.key==="AM_routine"){
+        const total=MORNING_CHECKLIST_KEYS.length;
+        const done=MORNING_CHECKLIST_KEYS.filter(k=>answers[k]==="Yes").length;
+        html+=`<td class="cell-readonly">${Math.round(done/total*100)}%</td>`;
+      } else {
+        let v=answers[it.key]||"";
+        html+=`<td class="editable" data-key="${it.key}">${v}</td>`;
+      }
     });
 
-    html += `</tbody></table>`;
-    document.getElementById("tableContainer").innerHTML = html;
-}
+    html+='</tr>';
+  });
 
+  html+='</tbody></table>';
+  document.querySelector('#tableContainer').innerHTML=html;
+}
 buildTable();
 
-const btnSettings = document.getElementById('btnSettings');
-const settingsMenu = document.getElementById('settingsMenu');
-const menuOverlay = document.getElementById('menuOverlay');
+/* ---------------- POPUP HANDLING ---------------- */
+const popup=document.querySelector('#editPopup');
+const popupTitle=document.querySelector('#popupTitle');
+const popupSelect=document.querySelector('#popupSelect');
+const popupText=document.querySelector('#popupText');
+let currentDay=null, currentKey=null;
 
-btnSettings.addEventListener('click', () => {
-  settingsMenu.classList.toggle('show');
-  menuOverlay.classList.toggle('show');
+function openPopup(day,key,label,value){
+  currentDay=day; currentKey=key;
+  popupTitle.textContent=label;
+
+  let optionGroup = KEY_OPTION_MAP[key] || "yesno";
+  let opts = OPTIONS[optionGroup] || [];
+
+  popupSelect.innerHTML = opts.map(o=>`<option value="${o}">${o}</option>`).join('') + '<option value="__TEXT__">Enter text…</option><option value="">Clear</option>';
+
+  popupSelect.classList.remove('hidden');
+  popupText.classList.add('hidden');
+
+  popupSelect.value = opts.includes(value)?value : "__TEXT__";
+  if(popupSelect.value==="__TEXT__"){ popupText.classList.remove('hidden'); popupText.value=value||""; }
+
+  popup.classList.remove('hidden');
+}
+
+popupSelect.onchange=()=>{
+  if(popupSelect.value==="__TEXT__"){
+    popupText.classList.remove('hidden');
+  } else popupText.classList.add('hidden');
+};
+
+/* Save */
+document.querySelector('#popupSave').onclick=()=>{
+  const raw=JSON.parse(localStorage.getItem("dailyTrackerData")||"{}");
+  const day=raw[currentDay];
+  if(!day) return;
+
+  const v = popupSelect.value==="__TEXT__" ? popupText.value.trim() : popupSelect.value;
+
+  if(MORNING_CHECKLIST_KEYS.includes(currentKey)){
+    day.morning = day.morning||{};
+    day.morning.answers = day.morning.answers||{};
+    day.morning.answers[currentKey]=v;
+  } else {
+    day.night = day.night||{};
+    day.night.answers = day.night.answers||{};
+    day.night.answers[currentKey]=v;
+  }
+
+  localStorage.setItem('dailyTrackerData', JSON.stringify(raw));
+  popup.classList.add('hidden');
+  buildTable();
+};
+
+document.querySelector('#popupCancel').onclick=()=>popup.classList.add('hidden');
+
+/* Click handlers */
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('editable')){
+    const td=e.target;
+    const tr=td.closest('tr');
+    openPopup(tr.dataset.day, td.dataset.key, LABELS[td.dataset.key], td.textContent.trim());
+  }
 });
-
-menuOverlay.addEventListener('click', () => {
-  settingsMenu.classList.remove('show');
-  menuOverlay.classList.remove('show');
-});
-
-   const footerButtons = document.querySelectorAll('.footer-nav .switch-btn');
-
-  footerButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // Remove active from all buttons
-      footerButtons.forEach(b => b.classList.remove('active'));
-
-      // Add active to the clicked one
-      btn.classList.add('active');
-    });
-  });
 </script>
-
 </body>
 </html>
