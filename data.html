@@ -124,7 +124,7 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
     <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"><span>Night</span></button>
   </div>
   <div class="right-group">
-    <button class="switch-btn history" id="historyBtn"><img src="icons/history.svg" alt="History"><span>History</span></button>
+    <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
     <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"><span>Data</span></button>
   </div>
 </footer>
@@ -167,7 +167,7 @@ td:first-child, th:first-child { position:sticky; left:0; background:rgba(0,0,0,
 
 <script>
   // Footer navigation handlers
-document.getElementById('historyBtn').onclick = () => { window.location.href = 'history.html'; };
+document.getElementById('todoBtn').onclick = () => { window.location.href = 'todo.html'; };
 document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
 document.getElementById('morningBtn').onclick = () => { window.location.href = 'index.html?mode=morning'; };
 document.getElementById('nightBtn').onclick = () => { window.location.href = 'index.html?mode=night'; };
