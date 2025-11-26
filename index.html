@@ -32,7 +32,67 @@ body {
   text-align: center;
   padding: 40px 20px;
 }
+  /* ===============================================
+   STICKY HEADER (Day + Menu)
+================================================= */
+#topHeader {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  z-index: 100;
+}
 
+/* Day of Week text inside header */
+#dayOfWeek {
+  flex: 1;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f0f4ff;
+  margin: 0;
+  pointer-events: none; /* text is not interactive */
+}
+
+/* Settings / Menu button */
+#btnSettings {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 101;
+  position: relative;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+#btnSettings:hover {
+  color: #ddd;
+}
+#dataBtn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 101;
+  position: relative;
+  min-width: 40px;
+  min-height: 40px;
+}
+
+   #dataBtn img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+   filter:invert(1);
+}
 h1 {
   font-size: 48px;
   font-weight: 700;
@@ -225,10 +285,13 @@ h1 {
 </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Daily Tracker</h1>
-    <div class="subtitle">Track your routines and wellness</div>
-    
+    <!-- Sticky header -->
+  <header id="topHeader">
+    <button class="switch-btn data" id="dataBtn"><img src="icons/chart.svg" alt="Data"></button>
+    <div id="dayOfWeek">Home</div>
+    <button id="btnSettings">☰</button>
+  </header>
+
     <div class="mode-buttons">
       <a href="morning.html" class="mode-btn">
         <img src="icons/sun.svg" alt="Morning">
@@ -312,6 +375,7 @@ h1 {
       document.getElementById('morningProgress').textContent = morningProgress + '%';
       document.getElementById('nightProgress').textContent = nightProgress + '%';
       document.getElementById('todoBtn').onclick = () => { window.location.href = 'todo.html'; };
+      document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
 
     });
   </script>
