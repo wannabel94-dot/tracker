@@ -433,30 +433,29 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
     </div>
   </div>
 
-  <footer class="footer-nav">
-    <div class="left-group">
-      <button class="switch-btn home" id="homeBtn"><img src="icons/home.svg" alt="Home"><span>Home</span></button>
-    </div>
-    <div class="right-group">
-      <button class="switch-btn todo active" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
-    </div>
-  </footer>
+  <!-- Sticky footer nav -->
+<footer class="footer-nav">
+  <div class="left-group">
+    <button class="switch-btn home" id="homeBtn"><img src="icons/home.svg" alt="Home"><span>Home</span></button>
+   <button class="switch-btn rx" id="rxBtn"><img src="icons/rx1.svg" alt="rx"><span>Rx</span></button>
+  </div>
+  <div class="right-group">
+    <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
+   <button class="switch-btn mood" id="moodBtn"><img src="icons/mood.svg" alt="mood"><span>Mood</span></button>
+  </div>
+</footer>
   <button class="floating-center-btn" id="centralBtn">+</button>
 
 <script>
 let notes = JSON.parse(localStorage.getItem('dailyNotes') || '[]');
 let editingNoteId = null;
 
-/* Footer navigation */
-document.getElementById('homeBtn').onclick = () => {
-  window.location.href = 'index.html';
-};
-document.getElementById('todoBtn').onclick = () => {
-  window.location.href = 'todo.html';
-};
-document.getElementById('dataBtn').onclick = () => {
-  window.location.href = 'data.html';
-};
+document.getElementById('homeBtn').onclick = () => { window.location.href = 'index.html'; };
+  document.getElementById('homeBtn').onclick = () => { window.location.href = 'home.html'; };
+  document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
+  document.getElementById('moodBtn').onclick = () => { window.location.href = 'mood.html'; };
+  document.getElementById('rxBtn').onclick = () => { window.location.href = 'rx.html'; };
+
 
 /* Settings menu */
 const btnSettings = document.getElementById('btnSettings');
