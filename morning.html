@@ -148,11 +148,12 @@ body {
   width: 100%;
   max-width: 740px;
   margin: 0 auto;
-  position: relative;
+  position: absolute;
+  top: 60px;      /* header height */
+  bottom: 60px;   /* footer height */
+  left: 0;
+  right: 0;
   padding: 18px;
-  padding-top: 60px;  /* space for header */
-  padding-bottom: 80px; /* space for footer */
-  min-height: calc(100vh - 140px);
 }
 
 /* ===============================================
