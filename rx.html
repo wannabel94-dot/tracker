@@ -270,9 +270,11 @@ button.pill-btn {
 
 <!-- Header -->
 <header id="topHeader">
-  <div id="dayOfWeek">Medication Counter</div>
+  <button class="switch-btn data" id="dataBtn"><img src="icons/chart.svg" alt="Data"></button>
+  <div id="dayOfWeek">Meds</div>
   <button id="btnSettings">☰</button>
 </header>
+
 
 <!-- Menu overlay & settings -->
 <div id="menuOverlay" class="menu-overlay"></div>
@@ -318,6 +320,7 @@ button.pill-btn {
    <button class="switch-btn mood" id="moodBtn"><img src="icons/mood.svg" alt="mood"><span>Mood</span></button>
   </div>
 </footer>
+<button class="floating-center-btn" id="centralBtn">+</button>
 
 <script>
   // Footer navigation handlers
