@@ -698,19 +698,23 @@ function loadUI() {
 
     progressBar.parentElement.style.display = 'block';
 
-    // Morning completion check - show done note if finished
-    if (mode === 'morning' && currentIndex >= MORNING.length) {
-        const allChecklistDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-        if (allChecklistDone) {
-            contentArea.innerHTML = '<div class="done-note">Morning completed.</div>';
-            backBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-            updateProgressBar();
-            return;
-        }
+// Morning completion check - show done note if finished
+if (mode === 'morning') {
+    const allQuestionsDone = MORNING.every(q => answers[q.key]);
+    const allChecklistDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+    
+    // If everything is done, show the done page
+    if (allQuestionsDone && allChecklistDone) {
+        showMorningDonePage();
+        return;
+    }
+    
+    // If just questions are done, show checklist
+    if (currentIndex >= MORNING.length) {
         loadMorningChecklist();
         return;
     }
+}
 
     // Night checklist logic
     if (mode === 'night') {
@@ -890,10 +894,6 @@ nextBtn.onclick = () => {
             return;
         }
 
-        // Trigger popup regardless of checklist completion
-        showMorningChecklistPopup();
-        return;
-    }
 
     // --- NIGHT LOGIC ---
     if (mode === 'night') {
