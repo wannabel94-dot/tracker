@@ -144,6 +144,71 @@ h1 {
   font-weight: 600;
 }
 
+  /* ===============================================
+   FIXED FOOTER NAV
+================================================= */
+.footer-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #303f5c;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+}
+
+.left-group, .right-group {
+  display: flex;
+  justify-content: space-between; /* even spacing between buttons */
+  width: 120px; /* adjust width to fit 2 buttons evenly */
+  margin: 0;
+  gap: 0; /* spacing is controlled by flex */
+}
+
+
+/* Circular cutout behind the button */
+.footer-nav::before {
+  content: '';
+  position: absolute;
+  top: -25px; /* half the cutout height */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background: var(--bg-color); /* match page background */
+  border-radius: 50%;
+  z-index: 110; /* below the button */
+}
+
+.floating-center-btn {
+  position: fixed; /* outside the footer */
+  bottom: 30px; /* vertically center it in the cutout */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;  /* same as cutout */
+  height: 50px;
+  border-radius: 50%;
+  background: #ccd4ef;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 36px;
+  font-weight: 700;
+  color: #000;
+  cursor: pointer;
+  z-index: 130; /* above footer and cutout */
+}
+
+.footer-nav .switch-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px 0; width: 50px; background:transparent; border:none; cursor:pointer; border-radius:12px; }
+.footer-nav .switch-btn img { width:22px; height:22px; opacity:0.9; filter:invert(1); }
+.footer-nav .switch-btn span { color:#fff; font-weight:600; }
+.footer-nav .switch-btn.active span { color:#8d4585; font-weight:700; }
+  
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -175,16 +240,6 @@ h1 {
       </a>
     </div>
 
-    <div class="secondary-links">
-      <a href="todo.html" class="secondary-btn">
-        <img src="icons/todo.svg" alt="To-do">
-        To-do
-      </a>
-      <a href="data.html" class="secondary-btn">
-        <img src="icons/chart.svg" alt="Data">
-        Data
-      </a>
-    </div>
 
     <div class="progress-summary" id="todayProgress">
       <h3>Today's Progress</h3>
@@ -198,6 +253,17 @@ h1 {
       </div>
     </div>
   </div>
+  
+  <!-- Sticky footer nav -->
+<footer class="footer-nav">
+  <div class="left-group">
+    <button class="switch-btn home" id="homeBtn"><img src="icons/sun.svg" alt="Home"><span>Home</span></button>
+  </div>
+  <div class="right-group">
+    <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
+  </div>
+</footer>
+<button class="floating-center-btn" id="centralBtn">+</button>
 
   <script>
     function getTodayDate() {
