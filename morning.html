@@ -604,55 +604,60 @@ document.addEventListener('DOMContentLoaded', () => {
     dayOfWeekElement.textContent = today.toLocaleDateString('en-US', options);
   }
 
-  function loadUI() {
-    updateDayOfWeek();
+function loadUI() {
+  updateDayOfWeek();
 
-    const allQuestionsDone = MORNING.every(q => answers[q.key]);
-    const allChecklistDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+  const allQuestionsDone = MORNING.every(q => answers[q.key]);
+  const allChecklistDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
 
-    // Show morning done page if everything completed
-    if (allQuestionsDone && allChecklistDone) {
-      showMorningDonePage();
-      return;
-    }
-
-    // Load checklist if questions are done
-    if (currentIndex >= MORNING.length) {
-      loadMorningChecklist();
-      return;
-    }
-
-    const q = MORNING[currentIndex];
-    let html = '';
-
-    if (q.icon) {
-      html += `<div class="question-with-icon">
-        <div class="question-icon"><img src="icons/${q.icon}" alt="${q.label}"></div>
-        <span class="question-text">${q.label}</span>
-      </div>`;
-    } else {
-      html += `<div class="question">${q.label}</div>`;
-    }
-
-    html += `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
-
-    if (q.type === 'single') {
-      q.options.forEach(opt => {
-        const selected = answers[q.key] === opt ? 'selected' : '';
-        html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-      });
-    } else if (q.type === 'time') {
-      html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
-    }
-
-    html += '</div>';
-    contentArea.innerHTML = html;
-
-    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-    nextBtn.style.display = 'inline-block';
-    nextBtn.textContent = 'Next';
-    updateProgressBar();
+  // Show morning done page if everything completed
+  if (allQuestionsDone && allChecklistDone) {
+    showMorningDonePage();
+    return;
   }
+
+  // Load checklist if questions are done
+  if (currentIndex >= MORNING.length) {
+    loadMorningChecklist();
+    return;
+  }
+
+  const q = MORNING[currentIndex];
+  let html = '';
+
+  if (q.icon) {
+    html += `<div class="question-with-icon">
+      <div class="question-icon"><img src="icons/${q.icon}" alt="${q.label}"></div>
+      <span class="question-text">${q.label}</span>
+    </div>`;
+  } else {
+    html += `<div class="question">${q.label}</div>`;
+  }
+
+  html += `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
+
+  if (q.type === 'single') {
+    q.options.forEach(opt => {
+      const selected = answers[q.key] === opt ? 'selected' : '';
+      html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+    });
+  } else if (q.type === 'time') {
+    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
+  }
+
+  html += '</div>';
+  contentArea.innerHTML = html;
+
+  // ✅ Back/Next always visible for questions
+  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+  nextBtn.style.display = 'inline-block';
+  nextBtn.textContent = 'Next';
+
+  // Only enable Next if question answered
+  nextBtn.disabled = !answers[q.key] || (Array.isArray(answers[q.key]) && answers[q.key].length === 0);
+
+  updateProgressBar();
+}
 
   /******************************
    * ANSWER HANDLERS
@@ -691,42 +696,39 @@ document.addEventListener('DOMContentLoaded', () => {
    * MORNING CHECKLIST
    ******************************/
 function loadMorningChecklist() {
-    const wrapper = document.querySelector('.checklist-wrapper');
-    const scrollPos = wrapper ? wrapper.scrollTop : 0;
-    
-    let html = `
-    <div class="checklist-title">Morning Routine</div>
-      <div class="checklist-wrapper">
-        <div class="checklist">
-          ${MORNING_CHECKLIST_ITEMS.map(item => {
-            const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-            return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-                      <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
-                      <span class="check-text">${item.label}</span>
-                    </div>`;
-          }).join('')}
-          <div style="height:80px;"></div>
-        </div>
-      </div>`;
+  const wrapper = document.querySelector('.checklist-wrapper');
+  const scrollPos = wrapper ? wrapper.scrollTop : 0;
 
-    contentArea.innerHTML = html;
+  let html = `
+  <div class="checklist-title">Morning Routine</div>
+    <div class="checklist-wrapper">
+      <div class="checklist">
+        ${MORNING_CHECKLIST_ITEMS.map(item => {
+          const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+          return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+                    <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+                    <span class="check-text">${item.label}</span>
+                  </div>`;
+        }).join('')}
+        <div style="height:80px;"></div>
+      </div>
+    </div>`;
 
-    // ✅ Make Back and Next buttons always visible
-    backBtn.style.display = 'inline-block';
-    nextBtn.style.display = 'inline-block';
-    nextBtn.textContent = 'Next';
-    nextBtn.disabled = false; // Always enabled for checklist
+  contentArea.innerHTML = html;
 
-    // Use a separate handler for checklist "Next" click
-    nextBtn.onclick = () => {
-        saveData();
-        showMorningDonePage();
-    };
+  // ✅ Back/Next always visible
+  backBtn.style.display = 'inline-block';
+  nextBtn.style.display = 'inline-block';
+  nextBtn.textContent = 'Next';
+  nextBtn.disabled = false; // Always enabled for checklist
 
-    // Optional: restore scroll position if needed
-    if (wrapper) wrapper.scrollTop = scrollPos;
+  nextBtn.onclick = () => {
+    saveData();
+    showMorningDonePage();
+  };
 
-    updateProgressBar();
+  if (wrapper) wrapper.scrollTop = scrollPos;
+  updateProgressBar();
 }
 
   window.toggleChecklist = (key) => {
