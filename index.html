@@ -318,14 +318,20 @@ h1 {
 <footer class="footer-nav">
   <div class="left-group">
     <button class="switch-btn home" id="homeBtn"><img src="icons/home.svg" alt="Home"><span>Home</span></button>
+   <button class="switch-btn home" id="rxBtn"><img src="icons/rx.svg" alt="rx"><span>Rx</span></button>
   </div>
   <div class="right-group">
     <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
+   <button class="switch-btn mood" id="moodBtn"><img src="icons/mood.svg" alt="mood"><span>Mood</span></button>
   </div>
 </footer>
 <button class="floating-center-btn" id="centralBtn">+</button>
 
   <script>
+  document.getElementById('todoBtn').onclick = () => { window.location.href = 'todo.html'; };
+  document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
+  document.getElementById('moodBtn').onclick = () => { window.location.href = 'mood.html'; };
+  document.getElementById('rxBtn').onclick = () => { window.location.href = 'rx.html'; };
 
     function updateDayOfWeek() {
     const dayOfWeekElement = document.getElementById('dayOfWeek');
@@ -382,9 +388,6 @@ function loadUI() {
       
       document.getElementById('morningProgress').textContent = morningProgress + '%';
       document.getElementById('nightProgress').textContent = nightProgress + '%';
-      document.getElementById('todoBtn').onclick = () => { window.location.href = 'todo.html'; };
-      document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
-
     });
   </script>
 </body>
