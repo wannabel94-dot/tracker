@@ -110,7 +110,51 @@ body.morning {
   object-fit: contain;
    filter:invert(1);
 }
+/* Homepage (not overlay, just regular content) */
+.homepage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  min-height: 60vh;
+  padding: 40px 20px;
+}
 
+.homepage.hidden {
+  display: none;
+}
+
+.homepage-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #f0f4ff;
+  text-align: center;
+}
+
+.homepage-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 280px;
+}
+
+.homepage-btn {
+  padding: 18px 32px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #f0f4ff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.homepage-btn:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.05);
+}
    /* pop up */-------------------------------
    
 .popup-overlay {
@@ -467,8 +511,21 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 
   <!-- Main content wrapper -->
   <div class="wrap">
-    <main class="card">
-      <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div></div>
+<div class="wrap">
+  <div class="homepage" id="homepage">
+    <h1 class="homepage-title">Daily Tracker</h1>
+    <div class="homepage-buttons">
+      <button class="homepage-btn" onclick="startMode('morning')">
+        ☀️ Morning Routine
+      </button>
+      <button class="homepage-btn" onclick="startMode('night')">
+        🌙 Night Routine
+      </button>
+    </div>
+  </div>
+  
+  <main class="card" id="trackerCard" style="display:none;">
+    <<div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div></div>
       <div id="contentArea"></div>
       <div class="controls">
         <button class="back-btn" id="backBtn">Back</button>
@@ -671,7 +728,11 @@ window.addEventListener('beforeunload', saveData);
 /****************************************************
  * 4️⃣ MODE SWITCHING (UI + DATA)
  ****************************************************/
-   
+   function startMode(mode) {
+  document.getElementById('homepage').classList.add('hidden');
+  document.getElementById('trackerCard').style.display = 'block';
+  switchMode(mode);
+}
    function switchMode(mode) {
     saveData();
     document.body.classList.toggle('morning', mode === 'morning');
