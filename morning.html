@@ -648,14 +648,25 @@ function loadUI() {
   html += '</div>';
   contentArea.innerHTML = html;
 
-  // ✅ Back/Next always visible for questions
-  backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+  // Back button visible but disabled on first question
+  if (currentIndex === 0) {
+    backBtn.style.display = 'inline-block';
+    backBtn.classList.add('disabled');  // Use CSS: .disabled { opacity:0.5; pointer-events:none; }
+  } else {
+    backBtn.style.display = 'inline-block';
+    backBtn.classList.remove('disabled');
+  }
+
+  // Next button visible
   nextBtn.style.display = 'inline-block';
   nextBtn.textContent = 'Next';
 
-  // Only enable Next if question answered
-  nextBtn.disabled = !answers[q.key] || (Array.isArray(answers[q.key]) && answers[q.key].length === 0);
-
+  // Disable Next if unanswered
+  if (q.type === 'time') {
+    nextBtn.disabled = !answers[q.key] || answers[q.key] === '';
+  } else {
+    nextBtn.disabled = !answers[q.key] || (Array.isArray(answers[q.key]) && answers[q.key].length === 0);
+  }
   updateProgressBar();
 }
 
