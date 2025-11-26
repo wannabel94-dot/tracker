@@ -473,7 +473,6 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   </div>
 </footer>
 <button class="floating-center-btn" id="centralBtn">+</button>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -499,21 +498,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('night');
 
   /******************************
-   * NIGHT CHECKLIST & QUESTIONS
+   * QUESTIONS & CHECKLIST
    ******************************/
-  const NIGHT_CHECKLIST_ITEMS = [
-    { key: 'prepare_breakfast', label:'Prepare meals', icon:'porridge.svg' },
-    { key: 'tidy_up_night', label:'Tidy up', icon:'spray.svg' },
-    { key: 'magnesium', label: 'Take magnesium', icon:'mg.svg' },
-    { key: 'tea_night', label:'Brew tea', icon:'herb.svg' },
-    { key: 'pjs', label:'PJs', icon:'pjs.svg' },
-    { key: 'pillowcase', label: 'Change pillowcase', icon:'pillow.svg'},
-    { key: 'skincare_night', label:'Skincare', icon:'dropper.svg' },
-    { key: 'shatki', label: 'Shatki mat', icon:'lotus.svg'},
-    { key: 'teeth_night', label:'Brush teeth', icon:'toothbrush.svg' },
-    { key: 'flossed', label:'Floss teeth', icon:'floss.svg'}
-  ];
-
   const NIGHT = [
     { key: 'psyllium', type:'single', label: 'Take psyllium', options:['Yes','No'], autoNext:true, icon:'grain.svg' },
     { key: 'left_house', type:'single', label:'Did you leave the house?', options:['Nope','Seconds','Briefly','1h+','2h+','Fair amount','All day'], autoNext:true, icon:'key.svg' },
@@ -537,17 +523,30 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'closed_eyes_time', type:'time', label:'What time are you closing your eyes?', autoNext:true, icon:'sleeptime.svg', specialIcon:true }
   ];
 
-  /****************************************************
+  const NIGHT_CHECKLIST_ITEMS = [
+    { key: 'prepare_breakfast', label:'Prepare meals', icon:'porridge.svg' },
+    { key: 'tidy_up_night', label:'Tidy up', icon:'spray.svg' },
+    { key: 'magnesium', label: 'Take magnesium', icon:'mg.svg' },
+    { key: 'tea_night', label:'Brew tea', icon:'herb.svg' },
+    { key: 'pjs', label:'PJs', icon:'pjs.svg' },
+    { key: 'pillowcase', label: 'Change pillowcase', icon:'pillow.svg'},
+    { key: 'skincare_night', label:'Skincare', icon:'dropper.svg' },
+    { key: 'shatki', label: 'Shatki mat', icon:'lotus.svg'},
+    { key: 'teeth_night', label:'Brush teeth', icon:'toothbrush.svg' },
+    { key: 'flossed', label:'Floss teeth', icon:'floss.svg'}
+  ];
+
+  /******************************
    * GLOBAL ELEMENTS
-   ****************************************************/
+   ******************************/
   const contentArea = document.getElementById('contentArea');
   const backBtn = document.getElementById('backBtn');
   const nextBtn = document.getElementById('nextBtn');
   const progressBar = document.getElementById('progressBar');
 
+  document.getElementById('homeBtn').onclick = () => { window.location.href = 'index.html'; };
   document.getElementById('todoBtn').onclick = () => { window.location.href = 'todo.html'; };
   document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
-  document.getElementById('homeBtn').onclick = () => { window.location.href = 'index.html'; };
 
   const btnSettings = document.getElementById('btnSettings');
   const settingsMenu = document.getElementById('settingsMenu');
@@ -561,14 +560,14 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsMenu.classList.remove('show');
     menuOverlay.classList.remove('show');
   };
-     settingsMenu.addEventListener("click", () => {
+  settingsMenu.addEventListener("click", () => {
     settingsMenu.classList.remove('show');
     menuOverlay.classList.remove('show');
   });
 
-  /****************************************************
-   * LOCAL STORAGE
-   ****************************************************/
+  /******************************
+   * DATE & STORAGE HELPERS
+   ******************************/
   function getTodayDate() {
     return new Date().toLocaleDateString('en-GB');
   }
@@ -586,17 +585,18 @@ document.addEventListener('DOMContentLoaded', () => {
       answers = {};
     }
   }
-   
+
   function saveData() {
     const day = getTodayDate();
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+    let all = JSON.parse(localStorage.getItem('dailyTrackerData')) || {};
     if (!all[day]) all[day] = {};
     all[day].night = { currentIndex, answers };
     localStorage.setItem('dailyTrackerData', JSON.stringify(all));
   }
 
   window.addEventListener('beforeunload', saveData);
- /******************************
+
+  /******************************
    * UI RENDERING
    ******************************/
   function updateDayOfWeek() {
@@ -609,133 +609,33 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadUI() {
     updateDayOfWeek();
 
-    const allQuestionsDone = MORNING.every(q => answers[q.key]);
-    const allChecklistDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-
-    // Show morning done page if everything completed
-    if (allQuestionsDone && allChecklistDone) {
-      showMorningDonePage();
+    // if checklist not done, load checklist first
+    if (!answers._nightChecklistDone) {
+      loadNightChecklist();
       return;
     }
 
-    // Load checklist if questions are done
-    if (currentIndex >= MORNING.length) {
-      loadMorningChecklist();
+    if (currentIndex >= NIGHT.length) {
+      contentArea.innerHTML = `<div class="done-note">Night done</div>`;
+      backBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
       return;
     }
 
-    const q = MORNING[currentIndex];
+    const q = NIGHT[currentIndex];
     let html = '';
-
     if (q.icon) {
       html += `<div class="question-with-icon">
-        <div class="question-icon"><img src="icons/${q.icon}" alt="${q.label}"></div>
+        <div class="question-icon${q.specialIcon ? ' special-icon' : ''}">
+          <img src="icons/${q.icon}" alt="${q.label}">
+        </div>
         <span class="question-text">${q.label}</span>
       </div>`;
     } else {
       html += `<div class="question">${q.label}</div>`;
     }
 
-    html += `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
-
-    if (q.type === 'single') {
-      q.options.forEach(opt => {
-        const selected = answers[q.key] === opt ? 'selected' : '';
-        html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-      });
-    } else if (q.type === 'time') {
-      html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
-    }
-
-    html += '</div>';
-    contentArea.innerHTML = html;
-
-    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
-    nextBtn.style.display = 'inline-block';
-    nextBtn.textContent = 'Next';
-    updateProgressBar();
-  }
-  /****************************************************
-   * NIGHT CHECKLIST
-   ****************************************************/
-  function loadNightChecklist() {
-    const wrapper = document.querySelector('.checklist-wrapper');
-    const scrollPos = wrapper ? wrapper.scrollTop : 0;
-
-    let html = `
-      <div class="checklist-title">Night Routine</div>
-      <div class="checklist-wrapper">
-        <div class="checklist">
-          ${NIGHT_CHECKLIST_ITEMS.map((item, index) => {
-              const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-              return `<div class="check-item ${selected}" onclick="toggleNightChecklist('${item.key}', ${index})">
-                        <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
-                        <span class="check-text">${item.label}</span>
-                      </div>`;
-          }).join('')}
-          <div style="height:80px;"></div>
-        </div>
-      </div>
-    `;
-
-    contentArea.innerHTML = html;
-    const newWrapper = document.querySelector('.checklist-wrapper');
-    if(newWrapper) newWrapper.scrollTop = 0;
-
-    backBtn.style.display = 'inline-block';
-    nextBtn.style.display = 'inline-block';
-    nextBtn.textContent = 'Save';
-    nextBtn.disabled = false;
-  }
-
-  window.toggleNightChecklist = (key, index) => {
-    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
-    saveData();
-
-    const el = document.querySelector(`[onclick="toggleNightChecklist('${key}', ${index})"]`);
-    if (el) el.classList.toggle('selected', answers[key] === 'Yes');
-
-    // Auto-complete if all items checked
-    const allDone = NIGHT_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-    if (allDone) {
-      answers._nightChecklistDone = true;
-      saveData();
-      currentIndex = 0;
-      loadUI();
-    }
-  };
-
-  /****************************************************
-   * QUESTIONS
-   ****************************************************/
-  function getQuestions() { return NIGHT; }
-
-  function loadUI() {
-    const questions = getQuestions();
-
-    // Night checklist
-    if (!answers._nightChecklistDone) {
-      loadNightChecklist();
-      return;
-    }
-
-    if (currentIndex >= questions.length) {
-      contentArea.innerHTML = '<div class="done-note">Day completed.</div>';
-      backBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-      return;
-    }
-
-    const q = questions[currentIndex];
-    let questionHeader = q.icon ? `
-      <div class="question-with-icon">
-        <div class="question-icon${q.specialIcon ? ' special-icon' : ''}">
-          <img src="icons/${q.icon}" alt="${q.label}">
-        </div>
-        <span class="question-text">${q.label}</span>
-      </div>` : `<div class="question">${q.label}</div>`;
-
-    let html = questionHeader + `<div class="options${q.key==='how_slept'?' column-options':''}">`;
+    html += `<div class="options${q.key==='how_slept'?' column-options':''}">`;
 
     if (q.type === 'single') {
       q.options.forEach(opt => {
@@ -754,77 +654,98 @@ document.addEventListener('DOMContentLoaded', () => {
 
     html += '</div>';
     contentArea.innerHTML = html;
-   updateProgressBar(); // <--- ADD THIS
 
     backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
     nextBtn.style.display = 'inline-block';
     nextBtn.textContent = 'Next';
     nextBtn.disabled = !answers[q.key] || (Array.isArray(answers[q.key]) && answers[q.key].length === 0);
+
+    updateProgressBar();
   }
 
+  /******************************
+   * ANSWER HANDLERS
+   ******************************/
   window.selectOption = (opt) => {
-    const q = getQuestions()[currentIndex];
+    const q = NIGHT[currentIndex];
     answers[q.key] = opt;
     saveData();
     if (q.autoNext) currentIndex++;
     loadUI();
+    updateProgressBar();
   };
 
-  window.toggleMultiOption = (qKey, opt) => {
-    if (!answers[qKey]) answers[qKey] = [];
+  window.toggleMultiOption = (qKey,opt) => {
+    if (!answers[qKey]) answers[qKey]=[];
     const selected = answers[qKey].includes(opt);
     if (!selected) answers[qKey].push(opt);
-    else answers[qKey] = answers[qKey].filter(o => o!==opt);
+    else answers[qKey] = answers[qKey].filter(o=>o!==opt);
     saveData();
     loadUI();
   };
 
-  backBtn.onclick = () => { if(currentIndex>0){currentIndex--; loadUI();} else {loadNightChecklist();} };
+  backBtn.onclick = () => { if(currentIndex>0){currentIndex--; loadUI();} };
   nextBtn.onclick = () => { currentIndex++; loadUI(); saveData(); };
 
-  /****************************************************
-   * PROGRESS BAR
-   ****************************************************/
-  function updateProgressBar(){
-    const keys = [...NIGHT_CHECKLIST_ITEMS.map(i=>i.key), ...NIGHT.map(q=>q.key)];
-    let done = 0;
-    keys.forEach(key=>{
-      if ((NIGHT_CHECKLIST_ITEMS.find(i=>i.key===key) && answers[key]==='Yes') ||
-          (NIGHT.find(q=>q.key===key) && answers[key])) done++;
-    });
-    progressBar.style.width = keys.length>0 ? Math.round((done/keys.length)*100)+'%' : '0%';
-  }
-   
- /******************************
-   * EXPORT & CLEAR DATA
+  /******************************
+   * NIGHT CHECKLIST
    ******************************/
-  document.getElementById("btnExport").addEventListener("click", () => {
-    const data = localStorage.getItem("dailyTrackerData");
-    if (!data) { alert("No data to export yet."); return; }
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "daily-tracker-data.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  });
+  function loadNightChecklist() {
+    let html = `
+    <div class="checklist-title">Night Routine</div>
+    <div class="checklist-wrapper">
+      <div class="checklist">
+        ${NIGHT_CHECKLIST_ITEMS.map(item => {
+          const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+          return `<div class="check-item ${selected}" onclick="toggleNightChecklist('${item.key}')">
+            <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+            <span class="check-text">${item.label}</span>
+          </div>`;
+        }).join('')}
+        <div style="height:80px;"></div>
+      </div>
+    </div>`;
+    contentArea.innerHTML = html;
 
-  document.getElementById('btnClearToday').onclick = () => {
-    const all = JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
-    delete all[getTodayDate()];
-    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
-    answers = {};
-    currentIndex = 0;
-    loadUI();
-    alert("Today's data cleared.");
+    backBtn.style.display = 'inline-block';
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = 'Next';
+    nextBtn.disabled = false;
+
+    nextBtn.onclick = () => {
+      answers._nightChecklistDone = true;
+      saveData();
+      currentIndex = 0;
+      loadUI();
+    };
+
+    updateProgressBar();
+  }
+
+  window.toggleNightChecklist = (key) => {
+    answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
+    saveData();
+    loadNightChecklist();
   };
 
-  /****************************************************
-   * INITIALIZATION
-   ****************************************************/
+  /******************************
+   * PROGRESS BAR
+   ******************************/
+  function updateProgressBar() {
+    const keys = [...NIGHT_CHECKLIST_ITEMS.map(i=>i.key), ...NIGHT.map(q=>q.key)];
+    let done = keys.filter(key => {
+      if (NIGHT_CHECKLIST_ITEMS.find(i=>i.key===key)) return answers[key]==='Yes';
+      return answers[key];
+    }).length;
+    progressBar.style.width = Math.round((done/keys.length)*100)+'%';
+  }
+
+  /******************************
+   * INITIALIZE
+   ******************************/
   loadSavedData();
   loadUI();
+
 });
 </script>
 </body>
