@@ -444,8 +444,7 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   <!-- Sticky footer nav -->
 <footer class="footer-nav">
   <div class="left-group">
-    <button class="switch-btn morning" id="morningBtn"><img src="icons/sun.svg" alt="Morning"><span>Morning</span></button>
-    <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"><span>Night</span></button>
+    <button class="switch-btn home" id="homeBtn"><img src="icons/home.svg" alt="Home"><span>Home</span></button>
   </div>
   <div class="right-group">
     <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
@@ -455,28 +454,34 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
 
 </body>
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/tracker/service-worker.js')
-      .then(reg => console.log('SW registered:', reg))
-      .catch(err => console.error('SW registration failed:', err));
-  });
-}
-
-let currentIndex = 0;
-let answers = {};
 document.addEventListener('DOMContentLoaded', () => {
 
-let switchTimeout;
-let onMorningDoneNote = false; // tracks if we’re showing the morning done note
-function getTodayDate() {
-    return new Date().toLocaleDateString('en-GB');
-}
-const mode = 'morning'; // Fixed mode
-document.body.classList.add('morning');
+  /******************************
+   * SERVICE WORKER REGISTRATION
+   ******************************/
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('/tracker/service-worker.js')
+        .then(reg => console.log('SW registered:', reg))
+        .catch(err => console.error('SW registration failed:', err));
+    });
+  }
 
-  /* ---------- QUESTIONS ---------- */
+  /******************************
+   * GLOBAL VARIABLES
+   ******************************/
+  let currentIndex = 0;
+  let answers = {};
+  let switchTimeout = null;
+  let onMorningDoneNote = false;
+  const mode = 'morning'; // fixed mode
+
+  document.body.classList.add('morning');
+
+  /******************************
+   * QUESTIONS & CHECKLIST
+   ******************************/
   const MORNING = [
     { key: 'wake_time', type: 'time', label: 'What time did you wake up?', icon: 'alarm.svg', autoNext: true },
     { key: 'how_slept', type: 'single', label: 'How do you think you slept?', options: [
@@ -486,7 +491,7 @@ document.body.classList.add('morning');
   ];
 
   const MORNING_CHECKLIST_ITEMS = [
-   { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
+    { key: 'temp', label: 'Take temp', icon: 'temp.svg' },
     { key: 'made_bed', label: 'Make bed', icon: 'bedsheet.svg' },
     { key: 'kettle', label: 'Boil kettle', icon: 'kettle1.svg' },
     { key: 'took_meds_morn', label: 'Take meds', icon: 'blister.svg' },
@@ -494,432 +499,247 @@ document.body.classList.add('morning');
     { key: 'tea', label: 'Have tea', icon: 'tea.svg' },
     { key: 'poop', label: 'Poop', icon: 'poop.svg' },
     { key: 'shower_morn', label: 'Shower', icon: 'shower.svg' },
-   { key: 'change_towel', label: 'Change towel', icon: 'towel.svg' },
-   { key: 'led_mask_morn', label: 'LED mask', icon: 'led.svg' },
-     { key: 'get_dressed', label: 'Get dressed', icon: 'hanger.svg' },
+    { key: 'change_towel', label: 'Change towel', icon: 'towel.svg' },
+    { key: 'led_mask_morn', label: 'LED mask', icon: 'led.svg' },
+    { key: 'get_dressed', label: 'Get dressed', icon: 'hanger.svg' },
     { key: 'skincare_morn', label: 'Skincare', icon: 'dropper.svg' },
     { key: 'eat_breakfast', label: 'Breakfast', icon: 'break2.svg' },
     { key: 'supplements_morn', label: 'Supplements', icon: 'supplements-cropped.svg' },
     { key: 'brush_teeth_morn', label: 'Brush teeth', icon: 'toothbrush.svg' }
   ];
 
+  /******************************
+   * ELEMENT REFERENCES
+   ******************************/
+  const contentArea = document.getElementById('contentArea');
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
 
-/****************************************************
- * 1️⃣ GLOBAL ELEMENTS & INITIAL REFERENCES
- ****************************************************/
-const contentArea = document.getElementById('contentArea');
-const backBtn = document.getElementById('backBtn');
-const nextBtn = document.getElementById('nextBtn');
-const progressBar = document.getElementById('progressBar');
-document.getElementById('nightBtn').onclick = () => { window.location.href = 'night.html'; };
-document.getElementById('todoBtn').onclick = () => { window.location.href = 'todo.html'; };
-document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
+  document.getElementById('homeBtn').onclick = () => { window.location.href = 'home.html'; };
+  document.getElementById('todoBtn').onclick = () => { window.location.href = 'todo.html'; };
+  document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
 
-/* Settings menu toggle */
-const btnSettings = document.getElementById('btnSettings');
-const settingsMenu = document.getElementById('settingsMenu');
-const menuOverlay = document.getElementById('menuOverlay');
-   settingsMenu.addEventListener("click", () => {
-  settingsMenu.classList.remove('show');
-  menuOverlay.classList.remove('show');
-});
+  const btnSettings = document.getElementById('btnSettings');
+  const settingsMenu = document.getElementById('settingsMenu');
+  const menuOverlay = document.getElementById('menuOverlay');
 
-btnSettings.onclick = () => {
-  const isOpen = settingsMenu.classList.toggle('show');
-  menuOverlay.classList.toggle('show', isOpen);
-};
-menuOverlay.onclick = () => {
-  settingsMenu.classList.remove('show');
-  menuOverlay.classList.remove('show');
-};
+  btnSettings.onclick = () => {
+    const isOpen = settingsMenu.classList.toggle('show');
+    menuOverlay.classList.toggle('show', isOpen);
+  };
+  menuOverlay.onclick = () => {
+    settingsMenu.classList.remove('show');
+    menuOverlay.classList.remove('show');
+  };
+  settingsMenu.addEventListener("click", () => {
+    settingsMenu.classList.remove('show');
+    menuOverlay.classList.remove('show');
+  });
 
-   document.getElementById('btnClearToday').onclick = () => {
-    const day = getTodayDate();
-    let all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
+  /******************************
+   * DATE & STORAGE HELPERS
+   ******************************/
+  function getTodayDate() {
+    return new Date().toLocaleDateString('en-GB');
+  }
 
-    if (all[day]) {
-        delete all[day];
-        localStorage.setItem('dailyTrackerData', JSON.stringify(all));
-    }
-
-    // Reset UI state
-    currentIndex = 0;
-    answers = {};
-    onMorningDoneNote = false;
-
-    loadUI();
-
-    alert("Today's data has been cleared.");
-};
-
-
-/****************************************************
- * 2️⃣ MODE & QUESTION HELPERS
- ****************************************************/
-const getMode = () => document.body.classList.contains('morning') ? 'morning' : 'night';
-const getQuestions = () => getMode() === 'morning' ? MORNING : NIGHT;
-
-/****************************************************
- * 3️⃣ LOCAL STORAGE: LOAD & SAVE
- ****************************************************/
-function loadSavedData() {
+  function loadSavedData() {
     const day = getTodayDate();
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const isMorning = getMode() === 'morning';
-    const modeData = isMorning ? all[day]?.morning : all[day]?.night;
+    const modeData = all[day]?.morning;
 
     if (modeData) {
-        currentIndex = modeData.currentIndex || 0;
-        answers = modeData.answers || {};
+      currentIndex = modeData.currentIndex || 0;
+      answers = modeData.answers || {};
     } else {
-        currentIndex = 0;
-        answers = {};
+      currentIndex = 0;
+      answers = {};
     }
-}
+  }
 
-function saveData() {
+  function saveData() {
     const day = getTodayDate();
     let all = JSON.parse(localStorage.getItem('dailyTrackerData')) || {};
-
     if (!all[day]) all[day] = {};
-
-    if (getMode() === 'morning') {
-        all[day].morning = { currentIndex, answers };
-    } else {
-        all[day].night = { currentIndex, answers };
-    }
-
+    all[day].morning = { currentIndex, answers };
     localStorage.setItem('dailyTrackerData', JSON.stringify(all));
-}
+  }
 
-// Save before leaving page
-window.addEventListener('beforeunload', saveData);
+  window.addEventListener('beforeunload', saveData);
 
-
-/****************************************************
- * 6️⃣ MAIN UI RENDERING
- ****************************************************/
-   function updateDayOfWeek() {
+  /******************************
+   * UI RENDERING
+   ******************************/
+  function updateDayOfWeek() {
     const dayOfWeekElement = document.getElementById('dayOfWeek');
     const today = new Date();
     const options = { weekday: 'long', month: 'short', day: 'numeric' };
     dayOfWeekElement.textContent = today.toLocaleDateString('en-US', options);
-}
+  }
 
-function loadUI() {
+  function loadUI() {
     updateDayOfWeek();
 
-    const mode = getMode();
-    const questions = getQuestions();
-
-    progressBar.parentElement.style.display = 'block';
-
-// Morning completion check - show done note if finished
-if (mode === 'morning') {
     const allQuestionsDone = MORNING.every(q => answers[q.key]);
     const allChecklistDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-    
-    // If everything is done, show the done page
+
+    // Show morning done page if everything completed
     if (allQuestionsDone && allChecklistDone) {
-        showMorningDonePage();
-        return;
+      showMorningDonePage();
+      return;
     }
-    
-    // If just questions are done, show checklist
+
+    // Load checklist if questions are done
     if (currentIndex >= MORNING.length) {
-        loadMorningChecklist();
-        return;
+      loadMorningChecklist();
+      return;
     }
-}
 
-/****************************************************
- * 7️⃣ QUESTION RENDERING FUNCTIONS
- ****************************************************/
-   const q = questions[currentIndex];
+    const q = MORNING[currentIndex];
+    let html = '';
 
-    let questionHeader = '';
     if (q.icon) {
-        const specialClass = q.specialIcon ? ' special-icon' : '';
-        questionHeader = `
-          <div class="question-with-icon">
-            <div class="question-icon${specialClass}">
-              <img src="icons/${q.icon}" alt="${q.label}">
-            </div>
-            <span class="question-text">${q.label}</span>
-          </div>
-        `;
+      html += `<div class="question-with-icon">
+        <div class="question-icon"><img src="icons/${q.icon}" alt="${q.label}"></div>
+        <span class="question-text">${q.label}</span>
+      </div>`;
     } else {
-        questionHeader = `<div class="question">${q.label}</div>`;
+      html += `<div class="question">${q.label}</div>`;
     }
 
-    let html = questionHeader + `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
+    html += `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
 
-// Render options
-if (q.type === 'single') {
-    q.options.forEach(opt => {
+    if (q.type === 'single') {
+      q.options.forEach(opt => {
         const selected = answers[q.key] === opt ? 'selected' : '';
         html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-    });
+      });
+    } else if (q.type === 'time') {
+      html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
+    }
 
-
-} else if (q.type === 'multi') {
-    if (!answers[q.key]) answers[q.key] = [];
-    q.options.forEach(opt => {
-        const selected = answers[q.key].includes(opt) ? 'selected' : '';
-        html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-    });
-
-} else if (q.type === 'time') {
-    html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
-}
-
-html += '</div>';
+    html += '</div>';
     contentArea.innerHTML = html;
 
     backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
     nextBtn.style.display = 'inline-block';
     nextBtn.textContent = 'Next';
-    
     updateProgressBar();
-}
+  }
 
-/****************************************************
- * 8️⃣ ANSWER HANDLING - SINGLE, MULTI, COUNTER
- ****************************************************/
-window.selectOption = (opt) => {
-    const q = getQuestions()[currentIndex];
+  /******************************
+   * ANSWER HANDLERS
+   ******************************/
+  window.selectOption = (opt) => {
+    const q = MORNING[currentIndex];
     answers[q.key] = opt;
     saveData();
     nextBtn.disabled = false;
+
+    if (q.autoNext || opt === 'None') {
+      currentIndex++;
+      loadUI();
+    }
     updateProgressBar();
+  };
 
-    // Auto-next if the selected option is "None"
-    if (opt === 'None') {
-        currentIndex++;
-        loadUI();
-    } else if (q.autoNext) {
-        currentIndex++;
-        loadUI();
-    }
-};
-
-window.toggleMultiOption = (qKey, opt) => {
-    if (!answers[qKey]) answers[qKey] = [];
-    const selected = answers[qKey].includes(opt);
-
-    if (opt === 'None') {
-        // Selecting "None" clears everything else
-        answers[qKey] = selected ? [] : ['None'];
-    } else {
-        // Normal multi-option logic
-        answers[qKey] = answers[qKey].filter(o => o !== 'None');
-        if (!selected) answers[qKey].push(opt);
-        else answers[qKey].splice(answers[qKey].indexOf(opt), 1);
-    }
-
-    saveData();
-
-    const val = answers[qKey];
-    const hasAnswer = (Array.isArray(val) && val.length > 0) || (typeof val === 'object' && Object.values(val).some(v => v !== 0));
-    nextBtn.disabled = !hasAnswer;
-
+  /******************************
+   * BACK/NEXT BUTTONS
+   ******************************/
+  backBtn.onclick = () => {
+    if (currentIndex > 0) currentIndex--;
     loadUI();
-
-    // Auto-next if "None" was just selected
-    if (opt === 'None' && !selected) {
-        currentIndex++;
-        loadUI();
-    }
-};
-    
-    saveData(); 
-    updateProgressBar();
-};
-/****************************************************
- * 9️⃣ BACK / NEXT BUTTON HANDLERS
- ****************************************************/
-   backBtn.onclick = () => {
-    if (currentIndex > 0) { currentIndex--; loadUI(); }
-    else if (getMode() === 'night' && !answers._nightChecklistDone) { currentIndex = -1; loadNightChecklist(); }
-};
-
-nextBtn.onclick = () => {
+  };
+  nextBtn.onclick = () => {
     saveData();
-    const mode = getMode();
-
-    if (mode === 'morning') {
-        // If checklist not yet loaded, load it first
-        if (!document.querySelector('.checklist-wrapper')) {
-            loadMorningChecklist();
-            return;
-        }
-
-        currentIndex++;
-        loadUI();
+    if (currentIndex < MORNING.length) {
+      currentIndex++;
+      loadUI();
+    } else {
+      loadMorningChecklist();
     }
-};
+  };
 
-   document.addEventListener('DOMContentLoaded', () => {
-  const checkbox = document.getElementById('medicationCheckbox');
-
-  // Initialize checkbox from localStorage
-  const alreadyChecked = localStorage.getItem('medChecked') === 'true';
-  checkbox.checked = alreadyChecked;
-
-  checkbox.addEventListener('change', (e) => {
-    let medTotal = parseInt(localStorage.getItem('medTotal') || '28', 10);
-
-    if (e.target.checked && !alreadyChecked) {
-      // Subtract 1 when first checked
-      medTotal = Math.max(0, medTotal - 1);
-      localStorage.setItem('medChecked', 'true');
-    } else if (!e.target.checked && alreadyChecked) {
-      // Optional: restore if unchecked
-      medTotal += 1;
-      localStorage.setItem('medChecked', 'false');
-    }
-
-    localStorage.setItem('medTotal', medTotal);
-  });
-});
-
-
-/****************************************************
- * 🔟 MORNING CHECKLIST SECTION
- ****************************************************/
-function loadMorningChecklist() {
-    const wrapper = document.querySelector('.checklist-wrapper');
-    const scrollPos = wrapper ? wrapper.scrollTop : 0;
-
-    let html = `
-      <div class="checklist-title">Morning Routine</div>
+  /******************************
+   * MORNING CHECKLIST
+   ******************************/
+  function loadMorningChecklist() {
+    let html = `<div class="checklist-title">Morning Routine</div>
       <div class="checklist-wrapper">
         <div class="checklist">
           ${MORNING_CHECKLIST_ITEMS.map(item => {
-              const selected = answers[item.key] === 'Yes' ? 'selected' : '';
-              return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-                        <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
-                        <span class="check-text">${item.label}</span>
-                      </div>`;
+            const selected = answers[item.key] === 'Yes' ? 'selected' : '';
+            return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
+              <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+              <span class="check-text">${item.label}</span>
+            </div>`;
           }).join('')}
           <div style="height:80px;"></div>
         </div>
-      </div>
-    `;
+      </div>`;
     contentArea.innerHTML = html;
-
-    const newWrapper = document.querySelector('.checklist-wrapper');
-    if(newWrapper) newWrapper.scrollTop = scrollPos;
-
     backBtn.style.display = 'inline-block';
     nextBtn.style.display = 'inline-block';
     nextBtn.textContent = 'Next';
     nextBtn.disabled = false;
 
-    // Next button goes to done page
     nextBtn.onclick = () => {
-        saveData();
-        showMorningDonePage();
+      saveData();
+      showMorningDonePage();
     };
 
     updateProgressBar();
-}
-window.toggleChecklist = (key) => {
-    const wrapper = document.querySelector('.checklist-wrapper');
-    const scrollPos = wrapper ? wrapper.scrollTop : 0;
+  }
 
+  window.toggleChecklist = (key) => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     saveData();
+    loadMorningChecklist();
 
-    if (getMode() === 'morning') {
-        loadMorningChecklist();
-        
-        // Check if all items are done for auto-next
-        const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
-        if (allDone) {
-            setTimeout(() => {
-                showMorningDonePage();
-            }, 300); // Small delay for visual feedback
-        }
-    } else {
-        loadNightChecklist();
-    }
+    const allDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+    if (allDone) setTimeout(showMorningDonePage, 300);
+  };
 
-    if (wrapper) wrapper.scrollTop = scrollPos;
-
-    const el = document.querySelector(`[onclick="toggleChecklist('${key}')"]`);
-    if (el && answers[key] === 'Yes') el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-};
-function showMorningDonePage() {
-    contentArea.innerHTML = `
-        <div class="done-note">Morning done</div>
-        <div style="display:flex; gap:12px; justify-content:center; margin-top:40px;">
-            <button id="goBackBtn" style="padding:12px 24px; border-radius:12px; background:rgba(255,255,255,0.15); color:#f0f4ff; border:none; font-weight:600; cursor:pointer;">Go back</button>
-            <button id="goNightBtn" style="padding:12px 24px; border-radius:12px; background:rgba(255,255,255,0.15); color:#f0f4ff; border:none; font-weight:600; cursor:pointer;">Go to night mode</button>
-        </div>
-    `;
-    
-    // Attach event listeners after creating the buttons
-    document.getElementById('goBackBtn').onclick = () => loadMorningChecklist();
-    document.getElementById('goNightBtn').onclick = () => switchMode('night');
-    
+  function showMorningDonePage() {
+    contentArea.innerHTML = `<div class="done-note">Morning done</div>
+      <div style="display:flex; gap:12px; justify-content:center; margin-top:40px;">
+        <button id="goBackBtn">Go back</button>
+      </div>`;
+    document.getElementById('goBackBtn').onclick = loadMorningChecklist;
     backBtn.style.display = 'none';
     nextBtn.style.display = 'none';
     updateProgressBar();
-}
+  }
 
-/* ---------- RETURN TO MORNING CHECKLIST ---------- */
-window.returnToMorningChecklist = () => {
-    clearTimeout(switchTimeout);
-    loadMorningChecklist();
-    backBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-};
+  /******************************
+   * PROGRESS BAR
+   ******************************/
+  function updateProgressBar() {
+    const keys = ['wake_time','how_slept', ...MORNING_CHECKLIST_ITEMS.map(i => i.key)];
+    const done = keys.filter(key => {
+      if (MORNING_CHECKLIST_ITEMS.find(i => i.key === key)) return answers[key] === 'Yes';
+      return answers[key];
+    }).length;
+    progressBar.style.width = Math.round((done / keys.length) * 100) + '%';
+  }
 
-/****************************************************
- * 1️⃣3️⃣ PROGRESS BAR
- ****************************************************/
-   function updateProgressBar(){
-    const isMorning = getMode() === 'morning';
-    const keys = isMorning
-        ? ['wake_time','how_slept', ...MORNING_CHECKLIST_ITEMS.map(i=>i.key)]
-        : [...NIGHT_CHECKLIST_ITEMS.map(i=>i.key), ...NIGHT.map(q=>q.key)];
-
-    let done = 0;
-    keys.forEach(key=>{
-        if (MORNING_CHECKLIST_ITEMS.find(i=>i.key===key) && answers[key]==='Yes'){done++; return;}
-        if (NIGHT_CHECKLIST_ITEMS.find(i=>i.key===key) && answers[key]==='Yes'){done++; return;}
-        const q = NIGHT.find(q=>q.key===key);
-        const val = answers[key];
-        if(q?.type==='multi'){
-            if(val && ((Array.isArray(val)&&val.length>0)||(typeof val==='object'&&Object.values(val).some(v=>v!==0)))) done++;
-        } else { if(val) done++; }
-    });
-
-    progressBar.style.width = keys.length>0 ? Math.round((done/keys.length)*100)+'%' : '0%';
-}
-
-
-
-
-/****************************************************
- * 1️⃣5️⃣ EXPORT & CLEAR DATA
- ****************************************************/
-   document.getElementById("btnExport").addEventListener("click", () => {
+  /******************************
+   * EXPORT & CLEAR DATA
+   ******************************/
+  document.getElementById("btnExport").addEventListener("click", () => {
     const data = localStorage.getItem("dailyTrackerData");
     if (!data) { alert("No data to export yet."); return; }
-
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement("a");
     a.href = url;
     a.download = "daily-tracker-data.json";
     a.click();
     URL.revokeObjectURL(url);
-});
+  });
 
-document.getElementById('btnClearToday').onclick = () => {
+  document.getElementById('btnClearToday').onclick = () => {
     const all = JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
     delete all[getTodayDate()];
     localStorage.setItem('dailyTrackerData', JSON.stringify(all));
@@ -927,52 +747,15 @@ document.getElementById('btnClearToday').onclick = () => {
     currentIndex = 0;
     loadUI();
     alert("Today's data cleared.");
-};
+  };
 
-// Automatically close the settings menu whenever a menu button is clicked
-settingsMenu.querySelectorAll('button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    closeMenu();
-  });
+  /******************************
+   * INITIALIZE
+   ******************************/
+  loadSavedData();
+  loadUI();
+
 });
-
-/****************************************************
- * 1️⃣2️⃣ DAILY REVIEW (OPTIONAL)
- ****************************************************/
-   function showDailyReview() {
-    let reviewHtml = `
-        <div class="checklist-title">Daily Review</div>
-        <div class="review-wrapper">
-            <div class="review-list">
-                <div class="review-section-title">Morning Checklist</div>
-                ${MORNING_CHECKLIST_ITEMS.map(item => `
-                    <div class="review-item">
-                        <span>${item.label}</span>
-                        <span class="review-answer">${answers[item.key]}</span>
-                    </div>
-                `).join('')}
-                <div class="review-section-title">Night Checklist</div>
-                ${NIGHT_CHECKLIST_ITEMS.map(item => `
-                    <div class="review-item">
-                        <span>${item.label}</span>
-                        <span class="review-answer">${answers[item.key]}</span>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `;
-
-    contentArea.innerHTML = reviewHtml;
-    backBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
-}
-
-/****************************************************
- * 1️⃣6️⃣ INITIALIZATION
- ****************************************************/
-loadSavedData();
-loadUI();
-});
-  </script>
+</script>
 </body>
 </html>
