@@ -327,6 +327,17 @@ h1 {
 <button class="floating-center-btn" id="centralBtn">+</button>
 
   <script>
+
+    function updateDayOfWeek() {
+    const dayOfWeekElement = document.getElementById('dayOfWeek');
+    const today = new Date();
+    const options = { weekday: 'long', month: 'short', day: 'numeric' };
+    dayOfWeekElement.textContent = today.toLocaleDateString('en-US', options);
+}
+
+function loadUI() {
+    updateDayOfWeek();
+  
     function getTodayDate() {
       return new Date().toLocaleDateString('en-GB');
     }
