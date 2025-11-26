@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
 <style>
-/* ===============================================
+/* ===============================================load
    ROOT VARIABLES
 ================================================= */
 :root {
@@ -596,72 +596,129 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('beforeunload', saveData);
 
-  /******************************
-   * UI RENDERING
-   ******************************/
-  function updateDayOfWeek() {
+/******************************
+ * UI RENDERING
+ ******************************/
+function updateDayOfWeek() {
     const dayOfWeekElement = document.getElementById('dayOfWeek');
     const today = new Date();
     const options = { weekday: 'long', month: 'short', day: 'numeric' };
     dayOfWeekElement.textContent = today.toLocaleDateString('en-US', options);
-  }
+}
 
-  function loadUI() {
+function loadUI() {
     updateDayOfWeek();
 
-    // if checklist not done, load checklist first
+    // Load checklist first if not done
     if (!answers._nightChecklistDone) {
-      loadNightChecklist();
-      return;
+        loadNightChecklist();
+        return;
     }
 
+    // If all questions answered, show done page
     if (currentIndex >= NIGHT.length) {
-      contentArea.innerHTML = `<div class="done-note">Night done</div>`;
-      backBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-      return;
+        contentArea.innerHTML = `<div class="done-note">Night done</div>`;
+        backBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        return;
     }
 
     const q = NIGHT[currentIndex];
     let html = '';
+
+    // Question header
     if (q.icon) {
-      html += `<div class="question-with-icon">
-        <div class="question-icon${q.specialIcon ? ' special-icon' : ''}">
-          <img src="icons/${q.icon}" alt="${q.label}">
-        </div>
-        <span class="question-text">${q.label}</span>
-      </div>`;
+        html += `<div class="question-with-icon">
+                    <div class="question-icon${q.specialIcon ? ' special-icon' : ''}">
+                        <img src="icons/${q.icon}" alt="${q.label}">
+                    </div>
+                    <span class="question-text">${q.label}</span>
+                 </div>`;
     } else {
-      html += `<div class="question">${q.label}</div>`;
+        html += `<div class="question">${q.label}</div>`;
     }
 
-    html += `<div class="options${q.key==='how_slept'?' column-options':''}">`;
+    html += `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
 
+    // Single-choice question
     if (q.type === 'single') {
-      q.options.forEach(opt => {
-        const selected = answers[q.key] === opt ? 'selected' : '';
-        html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
-      });
-    } else if (q.type === 'multi') {
-      if (!answers[q.key]) answers[q.key] = [];
-      q.options.forEach(opt => {
-        const selected = answers[q.key].includes(opt) ? 'selected' : '';
-        html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
-      });
-    } else if (q.type === 'time') {
-      html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
+        q.options.forEach(opt => {
+            const selected = answers[q.key] === opt ? 'selected' : '';
+            html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+        });
+    }
+    // Multi-choice question
+    else if (q.type === 'multi') {
+
+        // Special counter question for caffeine/alcohol
+        if (q.key === 'caffeine_alcohol') {
+            if (!answers[q.key]) answers[q.key] = {};
+            q.options.forEach(opt => {
+                const count = answers[q.key][opt] || 0;
+                html += `
+                <div class="opt-btn drink-pill">
+                    <span style="flex:1">${opt}</span>
+                    <div class="counter-inner">
+                        <span class="minus" onclick="updateCounter('${opt}', -1)">−</span>
+                        <span id="count-${opt}">${count}</span>
+                        <span class="plus" onclick="updateCounter('${opt}', 1)">+</span>
+                    </div>
+                </div>`;
+            });
+
+            // Enable next button for counter
+            nextBtn.disabled = false;
+            nextBtn.onclick = () => {
+                currentIndex++;
+                loadUI();
+            };
+        } 
+        // Regular multi-choice
+        else {
+            if (!answers[q.key]) answers[q.key] = [];
+            q.options.forEach(opt => {
+                const selected = answers[q.key].includes(opt) ? 'selected' : '';
+                html += `<button class="opt-btn ${selected}" onclick="toggleMultiOption('${q.key}','${opt}')">${opt}</button>`;
+            });
+        }
+    }
+    // Time input
+    else if (q.type === 'time') {
+        html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
     }
 
     html += '</div>';
     contentArea.innerHTML = html;
 
+    // Show/hide navigation
     backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
     nextBtn.style.display = 'inline-block';
     nextBtn.textContent = 'Next';
-    nextBtn.disabled = !answers[q.key] || (Array.isArray(answers[q.key]) && answers[q.key].length === 0);
+
+    // Set nextBtn.disabled safely
+    if (q.key === 'caffeine_alcohol') {
+        nextBtn.disabled = false;
+    } else {
+        nextBtn.disabled = !answers[q.key] || (Array.isArray(answers[q.key]) && answers[q.key].length === 0);
+    }
 
     updateProgressBar();
-  }
+}
+
+// Counter update function
+window.updateCounter = (opt, delta) => {
+    if (!answers['caffeine_alcohol']) answers['caffeine_alcohol'] = {};
+    let val = answers['caffeine_alcohol'][opt] || 0;
+    val += delta;
+    if (val < 0) val = 0;
+    answers['caffeine_alcohol'][opt] = val;
+
+    const el = document.getElementById(`count-${opt}`);
+    if (el) el.textContent = val;
+
+    saveData();
+    updateProgressBar();
+};
 
   /******************************
    * ANSWER HANDLERS
