@@ -690,9 +690,10 @@ document.addEventListener('DOMContentLoaded', () => {
   /******************************
    * MORNING CHECKLIST
    ******************************/
-  function loadMorningChecklist() {
-   const wrapper = document.querySelector('.checklist-wrapper');
-    const scrollPos = wrapper ? wrapper.scrollTop : 0
+function loadMorningChecklist() {
+    const wrapper = document.querySelector('.checklist-wrapper');
+    const scrollPos = wrapper ? wrapper.scrollTop : 0;
+    
     let html = `
     <div class="checklist-title">Morning Routine</div>
       <div class="checklist-wrapper">
@@ -700,27 +701,33 @@ document.addEventListener('DOMContentLoaded', () => {
           ${MORNING_CHECKLIST_ITEMS.map(item => {
             const selected = answers[item.key] === 'Yes' ? 'selected' : '';
             return `<div class="check-item ${selected}" onclick="toggleChecklist('${item.key}')">
-              <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
-              <span class="check-text">${item.label}</span>
-            </div>`;
+                      <div class="icon-circle"><img src="icons/${item.icon}" alt="${item.label}" class="counter-icon"></div>
+                      <span class="check-text">${item.label}</span>
+                    </div>`;
           }).join('')}
           <div style="height:80px;"></div>
         </div>
       </div>`;
-     
+
     contentArea.innerHTML = html;
+
+    // ✅ Make Back and Next buttons always visible
     backBtn.style.display = 'inline-block';
     nextBtn.style.display = 'inline-block';
     nextBtn.textContent = 'Next';
-    nextBtn.disabled = false;
+    nextBtn.disabled = false; // Always enabled for checklist
 
+    // Use a separate handler for checklist "Next" click
     nextBtn.onclick = () => {
-      saveData();
-      showMorningDonePage();
+        saveData();
+        showMorningDonePage();
     };
 
+    // Optional: restore scroll position if needed
+    if (wrapper) wrapper.scrollTop = scrollPos;
+
     updateProgressBar();
-  }
+}
 
   window.toggleChecklist = (key) => {
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
@@ -734,11 +741,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function showMorningDonePage() {
     contentArea.innerHTML = `<div class="done-note">Morning done</div>
       <div style="display:flex; gap:12px; justify-content:center; margin-top:40px;">
-        <button id="goBackBtn">Go back</button>
+        <button id="goBackBtn">Edit morning</button>
+         <button id="homeDoneBtn">Home</button>
       </div>`;
     document.getElementById('goBackBtn').onclick = loadMorningChecklist;
-    backBtn.style.display = 'true';
-    nextBtn.style.display = 'true';
+      document.getElementById('homeDoneBtn').onclick = () => {
+    window.location.href = 'index.html';
+  };
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
     updateProgressBar();
   }
 
