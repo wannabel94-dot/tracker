@@ -741,7 +741,15 @@ window.updateCounter = (opt, delta) => {
     loadUI();
   };
 
-  backBtn.onclick = () => { if(currentIndex>0){currentIndex--; loadUI();} };
+backBtn.onclick = () => {
+  if (currentIndex > 0) {
+    currentIndex--;
+    loadUI();
+  } else {
+    // On first question, go back to checklist
+    loadNightChecklist();
+  }
+};
   nextBtn.onclick = () => { currentIndex++; loadUI(); saveData(); };
 
   /******************************
@@ -764,7 +772,11 @@ window.updateCounter = (opt, delta) => {
     </div>`;
     contentArea.innerHTML = html;
 
-    backBtn.style.display = 'inline-block';
+  // Disable back button visually and functionally
+  backBtn.style.display = 'inline-block';
+  backBtn.classList.add('disabled');   // Add CSS class
+  backBtn.onclick = null;               // Prevent clicking
+     
     nextBtn.style.display = 'inline-block';
     nextBtn.textContent = 'Next';
     nextBtn.disabled = false;
