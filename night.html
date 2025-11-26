@@ -774,9 +774,12 @@ backBtn.onclick = () => {
   nextBtn.onclick = () => { currentIndex++; loadUI(); saveData(); };
 
   /******************************
-   * NIGHT CHECKLIST
-   ******************************/
-  function loadNightChecklist() {
+ * NIGHT CHECKLIST
+ ******************************/
+function loadNightChecklist() {
+    const wrapper = document.querySelector('.checklist-wrapper');
+    const scrollPos = wrapper ? wrapper.scrollTop : 0;
+
     let html = `
     <div class="checklist-title">Night Routine</div>
     <div class="checklist-wrapper">
@@ -791,32 +794,53 @@ backBtn.onclick = () => {
         <div style="height:80px;"></div>
       </div>
     </div>`;
+
     contentArea.innerHTML = html;
 
-  // Disable back button visually and functionally
-  backBtn.style.display = 'inline-block';
-  backBtn.classList.add('disabled');   // Add CSS class
-  backBtn.onclick = null;               // Prevent clicking
-     
+    // Restore scroll position
+    const newWrapper = document.querySelector('.checklist-wrapper');
+    if (newWrapper) newWrapper.scrollTop = scrollPos;
+
+    // Disable back button visually and functionally
+    backBtn.style.display = 'inline-block';
+    backBtn.classList.add('disabled');
+    backBtn.onclick = null;
+
+    // Next button always enabled
     nextBtn.style.display = 'inline-block';
     nextBtn.textContent = 'Next';
     nextBtn.disabled = false;
-
     nextBtn.onclick = () => {
-      answers._nightChecklistDone = true;
-      saveData();
-      currentIndex = 0;
-      loadUI();
+        answers._nightChecklistDone = true;
+        saveData();
+        currentIndex = 0;
+        loadUI();
     };
 
     updateProgressBar();
-  }
+}
 
-  window.toggleNightChecklist = (key) => {
+window.toggleNightChecklist = (key) => {
+    const wrapper = document.querySelector('.checklist-wrapper');
+    const scrollPos = wrapper ? wrapper.scrollTop : 0;
+
+    // Toggle answer
     answers[key] = answers[key] === 'Yes' ? 'No' : 'Yes';
     saveData();
+
+    // Reload checklist
     loadNightChecklist();
-  };
+
+    // Restore scroll
+    const newWrapper = document.querySelector('.checklist-wrapper');
+    if (newWrapper) newWrapper.scrollTop = scrollPos;
+
+    // Scroll newly selected item into view
+    if (answers[key] === 'Yes') {
+        const el = document.querySelector(`[onclick="toggleNightChecklist('${key}')"]`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+};
 
   /******************************
    * PROGRESS BAR
