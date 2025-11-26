@@ -738,34 +738,43 @@ window.toggleMultiOption = (qKey, opt) => {
 
     // Find the question object matching qKey
     const q = NIGHT.find(question => question.key === qKey);
-
     if (!q) return;
 
-    if (opt === 'None') {
+    const isNone = opt.trim().toLowerCase() === 'none';
+
+    if (isNone) {
         if (!selected) {
-            // Select only 'None' and deselect others
-            answers[qKey] = ['None'];
-            // Trigger autoNext if applicable
+            // Select only 'None'
+            answers[qKey] = [opt];
+            saveData();
+
+            // Auto-next if enabled
             if (q.autoNext) {
-                // Move currentIndex to this question's index +1
-                const idx = NIGHT.findIndex(question => question.key === qKey);
-                currentIndex = idx + 1;
+                currentIndex = NIGHT.findIndex(question => question.key === qKey) + 1;
                 loadUI();
-                return; // exit early
+                return;
             }
         } else {
-            // Deselect 'None'
+            // Deselect None
             answers[qKey] = [];
         }
     } else {
-        // Remove 'None' if another option is selected
-        answers[qKey] = answers[qKey].filter(o => o !== 'None');
+        // Remove None if other options selected
+        answers[qKey] = answers[qKey].filter(o => o.trim().toLowerCase() !== 'none');
 
         if (!selected) answers[qKey].push(opt);
         else answers[qKey] = answers[qKey].filter(o => o !== opt);
     }
 
     saveData();
+
+    // 🔹 If 'None' is already the only answer (e.g. after reload), autoNext
+    if (q.autoNext && answers[qKey].length === 1 && isNone) {
+        currentIndex = NIGHT.findIndex(question => question.key === qKey) + 1;
+        loadUI();
+        return;
+    }
+
     loadUI();
 };
 
