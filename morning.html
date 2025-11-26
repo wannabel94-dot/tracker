@@ -684,23 +684,42 @@ function loadUI() {
     }
     updateProgressBar();
   };
+// Back button logic inside loadUI
+if (currentIndex === 0) {
+    backBtn.style.display = 'inline-block';
+    backBtn.classList.add('disabled');  // visually disabled
+    backBtn.onclick = null;              // prevent any click
+} else {
+    backBtn.style.display = 'inline-block';
+    backBtn.classList.remove('disabled');
+    backBtn.onclick = () => {
+        currentIndex--;
+        loadUI();
+    };
+}
 
-  /******************************
-   * BACK/NEXT BUTTONS
-   ******************************/
-  backBtn.onclick = () => {
-    if (currentIndex > 0) currentIndex--;
-    loadUI();
-  };
-  nextBtn.onclick = () => {
+// Next button logic
+nextBtn.style.display = 'inline-block';
+nextBtn.textContent = 'Next';
+
+// Disable Next if unanswered
+const q = MORNING[currentIndex];
+if (q.type === 'time') {
+    nextBtn.disabled = !answers[q.key] || answers[q.key] === '';
+} else {
+    nextBtn.disabled = !answers[q.key] || (Array.isArray(answers[q.key]) && answers[q.key].length === 0);
+}
+
+nextBtn.onclick = () => {
     saveData();
-    if (currentIndex < MORNING.length) {
-      currentIndex++;
-      loadUI();
+    if (currentIndex < MORNING.length - 1) {
+        currentIndex++;
+        loadUI();
     } else {
-      loadMorningChecklist();
+        loadMorningChecklist();
     }
-  };
+};
+
 
   /******************************
    * MORNING CHECKLIST
