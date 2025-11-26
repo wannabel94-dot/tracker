@@ -36,7 +36,6 @@ body {
   font-family: inherit;
 }
 
-
   /* ===============================================
    STICKY HEADER (Day + Menu)
 ================================================= */
@@ -398,6 +397,30 @@ main.card { padding:18px; border-radius:var(--card-radius); min-height:520px; }
   transition: background 0.25s ease, transform 0.2s ease;
 }
 .back-to-checklist:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+/* ===============================================
+   MORNING CHECKLIST
+================================================= */
+.checklist { display:flex; flex-direction:column; gap:8px; padding-bottom:60px; }
+.checklist-title { font-size:18px; font-weight:600; color:#f0f4ff; margin-bottom:12px; text-align:center; }
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;                 /* consistent spacing between icon and text */
+  margin-bottom: 8px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}.check-item:hover { background:rgba(255,255,255,0.1); }
+.check-text {
+  flex: 1 1 auto;            /* text fills the remaining width */
+  margin: 0;                 /* remove any accidental margin */
+  font-weight: 500;
+  color: #f0f4ff;
+  line-height: 1;            /* tighter control so it aligns vertically */
+}.check-item.selected .check-text { text-decoration:line-through; opacity:0.6; }
+.checklist-wrapper { max-height:60vh; overflow-y:auto; -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
 
    /* ===============================================
    ANIMATIONS
@@ -512,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   /******************************
-   * ELEMENT REFERENCES
+   * GLOBAL ELEMENTS
    ******************************/
   const contentArea = document.getElementById('contentArea');
   const backBtn = document.getElementById('backBtn');
@@ -668,7 +691,10 @@ document.addEventListener('DOMContentLoaded', () => {
    * MORNING CHECKLIST
    ******************************/
   function loadMorningChecklist() {
-    let html = `<div class="checklist-title">Morning Routine</div>
+   const wrapper = document.querySelector('.checklist-wrapper');
+    const scrollPos = wrapper ? wrapper.scrollTop : 0
+    let html = `
+    <div class="checklist-title">Morning Routine</div>
       <div class="checklist-wrapper">
         <div class="checklist">
           ${MORNING_CHECKLIST_ITEMS.map(item => {
@@ -681,6 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="height:80px;"></div>
         </div>
       </div>`;
+     
     contentArea.innerHTML = html;
     backBtn.style.display = 'inline-block';
     nextBtn.style.display = 'inline-block';
@@ -710,8 +737,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <button id="goBackBtn">Go back</button>
       </div>`;
     document.getElementById('goBackBtn').onclick = loadMorningChecklist;
-    backBtn.style.display = 'none';
-    nextBtn.style.display = 'none';
+    backBtn.style.display = 'true';
+    nextBtn.style.display = 'true';
     updateProgressBar();
   }
 
