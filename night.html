@@ -736,7 +736,10 @@ window.toggleMultiOption = (qKey, opt) => {
     if (!answers[qKey]) answers[qKey] = [];
     const selected = answers[qKey].includes(opt);
 
-    const q = NIGHT[currentIndex]; // current question
+    // Find the question object matching qKey
+    const q = NIGHT.find(question => question.key === qKey);
+
+    if (!q) return;
 
     if (opt === 'None') {
         if (!selected) {
@@ -744,9 +747,11 @@ window.toggleMultiOption = (qKey, opt) => {
             answers[qKey] = ['None'];
             // Trigger autoNext if applicable
             if (q.autoNext) {
-                currentIndex++;
+                // Move currentIndex to this question's index +1
+                const idx = NIGHT.findIndex(question => question.key === qKey);
+                currentIndex = idx + 1;
                 loadUI();
-                return; // exit early to avoid further updates
+                return; // exit early
             }
         } else {
             // Deselect 'None'
