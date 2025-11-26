@@ -328,67 +328,96 @@ h1 {
 <button class="floating-center-btn" id="centralBtn">+</button>
 
   <script>
-  document.getElementById('todoBtn').onclick = () => { window.location.href = 'todo.html'; };
-  document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
-  document.getElementById('moodBtn').onclick = () => { window.location.href = 'mood.html'; };
-  document.getElementById('rxBtn').onclick = () => { window.location.href = 'rx.html'; };
+document.addEventListener("DOMContentLoaded", () => {
 
-    function updateDayOfWeek() {
-    const dayOfWeekElement = document.getElementById('dayOfWeek');
+  /* -----------------------------
+     SAFE BUTTON CLICK HANDLERS
+  ------------------------------ */
+
+  function safeNavigate(id, url) {
+    const el = document.getElementById(id);
+    if (el) el.onclick = () => (window.location.href = url);
+  }
+
+  safeNavigate("todoBtn", "todo.html");
+  safeNavigate("dataBtn", "data.html");
+  safeNavigate("moodBtn", "mood.html");
+  safeNavigate("rxBtn", "rx.html");
+  safeNavigate("homeBtn", "index.html");
+  safeNavigate("centralBtn", "add.html");
+
+
+  /* -----------------------------
+          UPDATE DAY
+  ------------------------------ */
+
+  function updateDayOfWeek() {
+    const dayEl = document.getElementById("dayOfWeek");
+    if (!dayEl) return;
+
     const today = new Date();
-    const options = { weekday: 'long', month: 'short', day: 'numeric' };
-    dayOfWeekElement.textContent = today.toLocaleDateString('en-US', options);
-}
+    const options = { weekday: "long", month: "short", day: "numeric" };
+    dayEl.textContent = today.toLocaleDateString("en-US", options);
+  }
 
-function loadUI() {
-    updateDayOfWeek();
-  
-    function getTodayDate() {
-      return new Date().toLocaleDateString('en-GB');
-    }
+  updateDayOfWeek();
 
-    function calculateProgress(mode) {
-      const day = getTodayDate();
-      const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-      const modeData = all[day]?.[mode];
-      
-      if (!modeData) return 0;
-      
-      const answers = modeData.answers || {};
-      const morningChecklistCount = 15; // Update this if you add/remove checklist items
-      const nightChecklistCount = 10;
-      const morningQuestionsCount = 2;
-      const nightQuestionsCount = 19;
-      
-      let done = 0;
-      let total = 0;
-      
-      if (mode === 'morning') {
-        total = morningQuestionsCount + morningChecklistCount;
-        Object.keys(answers).forEach(key => {
-          if (answers[key]) done++;
-        });
-      } else {
-        total = nightChecklistCount + nightQuestionsCount;
-        Object.keys(answers).forEach(key => {
-          const val = answers[key];
-          if (Array.isArray(val) && val.length > 0) done++;
-          else if (typeof val === 'object' && Object.values(val).some(v => v !== 0)) done++;
-          else if (val) done++;
-        });
-      }
-      
-      return total > 0 ? Math.round((done / total) * 100) : 0;
-    }
 
-    // Update progress on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      const morningProgress = calculateProgress('morning');
-      const nightProgress = calculateProgress('night');
-      
-      document.getElementById('morningProgress').textContent = morningProgress + '%';
-      document.getElementById('nightProgress').textContent = nightProgress + '%';
+  /* -----------------------------
+       PROGRESS CALCULATION
+  ------------------------------ */
+
+  function getTodayDate() {
+    return new Date().toLocaleDateString("en-GB");
+  }
+
+  function calculateProgress(mode) {
+    const day = getTodayDate();
+    const all = JSON.parse(localStorage.getItem("dailyTrackerData") || "{}");
+    const modeData = all[day]?.[mode];
+
+    if (!modeData) return 0;
+
+    const answers = modeData.answers || {};
+
+    const morningChecklistCount = 15;
+    const nightChecklistCount = 10;
+    const morningQuestionsCount = 2;
+    const nightQuestionsCount = 19;
+
+    let done = 0;
+    let total =
+      mode === "morning"
+        ? morningChecklistCount + morningQuestionsCount
+        : nightChecklistCount + nightQuestionsCount;
+
+    Object.keys(answers).forEach((key) => {
+      const val = answers[key];
+
+      if (Array.isArray(val) && val.length > 0) done++;
+      else if (typeof val === "object" && Object.values(val).some((v) => v !== 0))
+        done++;
+      else if (val) done++;
     });
-  </script>
+
+    return total > 0 ? Math.round((done / total) * 100) : 0;
+  }
+
+
+  /* -----------------------------
+        UPDATE PROGRESS TEXT
+  ------------------------------ */
+
+  const morningEl = document.getElementById("morningProgress");
+  const nightEl = document.getElementById("nightProgress");
+
+  if (morningEl)
+    morningEl.textContent = calculateProgress("morning") + "%";
+
+  if (nightEl)
+    nightEl.textContent = calculateProgress("night") + "%";
+
+});
+</script>
 </body>
 </html>
