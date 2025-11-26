@@ -199,43 +199,70 @@ button.pill-btn {
   color: #fff;
 }
 
-/* Footer like History page */
 .footer-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  height: 60px;
   background: #303f5c;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+}
+
+.left-group {
+  display: flex;
+  gap: 28px;
+  margin-right: 50px; /* space for central button */
+}
+
+.right-group {
+  display: flex;
+  gap: 28px;
+  margin-left: 0px; /* space for central button */
+}
+
+
+/* Circular cutout behind the button */
+.footer-nav::before {
+  content: '';
+  position: absolute;
+  top: -25px; /* half the cutout height */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background: var(--background); /* match page background */
+  border-radius: 50%;
+  z-index: 110; /* below the button */
+}
+
+.floating-center-btn {
+  position: fixed; /* outside the footer */
+  bottom: 30px; /* vertically center it in the cutout */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;  /* same as cutout */
+  height: 50px;
+  border-radius: 50%;
+  background: #8694af;
+  border: none;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 28px;
-  z-index: 100;
+  font-size: 36px;
+  font-weight: 700;
+  color: #000;
+  cursor: pointer;
+  z-index: 130; /* above footer and cutout */
 }
 
-.footer-nav .switch-btn {
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  padding: 10px;
-  transition: transform 0.25s, background 0.25s;
-}
-
-.footer-nav .switch-btn img {
-  filter: invert(1);
-  width: 32px;
-  height: 32px;
-  opacity: 0.8;
-  transition: opacity 0.3s, transform 0.3s;
-}
-
-.footer-nav .switch-btn:hover { transform: scale(1.1); }
-.footer-nav .switch-btn.active img { opacity: 1; transform: scale(1.2); }
-
-@media(max-width:480px){
-  .footer-nav { gap: 14px; }
-  .footer-nav .switch-btn img { width:28px; height:28px; }
+.footer-nav .switch-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px 8px; background:transparent; border:none; cursor:pointer; border-radius:12px; }
+.footer-nav .switch-btn img { width:22px; height:22px; opacity:0.9; filter:invert(1); }
+.footer-nav .switch-btn span { color:#fff; font-weight:600; }
+.footer-nav .switch-btn.active span { color:#8d4585; font-weight:700; }
 }
 </style>
 </head>
@@ -281,16 +308,25 @@ button.pill-btn {
   </div>
 </div>
 
-<!-- Footer -->
 <footer class="footer-nav">
-  <button class="switch-btn morning active" id="morningBtn"><img src="icons/sun.svg" alt="Morning"></button>
-  <button class="switch-btn night" id="nightBtn"><img src="icons/night.svg" alt="Night"></button>
-  <button class="switch-btn history" id="historyBtn"><img src="icons/history.svg" alt="History"></button>
-  <button class="switch-btn data" id="dataBtn"><img src="icons/data.svg" alt="Data"></button>
-  <button class="switch-btn blank" id="blankBtn"><img src="icons/balloon.svg" alt="Blank"></button>
+  <div class="left-group">
+    <button class="switch-btn home" id="homeBtn"><img src="icons/home.svg" alt="Home"><span>Home</span></button>
+   <button class="switch-btn rx" id="rxBtn"><img src="icons/rx1.svg" alt="rx"><span>Rx</span></button>
+  </div>
+  <div class="right-group">
+    <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
+   <button class="switch-btn mood" id="moodBtn"><img src="icons/mood.svg" alt="mood"><span>Mood</span></button>
+  </div>
 </footer>
 
 <script>
+  // Footer navigation handlers
+  document.getElementById('homeBtn').onclick = () => { window.location.href = 'index.html'; };
+  document.getElementById('todoBtn').onclick = () => { window.location.href = 'todo.html'; };
+  document.getElementById('moodBtn').onclick = () => { window.location.href = 'mood.html'; };
+  document.getElementById('rxBtn').onclick = () => { window.location.href = 'rx.html'; };
+  document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
+
 document.addEventListener('DOMContentLoaded', () => {
   const plusBtn = document.getElementById("plusBtn");
   const minusBtn = document.getElementById("minusBtn");
