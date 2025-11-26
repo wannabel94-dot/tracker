@@ -732,29 +732,32 @@ window.updateCounter = (opt, delta) => {
     updateProgressBar();
   };
 
-  window.toggleMultiOption = (qKey,opt) => {
-    if (!answers[qKey]) answers[qKey]=[];
+window.toggleMultiOption = (qKey, opt) => {
+    if (!answers[qKey]) answers[qKey] = [];
     const selected = answers[qKey].includes(opt);
 
-    // Special handling if option is "None"
+    const q = NIGHT[currentIndex]; // current question
+
     if (opt === 'None') {
         if (!selected) {
-            // Remove all other options and select only "None"
+            // Select only 'None' and deselect others
             answers[qKey] = ['None'];
-            const q = NIGHT[currentIndex];
-            if (q.autoNext) currentIndex++;
+            // Trigger autoNext if applicable
+            if (q.autoNext) {
+                currentIndex++;
+                loadUI();
+                return; // exit early to avoid further updates
+            }
         } else {
-            // Deselect "None"
+            // Deselect 'None'
             answers[qKey] = [];
         }
     } else {
-        // Remove "None" if another option is selected
+        // Remove 'None' if another option is selected
         answers[qKey] = answers[qKey].filter(o => o !== 'None');
-        if (!selected) {
-            answers[qKey].push(opt);
-        } else {
-            answers[qKey] = answers[qKey].filter(o => o !== opt);
-        }
+
+        if (!selected) answers[qKey].push(opt);
+        else answers[qKey] = answers[qKey].filter(o => o !== opt);
     }
 
     saveData();
