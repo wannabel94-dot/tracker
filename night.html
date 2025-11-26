@@ -735,11 +735,32 @@ window.updateCounter = (opt, delta) => {
   window.toggleMultiOption = (qKey,opt) => {
     if (!answers[qKey]) answers[qKey]=[];
     const selected = answers[qKey].includes(opt);
-    if (!selected) answers[qKey].push(opt);
-    else answers[qKey] = answers[qKey].filter(o=>o!==opt);
+
+    // Special handling if option is "None"
+    if (opt === 'None') {
+        if (!selected) {
+            // Remove all other options and select only "None"
+            answers[qKey] = ['None'];
+            const q = NIGHT[currentIndex];
+            if (q.autoNext) currentIndex++;
+        } else {
+            // Deselect "None"
+            answers[qKey] = [];
+        }
+    } else {
+        // Remove "None" if another option is selected
+        answers[qKey] = answers[qKey].filter(o => o !== 'None');
+        if (!selected) {
+            answers[qKey].push(opt);
+        } else {
+            answers[qKey] = answers[qKey].filter(o => o !== opt);
+        }
+    }
+
     saveData();
     loadUI();
-  };
+};
+
 
 backBtn.onclick = () => {
   if (currentIndex > 0) {
