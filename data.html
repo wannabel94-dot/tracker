@@ -7,10 +7,28 @@
 <title>Data</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root { --text:#f0f4ff; --card-radius:14px; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; }
-* { box-sizing:border-box; }
-html, body { margin:0; padding:0; height:100%; overflow:hidden; background:#07081d; color:#f0f4ff; }
-.wrap { width:100%; max-width:740px; position:absolute; top:60px; bottom:60px; left:0; right:0; padding:18px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+:root {
+  --text: #f0f4ff;
+  --background: #07081d;
+  --card-radius: 14px;
+  --bg-blur: 6px;
+  --glass-bg: rgba(255,255,255,0.08);
+  --glass-border: rgba(255,255,255,0.12);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+/* ===============================================
+   GLOBAL SETTINGS
+================================================= */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; overflow: hidden; }
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--text);
+  font-family: inherit;
+}.wrap { width:100%; max-width:740px; position:absolute; top:60px; bottom:60px; left:0; right:0; padding:18px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
 #topHeader { position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; padding:10px 18px; background:#07081d; z-index:100; }
 #btnSettings { background:transparent; border:none; font-size:24px; color:#fff; cursor:pointer; padding:8px; min-width:40px; min-height:40px; }
 #dayOfWeek { flex:1; text-align:center; font-size:1rem; font-weight:600; color:#f0f4ff; pointer-events:none; }
