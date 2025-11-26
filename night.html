@@ -561,23 +561,32 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsMenu.classList.remove('show');
     menuOverlay.classList.remove('show');
   };
+     settingsMenu.addEventListener("click", () => {
+    settingsMenu.classList.remove('show');
+    menuOverlay.classList.remove('show');
+  });
 
   /****************************************************
    * LOCAL STORAGE
    ****************************************************/
+  function getTodayDate() {
+    return new Date().toLocaleDateString('en-GB');
+  }
+
   function loadSavedData() {
     const day = getTodayDate();
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
-    const nightData = all[day]?.night;
-    if (nightData) {
-      currentIndex = nightData.currentIndex || 0;
-      answers = nightData.answers || {};
+    const modeData = all[day]?.night;
+
+    if (modeData) {
+      currentIndex = modeData.currentIndex || 0;
+      answers = modeData.answers || {};
     } else {
       currentIndex = 0;
       answers = {};
     }
   }
-
+   
   function saveData() {
     const day = getTodayDate();
     const all = JSON.parse(localStorage.getItem('dailyTrackerData') || '{}');
@@ -587,7 +596,65 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   window.addEventListener('beforeunload', saveData);
+ /******************************
+   * UI RENDERING
+   ******************************/
+  function updateDayOfWeek() {
+    const dayOfWeekElement = document.getElementById('dayOfWeek');
+    const today = new Date();
+    const options = { weekday: 'long', month: 'short', day: 'numeric' };
+    dayOfWeekElement.textContent = today.toLocaleDateString('en-US', options);
+  }
 
+  function loadUI() {
+    updateDayOfWeek();
+
+    const allQuestionsDone = MORNING.every(q => answers[q.key]);
+    const allChecklistDone = MORNING_CHECKLIST_ITEMS.every(i => answers[i.key] === 'Yes');
+
+    // Show morning done page if everything completed
+    if (allQuestionsDone && allChecklistDone) {
+      showMorningDonePage();
+      return;
+    }
+
+    // Load checklist if questions are done
+    if (currentIndex >= MORNING.length) {
+      loadMorningChecklist();
+      return;
+    }
+
+    const q = MORNING[currentIndex];
+    let html = '';
+
+    if (q.icon) {
+      html += `<div class="question-with-icon">
+        <div class="question-icon"><img src="icons/${q.icon}" alt="${q.label}"></div>
+        <span class="question-text">${q.label}</span>
+      </div>`;
+    } else {
+      html += `<div class="question">${q.label}</div>`;
+    }
+
+    html += `<div class="options${q.key === 'how_slept' ? ' column-options' : ''}">`;
+
+    if (q.type === 'single') {
+      q.options.forEach(opt => {
+        const selected = answers[q.key] === opt ? 'selected' : '';
+        html += `<button class="opt-btn ${selected}" onclick="selectOption('${opt}')">${opt}</button>`;
+      });
+    } else if (q.type === 'time') {
+      html += `<input type="time" value="${answers[q.key] || ''}" onchange="selectOption(this.value)" />`;
+    }
+
+    html += '</div>';
+    contentArea.innerHTML = html;
+
+    backBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = 'Next';
+    updateProgressBar();
+  }
   /****************************************************
    * NIGHT CHECKLIST
    ****************************************************/
@@ -727,6 +794,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     progressBar.style.width = keys.length>0 ? Math.round((done/keys.length)*100)+'%' : '0%';
   }
+   
+ /******************************
+   * EXPORT & CLEAR DATA
+   ******************************/
+  document.getElementById("btnExport").addEventListener("click", () => {
+    const data = localStorage.getItem("dailyTrackerData");
+    if (!data) { alert("No data to export yet."); return; }
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "daily-tracker-data.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('btnClearToday').onclick = () => {
+    const all = JSON.parse(localStorage.getItem('dailyTrackerData')||'{}');
+    delete all[getTodayDate()];
+    localStorage.setItem('dailyTrackerData', JSON.stringify(all));
+    answers = {};
+    currentIndex = 0;
+    loadUI();
+    alert("Today's data cleared.");
+  };
 
   /****************************************************
    * INITIALIZATION
