@@ -782,13 +782,13 @@ window.toggleChecklist = (key) => {
 function showMorningDonePage() {
     contentArea.innerHTML = `<div class="done-note">Morning done</div>
       <div style="display:flex; gap:12px; justify-content:center; margin-top:40px;">
-        <button id="goBackBtn">Edit morning</button>
-        <button id="homeDoneBtn">Home</button>
+        <button id="goBackBtn">Edit Morning</button>
+        <button id="nightBtn">Go to Night</button>
       </div>`;
     
     document.getElementById('goBackBtn').onclick = loadMorningChecklist;
-    document.getElementById('homeDoneBtn').onclick = () => {
-        window.location.href = 'index.html';
+    document.getElementById('nightBtn').onclick = () => {
+        window.location.href = 'night.html';
     };
 
     backBtn.style.display = 'none';
