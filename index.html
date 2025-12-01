@@ -210,16 +210,19 @@ h1 {
 .footer-nav {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   height: 60px;
+  width: 90%;         /* key change — shorter pillbox */
   background: #303f5c;
-  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 25px;
+  border-radius: 9999px;
+  z-index: 1500;
+  display: flex;
 }
-
+  
 .left-group, .right-group {
   display: flex;
   justify-content: space-between; /* even spacing between buttons */
