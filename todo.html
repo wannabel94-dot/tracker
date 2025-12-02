@@ -420,6 +420,39 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
   </label>
 </div>
 
+<!-- Task Modal -->
+<div id="noteModal" class="modal-overlay">
+  <div class="modal-box">
+    
+    <div class="modal-header">
+      <h3 id="modalTitle">New Task</h3>
+      <button id="closeModal" class="close-btn">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <input type="text" id="taskTitle" placeholder="Task title" />
+
+      <select id="taskCategory">
+        <option value="General">General</option>
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+        <option value="Errands">Errands</option>
+        <option value="Health">Health</option>
+      </select>
+
+      <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <input type="checkbox" id="taskDone" />
+        Mark as completed
+      </label>
+    </div>
+
+    <div class="modal-footer">
+      <button id="cancelBtn" class="modal-btn cancel">Cancel</button>
+      <button id="saveBtn" class="modal-btn save">Save</button>
+    </div>
+
+  </div>
+</div>
 
   <!-- Sticky footer nav -->
 <footer class="footer-nav">
