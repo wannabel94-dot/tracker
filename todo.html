@@ -258,6 +258,20 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
   font-size: 48px;
   margin-bottom: 16px;
 }
+.modal-body select {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 12px;
+  color: #f0f4ff;
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+.modal-body select:focus {
+  outline: none;
+  border-color: rgba(255,255,255,0.3);
+}
 
 /* Footer */
 .footer-nav {
@@ -389,23 +403,23 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
     <!-- Notes will be rendered here -->
   </div>
 
-  <!-- Note editor modal -->
-  <div class="modal-overlay" id="noteModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3 id="modalTitle">New Note</h3>
-        <button class="close-btn" id="closeModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <input type="text" id="noteTitle" placeholder="Title" />
-        <textarea id="noteContent" placeholder="Write your note here..."></textarea>
-      </div>
-      <div class="modal-footer">
-        <button class="modal-btn cancel" id="cancelBtn">Cancel</button>
-        <button class="modal-btn save" id="saveBtn">Save</button>
-      </div>
-    </div>
-  </div>
+<div class="modal-body">
+  <input type="text" id="taskTitle" placeholder="Task title" />
+
+  <select id="taskCategory">
+    <option value="General">General</option>
+    <option value="Work">Work</option>
+    <option value="Personal">Personal</option>
+    <option value="Errands">Errands</option>
+    <option value="Health">Health</option>
+  </select>
+
+  <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+    <input type="checkbox" id="taskDone" />
+    Mark as completed
+  </label>
+</div>
+
 
   <!-- Sticky footer nav -->
 <footer class="footer-nav">
@@ -421,14 +435,14 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
   <button class="floating-center-btn" id="centralBtn">+</button>
 
 <script>
-let notes = JSON.parse(localStorage.getItem('dailyNotes') || '[]');
-let editingNoteId = null;
+let tasks = JSON.parse(localStorage.getItem('todoTasks') || '[]');
+let editingTaskId = null;
 
-document.getElementById('homeBtn').onclick = () => { window.location.href = 'index.html'; };
-  document.getElementById('dataBtn').onclick = () => { window.location.href = 'data.html'; };
-  document.getElementById('moodBtn').onclick = () => { window.location.href = 'mood.html'; };
-  document.getElementById('rxBtn').onclick = () => { window.location.href = 'rx.html'; };
-
+/* Navigation */
+document.getElementById('homeBtn').onclick = () => { window.location.href="index.html"; };
+document.getElementById('dataBtn').onclick = () => { window.location.href="data.html"; };
+document.getElementById('moodBtn').onclick = () => { window.location.href="mood.html"; };
+document.getElementById('rxBtn').onclick = () => { window.location.href="rx.html"; };
 
 /* Settings menu */
 const btnSettings = document.getElementById('btnSettings');
@@ -444,160 +458,156 @@ menuOverlay.onclick = () => {
   menuOverlay.classList.remove('show');
 };
 
+/* Export */
 document.getElementById('btnExport').onclick = () => {
-  if (notes.length === 0) {
-    alert("No notes to export.");
+  if (tasks.length === 0) {
+    alert("No tasks to export.");
     return;
   }
-  const blob = new Blob([JSON.stringify(notes, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(tasks, null, 2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
-  a.download = "notes-export.json";
+  a.download = "todo-export.json";
   a.click();
   URL.revokeObjectURL(url);
 };
 
+/* Clear all */
 document.getElementById('btnClearAll').onclick = () => {
-  if (confirm('Are you sure you want to delete all notes? This cannot be undone.')) {
-    notes = [];
-    localStorage.setItem('dailyNotes', JSON.stringify(notes));
-    renderNotes();
-    alert('All notes cleared.');
+  if (confirm("Delete all tasks? This cannot be undone.")) {
+    tasks = [];
+    localStorage.setItem('todoTasks', JSON.stringify(tasks));
+    renderTasks();
   }
 };
 
-/* Note modal */
-const noteModal = document.getElementById('noteModal');
-const modalTitle = document.getElementById('modalTitle');
-const noteTitleInput = document.getElementById('noteTitle');
-const noteContentInput = document.getElementById('noteContent');
-const closeModal = document.getElementById('closeModal');
-const cancelBtn = document.getElementById('cancelBtn');
-const saveBtn = document.getElementById('saveBtn');
-const centralBtn = document.getElementById('centralBtn');
+/* Modal */
+const modal = document.getElementById("noteModal");
+const modalTitle = document.getElementById("modalTitle");
+const taskTitleInput = document.getElementById("taskTitle");
+const taskCategoryInput = document.getElementById("taskCategory");
+const taskDoneInput = document.getElementById("taskDone");
 
-function openNoteModal(noteId = null) {
-  editingNoteId = noteId;
-  
-  if (noteId) {
-    const note = notes.find(n => n.id === noteId);
-    if (note) {
-      modalTitle.textContent = 'Edit Note';
-      noteTitleInput.value = note.title;
-      noteContentInput.value = note.content;
-    }
+document.getElementById("closeModal").onclick = closeModal;
+document.getElementById("cancelBtn").onclick = closeModal;
+
+function closeModal() {
+  modal.classList.remove("show");
+  editingTaskId = null;
+}
+
+document.getElementById("centralBtn").onclick = () => openTaskModal();
+
+modal.onclick = e => {
+  if (e.target === modal) closeModal();
+};
+
+function openTaskModal(id = null) {
+  editingTaskId = id;
+
+  if (id) {
+    const t = tasks.find(x => x.id === id);
+    modalTitle.textContent = "Edit Task";
+    taskTitleInput.value = t.title;
+    taskCategoryInput.value = t.category;
+    taskDoneInput.checked = t.done;
   } else {
-    modalTitle.textContent = 'New Note';
-    noteTitleInput.value = '';
-    noteContentInput.value = '';
+    modalTitle.textContent = "New Task";
+    taskTitleInput.value = "";
+    taskCategoryInput.value = "General";
+    taskDoneInput.checked = false;
   }
-  
-  noteModal.classList.add('show');
-  noteTitleInput.focus();
+
+  modal.classList.add("show");
+  taskTitleInput.focus();
 }
 
-function closeNoteModal() {
-  noteModal.classList.remove('show');
-  editingNoteId = null;
-}
+/* Save task */
+document.getElementById("saveBtn").onclick = () => {
+  const title = taskTitleInput.value.trim();
+  const category = taskCategoryInput.value;
+  const done = taskDoneInput.checked;
 
-centralBtn.onclick = () => openNoteModal();
-closeModal.onclick = closeNoteModal;
-cancelBtn.onclick = closeNoteModal;
-
-noteModal.onclick = (e) => {
-  if (e.target === noteModal) closeNoteModal();
-};
-
-saveBtn.onclick = () => {
-  const title = noteTitleInput.value.trim();
-  const content = noteContentInput.value.trim();
-  
-  if (!title && !content) {
-    alert('Please add a title or content.');
+  if (!title) {
+    alert("Please enter a task name.");
     return;
   }
-  
-  if (editingNoteId) {
-    // Edit existing note
-    const note = notes.find(n => n.id === editingNoteId);
-    if (note) {
-      note.title = title || 'Untitled';
-      note.content = content;
-      note.updated = new Date().toISOString();
-    }
+
+  if (editingTaskId) {
+    const t = tasks.find(x => x.id === editingTaskId);
+    t.title = title;
+    t.category = category;
+    t.done = done;
+    t.updated = new Date().toISOString();
   } else {
-    // Create new note
-    const newNote = {
+    tasks.unshift({
       id: Date.now().toString(),
-      title: title || 'Untitled',
-      content: content,
+      title,
+      category,
+      done,
       created: new Date().toISOString(),
       updated: new Date().toISOString()
-    };
-    notes.unshift(newNote);
+    });
   }
-  
-  localStorage.setItem('dailyNotes', JSON.stringify(notes));
-  renderNotes();
-  closeNoteModal();
+
+  localStorage.setItem("todoTasks", JSON.stringify(tasks));
+  renderTasks();
+  closeModal();
 };
 
-function deleteNote(noteId) {
-  if (confirm('Are you sure you want to delete this note?')) {
-    notes = notes.filter(n => n.id !== noteId);
-    localStorage.setItem('dailyNotes', JSON.stringify(notes));
-    renderNotes();
+/* Delete */
+function deleteTask(id) {
+  if (confirm("Delete this task?")) {
+    tasks = tasks.filter(t => t.id !== id);
+    localStorage.setItem("todoTasks", JSON.stringify(tasks));
+    renderTasks();
   }
 }
 
-function formatDate(isoString) {
-  const date = new Date(isoString);
-  const now = new Date();
-  const diff = now - date;
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
-  
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
-  
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+/* Format time */
+function formatDate(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
 }
 
-function renderNotes() {
-  const container = document.getElementById('notesContainer');
-  
-  if (notes.length === 0) {
+/* Render tasks grouped by category */
+function renderTasks() {
+  const container = document.getElementById("notesContainer");
+
+  if (tasks.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-icon">📝</div>
-        <p>No notes yet</p>
-        <p style="font-size:0.9rem;">Tap the + button to create your first note</p>
-      </div>
-    `;
+        <div class="empty-state-icon">📋</div>
+        <p>No tasks yet</p>
+        <p style="font-size:0.9rem;">Tap the + button to create one</p>
+      </div>`;
     return;
   }
-  
-  container.innerHTML = notes.map(note => `
-    <div class="note-entry" onclick="openNoteModal('${note.id}')">
-      <div class="note-header">
-        <h3 class="note-title">${note.title}</h3>
-        <span class="note-timestamp">${formatDate(note.updated)}</span>
+
+  const categories = [...new Set(tasks.map(t => t.category))];
+
+  container.innerHTML = categories.map(cat => `
+    <h2 style="margin:10px 0 5px;opacity:0.7;">${cat}</h2>
+    ${tasks.filter(t => t.category === cat).map(t => `
+      <div class="note-entry">
+        <div class="note-header" onclick="openTaskModal('${t.id}')">
+          <h3 class="note-title" style="${t.done ? 'text-decoration:line-through;opacity:0.5;' : ''}">
+            ${t.title}
+          </h3>
+          <span class="note-timestamp">${formatDate(t.updated)}</span>
+        </div>
+
+        <div class="note-actions">
+          <button class="delete-btn" onclick="deleteTask('${t.id}')">Delete</button>
+        </div>
       </div>
-      ${note.content ? `<p class="note-preview">${note.content}</p>` : ''}
-      <div class="note-actions" onclick="event.stopPropagation()">
-        <button class="delete-btn" onclick="deleteNote('${note.id}')">Delete</button>
-      </div>
-    </div>
-  `).join('');
+    `).join("")}
+  `).join("");
 }
 
-// Initialize
-renderNotes();
+renderTasks();
 </script>
+
 </body>
 </html>
