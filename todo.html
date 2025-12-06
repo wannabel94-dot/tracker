@@ -12,125 +12,31 @@
 }
 *{box-sizing:border-box;}
 html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; overflow:hidden;}
-.wrap {
-  position: fixed; top: 60px; bottom: 60px; left: 0; right: 0;
-  overflow-y: auto; padding: 18px; -webkit-overflow-scrolling: touch;
-}
-#topHeader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #07081d;
-  padding: 10px 18px;
-  z-index: 100;
-}
+.wrap { position: fixed; top: 60px; bottom: 60px; left: 0; right: 0; overflow-y: auto; padding: 18px; -webkit-overflow-scrolling: touch; }
+#topHeader { position: fixed; top: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; background: #07081d; padding: 10px 18px; z-index: 100; }
 #dayOfWeek { flex: 1; text-align: center; font-weight: 600; font-size: 1rem; }
 #btnSettings, #dataBtn { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
-
-   #dataBtn img {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
-   filter:invert(1);
-}
-.footer-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: #303f5c;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 25px;
-}
-.left-group, .right-group {
-  display: flex;
-  justify-content: space-between;
-  width: 120px;
-}
+#dataBtn img { width: 22px; height: 22px; object-fit: contain; filter:invert(1); }
+.footer-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #303f5c; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; }
+.left-group, .right-group { display: flex; justify-content: space-between; width: 120px; }
 .footer-nav .switch-btn { display:flex; flex-direction:column; align-items:center; gap:4px; padding:6px 0; width: 50px; background:transparent; border:none; cursor:pointer; border-radius:12px; }
 .footer-nav .switch-btn img { width:22px; height:22px; opacity:0.9; filter:invert(1); }
 .footer-nav .switch-btn span { color:#fff; font-weight:600; }
 .footer-nav .switch-btn.active span { color:#8d4585; font-weight:700; }
 
 /* Masonry-style layout */
-#notesContainer {
-  column-count: 2;
-  column-gap: 16px;
-}
-
-.category-card {
-  background: rgba(255,255,255,0.05);
-  border-radius: var(--card-radius);
-  margin-bottom: 16px;
-  padding: 16px;
-  display: inline-block; /* needed for column layout */
-  width: 100%;
-  transition: background 0.2s;
-}
+#notesContainer { column-count: 2; column-gap: 16px; }
+.category-card { background: rgba(255,255,255,0.05); border-radius: var(--card-radius); margin-bottom: 16px; padding: 16px; display: inline-block; width: 100%; transition: background 0.2s; }
 .category-card:hover{ background: rgba(255,255,255,0.08); }
-
-.category-title{
-  font-weight:600; margin-bottom:10px; font-size:1.1rem;
-}
+.category-title{ font-weight:600; margin-bottom:10px; font-size:1.1rem; cursor:pointer; }
 .task-list{ list-style:none; margin:0; padding:0; }
-.task-list li{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-.task-list li span{ flex:1; cursor:pointer; }
-/* Hide the default checkbox */
-.task-list input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* Style the task items */
-.task-list li {
-  position: relative;
-  padding-left: 30px; /* space for the custom checkbox */
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-/* Custom checkbox box */
-.task-list li span::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  border: 2px solid #fff;
-  border-radius: 6px; /* slightly rounded */
-  background: transparent;
-  transition: all 0.2s;
-}
-
-/* Checkmark */
-.task-list li span::after {
-  content: '';
-  position: absolute;
-  left: 3px;
-  top: 50%;
-  transform: translateY(-50%) scale(0);
-  width: 14px;
-  height: 14px;
-  background: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M6 10.2L3.8 8l-1 1L6 12l8-8-1-1z"/></svg>') no-repeat center center;
-  background-size: 70%;
-  transition: transform 0.2s;
-}
-
-/* When checked,*
+.task-list li{ position: relative; padding-left: 30px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.task-list li span{ flex:1; }
+.task-list input[type="checkbox"]{ position:absolute; opacity:0; width:0; height:0; }
+.task-list li span::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; border: 2px solid #fff; border-radius: 6px; background: transparent; transition: all 0.2s; }
+.task-list li span::after { content: ''; position: absolute; left: 3px; top: 50%; transform: translateY(-50%) scale(0); width: 14px; height: 14px; background: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M6 10.2L3.8 8l-1 1L6 12l8-8-1-1z"/></svg>') no-repeat center center; background-size: 70%; transition: transform 0.2s; }
+.task-list li.checked span::after { transform: translateY(-50%) scale(1); }
+.task-list li.checked span::before { background: #8d4585; border-color: #8d4585; }
 
 /* Modal */
 .modal-overlay{ position:fixed; inset:0; background: rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s;}
@@ -168,16 +74,7 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
     </div>
     <div class="modal-body">
       <input type="text" id="taskTitle" placeholder="Task title" />
-      <select id="taskCategory">
-        <option value="General">General</option>
-        <option value="Work">Work</option>
-        <option value="Personal">Personal</option>
-        <option value="Errands">Errands</option>
-        <option value="Health">Health</option>
-      </select>
-      <label style="display:flex;align-items:center;gap:10px;">
-        <input type="checkbox" id="taskDone"/> Mark as completed
-      </label>
+      <select id="taskCategory"></select>
     </div>
     <div class="modal-footer">
       <button id="cancelBtn" class="modal-btn cancel">Cancel</button>
@@ -185,11 +82,6 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
     </div>
   </div>
 </div>
-  
-  <li>
-  <input type="checkbox" id="task1" ${t.done?'checked':''}/>
-  <span style="${t.done?'text-decoration:line-through;opacity:0.5;':''}">Task Title</span>
-</li>
 
 <footer class="footer-nav">
   <div class="left-group">
@@ -210,29 +102,29 @@ document.getElementById('moodBtn').onclick = () => { window.location.href="mood.
 document.getElementById('rxBtn').onclick = () => { window.location.href="rx.html"; };
 
 let tasks = JSON.parse(localStorage.getItem('todoTasks')||'[]');
+let categories = JSON.parse(localStorage.getItem('todoCategories')||'[]');
 let editingTaskId = null;
 
 const modal = document.getElementById('noteModal');
 const taskTitleInput = document.getElementById('taskTitle');
 const taskCategoryInput = document.getElementById('taskCategory');
-const taskDoneInput = document.getElementById('taskDone');
 const notesContainer = document.getElementById('notesContainer');
 
 /* Modal */
 function openTaskModal(id=null){
   editingTaskId=id;
+  populateCategoryDropdown();
+
   if(id){
     const t=tasks.find(x=>x.id===id);
     if(!t) return;
     document.getElementById('modalTitle').textContent='Edit Task';
     taskTitleInput.value=t.title;
     taskCategoryInput.value=t.category;
-    taskDoneInput.checked=t.done;
   } else {
     document.getElementById('modalTitle').textContent='New Task';
     taskTitleInput.value='';
-    taskCategoryInput.value='General';
-    taskDoneInput.checked=false;
+    taskCategoryInput.value=categories[0]||'';
   }
   modal.classList.add('show');
   taskTitleInput.focus();
@@ -243,17 +135,46 @@ document.getElementById('closeModal').onclick=closeModal;
 document.getElementById('cancelBtn').onclick=closeModal;
 modal.onclick=e=>{if(e.target===modal) closeModal();}
 
+/* Populate dropdown */
+function populateCategoryDropdown(){
+  taskCategoryInput.innerHTML='';
+  categories.forEach(cat=>{
+    const opt=document.createElement('option');
+    opt.value=cat;
+    opt.textContent=cat;
+    taskCategoryInput.appendChild(opt);
+  });
+  const addNew=document.createElement('option');
+  addNew.value='__add_new__';
+  addNew.textContent='Add New Category…';
+  taskCategoryInput.appendChild(addNew);
+}
+taskCategoryInput.onchange=()=>{
+  if(taskCategoryInput.value==='__add_new__'){
+    const newCat=prompt('Enter new category name:').trim();
+    if(newCat){
+      categories.push(newCat);
+      localStorage.setItem('todoCategories', JSON.stringify(categories));
+      populateCategoryDropdown();
+      taskCategoryInput.value=newCat;
+    } else {
+      taskCategoryInput.value=categories[0]||'';
+    }
+  }
+}
+
 /* Save Task */
 document.getElementById('saveBtn').onclick=()=>{
   const title=taskTitleInput.value.trim();
   const category=taskCategoryInput.value;
-  const done=taskDoneInput.checked;
   if(!title) return alert('Please enter a task name.');
+  if(!category) return alert('Please select a category.');
+
   if(editingTaskId!==null){
     const t=tasks.find(x=>x.id===editingTaskId);
-    if(t){ t.title=title; t.category=category; t.done=done; t.updated=new Date().toISOString(); }
+    if(t){ t.title=title; t.category=category; t.updated=new Date().toISOString(); }
   } else {
-    tasks.unshift({ id:Date.now().toString(), title, category, done, created:new Date().toISOString(), updated:new Date().toISOString() });
+    tasks.unshift({ id:Date.now().toString(), title, category, done:false, created:new Date().toISOString(), updated:new Date().toISOString() });
   }
   localStorage.setItem('todoTasks',JSON.stringify(tasks));
   renderTasks();
@@ -267,31 +188,29 @@ function renderTasks(){
     return;
   }
 
-  const categories = [...new Set(tasks.map(t=>t.category))];
+  const allCategories=[...new Set(tasks.map(t=>t.category))];
   let html='';
-  categories.forEach(cat=>{
+  allCategories.forEach(cat=>{
     const catTasks=tasks.filter(t=>t.category===cat);
     html+=`<div class="category-card">
       <div class="category-title">${cat}</div>
       <ul class="task-list">
-        ${catTasks.map(t=>`<li data-id="${t.id}"><input type="checkbox" ${t.done?'checked':''}/> <span style="${t.done?'text-decoration:line-through;opacity:0.5;':''}">${t.title}</span></li>`).join('')}
+        ${catTasks.map(t=>`<li data-id="${t.id}" class="${t.done?'checked':''}"><input type="checkbox" ${t.done?'checked':''}/><span>${t.title}</span></li>`).join('')}
       </ul>
     </div>`;
   });
-
   notesContainer.innerHTML=html;
 
-  // Checkbox toggle
-  document.querySelectorAll('.task-list input[type="checkbox"]').forEach(cb=>{
-    cb.onchange=()=>{
-      const t=tasks.find(x=>x.id===cb.closest('li').dataset.id);
-      if(t){ t.done=cb.checked; t.updated=new Date().toISOString(); localStorage.setItem('todoTasks',JSON.stringify(tasks)); renderTasks(); }
+  // Toggle task completion on click
+  document.querySelectorAll('.task-list li').forEach(li=>{
+    li.onclick=()=>{
+      const t=tasks.find(x=>x.id===li.dataset.id);
+      if(t){
+        t.done=!t.done;
+        localStorage.setItem('todoTasks',JSON.stringify(tasks));
+        renderTasks();
+      }
     }
-  });
-
-  // Click task to edit
-  document.querySelectorAll('.task-list li span').forEach(span=>{
-    span.onclick=()=>{ openTaskModal(span.closest('li').dataset.id); }
   });
 }
 
@@ -299,3 +218,4 @@ renderTasks();
 </script>
 </body>
 </html>
+
