@@ -245,24 +245,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     notesContainer.innerHTML = html;
 
-    // Checkbox click deletes task
-    document.querySelectorAll('.task-list li input[type="checkbox"]').forEach(cb => {
-      cb.onclick = (e) => {
-        const li = cb.closest('li');
-        const idx = tasks.findIndex(t => t.id === li.dataset.id);
-        if (idx !== -1) {
-          tasks.splice(idx, 1); // remove task
-          localStorage.setItem('todoTasks', JSON.stringify(tasks));
-          renderTasks();
-        }
-        e.stopPropagation();
-      };
-    });
-
-    // Click task to edit
-    document.querySelectorAll('.task-list li span').forEach(span => {
-      span.onclick = () => openTaskModal(span.closest('li').dataset.id);
-    });
+// Checkbox click deletes task
+document.querySelectorAll('.task-list li input[type="checkbox"]').forEach(cb => {
+  cb.onclick = (e) => {
+    e.stopPropagation(); // <- Prevents opening the edit modal
+    const li = cb.closest('li');
+    const idx = tasks.findIndex(t => t.id === li.dataset.id);
+    if (idx !== -1) {
+      tasks.splice(idx, 1); // remove task
+      localStorage.setItem('todoTasks', JSON.stringify(tasks));
+      renderTasks();
+    }
+  };
+});
 
     // Mobile long-press delete for categories
     addMobileLongPressDelete();
