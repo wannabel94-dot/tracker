@@ -2,406 +2,77 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="theme-color" content="#07081d" id="navColor">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>To-do</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --morning-text: #f0f4ff;
-  --night-text: #f0f4ff;
   --card-radius: 14px;
-  --glass-border: rgba(255,255,255,0.12);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
-*{box-sizing:border-box}
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
+*{box-sizing:border-box;}
+html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; overflow:hidden;}
 .wrap {
-  position: fixed;
-  top: 60px;
-  bottom: 60px;
-  left: 0;
-  right: 0;
-  overflow-y: auto;
-  padding: 18px;
-  -webkit-overflow-scrolling: touch;
+  position: fixed; top: 60px; bottom: 60px; left: 0; right: 0;
+  overflow-y: auto; padding: 18px; -webkit-overflow-scrolling: touch;
 }
-
-body{ color:#fff; }
-body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081d; }
-
 #topHeader{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display:flex;
-  align-items:center;
-  background: #07081d;
-  justify-content:space-between;
-  padding:10px 18px;
-  z-index:100;
+  position: fixed; top: 0; left:0; width:100%;
+  display:flex; justify-content:space-between; align-items:center;
+  background:#07081d; padding:10px 18px; z-index:100;
 }
-#dayOfWeek{ flex:1; text-align:center; font-size:1rem; font-weight:600; color:#f0f4ff; margin:0; pointer-events:none; }
-#btnSettings {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  color: #fff;
-  cursor: pointer;
-  padding: 8px;
-  z-index: 101;
-  position: relative;
-  min-width: 40px;
-  min-height: 40px;
-}
-  
-#btnSettings:hover { color: #ddd; }
-#dataBtn {
-  background: transparent;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  padding: 8px;
-  z-index: 101;
-  position: relative;
-  min-width: 40px;
-  min-height: 40px;
+#dayOfWeek{ flex:1; text-align:center; font-weight:600; font-size:1rem; }
+#btnSettings{ background:none; border:none; color:#fff; font-size:24px; cursor:pointer; }
+#btnSettings:hover{ color:#ddd; }
+#dataBtn{ background:none; border:none; color:#fff; cursor:pointer; }
+#dataBtn img{ width:22px; height:22px; filter:invert(1); }
+
+#notesContainer {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:16px;
 }
 
-#dataBtn img {
-  width: 22px;
-  height: 22px;
-  object-fit: contain;
-  filter:invert(1);
-}
-
-/* Note entries */
-.note-entry {
+/* Category card */
+.category-card {
   background: rgba(255,255,255,0.05);
   border-radius: var(--card-radius);
-  padding: 16px;
-  margin-bottom: 12px;
-  cursor: pointer;
+  padding:16px;
+  cursor:pointer;
   transition: background 0.2s;
 }
-.note-entry:hover {
-  background: rgba(255,255,255,0.08);
-}
-.note-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-.note-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  color: #f0f4ff;
-}
-.note-timestamp {
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.5);
-  white-space: nowrap;
-}
-.note-preview {
-  color: rgba(255,255,255,0.7);
-  font-size: 0.95rem;
-  line-height: 1.4;
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-.note-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-.delete-btn {
-  background: rgba(255,50,50,0.25);
-  color: #fff;
-  border: 0;
-  border-radius: 8px;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: background 0.2s;
-}
-.delete-btn:hover {
-  background: rgba(255,50,50,0.4);
-}
+.category-card:hover{ background: rgba(255,255,255,0.08); }
+.category-title{ font-weight:600; margin-bottom:10px; font-size:1.1rem; }
+.task-list{ list-style:none; margin:0; padding:0; display:none; }
+.task-list li{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.task-list li span{ flex:1; }
 
-/* Note editor modal */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 500;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-.modal-overlay.show {
-  opacity: 1;
-  pointer-events: all;
-}
-.modal-box {
-  background: #1e1e35;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  transform: translateY(50px);
-  transition: transform 0.3s;
-}
-.modal-overlay.show .modal-box {
-  transform: translateY(0);
-}
-.modal-header {
-  padding: 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.2rem;
-}
-.close-btn {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-}
-.modal-body {
-  padding: 20px;
-  overflow-y: auto;
-  flex: 1;
-}
-.modal-body input,
-.modal-body textarea {
-  width: 100%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 12px;
-  padding: 12px;
-  color: #f0f4ff;
-  font-family: inherit;
-  font-size: 1rem;
-  margin-bottom: 16px;
-}
-.modal-body input {
-  font-weight: 600;
-}
-.modal-body textarea {
-  min-height: 200px;
-  resize: vertical;
-}
-.modal-body input:focus,
-.modal-body textarea:focus {
-  outline: none;
-  border-color: rgba(255,255,255,0.3);
-}
-.modal-footer {
-  padding: 20px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-}
-.modal-btn {
-  padding: 10px 20px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.modal-btn:hover {
-  opacity: 0.8;
-}
-.modal-btn.cancel {
-  background: rgba(255,255,255,0.1);
-  color: #f0f4ff;
-}
-.modal-btn.save {
-  background: rgba(255,255,255,0.2);
-  color: #f0f4ff;
-}
+/* Modal */
+.modal-overlay{ position:fixed; inset:0; background: rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s;}
+.modal-overlay.show{ opacity:1; pointer-events:all;}
+.modal-box{ background:#1e1e35; border-radius:16px; width:90%; max-width:600px; max-height:80vh; display:flex; flex-direction:column; transform:translateY(50px); transition:0.3s;}
+.modal-overlay.show .modal-box{ transform:translateY(0);}
+.modal-header{ padding:20px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;}
+.close-btn{ background:none; border:none; color:#fff; font-size:24px; cursor:pointer; }
+.modal-body{ padding:20px; overflow-y:auto; flex:1; }
+.modal-body input, .modal-body select{ width:100%; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.12); margin-bottom:16px; background:rgba(255,255,255,0.05); color:#fff; font-size:1rem; }
+.modal-footer{ padding:20px; display:flex; gap:12px; justify-content:flex-end; }
+.modal-btn{ padding:10px 20px; border:none; border-radius:12px; font-weight:600; cursor:pointer; }
+.modal-btn.cancel{ background: rgba(255,255,255,0.1); color:#fff; }
+.modal-btn.save{ background: rgba(255,255,255,0.2); color:#fff; }
 
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: rgba(255,255,255,0.4);
-}
-.empty-state-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-.modal-body select {
-  width: 100%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 12px;
-  padding: 12px;
-  color: #f0f4ff;
-  font-size: 1rem;
-  margin-bottom: 16px;
-}
-.modal-body select:focus {
-  outline: none;
-  border-color: rgba(255,255,255,0.3);
-}
-
-/* Footer */
-.footer-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: #303f5c;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 25px;
-}
-
-.left-group, .right-group {
-  display: flex;
-  justify-content: space-between;
-  width: 120px;
-  margin: 0;
-  gap: 0;
-}
-
-.footer-nav::before {
-  content: '';
-  position: absolute;
-  top: -25px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
-  background: #07081d;
-  border-radius: 50%;
-  z-index: 110;
-}
-
-.floating-center-btn {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #8694af;
-  border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 36px;
-  font-weight: 700;
-  color: #000;
-  cursor: pointer;
-  z-index: 130;
-  transition: transform 0.2s;
-}
-.floating-center-btn:hover {
-  transform: translateX(-50%) scale(1.1);
-}
-
-.footer-nav .switch-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px 0; width: 50px; background:transparent; border:none; cursor:pointer; border-radius:12px; }
-.footer-nav .switch-btn img { width:22px; height:22px; opacity:0.9; filter:invert(1); }
-.footer-nav .switch-btn span { color:#fff; font-weight:600; }
-.footer-nav .switch-btn.active span { color:#8d4585; font-weight:700; }
-
-.settings-menu {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 50%;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(18px) saturate(180%);
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  transform: translateX(-100%);
-  transition: transform 0.4s ease;
-  z-index: 200;
-}
-.settings-menu.show {
-  transform: translateX(0);
-}
-.settings-menu button {
-  background: transparent;
-  border: 0;
-  padding: 16px 20px;
-  width: 100%;
-  text-align: left;
-  font-weight: 600;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.25s, transform 0.2s;
-}
-.settings-menu button:hover {
-  background: rgba(255,255,255,0.15);
-  transform: translateX(6px);
-}
-.menu-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-  z-index: 150;
-}
-.menu-overlay.show {
-  opacity: 1;
-  pointer-events: all;
-}
-
+.floating-center-btn{ position:fixed; bottom:30px; left:50%; transform:translateX(-50%); width:50px; height:50px; border-radius:50%; background:#8694af; border:none; font-size:36px; font-weight:700; color:#000; cursor:pointer; display:flex; justify-content:center; align-items:center; z-index:130; }
+.floating-center-btn:hover{ transform:translateX(-50%) scale(1.1);}
 </style>
 </head>
-<body class="morning">
+<body>
   <header id="topHeader">
     <button class="switch-btn data" id="dataBtn"><img src="icons/chart.svg" alt="Data"></button>
     <div id="dayOfWeek">Notes</div>
     <button id="btnSettings">☰</button>
   </header>
 
-  <div id="menuOverlay" class="menu-overlay"></div>
-  <div id="settingsMenu" class="settings-menu">
-    <button id="btnExport">Export data</button>
-    <button id="btnClearAll">Clear all notes</button>
-  </div>
-
   <div class="wrap" id="notesContainer"></div>
 
-  <!-- Task Modal -->
+  <!-- Modal -->
   <div id="noteModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
@@ -417,9 +88,8 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
           <option value="Errands">Errands</option>
           <option value="Health">Health</option>
         </select>
-        <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-          <input type="checkbox" id="taskDone" />
-          Mark as completed
+        <label style="display:flex;align-items:center;gap:10px;">
+          <input type="checkbox" id="taskDone"/> Mark as completed
         </label>
       </div>
       <div class="modal-footer">
@@ -429,202 +99,101 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
     </div>
   </div>
 
-  <!-- Sticky footer nav -->
-  <footer class="footer-nav">
-    <div class="left-group">
-      <button class="switch-btn home" id="homeBtn"><img src="icons/home.svg" alt="Home"><span>Home</span></button>
-      <button class="switch-btn rx" id="rxBtn"><img src="icons/rx1.svg" alt="rx"><span>Rx</span></button>
-    </div>
-    <div class="right-group">
-      <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
-      <button class="switch-btn mood" id="moodBtn"><img src="icons/mood.svg" alt="mood"><span>Mood</span></button>
-    </div>
-  </footer>
   <button class="floating-center-btn" id="centralBtn">+</button>
 
 <script>
-/* ======= Variables ======= */
-let tasks = JSON.parse(localStorage.getItem('todoTasks') || '[]');
+/* ===== Variables ===== */
+let tasks = JSON.parse(localStorage.getItem('todoTasks')||'[]');
 let editingTaskId = null;
 
-const modal = document.getElementById("noteModal");
-const modalTitle = document.getElementById("modalTitle");
-const taskTitleInput = document.getElementById("taskTitle");
-const taskCategoryInput = document.getElementById("taskCategory");
-const taskDoneInput = document.getElementById("taskDone");
-const notesContainer = document.getElementById("notesContainer");
+const modal = document.getElementById('noteModal');
+const taskTitleInput = document.getElementById('taskTitle');
+const taskCategoryInput = document.getElementById('taskCategory');
+const taskDoneInput = document.getElementById('taskDone');
+const notesContainer = document.getElementById('notesContainer');
 
-const btnSettings = document.getElementById('btnSettings');
-const settingsMenu = document.getElementById('settingsMenu');
-const menuOverlay = document.getElementById('menuOverlay');
-
-/* ======= Navigation ======= */
-document.getElementById('homeBtn').onclick = () => { window.location.href="index.html"; };
-document.getElementById('dataBtn').onclick = () => { window.location.href="data.html"; };
-document.getElementById('moodBtn').onclick = () => { window.location.href="mood.html"; };
-document.getElementById('rxBtn').onclick = () => { window.location.href="rx.html"; };
-
-/* ======= Settings Menu ======= */
-btnSettings.onclick = () => {
-  const isOpen = settingsMenu.classList.toggle('show');
-  menuOverlay.classList.toggle('show', isOpen);
-};
-menuOverlay.onclick = () => {
-  settingsMenu.classList.remove('show');
-  menuOverlay.classList.remove('show');
-};
-
-/* ======= Export Tasks ======= */
-document.getElementById('btnExport').onclick = () => {
-  if (!tasks.length) return alert("No tasks to export.");
-  const blob = new Blob([JSON.stringify(tasks, null, 2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "todo-export.json";
-  a.click();
-  URL.revokeObjectURL(url);
-};
-
-/* ======= Clear All Tasks ======= */
-document.getElementById('btnClearAll').onclick = () => {
-  if (confirm("Delete all tasks? This cannot be undone.")) {
-    tasks = [];
-    saveTasks();
-    renderTasks();
-  }
-};
-
-/* ======= Modal ======= */
-function openTaskModal(id = null) {
-  editingTaskId = id;
-  if (id) {
-    const t = tasks.find(x => x.id === id);
-    if (!t) return;
-    modalTitle.textContent = "Edit Task";
-    taskTitleInput.value = t.title;
-    taskCategoryInput.value = t.category;
-    taskDoneInput.checked = t.done;
+/* ===== Modal Controls ===== */
+function openTaskModal(id=null){
+  editingTaskId=id;
+  if(id){
+    const t=tasks.find(x=>x.id===id);
+    if(!t) return;
+    document.getElementById('modalTitle').textContent='Edit Task';
+    taskTitleInput.value=t.title;
+    taskCategoryInput.value=t.category;
+    taskDoneInput.checked=t.done;
   } else {
-    modalTitle.textContent = "New Task";
-    taskTitleInput.value = "";
-    taskCategoryInput.value = "General";
-    taskDoneInput.checked = false;
+    document.getElementById('modalTitle').textContent='New Task';
+    taskTitleInput.value='';
+    taskCategoryInput.value='General';
+    taskDoneInput.checked=false;
   }
-  modal.classList.add("show");
+  modal.classList.add('show');
   taskTitleInput.focus();
 }
+function closeModal(){ modal.classList.remove('show'); editingTaskId=null; }
+document.getElementById('centralBtn').onclick=()=>openTaskModal();
+document.getElementById('closeModal').onclick=closeModal;
+document.getElementById('cancelBtn').onclick=closeModal;
+modal.onclick=e=>{if(e.target===modal) closeModal();}
 
-function closeModal() {
-  modal.classList.remove("show");
-  editingTaskId = null;
-}
-
-document.getElementById("centralBtn").onclick = () => openTaskModal();
-document.getElementById("closeModal").onclick = closeModal;
-document.getElementById("cancelBtn").onclick = closeModal;
-modal.onclick = e => { if (e.target === modal) closeModal(); };
-
-/* ======= Save Task ======= */
-document.getElementById("saveBtn").onclick = () => {
-  const title = taskTitleInput.value.trim();
-  const category = taskCategoryInput.value;
-  const done = taskDoneInput.checked;
-
-  if (!title) return alert("Please enter a task name.");
-
-  if (editingTaskId !== null) {
-    const t = tasks.find(x => x.id === editingTaskId);
-    if (t) {
-      t.title = title;
-      t.category = category;
-      t.done = done;
-      t.updated = new Date().toISOString();
-    }
+/* ===== Save Task ===== */
+document.getElementById('saveBtn').onclick=()=>{
+  const title=taskTitleInput.value.trim();
+  const category=taskCategoryInput.value;
+  const done=taskDoneInput.checked;
+  if(!title) return alert('Please enter a task name.');
+  if(editingTaskId!==null){
+    const t=tasks.find(x=>x.id===editingTaskId);
+    if(t){ t.title=title; t.category=category; t.done=done; t.updated=new Date().toISOString(); }
   } else {
-    tasks.unshift({
-      id: Date.now().toString(),
-      title,
-      category,
-      done,
-      created: new Date().toISOString(),
-      updated: new Date().toISOString()
-    });
+    tasks.unshift({ id:Date.now().toString(), title, category, done, created:new Date().toISOString(), updated:new Date().toISOString() });
   }
-
-  saveTasks();
+  localStorage.setItem('todoTasks',JSON.stringify(tasks));
   renderTasks();
   closeModal();
 };
 
-/* ======= Save to localStorage ======= */
-function saveTasks() {
-  localStorage.setItem("todoTasks", JSON.stringify(tasks));
-}
-
-/* ======= Delete Task ======= */
-function deleteTask(id) {
-  if (!confirm("Delete this task?")) return;
-  tasks = tasks.filter(t => t.id !== id);
-  saveTasks();
-  renderTasks();
-}
-
-/* ======= Format Date ======= */
-function formatDate(ts) {
-  const d = new Date(ts);
-  return d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
-}
-
-/* ======= Render Tasks ======= */
-function renderTasks() {
-  if (!tasks.length) {
-    notesContainer.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">📋</div>
-        <p>No tasks yet</p>
-        <p style="font-size:0.9rem;">Tap the + button to create one</p>
-      </div>`;
+/* ===== Render Tasks ===== */
+function renderTasks(){
+  if(!tasks.length){
+    notesContainer.innerHTML='<div style="text-align:center;padding:60px 20px;color:rgba(255,255,255,0.4);"><div style="font-size:48px;margin-bottom:16px;">📋</div><p>No tasks yet</p><p style="font-size:0.9rem;">Tap the + button to create one</p></div>';
     return;
   }
+  const categories=[...new Set(tasks.map(t=>t.category))];
+  let html='';
+  categories.forEach(cat=>{
+    const catTasks=tasks.filter(t=>t.category===cat);
+    html+=`<div class="category-card">
+      <div class="category-title">${cat}</div>
+      <ul class="task-list">
+        ${catTasks.map(t=>`<li data-id="${t.id}"><input type="checkbox" ${t.done?'checked':''}/> <span style="${t.done?'text-decoration:line-through;opacity:0.5;':''}">${t.title}</span></li>`).join('')}
+      </ul>
+    </div>`;
+  });
+  notesContainer.innerHTML=html;
 
-  const categories = [...new Set(tasks.map(t => t.category))];
-  let html = '';
-
-  categories.forEach(cat => {
-    html += `<h2 style="margin:10px 0 5px;opacity:0.7;">${cat}</h2>`;
-    tasks.filter(t => t.category === cat).forEach(t => {
-      html += `
-      <div class="note-entry" data-task-id="${t.id}">
-        <div class="note-header" style="cursor:pointer;">
-          <h3 class="note-title" style="${t.done ? 'text-decoration:line-through;opacity:0.5;' : ''}">${t.title}</h3>
-          <span class="note-timestamp">${formatDate(t.updated)}</span>
-        </div>
-        <div class="note-actions">
-          <button class="delete-btn">Delete</button>
-        </div>
-      </div>`;
-    });
+  // Toggle task list
+  document.querySelectorAll('.category-card').forEach(card=>{
+    const taskList=card.querySelector('.task-list');
+    card.querySelector('.category-title').onclick=()=>{ taskList.style.display=taskList.style.display==='block'?'none':'block'; }
   });
 
-  notesContainer.innerHTML = html;
+  // Checkbox toggle
+  document.querySelectorAll('.task-list input[type="checkbox"]').forEach(cb=>{
+    cb.onchange=()=>{ 
+      const t=tasks.find(x=>x.id===cb.closest('li').dataset.id);
+      if(t){ t.done=cb.checked; t.updated=new Date().toISOString(); localStorage.setItem('todoTasks',JSON.stringify(tasks)); renderTasks(); }
+    }
+  });
+
+  // Click task to edit
+  document.querySelectorAll('.task-list li span').forEach(span=>{
+    span.onclick=()=>{ openTaskModal(span.closest('li').dataset.id); }
+  });
 }
 
-/* ======= Event Delegation for Edit/Delete ======= */
-notesContainer.addEventListener('click', (e) => {
-  const entry = e.target.closest('.note-entry');
-  if (!entry) return;
-  const taskId = entry.dataset.taskId;
-
-  if (e.target.matches('.delete-btn')) {
-    e.stopPropagation();
-    deleteTask(taskId);
-  } else {
-    openTaskModal(taskId);
-  }
-});
-
-/* ======= Initial Render ======= */
+/* ===== Initial Render ===== */
 renderTasks();
 </script>
 </body>
