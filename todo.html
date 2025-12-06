@@ -16,6 +16,42 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
   position: fixed; top: 60px; bottom: 60px; left: 0; right: 0;
   overflow-y: auto; padding: 18px; -webkit-overflow-scrolling: touch;
 }
+#topHeader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #07081d;
+  padding: 10px 18px;
+  z-index: 100;
+}
+#dayOfWeek { flex: 1; text-align: center; font-weight: 600; font-size: 1rem; }
+#btnSettings, #dataBtn { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+
+.footer-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #303f5c;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+}
+.left-group, .right-group {
+  display: flex;
+  justify-content: space-between;
+  width: 120px;
+}
+.footer-nav .switch-btn { display:flex; flex-direction:column; align-items:center; gap:4px; padding:6px 0; width: 50px; background:transparent; border:none; cursor:pointer; border-radius:12px; }
+.footer-nav .switch-btn img { width:22px; height:22px; opacity:0.9; filter:invert(1); }
+.footer-nav .switch-btn span { color:#fff; font-weight:600; }
+.footer-nav .switch-btn.active span { color:#8d4585; font-weight:700; }
 
 /* Masonry-style layout */
 #notesContainer {
@@ -94,10 +130,24 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
     </div>
   </div>
 </div>
-
+<footer class="footer-nav">
+  <div class="left-group">
+    <button class="switch-btn home" id="homeBtn"><img src="icons/home.svg" alt="Home"><span>Home</span></button>
+    <button class="switch-btn rx" id="rxBtn"><img src="icons/rx1.svg" alt="Rx"><span>Rx</span></button>
+  </div>
+  <div class="right-group">
+    <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="To-do"><span>To-do</span></button>
+    <button class="switch-btn mood" id="moodBtn"><img src="icons/mood.svg" alt="Mood"><span>Mood</span></button>
+  </div>
+</footer>
 <button class="floating-center-btn" id="centralBtn">+</button>
 
 <script>
+document.getElementById('homeBtn').onclick = () => { window.location.href="index.html"; };
+document.getElementById('dataBtn').onclick = () => { window.location.href="data.html"; };
+document.getElementById('moodBtn').onclick = () => { window.location.href="mood.html"; };
+document.getElementById('rxBtn').onclick = () => { window.location.href="rx.html"; };
+
 let tasks = JSON.parse(localStorage.getItem('todoTasks')||'[]');
 let editingTaskId = null;
 
