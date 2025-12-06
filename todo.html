@@ -114,170 +114,195 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
 <button class="floating-center-btn" id="centralBtn">+</button>
 
 <script>
-document.getElementById('homeBtn').onclick = () => { window.location.href="index.html"; };
-document.getElementById('dataBtn').onclick = () => { window.location.href="data.html"; };
-document.getElementById('moodBtn').onclick = () => { window.location.href="mood.html"; };
-document.getElementById('rxBtn').onclick = () => { window.location.href="rx.html"; };
+document.addEventListener('DOMContentLoaded', () => {
+  // Navigation buttons
+  document.getElementById('homeBtn').onclick = () => window.location.href = "index.html";
+  document.getElementById('dataBtn').onclick = () => window.location.href = "data.html";
+  document.getElementById('moodBtn').onclick = () => window.location.href = "mood.html";
+  document.getElementById('rxBtn').onclick = () => window.location.href = "rx.html";
 
-let tasks = JSON.parse(localStorage.getItem('todoTasks')||'[]');
-let categories = JSON.parse(localStorage.getItem('todoCategories')||'[]');
-let editingTaskId = null;
+  let tasks = JSON.parse(localStorage.getItem('todoTasks') || '[]');
+  let categories = JSON.parse(localStorage.getItem('todoCategories') || '[]');
+  let editingTaskId = null;
 
-const modal = document.getElementById('noteModal');
-const taskTitleInput = document.getElementById('taskTitle');
-const taskCategoryInput = document.getElementById('taskCategory');
-const notesContainer = document.getElementById('notesContainer');
+  const modal = document.getElementById('noteModal');
+  const taskTitleInput = document.getElementById('taskTitle');
+  const taskCategoryInput = document.getElementById('taskCategory');
+  const notesContainer = document.getElementById('notesContainer');
 
-/* Modal */
-function openTaskModal(id=null){
-  editingTaskId=id;
-  populateCategoryDropdown();
+  // --- MODAL HANDLERS ---
+  function openTaskModal(id = null) {
+    editingTaskId = id;
+    populateCategoryDropdown();
 
-  if(id){
-    const t=tasks.find(x=>x.id===id);
-    if(!t) return;
-    document.getElementById('modalTitle').textContent='Edit Task';
-    taskTitleInput.value=t.title;
-    taskCategoryInput.value=t.category;
-  } else {
-    document.getElementById('modalTitle').textContent='New Task';
-    taskTitleInput.value='';
-    taskCategoryInput.value=categories[0]||'';
-  }
-  modal.classList.add('show');
-  taskTitleInput.focus();
-}
-function closeModal(){ modal.classList.remove('show'); editingTaskId=null; }
-document.getElementById('centralBtn').onclick=()=>openTaskModal();
-document.getElementById('closeModal').onclick=closeModal;
-document.getElementById('cancelBtn').onclick=closeModal;
-modal.onclick=e=>{if(e.target===modal) closeModal();}
-
-/* Populate dropdown */
-function populateCategoryDropdown(){
-  taskCategoryInput.innerHTML='';
-  categories.forEach(cat=>{
-    const opt=document.createElement('option');
-    opt.value=cat;
-    opt.textContent=cat;
-    taskCategoryInput.appendChild(opt);
-  });
-  const addNew=document.createElement('option');
-  addNew.value='__add_new__';
-  addNew.textContent='Add New Category…';
-  taskCategoryInput.appendChild(addNew);
-}
-taskCategoryInput.onchange=()=>{
-  if(taskCategoryInput.value==='__add_new__'){
-    const newCat=prompt('Enter new category name:').trim();
-    if(newCat){
-      categories.push(newCat);
-      localStorage.setItem('todoCategories', JSON.stringify(categories));
-      populateCategoryDropdown();
-      taskCategoryInput.value=newCat;
+    if (id) {
+      const t = tasks.find(x => x.id === id);
+      if (!t) return;
+      document.getElementById('modalTitle').textContent = 'Edit Task';
+      taskTitleInput.value = t.title;
+      taskCategoryInput.value = t.category;
     } else {
-      taskCategoryInput.value=categories[0]||'';
+      document.getElementById('modalTitle').textContent = 'New Task';
+      taskTitleInput.value = '';
+      taskCategoryInput.value = categories[0] || '';
     }
+    modal.classList.add('show');
+    taskTitleInput.focus();
   }
-}
 
-/* Save Task */
-document.getElementById('saveBtn').onclick=()=>{
-  const title=taskTitleInput.value.trim();
-  const category=taskCategoryInput.value;
-  if(!title) return alert('Please enter a task name.');
-  if(!category) return alert('Please select a category.');
-
-  if(editingTaskId!==null){
-    const t=tasks.find(x=>x.id===editingTaskId);
-    if(t){ t.title=title; t.category=category; t.updated=new Date().toISOString(); }
-  } else {
-    tasks.unshift({ id:Date.now().toString(), title, category, done:false, created:new Date().toISOString(), updated:new Date().toISOString() });
+  function closeModal() {
+    modal.classList.remove('show');
+    editingTaskId = null;
   }
-  localStorage.setItem('todoTasks',JSON.stringify(tasks));
-  renderTasks();
-  closeModal();
-};
-  
-// Remove task on click (when checked)
-document.querySelectorAll('.task-list li').forEach(li=>{
-  li.onclick=()=>{
-    const tIndex = tasks.findIndex(x=>x.id===li.dataset.id);
-    if(tIndex !== -1){
-      tasks.splice(tIndex, 1); // remove the task
-      localStorage.setItem('todoTasks',JSON.stringify(tasks));
-      renderTasks(); // re-render
+
+  document.getElementById('centralBtn').onclick = () => openTaskModal();
+  document.getElementById('closeModal').onclick = closeModal;
+  document.getElementById('cancelBtn').onclick = closeModal;
+  modal.onclick = e => { if (e.target === modal) closeModal(); };
+
+  // --- CATEGORY DROPDOWN ---
+  function populateCategoryDropdown() {
+    taskCategoryInput.innerHTML = '';
+    categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      taskCategoryInput.appendChild(opt);
+    });
+    const addNew = document.createElement('option');
+    addNew.value = '__add_new__';
+    addNew.textContent = 'Add New Category…';
+    taskCategoryInput.appendChild(addNew);
+  }
+
+  taskCategoryInput.onchange = () => {
+    if (taskCategoryInput.value === '__add_new__') {
+      const newCat = prompt('Enter new category name:')?.trim();
+      if (newCat && !categories.includes(newCat)) {
+        categories.push(newCat);
+        localStorage.setItem('todoCategories', JSON.stringify(categories));
+        populateCategoryDropdown();
+        taskCategoryInput.value = newCat;
+      } else {
+        taskCategoryInput.value = categories[0] || '';
+      }
     }
-  }
-});
-function addMobileLongPressDelete() {
-  // Only apply if it's a touch device
-  if (!('ontouchstart' in window)) return;
+  };
 
-  document.querySelectorAll('.category-card').forEach(card => {
-    let timer;
+  // --- SAVE TASK ---
+  document.getElementById('saveBtn').onclick = () => {
+    const title = taskTitleInput.value.trim();
+    const category = taskCategoryInput.value;
+    if (!title) return alert('Please enter a task name.');
+    if (!category) return alert('Please select a category.');
 
-    card.addEventListener('touchstart', (e) => {
-      timer = setTimeout(() => {
-        card.classList.add('show-delete'); // reveal delete button
-      }, 600); // 600ms long press
+    if (editingTaskId !== null) {
+      const t = tasks.find(x => x.id === editingTaskId);
+      if (t) {
+        t.title = title;
+        t.category = category;
+        t.updated = new Date().toISOString();
+      }
+    } else {
+      tasks.unshift({
+        id: Date.now().toString(),
+        title,
+        category,
+        done: false,
+        created: new Date().toISOString(),
+        updated: new Date().toISOString()
+      });
+    }
+
+    localStorage.setItem('todoTasks', JSON.stringify(tasks));
+    renderTasks();
+    closeModal();
+  };
+
+  // --- RENDER TASKS ---
+  function renderTasks() {
+    if (!tasks.length) {
+      notesContainer.innerHTML = `<div style="text-align:center;padding:60px 20px;color:rgba(255,255,255,0.4);">
+        <div style="font-size:48px;margin-bottom:16px;">📋</div>
+        <p>No tasks yet</p>
+        <p style="font-size:0.9rem;">Tap the + button to create one</p>
+      </div>`;
+      return;
+    }
+
+    const allCategories = [...new Set(tasks.map(t => t.category))];
+    let html = '';
+
+    allCategories.forEach(cat => {
+      const catTasks = tasks.filter(t => t.category === cat);
+      html += `<div class="category-card">
+        <div class="category-title">${cat}</div>
+        <ul class="task-list">
+          ${catTasks.map(t => `<li data-id="${t.id}"><input type="checkbox" ${t.done ? 'checked' : ''}/><span>${t.title}</span></li>`).join('')}
+        </ul>
+      </div>`;
     });
 
-    card.addEventListener('touchend', () => clearTimeout(timer));
-    card.addEventListener('touchmove', () => clearTimeout(timer));
-  });
+    notesContainer.innerHTML = html;
 
-  // Delete category button
-  document.querySelectorAll('.category-card .delete-category-btn').forEach(btn => {
-    btn.onclick = (e) => {
-      e.stopPropagation();
-      const categoryName = btn.closest('.category-card').querySelector('.category-title').textContent;
-      if(confirm(`Delete all tasks in "${categoryName}"?`)) {
-        tasks = tasks.filter(t => t.category !== categoryName);
-        localStorage.setItem('todoTasks', JSON.stringify(tasks));
-        renderTasks();
-      }
-    };
-  });
-}
-renderTasks();
-addMobileLongPressDelete();
+    // Checkbox click deletes task
+    document.querySelectorAll('.task-list li input[type="checkbox"]').forEach(cb => {
+      cb.onclick = (e) => {
+        const li = cb.closest('li');
+        const idx = tasks.findIndex(t => t.id === li.dataset.id);
+        if (idx !== -1) {
+          tasks.splice(idx, 1); // remove task
+          localStorage.setItem('todoTasks', JSON.stringify(tasks));
+          renderTasks();
+        }
+        e.stopPropagation();
+      };
+    });
 
-/* Render Tasks */
-function renderTasks(){
-  if(!tasks.length){
-    notesContainer.innerHTML='<div style="text-align:center;padding:60px 20px;color:rgba(255,255,255,0.4);"><div style="font-size:48px;margin-bottom:16px;">📋</div><p>No tasks yet</p><p style="font-size:0.9rem;">Tap the + button to create one</p></div>';
-    return;
+    // Click task to edit
+    document.querySelectorAll('.task-list li span').forEach(span => {
+      span.onclick = () => openTaskModal(span.closest('li').dataset.id);
+    });
+
+    // Mobile long-press delete for categories
+    addMobileLongPressDelete();
   }
 
-  const allCategories=[...new Set(tasks.map(t=>t.category))];
-  let html='';
-  allCategories.forEach(cat=>{
-    const catTasks=tasks.filter(t=>t.category===cat);
-    html+=`<div class="category-card">
-      <div class="category-title">${cat}</div>
-      <ul class="task-list">
-        ${catTasks.map(t=>`<li data-id="${t.id}" class="${t.done?'checked':''}"><input type="checkbox" ${t.done?'checked':''}/><span>${t.title}</span></li>`).join('')}
-      </ul>
-    </div>`;
-  });
-  notesContainer.innerHTML=html;
+  // --- MOBILE LONG-PRESS CATEGORY DELETE ---
+  function addMobileLongPressDelete() {
+    if (!('ontouchstart' in window)) return;
 
-  // Toggle task completion on click
-  document.querySelectorAll('.task-list li').forEach(li=>{
-    li.onclick=()=>{
-      const t=tasks.find(x=>x.id===li.dataset.id);
-      if(t){
-        t.done=!t.done;
-        localStorage.setItem('todoTasks',JSON.stringify(tasks));
-        renderTasks();
-      }
-    }
-  });
-}
+    document.querySelectorAll('.category-card').forEach(card => {
+      if (card.querySelector('.delete-category-btn')) return; // already added
+      const btn = document.createElement('button');
+      btn.textContent = 'Delete';
+      btn.className = 'delete-category-btn';
+      card.appendChild(btn);
 
-renderTasks();
+      let timer;
+      card.addEventListener('touchstart', () => {
+        timer = setTimeout(() => card.classList.add('show-delete'), 600);
+      });
+      card.addEventListener('touchend', () => clearTimeout(timer));
+      card.addEventListener('touchmove', () => clearTimeout(timer));
+
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const categoryName = card.querySelector('.category-title').textContent;
+        if (confirm(`Delete all tasks in "${categoryName}"?`)) {
+          tasks = tasks.filter(t => t.category !== categoryName);
+          localStorage.setItem('todoTasks', JSON.stringify(tasks));
+          renderTasks();
+        }
+      };
+    });
+  }
+
+  // --- INITIAL RENDER ---
+  renderTasks();
+});
 </script>
+
 </body>
 </html>
 
