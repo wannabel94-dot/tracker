@@ -399,88 +399,72 @@ body::before{ content:""; position:fixed; inset:0; z-index:-1; background:#07081
     <button id="btnClearAll">Clear all notes</button>
   </div>
 
-  <div class="wrap" id="notesContainer">
-    <!-- Notes will be rendered here -->
+  <div class="wrap" id="notesContainer"></div>
+
+  <!-- Task Modal -->
+  <div id="noteModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle">New Task</h3>
+        <button id="closeModal" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="taskTitle" placeholder="Task title" />
+        <select id="taskCategory">
+          <option value="General">General</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Errands">Errands</option>
+          <option value="Health">Health</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <input type="checkbox" id="taskDone" />
+          Mark as completed
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelBtn" class="modal-btn cancel">Cancel</button>
+        <button id="saveBtn" class="modal-btn save">Save</button>
+      </div>
+    </div>
   </div>
 
-<div class="modal-body">
-  <input type="text" id="taskTitle" placeholder="Task title" />
-
-  <select id="taskCategory">
-    <option value="General">General</option>
-    <option value="Work">Work</option>
-    <option value="Personal">Personal</option>
-    <option value="Errands">Errands</option>
-    <option value="Health">Health</option>
-  </select>
-
-  <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-    <input type="checkbox" id="taskDone" />
-    Mark as completed
-  </label>
-</div>
-
-<!-- Task Modal -->
-<div id="noteModal" class="modal-overlay">
-  <div class="modal-box">
-    
-    <div class="modal-header">
-      <h3 id="modalTitle">New Task</h3>
-      <button id="closeModal" class="close-btn">&times;</button>
-    </div>
-
-    <div class="modal-body">
-      <input type="text" id="taskTitle" placeholder="Task title" />
-
-      <select id="taskCategory">
-        <option value="General">General</option>
-        <option value="Work">Work</option>
-        <option value="Personal">Personal</option>
-        <option value="Errands">Errands</option>
-        <option value="Health">Health</option>
-      </select>
-
-      <label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-        <input type="checkbox" id="taskDone" />
-        Mark as completed
-      </label>
-    </div>
-
-    <div class="modal-footer">
-      <button id="cancelBtn" class="modal-btn cancel">Cancel</button>
-      <button id="saveBtn" class="modal-btn save">Save</button>
-    </div>
-
-  </div>
-</div>
   <!-- Sticky footer nav -->
-<footer class="footer-nav">
-  <div class="left-group">
-    <button class="switch-btn home" id="homeBtn"><img src="icons/home.svg" alt="Home"><span>Home</span></button>
-   <button class="switch-btn rx" id="rxBtn"><img src="icons/rx1.svg" alt="rx"><span>Rx</span></button>
-  </div>
-  <div class="right-group">
-    <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
-   <button class="switch-btn mood" id="moodBtn"><img src="icons/mood.svg" alt="mood"><span>Mood</span></button>
-  </div>
-</footer>
+  <footer class="footer-nav">
+    <div class="left-group">
+      <button class="switch-btn home" id="homeBtn"><img src="icons/home.svg" alt="Home"><span>Home</span></button>
+      <button class="switch-btn rx" id="rxBtn"><img src="icons/rx1.svg" alt="rx"><span>Rx</span></button>
+    </div>
+    <div class="right-group">
+      <button class="switch-btn todo" id="todoBtn"><img src="icons/todo.svg" alt="todo"><span>To-do</span></button>
+      <button class="switch-btn mood" id="moodBtn"><img src="icons/mood.svg" alt="mood"><span>Mood</span></button>
+    </div>
+  </footer>
   <button class="floating-center-btn" id="centralBtn">+</button>
 
 <script>
+/* ======= Variables ======= */
 let tasks = JSON.parse(localStorage.getItem('todoTasks') || '[]');
 let editingTaskId = null;
 
-/* Navigation */
+const modal = document.getElementById("noteModal");
+const modalTitle = document.getElementById("modalTitle");
+const taskTitleInput = document.getElementById("taskTitle");
+const taskCategoryInput = document.getElementById("taskCategory");
+const taskDoneInput = document.getElementById("taskDone");
+const notesContainer = document.getElementById("notesContainer");
+
+const btnSettings = document.getElementById('btnSettings');
+const settingsMenu = document.getElementById('settingsMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+
+/* ======= Navigation ======= */
 document.getElementById('homeBtn').onclick = () => { window.location.href="index.html"; };
 document.getElementById('dataBtn').onclick = () => { window.location.href="data.html"; };
 document.getElementById('moodBtn').onclick = () => { window.location.href="mood.html"; };
 document.getElementById('rxBtn').onclick = () => { window.location.href="rx.html"; };
 
-/* Settings menu */
-const btnSettings = document.getElementById('btnSettings');
-const settingsMenu = document.getElementById('settingsMenu');
-const menuOverlay = document.getElementById('menuOverlay');
-
+/* ======= Settings Menu ======= */
 btnSettings.onclick = () => {
   const isOpen = settingsMenu.classList.toggle('show');
   menuOverlay.classList.toggle('show', isOpen);
@@ -490,12 +474,9 @@ menuOverlay.onclick = () => {
   menuOverlay.classList.remove('show');
 };
 
-/* Export */
+/* ======= Export Tasks ======= */
 document.getElementById('btnExport').onclick = () => {
-  if (tasks.length === 0) {
-    alert("No tasks to export.");
-    return;
-  }
+  if (!tasks.length) return alert("No tasks to export.");
   const blob = new Blob([JSON.stringify(tasks, null, 2)], {type:"application/json"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -505,39 +486,18 @@ document.getElementById('btnExport').onclick = () => {
   URL.revokeObjectURL(url);
 };
 
-/* Clear all */
+/* ======= Clear All Tasks ======= */
 document.getElementById('btnClearAll').onclick = () => {
   if (confirm("Delete all tasks? This cannot be undone.")) {
     tasks = [];
-    localStorage.setItem('todoTasks', JSON.stringify(tasks));
+    saveTasks();
     renderTasks();
   }
 };
 
-/* Modal */
-const modal = document.getElementById("noteModal");
-const modalTitle = document.getElementById("modalTitle");
-const taskTitleInput = document.getElementById("taskTitle");
-const taskCategoryInput = document.getElementById("taskCategory");
-const taskDoneInput = document.getElementById("taskDone");
-
-document.getElementById("closeModal").onclick = closeModal;
-document.getElementById("cancelBtn").onclick = closeModal;
-
-function closeModal() {
-  modal.classList.remove("show");
-  editingTaskId = null;
-}
-
-document.getElementById("centralBtn").onclick = () => openTaskModal();
-
-modal.onclick = e => {
-  if (e.target === modal) closeModal();
-};
-
+/* ======= Modal ======= */
 function openTaskModal(id = null) {
   editingTaskId = id;
-
   if (id) {
     const t = tasks.find(x => x.id === id);
     if (!t) return;
@@ -551,23 +511,29 @@ function openTaskModal(id = null) {
     taskCategoryInput.value = "General";
     taskDoneInput.checked = false;
   }
-
   modal.classList.add("show");
   taskTitleInput.focus();
 }
 
-/* Save task */
+function closeModal() {
+  modal.classList.remove("show");
+  editingTaskId = null;
+}
+
+document.getElementById("centralBtn").onclick = () => openTaskModal();
+document.getElementById("closeModal").onclick = closeModal;
+document.getElementById("cancelBtn").onclick = closeModal;
+modal.onclick = e => { if (e.target === modal) closeModal(); };
+
+/* ======= Save Task ======= */
 document.getElementById("saveBtn").onclick = () => {
   const title = taskTitleInput.value.trim();
   const category = taskCategoryInput.value;
   const done = taskDoneInput.checked;
 
-  if (!title) {
-    alert("Please enter a task name.");
-    return;
-  }
+  if (!title) return alert("Please enter a task name.");
 
-  if (editingTaskId) {
+  if (editingTaskId !== null) {
     const t = tasks.find(x => x.id === editingTaskId);
     if (t) {
       t.title = title;
@@ -586,32 +552,34 @@ document.getElementById("saveBtn").onclick = () => {
     });
   }
 
-  localStorage.setItem("todoTasks", JSON.stringify(tasks));
+  saveTasks();
   renderTasks();
   closeModal();
 };
 
-/* Delete */
-function deleteTask(id) {
-  if (confirm("Delete this task?")) {
-    tasks = tasks.filter(t => t.id !== id);
-    localStorage.setItem("todoTasks", JSON.stringify(tasks));
-    renderTasks();
-  }
+/* ======= Save to localStorage ======= */
+function saveTasks() {
+  localStorage.setItem("todoTasks", JSON.stringify(tasks));
 }
 
-/* Format time */
+/* ======= Delete Task ======= */
+function deleteTask(id) {
+  if (!confirm("Delete this task?")) return;
+  tasks = tasks.filter(t => t.id !== id);
+  saveTasks();
+  renderTasks();
+}
+
+/* ======= Format Date ======= */
 function formatDate(ts) {
   const d = new Date(ts);
   return d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
 }
 
-/* Render tasks grouped by category */
+/* ======= Render Tasks ======= */
 function renderTasks() {
-  const container = document.getElementById("notesContainer");
-
-  if (tasks.length === 0) {
-    container.innerHTML = `
+  if (!tasks.length) {
+    notesContainer.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">📋</div>
         <p>No tasks yet</p>
@@ -621,47 +589,43 @@ function renderTasks() {
   }
 
   const categories = [...new Set(tasks.map(t => t.category))];
-
   let html = '';
+
   categories.forEach(cat => {
     html += `<h2 style="margin:10px 0 5px;opacity:0.7;">${cat}</h2>`;
-    
     tasks.filter(t => t.category === cat).forEach(t => {
       html += `
-        <div class="note-entry" data-task-id="${t.id}">
-          <div class="note-header">
-            <h3 class="note-title" style="${t.done ? 'text-decoration:line-through;opacity:0.5;' : ''}">
-              ${t.title}
-            </h3>
-            <span class="note-timestamp">${formatDate(t.updated)}</span>
-          </div>
-
-          <div class="note-actions">
-            <button class="delete-btn" data-delete-id="${t.id}">Delete</button>
-          </div>
+      <div class="note-entry" data-task-id="${t.id}">
+        <div class="note-header" style="cursor:pointer;">
+          <h3 class="note-title" style="${t.done ? 'text-decoration:line-through;opacity:0.5;' : ''}">${t.title}</h3>
+          <span class="note-timestamp">${formatDate(t.updated)}</span>
         </div>
-      `;
+        <div class="note-actions">
+          <button class="delete-btn">Delete</button>
+        </div>
+      </div>`;
     });
   });
 
-  container.innerHTML = html;
-
-  // Add event listeners using event delegation
-  container.querySelectorAll('.note-entry').forEach(entry => {
-    const taskId = entry.dataset.taskId;
-    const deleteBtn = entry.querySelector('.delete-btn');
-    const header = entry.querySelector('.note-header');
-    
-    header.onclick = () => openTaskModal(taskId);
-    deleteBtn.onclick = (e) => {
-      e.stopPropagation();
-      deleteTask(taskId);
-    };
-  });
+  notesContainer.innerHTML = html;
 }
 
+/* ======= Event Delegation for Edit/Delete ======= */
+notesContainer.addEventListener('click', (e) => {
+  const entry = e.target.closest('.note-entry');
+  if (!entry) return;
+  const taskId = entry.dataset.taskId;
+
+  if (e.target.matches('.delete-btn')) {
+    e.stopPropagation();
+    deleteTask(taskId);
+  } else {
+    openTaskModal(taskId);
+  }
+});
+
+/* ======= Initial Render ======= */
 renderTasks();
 </script>
-
 </body>
 </html>
