@@ -68,12 +68,10 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
 <!-- Modal -->
 <div id="noteModal" class="modal-overlay">
   <div class="modal-box">
-    <div class="modal-header">
-      <h3 id="modalTitle">New Task</h3>
       <button id="closeModal" class="close-btn">&times;</button>
     </div>
     <div class="modal-body">
-      <input type="text" id="taskTitle" placeholder="Task title" />
+      <input type="text" id="taskTitle" placeholder="Task" />
       <select id="taskCategory"></select>
     </div>
     <div class="modal-footer">
@@ -180,6 +178,18 @@ document.getElementById('saveBtn').onclick=()=>{
   renderTasks();
   closeModal();
 };
+  
+// Remove task on click (when checked)
+document.querySelectorAll('.task-list li').forEach(li=>{
+  li.onclick=()=>{
+    const tIndex = tasks.findIndex(x=>x.id===li.dataset.id);
+    if(tIndex !== -1){
+      tasks.splice(tIndex, 1); // remove the task
+      localStorage.setItem('todoTasks',JSON.stringify(tasks));
+      renderTasks(); // re-render
+    }
+  }
+});
 
 /* Render Tasks */
 function renderTasks(){
