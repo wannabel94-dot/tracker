@@ -37,6 +37,24 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
 .task-list li span::after { content: ''; position: absolute; left: 3px; top: 50%; transform: translateY(-50%) scale(0); width: 14px; height: 14px; background: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M6 10.2L3.8 8l-1 1L6 12l8-8-1-1z"/></svg>') no-repeat center center; background-size: 70%; transition: transform 0.2s; }
 .task-list li.checked span::after { transform: translateY(-50%) scale(1); }
 .task-list li.checked span::before { background: #8d4585; border-color: #8d4585; }
+.category-card .delete-category-btn {
+  display: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255,50,50,0.7);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  z-index: 10;
+}
+
+.category-card.show-delete .delete-category-btn {
+  display: block;
+}
 
 /* Modal */
 .modal-overlay{ position:fixed; inset:0; background: rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s;}
@@ -190,6 +208,38 @@ document.querySelectorAll('.task-list li').forEach(li=>{
     }
   }
 });
+function addMobileLongPressDelete() {
+  // Only apply if it's a touch device
+  if (!('ontouchstart' in window)) return;
+
+  document.querySelectorAll('.category-card').forEach(card => {
+    let timer;
+
+    card.addEventListener('touchstart', (e) => {
+      timer = setTimeout(() => {
+        card.classList.add('show-delete'); // reveal delete button
+      }, 600); // 600ms long press
+    });
+
+    card.addEventListener('touchend', () => clearTimeout(timer));
+    card.addEventListener('touchmove', () => clearTimeout(timer));
+  });
+
+  // Delete category button
+  document.querySelectorAll('.category-card .delete-category-btn').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const categoryName = btn.closest('.category-card').querySelector('.category-title').textContent;
+      if(confirm(`Delete all tasks in "${categoryName}"?`)) {
+        tasks = tasks.filter(t => t.category !== categoryName);
+        localStorage.setItem('todoTasks', JSON.stringify(tasks));
+        renderTasks();
+      }
+    };
+  });
+}
+renderTasks();
+addMobileLongPressDelete();
 
 /* Render Tasks */
 function renderTasks(){
