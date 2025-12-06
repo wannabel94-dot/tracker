@@ -82,6 +82,55 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
 .task-list{ list-style:none; margin:0; padding:0; }
 .task-list li{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
 .task-list li span{ flex:1; cursor:pointer; }
+/* Hide the default checkbox */
+.task-list input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Style the task items */
+.task-list li {
+  position: relative;
+  padding-left: 30px; /* space for the custom checkbox */
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* Custom checkbox box */
+.task-list li span::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fff;
+  border-radius: 6px; /* slightly rounded */
+  background: transparent;
+  transition: all 0.2s;
+}
+
+/* Checkmark */
+.task-list li span::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%) scale(0);
+  width: 14px;
+  height: 14px;
+  background: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M6 10.2L3.8 8l-1 1L6 12l8-8-1-1z"/></svg>') no-repeat center center;
+  background-size: 70%;
+  transition: transform 0.2s;
+}
+
+/* When checked,*
 
 /* Modal */
 .modal-overlay{ position:fixed; inset:0; background: rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s;}
@@ -136,6 +185,12 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
     </div>
   </div>
 </div>
+  
+  <li>
+  <input type="checkbox" id="task1" ${t.done?'checked':''}/>
+  <span style="${t.done?'text-decoration:line-through;opacity:0.5;':''}">Task Title</span>
+</li>
+
 <footer class="footer-nav">
   <div class="left-group">
     <button class="switch-btn home" id="homeBtn"><img src="icons/home.svg" alt="Home"><span>Home</span></button>
