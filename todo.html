@@ -79,6 +79,20 @@ html, body{margin:0; padding:0; height:100%; background:var(--bg); color:#fff; o
   outline: none;
   box-shadow: 0 0 0 4px rgba(141,69,133,0.12);
 }
+.category-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.cat-icon {
+  width: 22px;
+  height: 22px;
+  opacity: 0.9;
+  filter: invert(1);
+}
 
 /* Delete checked button (sticky above footer) */
 #deleteCheckedBtn {
@@ -188,6 +202,16 @@ document.addEventListener('DOMContentLoaded', () => {
   let tasks = JSON.parse(localStorage.getItem('todoTasks') || '[]');
   let categories = JSON.parse(localStorage.getItem('todoCategories') || '[]');
   let editingTaskId = null;
+  
+const permanentCategoryIcons = {
+  "Buy": "icons/buy.svg",
+  "Home": "icons/home.svg",
+  "Admin": "icons/admin.svg",
+  "Social": "icons/social.svg",
+  "Finances": "icons/finances.svg",
+  "Personal": "icons/personal.svg",
+  "Health": "icons/health.svg"
+};
 
   // For undo (stores array of deleted tasks)
   let lastDeleted = [];
@@ -349,7 +373,13 @@ document.addEventListener('DOMContentLoaded', () => {
     allCategories.forEach(cat => {
       const catTasks = tasks.filter(t => t.category === cat);
       html += `<div class="category-card">
-        <div class="category-title">${cat}</div>
+<div class="category-title">
+  ${permanentCategoryIcons[cat] 
+    ? `<img class="cat-icon" src="${permanentCategoryIcons[cat]}" alt="${cat}">`
+    : ""
+  }
+  <span>${cat}</span>
+</div>
         <ul class="task-list">
           ${catTasks.map(t => `
             <li data-id="${t.id}">
