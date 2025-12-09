@@ -8,12 +8,14 @@
 <style>
 :root{
   --card-radius: 14px;
+  --bg: #07081d;
+  --muted: rgba(255,255,255,0.4);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
 *{box-sizing:border-box;}
-html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; overflow:hidden;}
+html, body{margin:0; padding:0; height:100%; background:var(--bg); color:#fff; overflow:hidden;}
 .wrap { position: fixed; top: 60px; bottom: 60px; left: 0; right: 0; overflow-y: auto; padding: 18px; -webkit-overflow-scrolling: touch; }
-#topHeader { position: fixed; top: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; background: #07081d; padding: 10px 18px; z-index: 100; }
+#topHeader { position: fixed; top: 0; left: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; background: var(--bg); padding: 10px 18px; z-index: 100; }
 #dayOfWeek { flex: 1; text-align: center; font-weight: 600; font-size: 1rem; }
 #btnSettings, #dataBtn { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
 #dataBtn img { width: 22px; height: 22px; object-fit: contain; filter:invert(1); }
@@ -26,17 +28,77 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
 
 /* Masonry-style layout */
 #notesContainer { column-count: 2; column-gap: 16px; }
-.category-card { background: rgba(255,255,255,0.05); border-radius: var(--card-radius); margin-bottom: 16px; padding: 16px; display: inline-block; width: 100%; transition: background 0.2s; }
+.category-card { background: rgba(255,255,255,0.05); border-radius: var(--card-radius); margin-bottom: 16px; padding: 16px; display: inline-block; width: 100%; transition: background 0.2s; position: relative; }
 .category-card:hover{ background: rgba(255,255,255,0.08); }
 .category-title{ font-weight:600; margin-bottom:10px; font-size:1.1rem; cursor:pointer; }
 .task-list{ list-style:none; margin:0; padding:0; }
-.task-list li{ position: relative; padding-left: 30px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.task-list li{ position: relative; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; padding: 6px 4px; border-radius:10px; cursor: pointer; transition: background 0.12s; }
+.task-list li:hover { background: rgba(255,255,255,0.02); }
 .task-list li span{ flex:1; }
-.task-list input[type="checkbox"]{ position:absolute; opacity:0; width:0; height:0; }
-.task-list li span::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; border: 2px solid #fff; border-radius: 6px; background: transparent; transition: all 0.2s; }
-.task-list li span::after { content: ''; position: absolute; left: 3px; top: 50%; transform: translateY(-50%) scale(0); width: 14px; height: 14px; background: url('data:image/svg+xml;utf8,<svg fill="white" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M6 10.2L3.8 8l-1 1L6 12l8-8-1-1z"/></svg>') no-repeat center center; background-size: 70%; transition: transform 0.2s; }
-.task-list li.checked span::after { transform: translateY(-50%) scale(1); }
-.task-list li.checked span::before { background: #8d4585; border-color: #8d4585; }
+
+/* Hide the old inputs if present */
+.task-list input[type="checkbox"]{ position:absolute; opacity:0; width:0; height:0; pointer-events:none; }
+
+/* ---------- iOS-style circular toggle ---------- */
+.task-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.9);
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+  transition: all 0.22s cubic-bezier(.2,.9,.2,1);
+  flex-shrink: 0;
+  position: relative;
+}
+.task-circle .inner-check {
+  transform: scale(0);
+  opacity: 0;
+  transition: all 0.18s ease;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+  user-select: none;
+}
+.task-circle.checked {
+  background: linear-gradient(135deg,#8d4585 0%, #7a3a74 100%);
+  border-color: rgba(255,255,255,0.0);
+  transform: scale(0.98);
+}
+.task-circle.checked .inner-check{
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* subtle focus style for keyboard users */
+.task-circle:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(141,69,133,0.12);
+}
+
+/* Delete checked button (sticky above footer) */
+#deleteCheckedBtn {
+  position: fixed;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #d9534f;
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  display: none;
+  z-index: 220;
+  border: none;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* category delete button (mobile) */
 .category-card .delete-category-btn {
   display: none;
   position: absolute;
@@ -51,10 +113,7 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
   font-size: 0.8rem;
   z-index: 10;
 }
-
-.category-card.show-delete .delete-category-btn {
-  display: block;
-}
+.category-card.show-delete .delete-category-btn { display:block; }
 
 /* Modal */
 .modal-overlay{ position:fixed; inset:0; background: rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s;}
@@ -72,6 +131,7 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
 
 .floating-center-btn{ position:fixed; bottom:30px; left:50%; transform:translateX(-50%); width:50px; height:50px; border-radius:50%; background:#8694af; border:none; font-size:36px; font-weight:700; color:#000; cursor:pointer; display:flex; justify-content:center; align-items:center; z-index:130; }
 .floating-center-btn:hover{ transform:translateX(-50%) scale(1.1);}
+
 </style>
 </head>
 <body>
@@ -82,6 +142,9 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
 </header>
 
 <div class="wrap" id="notesContainer"></div>
+
+<!-- Delete checked button -->
+<button id="deleteCheckedBtn">Delete Checked</button>
 
 <!-- Modal -->
 <div id="noteModal" class="modal-overlay">
@@ -111,6 +174,7 @@ html, body{margin:0; padding:0; height:100%; background:#07081d; color:#fff; ove
     <button class="switch-btn mood" id="moodBtn"><img src="icons/mood.svg" alt="Mood"><span>Mood</span></button>
   </div>
 </footer>
+
 <button class="floating-center-btn" id="centralBtn">+</button>
 
 <script>
@@ -125,19 +189,20 @@ document.addEventListener('DOMContentLoaded', () => {
   let categories = JSON.parse(localStorage.getItem('todoCategories') || '[]');
   let editingTaskId = null;
 
-  // For undo
-  let lastDeleted = null;
+  // For undo (stores array of deleted tasks)
+  let lastDeleted = [];
   let undoTimer = null;
 
   const modal = document.getElementById('noteModal');
   const taskTitleInput = document.getElementById('taskTitle');
   const taskCategoryInput = document.getElementById('taskCategory');
   const notesContainer = document.getElementById('notesContainer');
+  const deleteCheckedBtn = document.getElementById('deleteCheckedBtn');
 
   // --- MAKE UNDO POPUP ---
   const undoPopup = document.createElement('div');
   undoPopup.style.position = "fixed";
-  undoPopup.style.bottom = "80px";
+  undoPopup.style.bottom = "110px";
   undoPopup.style.left = "50%";
   undoPopup.style.transform = "translateX(-50%)";
   undoPopup.style.background = "#1e1e35";
@@ -145,18 +210,19 @@ document.addEventListener('DOMContentLoaded', () => {
   undoPopup.style.borderRadius = "12px";
   undoPopup.style.boxShadow = "0 4px 10px rgba(0,0,0,0.4)";
   undoPopup.style.display = "none";
-  undoPopup.style.zIndex = "200";
+  undoPopup.style.zIndex = "300";
   undoPopup.style.color = "#fff";
   undoPopup.style.fontSize = "0.95rem";
   undoPopup.style.fontWeight = "600";
   undoPopup.style.cursor = "pointer";
-  undoPopup.textContent = "Task deleted — Undo";
+  undoPopup.textContent = "Tasks deleted — Undo";
   document.body.appendChild(undoPopup);
 
   undoPopup.onclick = () => {
-    if (lastDeleted) {
-      tasks.unshift(lastDeleted);
-      lastDeleted = null;
+    if (lastDeleted && lastDeleted.length) {
+      // restore deleted tasks to front (preserve relative order)
+      tasks = [...lastDeleted, ...tasks];
+      lastDeleted = [];
       clearTimeout(undoTimer);
       localStorage.setItem('todoTasks', JSON.stringify(tasks));
       renderTasks();
@@ -165,14 +231,14 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // --- SHOW UNDO POPUP ---
-  function showUndo(deletedTask) {
-    lastDeleted = deletedTask;
+  function showUndo(deletedTasks) {
+    lastDeleted = deletedTasks;
     undoPopup.style.display = "block";
 
     clearTimeout(undoTimer);
     undoTimer = setTimeout(() => {
       undoPopup.style.display = "none";
-      lastDeleted = null;
+      lastDeleted = [];
     }, 5000);
   }
 
@@ -273,6 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p>No tasks yet</p>
         <p style="font-size:0.9rem;">Tap the + button to create one</p>
       </div>`;
+      deleteCheckedBtn.style.display = 'none';
       return;
     }
 
@@ -286,8 +353,11 @@ document.addEventListener('DOMContentLoaded', () => {
         <ul class="task-list">
           ${catTasks.map(t => `
             <li data-id="${t.id}">
-              <input type="checkbox" ${t.done ? 'checked' : ''}/>
-              <span>${t.title}</span>
+              <!-- circle toggle -->
+              <button class="task-circle" aria-pressed="${t.done ? 'true' : 'false'}" title="${t.done ? 'Checked' : 'Mark done'}">
+                <span class="inner-check">${t.done ? '✓' : ''}</span>
+              </button>
+              <span class="task-title">${escapeHtml(t.title)}</span>
             </li>`
           ).join('')}
         </ul>
@@ -296,46 +366,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
     notesContainer.innerHTML = html;
     addMobileLongPressDelete();
+    checkForDeleteVisibility();
   }
 
-  // --- CHECKBOX DELETE WITH ANIMATION + UNDO ---
-notesContainer.addEventListener('click', (e) => {
-  const li = e.target.closest('li');
-  if (!li) return;
+  // small helper to escape user text
+  function escapeHtml(s) {
+    return (s+'').replace(/[&<>"']/g, function(m){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]; });
+  }
 
-  const checkbox = li.querySelector('input[type="checkbox"]');
-  if (!checkbox) return;
+  // --- DELEGATED CLICK HANDLING ---
+  notesContainer.addEventListener('click', (e) => {
+    const circle = e.target.closest('.task-circle');
+    if (circle) {
+      // toggle done state
+      e.stopPropagation();
+      const li = circle.closest('li');
+      const id = li.dataset.id;
+      const t = tasks.find(x => x.id === id);
+      if (!t) return;
+      t.done = !t.done;
+      // update DOM immediately for snappy feel
+      circle.classList.toggle('checked', t.done);
+      const inner = circle.querySelector('.inner-check');
+      if (inner) inner.textContent = t.done ? '✓' : '';
+      circle.setAttribute('aria-pressed', t.done ? 'true' : 'false');
 
-  // treat li click like checkbox click
-  checkbox.checked = true;
+      localStorage.setItem('todoTasks', JSON.stringify(tasks));
+      checkForDeleteVisibility();
+      return;
+    }
 
-  const id = li.dataset.id;
-  const task = tasks.find(t => t.id === id);
-  if (!task) return;
+    const li = e.target.closest('li');
+    if (li) {
+      // clicking the list item (but not the circle) opens edit modal
+      const id = li.dataset.id;
+      openTaskModal(id);
+    }
+  });
 
-  // animate
-  li.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-  li.style.opacity = "0";
-  li.style.transform = "translateX(30px)";
+  // --- DELETE CHECKED (batch) ---
+  deleteCheckedBtn.addEventListener('click', () => {
+    const checkedTasks = tasks.filter(t => t.done);
+    if (!checkedTasks.length) return;
+    if (!confirm(`Delete ${checkedTasks.length} checked task${checkedTasks.length>1?'s':''}?`)) return;
 
-  setTimeout(() => {
-    const idx = tasks.findIndex(t => t.id === id);
-    if (idx !== -1) {
-      const deletedTask = tasks[idx];
-      tasks.splice(idx, 1);
+    // animation: fade/slide checked li elements
+    checkedTasks.forEach(dt => {
+      const el = notesContainer.querySelector(`li[data-id="${dt.id}"]`);
+      if (el) {
+        el.style.transition = "opacity 0.28s ease, transform 0.28s ease";
+        el.style.opacity = "0";
+        el.style.transform = "translateX(40px)";
+      }
+    });
+
+    // after animation, remove from tasks and persist
+    setTimeout(() => {
+      const deleted = [];
+      tasks = tasks.filter(t => {
+        if (t.done) { deleted.push(t); return false; }
+        return true;
+      });
       localStorage.setItem('todoTasks', JSON.stringify(tasks));
       renderTasks();
-      showUndo(deletedTask);
-    }
-  }, 300);
-});
+      showUndo(deleted);
+    }, 300);
+  });
+
+  // --- UNDO handled earlier with popup ---
+
+  // --- SHOW/HIDE DELETE BUTTON ---
+  function checkForDeleteVisibility() {
+    const any = tasks.some(t => t.done);
+    deleteCheckedBtn.style.display = any ? 'block' : 'none';
+  }
 
   // --- MOBILE LONG-PRESS CATEGORY DELETE ---
   function addMobileLongPressDelete() {
+    // preserve original behavior: only add handlers on touch devices
     if (!('ontouchstart' in window)) return;
 
     document.querySelectorAll('.category-card').forEach(card => {
-      if (card.querySelector('.delete-category-btn')) return;
+      if (card.querySelector('.delete-category-btn')) return; // already added
       const btn = document.createElement('button');
       btn.textContent = 'Delete';
       btn.className = 'delete-category-btn';
@@ -351,7 +463,7 @@ notesContainer.addEventListener('click', (e) => {
       btn.onclick = (e) => {
         e.stopPropagation();
         const categoryName = card.querySelector('.category-title').textContent;
-    if (confirm(`Delete all tasks in "${categoryName}"?`)) {
+        if (confirm(`Delete all tasks in "${categoryName}"?`)) {
           tasks = tasks.filter(t => t.category !== categoryName);
           localStorage.setItem('todoTasks', JSON.stringify(tasks));
           renderTasks();
@@ -362,9 +474,9 @@ notesContainer.addEventListener('click', (e) => {
 
   // --- INITIAL RENDER ---
   renderTasks();
+
 });
 </script>
 
 </body>
 </html>
-
