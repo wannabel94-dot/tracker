@@ -299,35 +299,36 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- CHECKBOX DELETE WITH ANIMATION + UNDO ---
-  notesContainer.addEventListener('click', (e) => {
-    const cb = e.target.closest('input[type="checkbox"]');
-    if (!cb) return;
+notesContainer.addEventListener('click', (e) => {
+  const li = e.target.closest('li');
+  if (!li) return;
 
-    e.stopPropagation();
+  const checkbox = li.querySelector('input[type="checkbox"]');
+  if (!checkbox) return;
 
-    const li = cb.closest('li');
-    const id = li.dataset.id;
+  // treat li click like checkbox click
+  checkbox.checked = true;
 
-    const task = tasks.find(t => t.id === id);
-    if (!task) return;
+  const id = li.dataset.id;
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
 
-    // 1. Animate fade + slide
-    li.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-    li.style.opacity = "0";
-    li.style.transform = "translateX(30px)";
+  // animate
+  li.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+  li.style.opacity = "0";
+  li.style.transform = "translateX(30px)";
 
-    setTimeout(() => {
-      // 2. Remove from dataset
-      const idx = tasks.findIndex(t => t.id === id);
-      if (idx !== -1) {
-        const deletedTask = tasks[idx];
-        tasks.splice(idx, 1);
-        localStorage.setItem('todoTasks', JSON.stringify(tasks));
-        renderTasks();
-        showUndo(deletedTask);
-      }
-    }, 300);
-  });
+  setTimeout(() => {
+    const idx = tasks.findIndex(t => t.id === id);
+    if (idx !== -1) {
+      const deletedTask = tasks[idx];
+      tasks.splice(idx, 1);
+      localStorage.setItem('todoTasks', JSON.stringify(tasks));
+      renderTasks();
+      showUndo(deletedTask);
+    }
+  }, 300);
+});
 
   // --- MOBILE LONG-PRESS CATEGORY DELETE ---
   function addMobileLongPressDelete() {
