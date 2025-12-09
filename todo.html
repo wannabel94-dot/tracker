@@ -125,10 +125,56 @@ document.addEventListener('DOMContentLoaded', () => {
   let categories = JSON.parse(localStorage.getItem('todoCategories') || '[]');
   let editingTaskId = null;
 
+  // For undo
+  let lastDeleted = null;
+  let undoTimer = null;
+
   const modal = document.getElementById('noteModal');
   const taskTitleInput = document.getElementById('taskTitle');
   const taskCategoryInput = document.getElementById('taskCategory');
   const notesContainer = document.getElementById('notesContainer');
+
+  // --- MAKE UNDO POPUP ---
+  const undoPopup = document.createElement('div');
+  undoPopup.style.position = "fixed";
+  undoPopup.style.bottom = "80px";
+  undoPopup.style.left = "50%";
+  undoPopup.style.transform = "translateX(-50%)";
+  undoPopup.style.background = "#1e1e35";
+  undoPopup.style.padding = "12px 20px";
+  undoPopup.style.borderRadius = "12px";
+  undoPopup.style.boxShadow = "0 4px 10px rgba(0,0,0,0.4)";
+  undoPopup.style.display = "none";
+  undoPopup.style.zIndex = "200";
+  undoPopup.style.color = "#fff";
+  undoPopup.style.fontSize = "0.95rem";
+  undoPopup.style.fontWeight = "600";
+  undoPopup.style.cursor = "pointer";
+  undoPopup.textContent = "Task deleted — Undo";
+  document.body.appendChild(undoPopup);
+
+  undoPopup.onclick = () => {
+    if (lastDeleted) {
+      tasks.unshift(lastDeleted);
+      lastDeleted = null;
+      clearTimeout(undoTimer);
+      localStorage.setItem('todoTasks', JSON.stringify(tasks));
+      renderTasks();
+      undoPopup.style.display = "none";
+    }
+  };
+
+  // --- SHOW UNDO POPUP ---
+  function showUndo(deletedTask) {
+    lastDeleted = deletedTask;
+    undoPopup.style.display = "block";
+
+    clearTimeout(undoTimer);
+    undoTimer = setTimeout(() => {
+      undoPopup.style.display = "none";
+      lastDeleted = null;
+    }, 5000);
+  }
 
   // --- MODAL HANDLERS ---
   function openTaskModal(id = null) {
@@ -238,37 +284,57 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `<div class="category-card">
         <div class="category-title">${cat}</div>
         <ul class="task-list">
-          ${catTasks.map(t => `<li data-id="${t.id}"><input type="checkbox" ${t.done ? 'checked' : ''}/><span>${t.title}</span></li>`).join('')}
+          ${catTasks.map(t => `
+            <li data-id="${t.id}">
+              <input type="checkbox" ${t.done ? 'checked' : ''}/>
+              <span>${t.title}</span>
+            </li>`
+          ).join('')}
         </ul>
       </div>`;
     });
 
     notesContainer.innerHTML = html;
-
-// Checkbox click deletes task
-document.querySelectorAll('.task-list li input[type="checkbox"]').forEach(cb => {
-  cb.onclick = (e) => {
-    e.stopPropagation(); // <- Prevents opening the edit modal
-    const li = cb.closest('li');
-    const idx = tasks.findIndex(t => t.id === li.dataset.id);
-    if (idx !== -1) {
-      tasks.splice(idx, 1); // remove task
-      localStorage.setItem('todoTasks', JSON.stringify(tasks));
-      renderTasks();
-    }
-  };
-});
-
-    // Mobile long-press delete for categories
     addMobileLongPressDelete();
   }
+
+  // --- CHECKBOX DELETE WITH ANIMATION + UNDO ---
+  notesContainer.addEventListener('click', (e) => {
+    const cb = e.target.closest('input[type="checkbox"]');
+    if (!cb) return;
+
+    e.stopPropagation();
+
+    const li = cb.closest('li');
+    const id = li.dataset.id;
+
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+
+    // 1. Animate fade + slide
+    li.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+    li.style.opacity = "0";
+    li.style.transform = "translateX(30px)";
+
+    setTimeout(() => {
+      // 2. Remove from dataset
+      const idx = tasks.findIndex(t => t.id === id);
+      if (idx !== -1) {
+        const deletedTask = tasks[idx];
+        tasks.splice(idx, 1);
+        localStorage.setItem('todoTasks', JSON.stringify(tasks));
+        renderTasks();
+        showUndo(deletedTask);
+      }
+    }, 300);
+  });
 
   // --- MOBILE LONG-PRESS CATEGORY DELETE ---
   function addMobileLongPressDelete() {
     if (!('ontouchstart' in window)) return;
 
     document.querySelectorAll('.category-card').forEach(card => {
-      if (card.querySelector('.delete-category-btn')) return; // already added
+      if (card.querySelector('.delete-category-btn')) return;
       const btn = document.createElement('button');
       btn.textContent = 'Delete';
       btn.className = 'delete-category-btn';
@@ -284,7 +350,7 @@ document.querySelectorAll('.task-list li input[type="checkbox"]').forEach(cb => 
       btn.onclick = (e) => {
         e.stopPropagation();
         const categoryName = card.querySelector('.category-title').textContent;
-        if (confirm(`Delete all tasks in "${categoryName}"?`)) {
+    if (confirm(`Delete all tasks in "${categoryName}"?`)) {
           tasks = tasks.filter(t => t.category !== categoryName);
           localStorage.setItem('todoTasks', JSON.stringify(tasks));
           renderTasks();
