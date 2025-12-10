@@ -163,9 +163,10 @@ html, body{margin:0; padding:0; height:100%; background:var(--bg); color:#fff; o
 <!-- Modal -->
 <div id="noteModal" class="modal-overlay">
   <div class="modal-box">
-    <div class="modal-header">
-      <button id="closeModal" class="close-btn">&times;</button>
-    </div>
+   <div class="modal-header">
+  <span id="modalTitle" style="font-size:1.2rem; font-weight:700;">New Task</span>
+  <button id="closeModal" class="close-btn">&times;</button>
+</div>
     <div class="modal-body">
       <input type="text" id="taskTitle" placeholder="Task" />
       <select id="taskCategory"></select>
